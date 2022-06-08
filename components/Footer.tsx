@@ -1,16 +1,16 @@
-import LogoDark from "../assests/logo-dark.svg";
+import LogoDark from "../assests/about-us/logo-dark.svg";
 import Image from "next/image";
-import LinkedIn from "../assests/LinkedIn.svg";
-import Twitter from "../assests/Twitter.svg";
-import Youtube from "../assests/Youtube.svg";
-import Instagram from "../assests/Instagram.svg";
-import Facebook from "../assests/Facebook.svg";
+import LinkedIn from "../assests/about-us/LinkedIn.svg";
+import Twitter from "../assests/about-us/Twitter.svg";
+import Youtube from "../assests/about-us/Youtube.svg";
+import Instagram from "../assests/about-us/Instagram.svg";
+import Facebook from "../assests/about-us/Facebook.svg";
 import Link from "next/link"
 type Props = {};
 
 const Footer = (props: Props) => {
   return (
-    <footer className="bg-[#111111]  w-full px-10 py-5">
+    <footer className="bg-[#000]  w-full px-10 py-5">
       <div className="w-full">
         <Image src={LogoDark} />
       </div>
