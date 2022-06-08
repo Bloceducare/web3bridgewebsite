@@ -1,13 +1,88 @@
 import Nav from "../components/Nav";
 import Background from "../components/Background";
-import HeaderImg from "../assests/about-header-image.svg";
-import GroupImg from "../assests/group-image.svg";
+import HeaderImg from "../assests/about-us/about-header-image.svg";
+import GroupImg from "../assests/about-us/group-image.svg";
+import Founder from "../assests/about-us/Founder.svg";
+import Cofounder from "../assests/about-us/Cofounder.svg";
+import Head from "../assests/about-us/Head.svg";
+import LeadDev from "../assests/about-us/LeadDev.svg";
+import Developer1 from "../assests/about-us/Developer1.svg";
+import Developer2 from "../assests/about-us/Developer2.svg";
+import Developer3 from "../assests/about-us/Developer3.svg";
+import Developer4 from "../assests/about-us/Developer4.svg";
+import Developer5 from "../assests/about-us/Developer5.svg";
+import Investor from "../assests/about-us/Investor.svg";
 import Image from "next/image";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-type Props = {};
-
-const About = (props: Props) => {
+type Images = {
+  name: string;
+  role: string;
+  image: any;
+};
+const About = () => {
+  const images: Images[] = [
+    {
+      name: "Awosika Israel Ayodeji",
+      role: "Founder, Program Manger",
+      image: Founder,
+    },
+    {
+      name: "Akinnusotu Temitayo Daniel",
+      role: "Co-founder, Lead Dev/Mentor",
+      image: Cofounder,
+    },
+    {
+      name: "Katangole Allan",
+      role: "Head, Technical Training",
+      image: Head,
+    },
+    {
+      name: "Jeremiah Noah",
+      role: "Lead dev/ Mentor",
+      image: LeadDev,
+    },
+    {
+      name: "Oke Kehinde",
+      role: "Developer",
+      image: Developer1,
+    },
+    {
+      name: "Fatolu Pelumi",
+      role: "Developer",
+      image: Developer2,
+    },
+    {
+      name: "Abimbola Adebayo",
+      role: "Devloper/ Mentor",
+      image: Developer3,
+    },
+    {
+      name: "Falilat Owolabi",
+      role: "Developer",
+      image: Developer4,
+    },
+    {
+      name: "Ademola Kelvin",
+      role: "Developer",
+      image: Developer5,
+    },
+    {
+      name: "Michael Jerry",
+      role: "Community/ Social Media Lead",
+      image: Developer3,
+    },
+    {
+      name: "Billy Luedtke",
+      role: "Advisor & Angel investor",
+      image: Investor,
+    },
+    {
+      name: "Ademola Kelvin",
+      role: "Developer",
+      image: Developer5,
+    },
+  ];
   return (
     <Background>
       <Nav />
@@ -65,13 +140,34 @@ const About = (props: Props) => {
             Africa. We are working on building sustainable Web3 economy in
             Africa through remote and onsite Web3 development training,
             supporting web3 developers and startups, and lowering barriers of
-            entry into the Web3 ecosystem. 
+            entry into the Web3 ecosystem.
           </p>
           <p className="mt-6 text-[#737373] dark:text-[#D0D0D0]">
-          And we take care of Accomodation
-            Feeding and data expenses for all our onsite participants during the
-            program to make it easier for them to learn
+            And we take care of Accomodation Feeding and data expenses for all
+            our onsite participants during the program to make it easier for
+            them to learn
           </p>
+        </div>
+      </section>
+      <section className="mt-[10rem] px-12">
+        <h1 className="dark:text-[#D0D0D0] font-bold text-[2rem] ml-8 my-12">Pioneered By Awesome Team</h1>
+        <div className=" flex flex-wrap w-full justify-between">
+          {images.map((items, index) => {
+            return (
+              <div className="w-30% text-center mb-24 text-white">
+                <Image
+                  key={index}
+                  src={items?.image}
+                  height={400}
+                  width={400}
+                />
+                <h1 className="text-xl text-[#151515] dark:text-white font-bold">
+                  {items?.name}
+                </h1>
+                <p className="text-[#A1A1A1]">{items?.role}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
       <Footer />
