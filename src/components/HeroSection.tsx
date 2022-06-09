@@ -16,7 +16,7 @@ const HeroSection = () => {
             <div className="w-full">
               <input
                 className="pl-2 py-3 w-11/12  border-2 border-white10"
-                placeholder="Enter your email address here"
+                placeholder="Enter your email address"
               />
             </div>
             <div className="">
