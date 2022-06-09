@@ -36,6 +36,13 @@ const Navbar = () => {
   //   const { systemTheme, theme, setTheme } = useTheme()
   //   const currentThemeChanger = () => {
   //     const currentTheme = theme === 'system' ? systemTheme : theme
+  //     if (currentTheme === 'dark') {
+  //       return (
+  //         <Button>
+  //           <ModeIcon />
+  //         </Button>
+  //       )
+  //     }
   //   }
   return (
     <>
