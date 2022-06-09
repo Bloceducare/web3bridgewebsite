@@ -42,7 +42,7 @@ const Nav = () => {
             </Link>
           </li>
           <li className="mx-4">
-            <Link href={"/"}>
+            <Link href={"/alumni"}>
               <a>Alumni</a>
             </Link>
           </li>
@@ -53,8 +53,8 @@ const Nav = () => {
           </li>
         </ul>
         <div className="ml-auto mr-2 flex items-center">
-          <Button class="mx-2 px-6 py-1" type="transparent" content="Sign in" />
-          <Button class="mx-2 px-6 py-1" type="background" content="Register" />
+          <Button class="mx-2 border-[#FA0101] text-[#FA0101] px-6 py-1" type="transparent" content="Sign in" />
+          <Button class="mx-2  px-6 py-1" type="background" content="Register" />
         </div>
 
         {theme === "light" ? (
