@@ -10,7 +10,7 @@ const Button = (props: Props) => {
       className={`${
         props.type === "background"
           ? "text-white bg-[#FA0101] border border-[#FA0101]"
-          : "text-[#FA0101] border border-[#FA0101]"
+          : " border "
       }
       ${props.class} rounded-sm text-sm `}
     >
