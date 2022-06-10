@@ -12,12 +12,12 @@ const Layout = ({ children }: Props) => {
   return (
     <>
       <Head>
-        <title>Web3bride</title>
+        <title>Web3bridge</title>
         <link rel="shortcut icon" href="favicon.png" />
         <meta property="og:url" content="" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="HighTable" />
-        <meta property="og:description" content="Welcome to web£ world" />
+        <meta property="og:title" content="web3bride" />
+        <meta property="og:description" content="Welcome to web3bridge" />
         <meta property="og:image" content="" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
