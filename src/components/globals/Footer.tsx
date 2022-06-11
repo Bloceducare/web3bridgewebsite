@@ -1,14 +1,15 @@
-import LogoDark from "../assests/about-us/logo-dark.svg";
+import LogoDark from "../../../assests/logo-dark.svg";
 import Image from "next/image";
-import LinkedIn from "../assests/about-us/LinkedIn.svg";
-import Twitter from "../assests/about-us/Twitter.svg";
-import Youtube from "../assests/about-us/Youtube.svg";
-import Instagram from "../assests/about-us/Instagram.svg";
-import Facebook from "../assests/about-us/Facebook.svg";
-import Link from "next/link"
-type Props = {};
+import {
+  FacebookIcon,
+  LinkedInIcon,
+  TwitterIcon,
+  YoutubeIcon,
+  InstagramIcon,
+} from "./icons";
+import Link from "next/link";
 
-const Footer = (props: Props) => {
+const Footer = () => {
   return (
     <footer className="bg-[#000]  w-full px-10 py-5">
       <div className="w-full">
@@ -18,11 +19,11 @@ const Footer = (props: Props) => {
         <div className="w-[25%] mr-auto">
           <p className="text-white">Support@web3bridge.com</p>
           <div className="flex items-center w-[80%] justify-between">
-            <Image src={Twitter} className="block mx-4" />
-            <Image src={LinkedIn} />
-            <Image src={Facebook} />
-            <Image src={Instagram} />
-            <Image src={Youtube} />
+            <TwitterIcon />
+            <LinkedInIcon />
+            <FacebookIcon />
+            <InstagramIcon />
+            <YoutubeIcon />
           </div>
         </div>
         <div className="w-[20%]">
@@ -51,7 +52,7 @@ const Footer = (props: Props) => {
           </ul>
         </div>
         <div className="w-[20%]">
-        <h1 className="font-bold mb-4">Support</h1>
+          <h1 className="font-bold mb-4">Support</h1>
           <ul className="text-xs ">
             <li className="my-1">
               <Link href={"/"}>
@@ -76,7 +77,7 @@ const Footer = (props: Props) => {
           </ul>
         </div>
         <div className="w-[20%]">
-        <h1 className="font-bold mb-4">General</h1>
+          <h1 className="font-bold mb-4">General</h1>
           <ul className="text-xs ">
             <li className="my-1">
               <Link href={"/"}>
@@ -101,7 +102,9 @@ const Footer = (props: Props) => {
           </ul>
         </div>
       </div>
-      <p className="text-center text-white text-xs py-4 mt-10">All rights reserved 2022</p>
+      <p className="text-center text-white text-xs py-4 mt-10">
+        All rights reserved 2022
+      </p>
     </footer>
   );
 };

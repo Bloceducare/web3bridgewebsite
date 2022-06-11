@@ -1,20 +1,17 @@
-import Nav from "../components/Nav";
-import Background from "../components/Background";
-import HeaderImg from "../assests/about-us/about-header-image.svg";
-import GroupImg from "../assests/about-us/group-image.svg";
-import Founder from "../assests/about-us/Founder.svg";
-import Cofounder from "../assests/about-us/Cofounder.svg";
-import Head from "../assests/about-us/Head.svg";
-import LeadDev from "../assests/about-us/LeadDev.svg";
-import Developer1 from "../assests/about-us/Developer1.svg";
-import Developer2 from "../assests/about-us/Developer2.svg";
-import Developer3 from "../assests/about-us/Developer3.svg";
-import Developer4 from "../assests/about-us/Developer4.svg";
-import Developer5 from "../assests/about-us/Developer5.svg";
-import Investor from "../assests/about-us/Investor.svg";
+import HeaderImg from "../../assests/about-us/about-header-image.svg";
+import GroupImg from "../../assests/about-us/group-image.svg";
+import Founder from "../../assests/about-us/Founder.svg";
+import Cofounder from "../../assests/about-us/Cofounder.svg";
+import Head from "../../assests/about-us/Head.svg";
+import LeadDev from "../../assests/about-us/LeadDev.svg";
+import Developer1 from "../../assests/about-us/Developer1.svg";
+import Developer2 from "../../assests/about-us/Developer2.svg";
+import Developer3 from "../../assests/about-us/Developer3.svg";
+import Developer4 from "../../assests/about-us/Developer4.svg";
+import Developer5 from "../../assests/about-us/Developer5.svg";
+import Investor from "../../assests/about-us/Investor.svg";
 import Image from "next/image";
 import Button from "../components/Button";
-import Footer from "../components/Footer";
 type Images = {
   name: string;
   role: string;
@@ -84,8 +81,7 @@ const About = () => {
     },
   ];
   return (
-    <Background>
-      <Nav />
+    <>
       <header className="flex w-[80%] items-center justify-around  mt-12 mx-auto">
         <Image src={HeaderImg} height={326} width={326} />
         <div className="w-[50%]">
@@ -150,7 +146,9 @@ const About = () => {
         </div>
       </section>
       <section className="mt-[10rem] px-12">
-        <h1 className="dark:text-[#D0D0D0] font-bold text-[2rem] ml-8 my-12">Pioneered By Awesome Team</h1>
+        <h1 className="dark:text-[#D0D0D0] font-bold text-[2rem] ml-8 my-12">
+          Pioneered By Awesome Team
+        </h1>
         <div className=" flex flex-wrap w-full justify-between">
           {images.map((items, index) => {
             return (
@@ -170,8 +168,7 @@ const About = () => {
           })}
         </div>
       </section>
-      <Footer />
-    </Background>
+    </>
   );
 };
 
