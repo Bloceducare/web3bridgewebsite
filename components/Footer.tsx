@@ -10,7 +10,7 @@ type Props = {};
 
 const Footer = (props: Props) => {
   return (
-    <footer className="bg-[#000]  w-full px-10 py-5">
+    <footer className="bg-base  w-full px-10 py-5">
       <div className="w-full">
         <Image src={LogoDark} />
       </div>
