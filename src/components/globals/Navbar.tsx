@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ThemeContext } from "../ThemeContext";
 import Link from "next/link";
 import Image from "next/image";
 import DarkLogo from "../../../assests/logo-dark.svg";
 import LightLogo from "../../../assests/logo-light.svg";
-import {  DarkModeIcon, LightModeIcon } from "./icons";
+import { DarkModeIcon, LightModeIcon } from "./icons";
 import Button from "../Button";
 
 const menuItems = [
@@ -18,7 +18,7 @@ const menuItems = [
   },
   {
     menu: "Cohorts",
-    link: "/",
+    link: "/cohorts",
   },
   {
     menu: "dApps",
@@ -30,34 +30,30 @@ const menuItems = [
   },
   {
     menu: "Hire us",
-    link: "/",
+    link: "/hire",
   },
 ];
 
 const Navbar = () => {
   const [display, setDisplay] = useState<any>("hidden");
+  const [isLight, setIsLight] = useState<boolean>(false);
   const { theme, setTheme } = useContext(ThemeContext);
-
-  //   const { systemTheme, theme, setTheme } = useTheme()
-  //   const currentThemeChanger = () => {
-  //     const currentTheme = theme === 'system' ? systemTheme : theme
-  //     if (currentTheme === 'dark') {
-  //       return (
-  //         <Button>
-  //           <ModeIcon />
-  //         </Button>
-  //       )
-  //     }
-  //   }
+  useEffect(() => {
+    if (theme === "light") {
+      setIsLight(true);
+    } else {
+      setIsLight(false);
+    }
+  }, [theme]);
   return (
     <>
-      <nav className="w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex items-center justify-center dark:bg-[#000]">
+      <nav className="w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex items-center justify-center dark:bg-base">
         <div className=" w-11/12  flex items-center justify-between">
           {/* Logo */}
-          {theme === "dark" ? (
-            <Image src={DarkLogo} />
-          ) : (
+          {isLight ? (
             <Image src={LightLogo} className=" " />
+          ) : (
+            <Image src={DarkLogo} />
           )}
           {/* Menu Items */}
           <div className="hidden md:flex space-x-10 ">
@@ -65,7 +61,7 @@ const Navbar = () => {
               return (
                 <div key={index} className="text-base hover:text-primary">
                   <Link href={menuItem.link}>
-                    <a  className="dark:text-white">{menuItem.menu}</a>
+                    <a className="dark:text-white">{menuItem.menu}</a>
                   </Link>
                 </div>
               );
@@ -79,7 +75,7 @@ const Navbar = () => {
             <button className=" xl:block bg-primary text-white font-base px-[2rem]  py-1 border-2 border-primary ">
               Register
             </button>
-            {theme === "light" ? (
+            {isLight ? (
               <button
                 className=""
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

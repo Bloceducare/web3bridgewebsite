@@ -1,6 +1,6 @@
 const Background = ({ children }: any) => {
   return (
-    <div className="bg-white dark:bg-[#111111] transition-all">{children}</div>
+    <div className="bg-white dark:bg-base90 transition-all">{children}</div>
   );
 };
 
