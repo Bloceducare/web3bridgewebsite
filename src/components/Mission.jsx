@@ -1,24 +1,5 @@
 import React from 'react'
-
-const missionData = [
-  {
-    icon: './mission.png',
-    title: 'Mission.',
-    text:
-      'We are on the journey to discover web3 passion, create an African Web3 community, train in a collaborative and supportive environment and in turn develop Africa’s Web3 economy',
-  },
-  {
-    icon: './stats.png',
-    title: 'Statistics.',
-    text: `Web4 Trained: 880, web2 trained 1808./n Graduated: 150+ /n
-    Dapps 7+`,
-  },
-  {
-    icon: './tools.png',
-    title: 'Our Tools.',
-    text: 'Foundry, Hardhat, Diamond Standard, Ethers js,  ',
-  },
-]
+import { missionData } from '../Data'
 
 const Mission = () => {
   return (
@@ -28,7 +9,7 @@ const Mission = () => {
           <h1 className="flex justify-center align-center">
             What is our story
           </h1>
-          <div className="mt-20 w-4/5 text-center font-secondary text-white60 text-xl font-medium mx-auto md:w-2/6">
+          <div className="mt-20 w-11/12 text-lg text-center font-secondary text-white60  font-medium mx-auto md:w-2/6 md:text-xl">
             Web3bridge is a program created in 2019 to train Web3 developers in
             Africa. We are working on building sustainable Web3 economy in
             Africa through remote and onsite Web3 development training,

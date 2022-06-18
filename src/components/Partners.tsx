@@ -1,15 +1,6 @@
 import React from 'react'
 import Marquee from 'react-fast-marquee'
-
-const partnerIcons = [
-  './google.png',
-  './tesla.png',
-  './microsoft.png',
-  './udemy.png',
-  './microsoft.png',
-  './tesla.png',
-  './google.png',
-]
+import { partnerIcons } from '../Data'
 
 const Partners = () => {
   return (
@@ -27,7 +18,7 @@ const Partners = () => {
           nullam. Luctus.
         </p>
       </div>
-      <Marquee pauseOnHover speed={50}>
+      {/* <Marquee pauseOnHover speed={50}>
         <div className="flex justify-content items-center">
           {partnerIcons.map((icon, index) => {
             return (
@@ -37,7 +28,21 @@ const Partners = () => {
             )
           })}
         </div>
-      </Marquee>
+      </Marquee> */}
+      <div className="with-full  justify-center items-center  flex flex-wrap bg-red  mx-auto">
+        <div className="flex flex-wrap justify-center items-center ">
+          {partnerIcons.map((icon, index) => {
+            return (
+              <div
+                key={index}
+                className=" w-12 h-10 my-6 mx-5 md:w-44 md:h-16 md:my-10 md:mx-10"
+              >
+                <img src={icon} alt="partner icons" />
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
