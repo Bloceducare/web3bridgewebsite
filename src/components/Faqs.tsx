@@ -1,5 +1,5 @@
 import { faqData } from '../Data'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Faq from 'react-faq-component'
 
 const styles = {
