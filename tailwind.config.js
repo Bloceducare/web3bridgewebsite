@@ -1,6 +1,6 @@
 module.exports = {
-  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     screens: {
       sm: '480px',
@@ -14,6 +14,7 @@ module.exports = {
       base90: '#151515',
       white: '#ffffff',
       white10: '#D0D0D0',
+      white20: '#CFCFCF',
       white60: '#737373',
       white50: '#A1A1A1',
       background10: '#E5E5E5',
@@ -22,7 +23,11 @@ module.exports = {
       primary: ['DM Sans', 'sans-serif'],
       secondary: ['Poppins', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        '2xl': '0px 4px 48px rgba(32, 51, 160, 0.08)',
+      },
+    },
   },
   plugins: [],
 }

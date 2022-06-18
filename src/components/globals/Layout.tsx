@@ -1,11 +1,12 @@
-import Head from 'next/head'
-import Navbar from './Navbar'
-import React, { ReactNode } from 'react'
-// import Footer from './Global/Footer'
-import TopHeader from './TopHeader'
+import Head from "next/head";
+import Navbar from "./Navbar";
+import React, { ReactNode } from "react";
+import Footer from "./Footer";
+import Background from "../Background";
+import TopHeader from "./TopHeader";
 
 interface Props {
-  children?: ReactNode
+  children?: ReactNode;
   // any props that come into the component
 }
 const Layout = ({ children }: Props) => {
@@ -27,11 +28,14 @@ const Layout = ({ children }: Props) => {
           rel="stylesheet"
         ></link>
       </Head>
-      <TopHeader />
-      <Navbar />
-      {children}
+      <Background>
+        <TopHeader />
+        <Navbar />
+        {children}
+        <Footer />
+      </Background>
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

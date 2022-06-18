@@ -1,67 +1,67 @@
-import React, { useState } from 'react'
-// import { useTheme } from 'next-theme'
+import React, { useState, useContext, useEffect } from 'react'
+import { ThemeContext } from '../ThemeContext'
 import Link from 'next/link'
-import { ModeIcon } from './icons'
+import Image from 'next/image'
+import DarkLogo from '../../../assests/logo-dark.svg'
+import LightLogo from '../../../assests/logo-light.svg'
+import { DarkModeIcon, LightModeIcon } from './icons'
+import Button from '../Button'
 
 const menuItems = [
   {
     menu: 'Home',
-    link: 'www.google.com',
+    link: '/',
   },
   {
     menu: 'About Us',
-    link: 'www.google.com',
+    link: '/about-us',
   },
   {
     menu: 'Cohorts',
-    link: 'www.google.com',
+    link: '/cohorts',
   },
   {
     menu: 'dApps',
-    link: 'www.google.com',
+    link: '/',
   },
   {
     menu: 'Alumni',
-    link: 'www.google.com',
+    link: '/alumni',
   },
   {
     menu: 'Hire us',
-    link: 'www.google.com',
+    link: '/hire',
   },
 ]
 
 const Navbar = () => {
   const [display, setDisplay] = useState<any>('hidden')
-
-  //   const { systemTheme, theme, setTheme } = useTheme()
-  //   const currentThemeChanger = () => {
-  //     const currentTheme = theme === 'system' ? systemTheme : theme
-  //     if (currentTheme === 'dark') {
-  //       return (
-  //         <Button>
-  //           <ModeIcon />
-  //         </Button>
-  //       )
-  //     }
-  //   }
+  const [isLight, setIsLight] = useState<boolean>(false)
+  const { theme, setTheme } = useContext(ThemeContext)
+  useEffect(() => {
+    if (theme === 'light') {
+      setIsLight(true)
+    } else {
+      setIsLight(false)
+    }
+  }, [theme])
   return (
     <>
-      <div className="w-full h-24 flex items-center justify-center">
+      <nav className="w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex items-center justify-center dark:bg-base">
         <div className=" w-11/12  flex items-center justify-between">
           {/* Logo */}
-          <div className="">
-            <img src="./logolight.png" alt="logo" />
-          </div>
+          {isLight ? (
+            <Image src={LightLogo} className=" " />
+          ) : (
+            <Image src={DarkLogo} />
+          )}
           {/* Menu Items */}
           <div className="hidden md:flex space-x-10 ">
             {menuItems.map((menuItem, index) => {
               return (
-                <div
-                  key={index}
-                  className="text-base text-base  hover:text-primary"
-                >
+                <div key={index} className="text-base hover:text-primary">
                   <Link href={menuItem.link}>
-                    <a>{menuItem.menu}</a>
+                    <a className="dark:text-white">{menuItem.menu}</a>
                   </Link>
                 </div>
               )
@@ -69,15 +69,27 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
-            <button className=" hidden md:block bg-secondary text-primary font-base w-44 py-2 border-2 border-primary">
+            <button className=" hidden md:block bg-secondary text-primary font-base px-[2rem] py-1 border-2 border-primary">
               Sign in
             </button>
-            <button className="hidden xl:block bg-primary text-white font-base w-44 py-2 border-2 border-primary ">
+            <button className=" xl:block bg-primary text-white font-base px-[2rem]  py-1 border-2 border-primary ">
               Register
             </button>
-            <button>
-              <ModeIcon />
-            </button>
+            {isLight ? (
+              <button
+                className=""
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              >
+                <DarkModeIcon />
+              </button>
+            ) : (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              >
+                <LightModeIcon />
+              </button>
+            )}
+
             {/* hamburger Menu */}
             <button
               onClick={() => {
@@ -86,9 +98,9 @@ const Navbar = () => {
               id="menu-btn"
               className="block ml-20 hamburger md:hidden focus:outline-none"
             >
-              <span className="hamburger-top"></span>
-              <span className="hamburger-middle"></span>
-              <span className="hamburger-bottom"></span>
+              <span className="hamburger-top dark:bg-white"></span>
+              <span className="hamburger-middle dark:bg-white"></span>
+              <span className="hamburger-bottom dark:bg-white"></span>
             </button>
           </div>
           {/* mobile menu */}
@@ -97,10 +109,7 @@ const Navbar = () => {
           <div className="absolute flex flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md">
             {menuItems.map((menuItem, index) => {
               return (
-                <div
-                  key={index}
-                  className="text-base text-base  hover:text-primary"
-                >
+                <div key={index} className=" text-base  hover:text-primary">
                   <Link href={menuItem.link}>
                     <a>{menuItem.menu}</a>
                   </Link>
@@ -109,7 +118,7 @@ const Navbar = () => {
             })}
           </div>
         </div>
-      </div>
+      </nav>
     </>
   )
 }
