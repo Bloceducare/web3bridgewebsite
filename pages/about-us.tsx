@@ -1,3 +1,4 @@
+<<<<<<< HEAD:pages/about-us.tsx
 import Nav from "../components/Nav";
 import Background from "../components/Background";
 import HeaderImg from "../assests/about-us/about-header-image.svg";
@@ -15,74 +16,90 @@ import Investor from "../assests/about-us/Investor.svg";
 import Image from "next/image";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
+=======
+import HeaderImg from '../../assests/about-us/about-header-image.svg'
+import GroupImg from '../../assests/about-us/group-image.svg'
+import Founder from '../../assests/about-us/Founder.svg'
+import Cofounder from '../../assests/about-us/Cofounder.svg'
+import Head from '../../assests/about-us/Head.svg'
+import LeadDev from '../../assests/about-us/LeadDev.svg'
+import Developer1 from '../../assests/about-us/Developer1.svg'
+import Developer2 from '../../assests/about-us/Developer2.svg'
+import Developer3 from '../../assests/about-us/Developer3.svg'
+import Developer4 from '../../assests/about-us/Developer4.svg'
+import Developer5 from '../../assests/about-us/Developer5.svg'
+import Investor from '../../assests/about-us/Investor.svg'
+import Image from 'next/image'
+import Button from '../components/Button'
+>>>>>>> I fixed eslint issues:src/pages/about-us.tsx
 type Images = {
-  name: string;
-  role: string;
-  image: any;
-};
+  name: string
+  role: string
+  image: any
+}
 const About = () => {
   const images: Images[] = [
     {
-      name: "Awosika Israel Ayodeji",
-      role: "Founder, Program Manger",
+      name: 'Awosika Israel Ayodeji',
+      role: 'Founder, Program Manger',
       image: Founder,
     },
     {
-      name: "Akinnusotu Temitayo Daniel",
-      role: "Co-founder, Lead Dev/Mentor",
+      name: 'Akinnusotu Temitayo Daniel',
+      role: 'Co-founder, Lead Dev/Mentor',
       image: Cofounder,
     },
     {
-      name: "Katangole Allan",
-      role: "Head, Technical Training",
+      name: 'Katangole Allan',
+      role: 'Head, Technical Training',
       image: Head,
     },
     {
-      name: "Jeremiah Noah",
-      role: "Lead dev/ Mentor",
+      name: 'Jeremiah Noah',
+      role: 'Lead dev/ Mentor',
       image: LeadDev,
     },
     {
-      name: "Oke Kehinde",
-      role: "Developer",
+      name: 'Oke Kehinde',
+      role: 'Developer',
       image: Developer1,
     },
     {
-      name: "Fatolu Pelumi",
-      role: "Developer",
+      name: 'Fatolu Pelumi',
+      role: 'Developer',
       image: Developer2,
     },
     {
-      name: "Abimbola Adebayo",
-      role: "Devloper/ Mentor",
+      name: 'Abimbola Adebayo',
+      role: 'Devloper/ Mentor',
       image: Developer3,
     },
     {
-      name: "Falilat Owolabi",
-      role: "Developer",
+      name: 'Falilat Owolabi',
+      role: 'Developer',
       image: Developer4,
     },
     {
-      name: "Ademola Kelvin",
-      role: "Developer",
+      name: 'Ademola Kelvin',
+      role: 'Developer',
       image: Developer5,
     },
     {
-      name: "Michael Jerry",
-      role: "Community/ Social Media Lead",
+      name: 'Michael Jerry',
+      role: 'Community/ Social Media Lead',
       image: Developer3,
     },
     {
-      name: "Billy Luedtke",
-      role: "Advisor & Angel investor",
+      name: 'Billy Luedtke',
+      role: 'Advisor & Angel investor',
       image: Investor,
     },
     {
-      name: "Ademola Kelvin",
-      role: "Developer",
+      name: 'Ademola Kelvin',
+      role: 'Developer',
       image: Developer5,
     },
-  ];
+  ]
   return (
     <Background>
       <Nav />
@@ -94,7 +111,6 @@ const About = () => {
             founder of Web 3 bridge.
           </h1>
           <p className="text-[#737373]">
-            {" "}
             If you've got a couple of minutes I'd love to share the story of how
             web 3 bridge has grown as a bootstrapped startup. It's been an
             awesome journey and I couldn't have done it without the support of
@@ -131,7 +147,7 @@ const About = () => {
           />
         </div>
         <div className="w-[50%]">
-          <Image src={GroupImg} className={"w-full"} />
+          <Image src={GroupImg} className={'w-full'} />
           <h1 className="mb-6 mt-4 font-bold text-2xl text-[#151515] dark:text-[#D0D0D0]">
             Developers dont have to pay so much to learn web 3
           </h1>
@@ -154,25 +170,26 @@ const About = () => {
         <div className=" flex flex-wrap w-full justify-between">
           {images.map((items, index) => {
             return (
-              <div className="w-30% text-center mb-24 text-white">
-                <Image
-                  key={index}
-                  src={items?.image}
-                  height={400}
-                  width={400}
-                />
+              <div key={index} className="w-30% text-center mb-24 text-white">
+                <Image src={items?.image} height={400} width={400} />
                 <h1 className="text-xl text-[#151515] dark:text-white font-bold">
                   {items?.name}
                 </h1>
                 <p className="text-[#A1A1A1]">{items?.role}</p>
               </div>
-            );
+            )
           })}
         </div>
       </section>
+<<<<<<< HEAD:pages/about-us.tsx
       <Footer />
     </Background>
   );
 };
+=======
+    </>
+  )
+}
+>>>>>>> I fixed eslint issues:src/pages/about-us.tsx
 
-export default About;
+export default About

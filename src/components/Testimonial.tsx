@@ -17,8 +17,16 @@ const Testimonial = () => {
       <div className="w-full flex flex-col-reverse  justify-around mt-10 md:flex-row bg-background10 md:w-10/12">
         {Testimonials.map((testimonial, index) => {
           return (
+<<<<<<< HEAD
             <div className=" 3/12 bg-white p-5 m-3">
               <p className="w-full p-2 font-secondary text-base text-white60 mb-1 md:w-full">
+=======
+            <div
+              key={index}
+              className=" 3/12 bg-white dark:bg-base p-5 m-3 boxShadow-2xl rounded-md"
+            >
+              <p className="w-full p-2 font-secondary text-base text-white60 dark:text-white20 mb-1 md:w-full">
+>>>>>>> I fixed eslint issues
                 {testimonial.text}
               </p>
               <div className="flex items-center ">
