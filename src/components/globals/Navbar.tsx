@@ -5,7 +5,6 @@ import Image from 'next/image'
 import DarkLogo from '../../../assests/logo-dark.svg'
 import LightLogo from '../../../assests/logo-light.svg'
 import { DarkModeIcon, LightModeIcon } from './icons'
-import Button from '../Button'
 
 const menuItems = [
   {
@@ -22,7 +21,7 @@ const menuItems = [
   },
   {
     menu: 'dApps',
-    link: '/',
+    link: '/dapps',
   },
   {
     menu: 'Alumni',

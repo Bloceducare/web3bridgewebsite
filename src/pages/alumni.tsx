@@ -1,3 +1,4 @@
+import React, {Fragment} from "react"
 import Image from "next/image";
 import HeaderImg from "../../assests/alumni/headerImg.svg";
 import GroupImg from "../../assests/alumni/group-image.svg";
@@ -5,10 +6,11 @@ import AbdurImg from "../../assests/alumni/abdur.svg";
 import AyoImg from "../../assests/alumni/ayodeji.svg";
 import OlaImg from "../../assests/alumni/olayinka.svg";
 import Button from "../components/Button";
+import type { NextPage } from "next";
 
-const Alumni = () => {
+const Alumni: NextPage = () => {
   return (
-    <>
+    <Fragment>
       <header className="flex pt-10 px-16 items-center">
         <div className="w-[50%] px-16">
           <h2 className="text-[#FA0101] ">JOIN OUR ALUMNI COMMUNITY</h2>
@@ -96,7 +98,7 @@ const Alumni = () => {
           content="Become a member"
         />
       </section>
-    </>
+    </Fragment>
   );
 };
 
