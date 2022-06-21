@@ -13,7 +13,7 @@ import Link from "next/link";
 const Footer = () => {
   return (
     <footer className="bg-base  w-full px-4 md:px-10 py-5">
-      <div className="w-full ml-8 md:ml-auto ">
+      <div className="w-[80%] ml-8 md:ml-auto ">
         <Image src={LogoDark} />
       </div>
       <div className="w-full flex flex-wrap justify-center items-start mt-4 text-white">

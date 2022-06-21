@@ -18,7 +18,7 @@ const Career = () => {
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 3 Cohort ongoing
           </h2>
-          <p className=" font-primary text-xl text-white60 font-normal mb-10">
+          <p className=" text-center font-primary text-xl text-white60 font-normal mb-10">
             Web3bridge runs a 16weeks cohort based training that will hold you
             by the hand to give you the right head start to launch your
             Blockchain Development as we help navigate you from the state of the
@@ -56,7 +56,7 @@ const Career = () => {
             })}
           </div>
           <div className=" mt-10">
-            <button className="border-base dark:border-white20 border-2 py-4 px-14 text-base90 dark:text-white20 font-secondary text-base">
+            <button className=" py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base md:py-4 md:px-14 ">
               View Cohort
             </button>
           </div>
@@ -82,7 +82,7 @@ const Career = () => {
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 2 Cohort ongoing now!
           </h2>
-          <p className=" font-primary text-xl text-white60 font-normal mb-10">
+          <p className=" text-center font-primary text-xl text-white60 font-normal mb-10">
             Want to get started in coding but don’t know where to start, You can
             get all the needed trainigs to make you a proficient Web Developer
             through our 6 months handson training on web2 technologies.
@@ -119,7 +119,7 @@ const Career = () => {
             })}
           </div>
           <div className=" my-10">
-            <button className="border-base dark:border-white20 border-2 py-4 px-14 text-base90 dark:text-white20 font-secondary text-base">
+            <button className="  py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base  md:py-4 md:px-14">
               View Cohort
             </button>
           </div>

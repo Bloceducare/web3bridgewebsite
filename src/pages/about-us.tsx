@@ -22,66 +22,66 @@ type Images = {
 const About: NextPage = () => {
   const images: Images[] = [
     {
-      name: "Awosika Israel Ayodeji",
-      role: "Founder, Program Manger",
+      name: 'Awosika Israel Ayodeji',
+      role: 'Founder, Program Manger',
       image: Founder,
     },
     {
-      name: "Akinnusotu Temitayo Daniel",
-      role: "Co-founder, Lead Dev/Mentor",
+      name: 'Akinnusotu Temitayo Daniel',
+      role: 'Co-founder, Lead Dev/Mentor',
       image: Cofounder,
     },
     {
-      name: "Katangole Allan",
-      role: "Head, Technical Training",
+      name: 'Katangole Allan',
+      role: 'Head, Technical Training',
       image: Head,
     },
     {
-      name: "Jeremiah Noah",
-      role: "Lead dev/ Mentor",
+      name: 'Jeremiah Noah',
+      role: 'Lead dev/ Mentor',
       image: LeadDev,
     },
     {
-      name: "Oke Kehinde",
-      role: "Developer",
+      name: 'Oke Kehinde',
+      role: 'Developer',
       image: Developer1,
     },
     {
-      name: "Fatolu Pelumi",
-      role: "Developer",
+      name: 'Fatolu Pelumi',
+      role: 'Developer',
       image: Developer2,
     },
     {
-      name: "Abimbola Adebayo",
-      role: "Devloper/ Mentor",
+      name: 'Abimbola Adebayo',
+      role: 'Devloper/ Mentor',
       image: Developer3,
     },
     {
-      name: "Falilat Owolabi",
-      role: "Developer",
+      name: 'Falilat Owolabi',
+      role: 'Developer',
       image: Developer4,
     },
     {
-      name: "Ademola Kelvin",
-      role: "Developer",
+      name: 'Ademola Kelvin',
+      role: 'Developer',
       image: Developer5,
     },
     {
-      name: "Michael Jerry",
-      role: "Community/ Social Media Lead",
+      name: 'Michael Jerry',
+      role: 'Community/ Social Media Lead',
       image: Developer3,
     },
     {
-      name: "Billy Luedtke",
-      role: "Advisor & Angel investor",
+      name: 'Billy Luedtke',
+      role: 'Advisor & Angel investor',
       image: Investor,
     },
     {
-      name: "Ademola Kelvin",
-      role: "Developer",
+      name: 'Ademola Kelvin',
+      role: 'Developer',
       image: Developer5,
     },
-  ];
+  ]
   return (
     <Fragment>
       <header className="flex flex-wrap w-[100%] lg:w-[80%] items-center justify-around  mt-12 mx-auto">
@@ -95,7 +95,6 @@ const About: NextPage = () => {
             founder of Web 3 bridge.
           </h1>
           <p className="text-[#737373]">
-            {" "}
             If you've got a couple of minutes I'd love to share the story of how
             web 3 bridge has grown as a bootstrapped startup. It's been an
             awesome journey and I couldn't have done it without the support of
@@ -169,7 +168,7 @@ const About: NextPage = () => {
                 </h1>
                 <p className="text-[#A1A1A1]">{items?.role}</p>
               </div>
-            );
+            )
           })}
         </div>
       </section>
@@ -177,4 +176,4 @@ const About: NextPage = () => {
   );
 };
 
-export default About;
+export default About

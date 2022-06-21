@@ -11,10 +11,10 @@ import type { NextPage } from "next";
 const Alumni: NextPage = () => {
   return (
     <Fragment>
-      <header className="flex pt-10 px-16 items-center">
-        <div className="w-[50%] px-16">
-          <h2 className="text-[#FA0101] ">JOIN OUR ALUMNI COMMUNITY</h2>
-          <h1 className=" dark:text-[#D0D0D0] text-3xl font-bold py-8">
+      <header className="flex flex-wrap pt-10 px-6 lg:px-16 items-center">
+        <div className="w-full sm:w-[80%] md:w-[50%] px-4 sm:px-8 lg:px-16">
+          <h2 className="text-[#FA0101] text-sm lg:text-[1rem] ">JOIN OUR ALUMNI COMMUNITY</h2>
+          <h1 className=" dark:text-[#D0D0D0] text-xl lg:text-3xl font-bold py-8">
             Welcome to Web 3 Bridge Alumni Community Hub
           </h1>
           <p className="text-[#737373]">
@@ -23,13 +23,16 @@ const Alumni: NextPage = () => {
             cohort, feel free to mingle please.
           </p>
         </div>
+        <div className="w-[80%] mx-auto mt-16 md:mt-0 md:w-[45%]">
+
         <Image src={HeaderImg} />
+        </div>
       </header>
-      <section className="text-center mt-[6rem] px-40">
+      <section className="text-center mt-[6rem] px-3 sm:px-11 lg:px-40">
         <h1 className="dark:text-[#D0D0D0] text-3xl mb-6 font-bold">
           Cohort VI officially end, the bumpy ride begins
         </h1>
-        <p className="mb-20 mx-auto text-[#737373] w-[50%]">
+        <p className="mb-20 mx-auto text-[#737373] w-[80%] md:w-[50%]">
           Participants of our Web3Bridge program will be participating in Catch
           the flag; where they will be hacking a smart contract with rewards
         </p>
@@ -42,15 +45,15 @@ const Alumni: NextPage = () => {
         </div>
       </section>
       <section className="mt-32 text-center">
-        <h1 className="dark:text-[#D0D0D0] mb-4 text-3xl text-bold">
+        <h1 className="dark:text-[#D0D0D0] px-4 mb-4 text-3xl text-bold">
           Past Mentees of our cohorts
         </h1>
-        <h2 className="text-[#737373] mb-24">
+        <h2 className="text-[#737373] px-4 mb-24">
           Aliquam et in sit libero nisl ultrices morbi. Curabitur ipsum maecenas
           aliquam commodo.
         </h2>
-        <div className="flex items-center justify-around px-12">
-          <div className="text-center">
+        <div className="flex flex-wrap items-start justify-around px-12">
+          <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={AbdurImg} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
               Abdur-rasheed Idris
@@ -60,7 +63,7 @@ const Alumni: NextPage = () => {
             </p>
             <p className="text-[#A1A1A1] text-sm">(2019)</p>
           </div>
-          <div className="text-center">
+          <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={AyoImg} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
               Ayodeji Ayomide
@@ -68,7 +71,7 @@ const Alumni: NextPage = () => {
             <p className="text-[#A1A1A1] text-sm">Cohort III, Web 3</p>
             <p className="text-[#A1A1A1] text-sm"> Mentee (2020)</p>
           </div>
-          <div className="text-center">
+          <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={OlaImg} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
               Olayinka Ademola

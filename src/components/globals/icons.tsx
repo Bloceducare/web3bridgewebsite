@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export const ArrowRight = () => {
   return (
@@ -17,8 +17,8 @@ export const ArrowRight = () => {
         strokeLinejoin="round"
       />
     </svg>
-  );
-};
+  )
+}
 
 export const ModeIcon = () => {
   return (
@@ -36,8 +36,8 @@ export const ModeIcon = () => {
         fill="#151515"
       />
     </svg>
-  );
-};
+  )
+}
 
 export const LinkedInIcon = () => (
   <svg
@@ -64,7 +64,8 @@ export const LinkedInIcon = () => (
       </clipPath>
     </defs>
   </svg>
-);
+)
+
 export const TwitterIcon = () => (
   <svg
     width="24"
@@ -90,7 +91,7 @@ export const TwitterIcon = () => (
       </clipPath>
     </defs>
   </svg>
-);
+)
 export const YoutubeIcon = () => (
   <svg
     width="40"
@@ -104,7 +105,7 @@ export const YoutubeIcon = () => (
       fill="white"
     />
   </svg>
-);
+)
 export const InstagramIcon = () => (
   <svg
     width="29"
@@ -118,7 +119,7 @@ export const InstagramIcon = () => (
       fill="white"
     />
   </svg>
-);
+)
 export const FacebookIcon = () => (
   <svg
     width="24"
@@ -144,7 +145,7 @@ export const FacebookIcon = () => (
       </clipPath>
     </defs>
   </svg>
-);
+)
 
 export const LightModeIcon = () => (
   <svg
@@ -165,7 +166,7 @@ export const LightModeIcon = () => (
       fill="white"
     />
   </svg>
-);
+)
 export const DarkModeIcon = () => (
   <svg
     width="20"
@@ -185,7 +186,7 @@ export const DarkModeIcon = () => (
       fill="#151515"
     />
   </svg>
-);
+)
 export const DropDown = () => (
   <svg
     width="18"
@@ -199,7 +200,7 @@ export const DropDown = () => (
       stroke="#444444"
       strokeWidth="2"
       strokeLinecap="round"
-      stroke-Linejoin="round"
+      strokeLinejoin="round"
     />
   </svg>
-);
+)

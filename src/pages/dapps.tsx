@@ -37,8 +37,8 @@ const Dapps: NextPage = () => {
   ];
   return (
     <Fragment>
-      <header className="flex justify-center px-[5rem] py-[5rem] items-center">
-        <div className="w-[50%]">
+      <header className="flex flex-wrap justify-center px-2 sm:px-7 lg:px-[5rem] py-[5rem] items-center">
+        <div className="w-[90%] md:w-[70%] lg:w-[49%] mb-24  lg:mb-0">
           <h2 className="text-primary mb-6">
             DECENTRALIZED APPLICATIONS (DAPPS)
           </h2>
@@ -51,18 +51,18 @@ const Dapps: NextPage = () => {
           </p>
           <div className="flex items-center">
             <Button
-              class="py-2 px-10"
+              class="py-2 px-10 text-xs sm:text-[1rem]"
               type="background"
               content="Explore Dapps"
             />
             <Button
-              class="py-2 px-10 border-primary text-primary ml-6"
+              class="py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary ml-6"
               type="transparent"
               content="Build Software"
             />
           </div>
         </div>
-        <div className="w-[50%]">
+        <div className="w-full mx-auto flex lg:block justify-center lg:w-[49%] ml-4">
           <Image src={HeroImg} alt="hero-image" />
         </div>
       </header>
@@ -70,7 +70,7 @@ const Dapps: NextPage = () => {
         <h1 className="text-base90 dark:text-white10 text-3xl text-center mb-5">
           Explore dapps
         </h1>
-        <p className="text-white60 text-sm text-center px-[20rem] mb-[8rem]">
+        <p className="text-white60 text-sm text-center px-[5rem] lg:px-[20rem] mb-[8rem]">
           A lot of dapps are still experimental, testing the possibilties of
           decentralized networks. But there have been some successful early
           movers in the technology, financial, gaming and collectibles
@@ -79,22 +79,22 @@ const Dapps: NextPage = () => {
         <h1 className="text-2xl mb-8 text-center dark:text-white10">
           Choose Category
         </h1>
-        <div className="flex w-[80%] mx-auto mb-[10rem] items-center justify-around text-white10">
-          <div className="border hover:border-primary hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+        <div className="flex flex-wrap w-[100%] lg:w-[80%] mx-auto mb-[10rem] items-center justify-around text-white10">
+          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={FinanceImg} /> <p className="ml-4">De Finance</p>
           </div>
-          <div className="border hover:border-primary hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={ArtImg} /> <p className="ml-4">Art & Collectibles</p>{" "}
           </div>
-          <div className="border hover:border-primary hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={GamingImg} /> <p className="ml-4">Gaming</p>{" "}
           </div>
-          <div className="border hover:border-primary hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={TechImg} /> <p className="ml-4">Technology</p>{" "}
           </div>
         </div>
-        <div className="mx-16 border flex items border-white60 px-6 py-8">
-          <div className="">
+        <div className="mx-8 md:mx-16 border flex flex-wrap items border-white60 px-6 py-8">
+          <div className="w-[90%] mx-auto md:w-[65%] mr-auto">
             <h1 className="text-base90 dark:text-white10 mb-4 font-bold text-lg">
               Do you have decentralized app idea?
             </h1>
@@ -105,9 +105,9 @@ const Dapps: NextPage = () => {
               GitHub.
             </p>
           </div>
-          <div className="w-[30%] flex items-center">
+          <div className="w-[80%] mx-auto mt-[3rem] md:mt-0 md:w-[30%] justify-center flex items-center">
             <Button
-              class=" bg-base90 dark:bg-white text-white dark:text-base90 mx-auto px-6 text-sm font-bold py-2 "
+              class=" bg-base90 w-[70%] md:w-auto dark:bg-white text-white dark:text-base90 mx-auto px-6 text-sm font-bold py-2 "
               type="transparent"
               content="Suggest Dapp"
             />
@@ -118,10 +118,10 @@ const Dapps: NextPage = () => {
         <h1 className="text-3xl mb-16 text-base90 dark:text-white10 font-bold text-center">
           Check out what we are working on
         </h1>
-        <div className="flex w-full justify-between">
+        <div className="flex flex-wrap w-full justify-center lg:justify-between">
           {workingList.map((item, index) => {
             return (
-              <div className="w-[30%] relative h-[37rem] py-4 px-4 border border-white60">
+              <div className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-white60">
                 <div className="w-full mx-auto block mb-10" key={index}>
                   <Image src={item?.image} alt="img" />
                 </div>
@@ -150,11 +150,11 @@ const Dapps: NextPage = () => {
           })}
         </div>
       </section>
-      <section className="my-16 px-[5rem]">
+      <section className="my-16 p-[1rem] lg:px-[5rem]">
         <h1 className="text-3xl mb-6 text-base90 dark:text-white10 font-bold text-center">
           How to try a dapp?
         </h1>
-        <p className="text-white60 text-center w-[55%] mx-auto">
+        <p className="text-white60 text-center w-[85%] lg:w-[55%] mx-auto">
           To try a dapp, you'll need a wallet and some ETH. A wallet will allow
           you to connect, or log in. And you'll need ETH to pay any transaction
           fees.{" "}
@@ -164,12 +164,12 @@ const Dapps: NextPage = () => {
             </a>
           </span>{" "}
         </p>
-        <div className="border border-[#CDCDCD] my-24 w-full mx-auto flex">
-          <div className="w-[33.3%] py-4 px-4 border-r border-[#CDCDCD]">
+        <div className="border border-[#CDCDCD] my-24 w-[90%] sm:w-[80%] md:w-full mx-auto flex flex-wrap">
+          <div className="w-[100%] md:w-[33.3%] py-4 px-4 md:border-r border-[#CDCDCD]">
             <h1 className="text-base90 dark:text-white10 font-bold">
               1. Get some ETH
             </h1>
-            <p className="text-white60 py-7">
+            <p className="text-white60 text-sm lg:text-[1rem] py-7">
               Dapp action cost a transaction fee
             </p>
             <Button
@@ -178,22 +178,22 @@ const Dapps: NextPage = () => {
               content="Get an ETH"
             />
           </div>
-          <div className="w-[33.3%] py-4 px-4 border-r border-[#CDCDCD]">
+          <div className="w-[100%] md:w-[33.3%] py-4 px-4 md:border-r border-[#CDCDCD]">
             <h1 className="text-base90 dark:text-white10 font-bold">
               2. Set up wallet
             </h1>
-            <p className="text-white60 py-7">A wallet is your login for dapp</p>
+            <p className="text-white60 text-sm lg:text-[1rem] py-7">A wallet is your login for dapp</p>
             <Button
               class="text-base90 dark:text-white10 w-full py-4 border border-base90 dark:border-[#D0D0D0]"
               type="transparent"
               content="Find Wallet"
             />
           </div>
-          <div className="w-[33.3%] py-4 px-4">
+          <div className="w-[100%] md:w-[33.3%] py-4 px-4">
             <h1 className="text-base90 dark:text-white10 font-bold">
               3. Ready
             </h1>
-            <p className="text-white60 py-7">Choose a dapp to try out</p>
+            <p className="text-white60 text-sm lg:text-[1rem] py-7">Choose a dapp to try out</p>
             <Button
               class="text-base90 dark:text-white10 w-full py-4 border border-base90 dark:border-[#D0D0D0]"
               type="transparent"
