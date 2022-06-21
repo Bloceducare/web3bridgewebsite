@@ -13,7 +13,7 @@ export const menuItems = [
   },
   {
     menu: 'dApps',
-    link: '/',
+    link: '/dapps',
   },
   {
     menu: 'Alumni',

@@ -1,16 +1,23 @@
+import React from "react";
 import Input from "../components/Input";
 import { DropDown } from "../components/globals/icons";
 import Image from "next/image";
 import HireImage from "../../assests/hire/illustration.svg";
-const HireUs = () => {
+import type { NextPage } from "next";
+
+const HireUs: NextPage = () => {
   return (
-    <section className="px-[10rem] py-[5rem]">
-      <h2 className="dark:text-primary font-bold mb-1">Hire US!!!</h2>
-      <h1 className="dark:text-white text-[2rem]">Lets build some magic</h1>
-      <h1 className="dark:text-white text-[2rem]">together</h1>
-      <div className="flex items-start w-full mt-8">
-        <div className="bg-[#FDFCFC] dark:bg-base flex flex-col items-center w-[50%] px-6 py-8">
-          <label className="self-start text-base90 dark:text-white font-bold">Full name</label>
+    <section className="sm:px-[1rem] md:px-[5rem] py-[5rem]">
+      <div className="mb-32 lg:mb-0 ml-10 md:ml-[5rem] lg:ml-0">
+        <h2 className="dark:text-primary font-bold mb-1">Hire US!!!</h2>
+        <h1 className="dark:text-white text-[2rem]">Lets build some magic</h1>
+        <h1 className="dark:text-white text-[2rem]">together</h1>
+      </div>
+      <div className="flex flex-wrap justify-center lg:justify-start items-start w-full mt-8">
+        <div className="bg-[#FDFCFC] dark:bg-base flex flex-col items-center w-[80%] lg:w-[50%] px-6 py-8">
+          <label className="self-start text-base90 dark:text-white font-bold">
+            Full name
+          </label>
           <Input type="text" placeholder="Enter your full name" />
           <label className="self-start text-base90 dark:text-white font-bold">
             Email Address
@@ -23,7 +30,9 @@ const HireUs = () => {
             <p className="mr-auto">Choose Project</p>
             <DropDown />
           </button>
-            <label className="self-start text-base90 dark:text-white font-bold">Budget</label>
+          <label className="self-start text-base90 dark:text-white font-bold">
+            Budget
+          </label>
           <button className="text-white10 px-6 py-2 w-full flex items-center border bg-[#0000] border-white10 rounded-md my-4 ">
             <p className="mr-auto">$4,000.00 - $1,000,000.00</p>
             <DropDown />
@@ -36,7 +45,7 @@ const HireUs = () => {
             placeholder="Tell us more about your business idea"
           ></textarea>
         </div>
-        <div className="w-[50% flex ml-[4rem] h-[20rem]">
+        <div className="w-full sm:w-[80%] lg:w-[40%] flex ml-[4rem] h-[20rem] mt-12 lg:mt-0">
           <Image src={HireImage} />
           <div className="flex flex-col justify-between  h-full ">
             <div className="mt-[1rem]">

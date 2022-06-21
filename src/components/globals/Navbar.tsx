@@ -6,7 +6,6 @@ import DarkLogo from '../../../assests/logo-dark.svg'
 import LightLogo from '../../../assests/logo-light.svg'
 import { DarkModeIcon, LightModeIcon } from './icons'
 import { menuItems } from '../../Data'
-import Button from '../Button'
 import { FaTimes } from 'react-icons/fa'
 
 const Navbar = () => {
