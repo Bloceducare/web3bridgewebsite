@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 // import { useTheme } from 'next-theme'
 import Link from 'next/link'
+<<<<<<< HEAD
 import { ModeIcon } from './icons'
 =======
 import React, { useState, useContext, useEffect } from "react";
@@ -50,6 +51,15 @@ const menuItems = [
 >>>>>>> hire us and cohorts pages
   },
 ]
+=======
+import Image from 'next/image'
+import DarkLogo from '../../../assests/logo-dark.svg'
+import LightLogo from '../../../assests/logo-light.svg'
+import { DarkModeIcon, LightModeIcon } from './icons'
+import { menuItems } from '../../Data'
+import Button from '../Button'
+import { FaTimes } from 'react-icons/fa'
+>>>>>>> I fixed navbar responsiveness
 
 const Navbar = () => {
 <<<<<<< HEAD
@@ -88,16 +98,16 @@ const Navbar = () => {
   return (
     <>
       <nav className="w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex items-center justify-center dark:bg-base">
-        <div className=" w-11/12  flex items-center justify-between">
+        <div className=" w-11/12  flex items-center justify-between md:w-full md:p-4 lg:w-11/12 lg:p-0">
           {/* Logo */}
           {isLight ? (
-            <Image src={LightLogo} className=" " />
+            <Image src={LightLogo} className="" />
           ) : (
             <Image src={DarkLogo} />
           )}
 >>>>>>> hire us and cohorts pages
           {/* Menu Items */}
-          <div className="hidden md:flex space-x-10 ">
+          <div className="hidden md:space-x-7 lg:space-x-10 md:flex  ">
             {menuItems.map((menuItem, index) => {
               return (
                 <div
@@ -117,10 +127,17 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
+<<<<<<< HEAD
             <button className=" hidden md:block bg-secondary text-primary font-base w-44 py-2 border-2 border-primary">
               Sign in
             </button>
             <button className="hidden xl:block bg-primary text-white font-base w-44 py-2 border-2 border-primary ">
+=======
+            <button className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary">
+              Sign in
+            </button>
+            <button className="px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+>>>>>>> I fixed navbar responsiveness
               Register
             </button>
 <<<<<<< HEAD
@@ -150,7 +167,7 @@ const Navbar = () => {
                 setDisplay((display: any) => !display)
               }}
               id="menu-btn"
-              className="block ml-20 hamburger md:hidden focus:outline-none"
+              className="block ml-20 hamburger md:hidden focus:outline-none "
             >
               <span className="hamburger-top"></span>
               <span className="hamburger-middle"></span>
@@ -160,7 +177,18 @@ const Navbar = () => {
           {/* mobile menu */}
         </div>
         <div className={`${display ? 'hidden' : ''} md:hidden`}>
-          <div className="absolute flex flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md">
+          <div
+            className={`absolute flex flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md 
+            ${display ? ' ' : 'ease-in-out duration-1000'} `}
+          >
+            <button
+              onClick={() => {
+                setDisplay((display: any) => !display)
+              }}
+              className="ml-auto mr-5 hamburger left-0 focus:outline-none "
+            >
+              <FaTimes size={20} color="#FA0101" />
+            </button>
             {menuItems.map((menuItem, index) => {
               return (
                 <div
