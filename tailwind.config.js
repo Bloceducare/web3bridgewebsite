@@ -17,7 +17,6 @@ module.exports = {
       white20: '#CFCFCF',
       white60: '#737373',
       white50: '#A1A1A1',
-      background10: '#E5E5E5',
     },
     fontFamily: {
       primary: ['DM Sans', 'sans-serif'],

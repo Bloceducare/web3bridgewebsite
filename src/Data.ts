@@ -1,3 +1,31 @@
+export const menuItems = [
+  {
+    menu: 'Home',
+    link: '/',
+  },
+  {
+    menu: 'About Us',
+    link: '/about-us',
+  },
+  {
+    menu: 'Cohorts',
+    link: '/cohorts',
+  },
+  {
+    menu: 'dApps',
+    link: '/',
+  },
+  {
+    menu: 'Alumni',
+    link: '/alumni',
+  },
+  {
+    menu: 'Hire us',
+    link: '/hire',
+  },
+]
+
+
 export const missionData = [
     {
       icon: './mission.png',
@@ -151,3 +179,20 @@ export const missionData = [
         },
     ],
 }
+
+export const teamImages =[
+  '../community/community1.png',
+  '../community/community2.png',
+  '../community/community3.png',
+  '../community/community4.png',
+  '../community/community5.png',
+  '../community/community6.png',
+  '../community/community7.png',
+  '../community/community8.png',
+  '../community/community9.png',
+  '../community/community10.png',
+  '../community/community11.png',
+  '../community/community12.png',
+
+  
+]
