@@ -49,14 +49,14 @@ const Dapps: NextPage = () => {
             Dapps are a growing movement of applications that use Ethereum to
             disrupt business models or invent new ones.
           </p>
-          <div className="flex items-center">
+          <div className="flex flex-wrap items-center">
             <Button
-              class="py-2 px-10 text-xs sm:text-[1rem]"
+              class=" w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
               type="background"
               content="Explore Dapps"
             />
             <Button
-              class="py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary ml-6"
+              class="w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
               content="Build Software"
             />
@@ -79,21 +79,21 @@ const Dapps: NextPage = () => {
         <h1 className="text-2xl mb-8 text-center dark:text-white10">
           Choose Category
         </h1>
-        <div className="flex flex-wrap w-[100%] lg:w-[80%] mx-auto mb-[10rem] items-center justify-around text-white10">
-          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+        <div className="flex flex-wrap w-[100%] lg:w-[80%] mx-auto mb-[10rem] items-center justify-around text-white10 px-6 sm:px-0">
+          <div className="w-full sm:w-auto border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={FinanceImg} /> <p className="ml-4">De Finance</p>
           </div>
-          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={ArtImg} /> <p className="ml-4">Art & Collectibles</p>{" "}
           </div>
-          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={GamingImg} /> <p className="ml-4">Gaming</p>{" "}
           </div>
-          <div className="border hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
+          <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
             <Image src={TechImg} /> <p className="ml-4">Technology</p>{" "}
           </div>
         </div>
-        <div className="mx-8 md:mx-16 border flex flex-wrap items border-white60 px-6 py-8">
+        <div className="mx-8 md:mx-16 sm:border flex flex-wrap items sm:border-white60 px-6 py-8">
           <div className="w-[90%] mx-auto md:w-[65%] mr-auto">
             <h1 className="text-base90 dark:text-white10 mb-4 font-bold text-lg">
               Do you have decentralized app idea?
@@ -121,7 +121,7 @@ const Dapps: NextPage = () => {
         <div className="flex flex-wrap w-full justify-center lg:justify-between">
           {workingList.map((item, index) => {
             return (
-              <div className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-white60">
+              <div className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-[#78787835] dark:border-white60">
                 <div className="w-full mx-auto block mb-10" key={index}>
                   <Image src={item?.image} alt="img" />
                 </div>
@@ -164,8 +164,8 @@ const Dapps: NextPage = () => {
             </a>
           </span>{" "}
         </p>
-        <div className="border border-[#CDCDCD] my-24 w-[90%] sm:w-[80%] md:w-full mx-auto flex flex-wrap">
-          <div className="w-[100%] md:w-[33.3%] py-4 px-4 md:border-r border-[#CDCDCD]">
+        <div className="sm:border border-[#CDCDCD] my-24 w-[90%] sm:w-[80%] md:w-full mx-auto flex flex-wrap">
+          <div className="w-[100%] mb-10 sm:mb-0 md:w-[33.3%] py-4 px-4 border sm:border-0 md:border-r border-[#CDCDCD]">
             <h1 className="text-base90 dark:text-white10 font-bold">
               1. Get some ETH
             </h1>
@@ -178,22 +178,26 @@ const Dapps: NextPage = () => {
               content="Get an ETH"
             />
           </div>
-          <div className="w-[100%] md:w-[33.3%] py-4 px-4 md:border-r border-[#CDCDCD]">
+          <div className="w-[100%] mb-10 sm:mb-0 md:w-[33.3%] py-4 px-4 border sm:border-0 md:border-r border-[#CDCDCD]">
             <h1 className="text-base90 dark:text-white10 font-bold">
               2. Set up wallet
             </h1>
-            <p className="text-white60 text-sm lg:text-[1rem] py-7">A wallet is your login for dapp</p>
+            <p className="text-white60 text-sm lg:text-[1rem] py-7">
+              A wallet is your login for dapp
+            </p>
             <Button
               class="text-base90 dark:text-white10 w-full py-4 border border-base90 dark:border-[#D0D0D0]"
               type="transparent"
               content="Find Wallet"
             />
           </div>
-          <div className="w-[100%] md:w-[33.3%] py-4 px-4">
+          <div className="w-[100%] md:w-[33.3%] py-4 px-4 border sm:border-0 border-[#CDCDCD]">
             <h1 className="text-base90 dark:text-white10 font-bold">
               3. Ready
             </h1>
-            <p className="text-white60 text-sm lg:text-[1rem] py-7">Choose a dapp to try out</p>
+            <p className="text-white60 text-sm lg:text-[1rem] py-7">
+              Choose a dapp to try out
+            </p>
             <Button
               class="text-base90 dark:text-white10 w-full py-4 border border-base90 dark:border-[#D0D0D0]"
               type="transparent"
