@@ -8,7 +8,7 @@ const HeroSection = () => {
           <h1 className="w-full mt-10 mb-6 text-2xl font-bold text-center dark:text-white20 md:mt-0 lg:text-4xl md:text-left">
             Learn, Build and Network at Web3Bridge
           </h1>
-          <p className="w-full mb-16 text-base text-white60">
+          <p className="w-full mb-16 text-xl text-white60">
             Get the right headstart to launch your career in the Blockchain
             Development industry by receiving training from industry experts
             through our 16 weeks hands on bootcamp.
