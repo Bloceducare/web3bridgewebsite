@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { teamImages } from '../Data'
 
+const images = ['./web3cohort.png', './web2cohort.png']
 const HeroSection = () => {
+  const [currentImage, setCurrentImage] = useState(null)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImage(teamImages[Math.floor(Math.random() * teamImages.length)])
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [])
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="w-11/12 md:w-10/12 flex flex-col items-center justify-between mt-10 md:mt-20 md:flex-row gap-20">
@@ -29,7 +41,7 @@ const HeroSection = () => {
         </div>
         {/* Hero image */}
         <div className="w-full md:w-6/12  lg:w-4/12 ">
-          <img className="w-full" src="./heroimage.png" alt="hero image" />
+          <img className="w-full" src={currentImage} alt="hero image" />
         </div>
       </div>
     </div>

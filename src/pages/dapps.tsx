@@ -10,6 +10,7 @@ import TechImg from '../../assests/dapps/tech.svg'
 import HydroImg from '../../assests/dapps/hydro.png'
 import ChainedImg from '../../assests/dapps/chained.png'
 import SafeKeepImg from '../../assests/dapps/safekeep.png'
+import Link from 'next/link'
 
 const Dapps: NextPage = () => {
   const workingList = [
@@ -20,6 +21,7 @@ const Dapps: NextPage = () => {
         'Swap your tokens with ease. A community favourite that allows you to trade tokens with folks across the network.',
       buttonContent: 'OPEN HYDROSWAP',
       plate: 'FINANCE',
+      link: 'https://www.hydroswap.org/',
     },
     {
       image: ChainedImg,
@@ -28,6 +30,7 @@ const Dapps: NextPage = () => {
         'Play against others to conquer planets and try out bleeding-edge Ethereum scaling/privacy technology. Maybe one for those already familiar with Ethereum.',
       buttonContent: 'Coming soon',
       plate: 'FINANCE',
+      link: '#',
     },
     {
       image: SafeKeepImg,
@@ -35,6 +38,7 @@ const Dapps: NextPage = () => {
       desc: 'Get your digital assets locked in a sfe protcol and prevent loss.',
       buttonContent: 'Coming soon',
       plate: 'COLLECTILES',
+      link: '#',
     },
   ]
   return (
@@ -133,6 +137,7 @@ const Dapps: NextPage = () => {
                 <h1 className="text-base90 dark:text-white10 mb-6 font-bold">
                   {item?.name}
                 </h1>
+
                 <button className="bg-white block rounded-sm w-auto mb-4">
                   <p
                     className={`text-sm px-2 py-2  ${
@@ -144,12 +149,15 @@ const Dapps: NextPage = () => {
                     {item?.plate}
                   </p>
                 </button>
+
                 <p className="text-white50 text-base mb-6">{item?.desc}</p>
-                <Button
-                  class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
-                  type="background"
-                  content={item?.buttonContent}
-                />
+                <a href={item.link} target="_blank">
+                  <Button
+                    class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
+                    type="background"
+                    content={item?.buttonContent}
+                  />
+                </a>
               </div>
             )
           })}

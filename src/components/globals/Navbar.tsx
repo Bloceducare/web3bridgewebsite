@@ -114,7 +114,9 @@ const Navbar = () => {
             )
           })}
           <div className="w-full px-10 flex justify-between">
-            <p className="">Theme</p>
+            <p className="text-base dark:text-white hover:text-primary">
+              Theme
+            </p>
             <div className="">
               {isLight ? (
                 <button
