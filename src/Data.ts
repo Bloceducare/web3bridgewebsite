@@ -36,13 +36,16 @@ export const missionData = [
     {
       icon: './stats.png',
       title: 'Statistics.',
-      text: `Web4 Trained: 880, web2 trained 1808./n Graduated: 150+ /n
-      Dapps 7+`,
+      text: `We have intorduced  880 students Web3 and 1808 trained in web2 technologies.
+
+      Graduated: 150+
+      
+      Dapps built: 7+`,
     },
     {
       icon: './tools.png',
       title: 'Our Tools.',
-      text: 'Foundry, Hardhat, Diamond Standard, Ethers js,  ',
+      text: 'We have armed our student with the neccesary skills to be amazing Blockchain Developer through our indepth guide into the Ethereun Ecosystem.',
     },
   ]
 
@@ -172,11 +175,28 @@ export const missionData = [
         },
         {
             title: "Curabitur laoreet, mauris vel blandit fringilla",
-            content: `Curabitur laoreet, mauris vel blandit fringilla, leo elit rhoncus nunc, ac sagittis leo elit vel lorem.
-            Fusce tempor lacus ut libero posuere viverra. Nunc velit dolor, tincidunt at varius vel, laoreet vel quam.
+            content: `Curabitur laoreet, mauris vel blandit 
             Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
             Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
         },
+        {
+          title: "Curabitur laoreet, mauris vel blandit fringilla",
+          content: `Curabitur laoreet, mauris vel blandit 
+          Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
+          Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+      },
+      {
+        title: "Curabitur laoreet, mauris vel blandit fringilla",
+        content: `Curabitur laoreet, mauris vel blandit 
+        Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
+        Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+    },
+    {
+      title: "Curabitur laoreet, mauris vel blandit fringilla",
+      content: `Curabitur laoreet, mauris vel blandit 
+      Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
+      Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+  },
     ],
 }
 

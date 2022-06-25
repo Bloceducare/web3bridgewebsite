@@ -7,7 +7,7 @@ const Newsletter = () => {
         <h1 className=" text-white mt-7 mb-6 text-2xl font-bold text-center md:mt-0 md:text-5xl ">
           Subscribe to our Newsletter
         </h1>
-        <p className=" w-11/12  m-2/5 mb-20 text-xl text-center text-white10 md:w-4/5 ">
+        <p className=" w-11/12  m-2/5 mb-20 text-xl md:text-center text-white10 md:w-4/5 ">
           Get occasional news and update from us about the latest trends,
           technology in the web 3 world, we promise not to spam you.
         </p>

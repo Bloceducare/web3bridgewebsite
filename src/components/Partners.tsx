@@ -12,10 +12,9 @@ const Partners = () => {
             200+ Leading tech giant companies
           </span>
         </h1>
-        <p className="text-center font-primary text-white60 dark:text-white20 text-xl ">
-          At facilisis sed ornare at etiam mattis. Eget turpis in sed feugiat.
-          Adipiscing elit egestas id quisque ut tincidunt etiam tincidunt
-          nullam. Luctus.
+        <p className="md:text-center font-primary text-white60 dark:text-white20 text-xl ">
+          We have a working partnership with the following brands which helps us
+          to move our vision forward.
         </p>
       </div>
       {/* <Marquee pauseOnHover speed={50}>

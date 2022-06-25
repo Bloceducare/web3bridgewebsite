@@ -1,10 +1,10 @@
-import Image from "next/image";
-import HeaderImg from "../../assests/alumni/headerImg.svg";
-import GroupImg from "../../assests/alumni/group-image.svg";
-import AbdurImg from "../../assests/alumni/abdur.svg";
-import AyoImg from "../../assests/alumni/ayodeji.svg";
-import OlaImg from "../../assests/alumni/olayinka.svg";
-import Button from "../components/Button";
+import Image from 'next/image'
+import HeaderImg from '../../assests/alumni/headerImg.svg'
+import GroupImg from '../../assests/alumni/group-image.svg'
+import AbdurImg from '../../assests/alumni/abdur.svg'
+import AyoImg from '../../assests/alumni/ayodeji.svg'
+import OlaImg from '../../assests/alumni/olayinka.svg'
+import Button from '../components/Button'
 
 const Alumni = () => {
   return (
@@ -54,7 +54,7 @@ const Alumni = () => {
               Abdur-rasheed Idris
             </h1>
             <p className="text-[#A1A1A1] text-sm">
-              Cohort II, Web 2 dark:text-[#D0D0D0] Mentee{" "}
+              Cohort II, Web 2 dark:text-[#D0D0D0] Mentee{' '}
             </p>
             <p className="text-[#A1A1A1] text-sm">(2019)</p>
           </div>
@@ -97,7 +97,7 @@ const Alumni = () => {
         />
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Alumni;
+export default Alumni

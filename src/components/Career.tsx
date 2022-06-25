@@ -13,16 +13,15 @@ const Career = () => {
           web3bridge.
         </p>
       </div>
-      <div className="w-10/12 flex flex-col-reverse  justify-around mt-20 md:flex-row">
+      <div className="w-11/12 flex flex-col-reverse  justify-around mt-20 md:w md:flex-row">
         <div className=" w-full md:w-2/5 ">
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 3 Cohort ongoing
           </h2>
-          <p className=" text-center font-primary text-xl text-white60 font-normal mb-10">
-            Web3bridge runs a 16weeks cohort based training that will hold you
-            by the hand to give you the right head start to launch your
-            Blockchain Development as we help navigate you from the state of the
-            known to the fiery edge of the unknown.
+          <p className=" md:text-center font-primary text-xl text-white60 font-normal mb-10">
+            Get everything you need to launch your career in Blockchain
+            Development through our trainings that gives you the nitty gritty of
+            experience through practical classes.
           </p>
           <div className="">
             <p className="flex items-center mb-5">
@@ -41,7 +40,7 @@ const Career = () => {
               </span>
             </p>
           </div>
-          <div className=" w-full flex flex-wrap md:w-2/4">
+          <div className=" w-full flex flex-wrap lg:w-3/4">
             {web3Courses.map((course, index) => {
               return (
                 <div key={index} className="">
@@ -68,8 +67,9 @@ const Career = () => {
             alt="web3 cohort Image"
           />
         </div>
+        {/* web 2 Cohort */}
       </div>
-      <div className="w-10/12 flex flex-col-reverse  justify-around mt-10 md:flex-row">
+      <div className="w-11/12 flex flex-col-reverse justify-around mt-10 md:flex-row">
         <div className=" w-full md:w-5/12">
           <img
             className="w-full"
@@ -82,7 +82,7 @@ const Career = () => {
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 2 Cohort ongoing now!
           </h2>
-          <p className=" text-center font-primary text-xl text-white60 font-normal mb-10">
+          <p className=" md:text-center font-primary text-xl text-white60 font-normal mb-10">
             Want to get started in coding but don’t know where to start, You can
             get all the needed trainigs to make you a proficient Web Developer
             through our 6 months handson training on web2 technologies.
@@ -104,7 +104,7 @@ const Career = () => {
               </span>
             </p>
           </div>
-          <div className=" w-full flex flex-wrap md:w-2/4">
+          <div className=" w-full flex flex-wrap md:w-full xl:w-2/4">
             {web2Courses.map((course, index) => {
               return (
                 <div key={index} className="">
