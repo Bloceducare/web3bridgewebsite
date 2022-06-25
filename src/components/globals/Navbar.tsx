@@ -83,7 +83,7 @@ const Navbar = () => {
         <div
           className={` ${
             display ? 'w-0 scale-x-0' : 'w-full z-10'
-          } absolute left-0 top-0  h-[100vh] md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-500 `}
+          } absolute left-0 top-0  h-[100vh] md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
         >
           <div className="w-full flex justify-between px-5 py-3 shadow-md">
             {isLight ? (
