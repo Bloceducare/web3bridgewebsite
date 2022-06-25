@@ -3,7 +3,7 @@ import React from 'react'
 const HeroSection = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <div className="w-11/12 md:w-10/12 flex flex-col items-center justify-between mt-20 md:flex-row gap-20">
+      <div className="w-11/12 md:w-10/12 flex flex-col items-center justify-between mt-10 md:mt-20 md:flex-row gap-20">
         <div className="w-11/12 md:w-6/12  lg:w-4/12 flex flex-col ">
           <h1 className="w-full mt-10 mb-6 text-2xl font-bold text-center dark:text-white20 md:mt-0 lg:text-4xl md:text-left">
             Learn, Build and Network at Web3Bridge
