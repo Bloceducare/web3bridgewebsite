@@ -6,16 +6,15 @@ const Partners = () => {
   return (
     <div className="mt-12 w-full flex flex-col justify-center items-center ">
       <div className=" w-5/6 ">
-        <h1 className="mb-6 font-secondary text-base text-center  text-xl font-semibold md:text-4xl ">
+        <h1 className="mb-6 font-secondary text-base dark:text-white10 text-center  text-xl font-semibold md:text-4xl ">
           We Collaborate with
           <span className="ml-3 text-primary">
             200+ Leading tech giant companies
           </span>
         </h1>
-        <p className="text-center font-primary text-white60 text-xl ">
-          At facilisis sed ornare at etiam mattis. Eget turpis in sed feugiat.
-          Adipiscing elit egestas id quisque ut tincidunt etiam tincidunt
-          nullam. Luctus.
+        <p className="md:text-center font-primary text-white60 dark:text-white20 text-xl ">
+          We have a working partnership with the following brands which helps us
+          to move our vision forward.
         </p>
       </div>
       {/* <Marquee pauseOnHover speed={50}>

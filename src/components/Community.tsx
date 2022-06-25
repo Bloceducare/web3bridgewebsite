@@ -9,10 +9,9 @@ const Community = () => {
       <div className="font-secondary font-medium, text-base90 dark:text-white20 text-4xl mt-20 mb-7">
         Community
       </div>
-      <p className="font-secondary text-white60 font-medium text-l text-center md:w-3/5">
-        Penatibus sed imperdiet scelerisque duis tristique neque ipsum.
-        Pellentesque enim quisque tristique vel leo leo. At parturient habitasse
-        viverra elementum odio condimentum. Urna vitae ut.
+      <p className="w-11/12 font-secondary text-white60 font-medium text-l md:text-center md:w-3/5">
+        Gain access to our ever growing community to connect with brilliant
+        minds and get the needed support for your growth.
       </p>
       <div className="mt-14">
         <button className="flex px-3 py-1 items-center border-2 border-white10">

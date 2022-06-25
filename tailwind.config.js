@@ -21,7 +21,14 @@ module.exports = {
       primary: ['DM Sans', 'sans-serif'],
       secondary: ['Poppins', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        '2xl': '0px 4px 48px rgba(32, 51, 160, 0.08)',
+      },
+      animation: {
+        spin: 'spin 2s linear infinite',
+      },
+    },
   },
   plugins: [],
 }

@@ -1,34 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { images } from '../Data'
 
 const HeroSection = () => {
+  const [currentImage, setCurrentImage] = useState<any>(null)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImage(images[Math.floor(Math.random() * images.length)])
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [])
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="space-y-0 md:space-y-0 w-10/12 flex flex-col-reverse  items-center justify-around mt-10 md:flex-row ">
-        <div className="flex flex-col ">
-          <h1 className="max-w-xl mt-10 mb-6 text-4xl font-bold text-center md:mt-0 md:text-5xl md:text-left">
+    <div className="w-full flex flex-col items-center justify-center">
+      <div className="w-11/12 md:w-10/12 flex flex-col items-center justify-between mt-10 md:mt-20 md:flex-row gap-20">
+        <div className="w-11/12 md:w-6/12  lg:w-4/12 flex flex-col ">
+          <h1 className="w-full mt-10 mb-6 text-2xl font-bold text-center dark:text-white20 md:mt-0 lg:text-4xl md:text-left">
             Learn, Build and Network at Web3Bridge
           </h1>
-          <p className="max-w-xl mb-20 text-xl text-center text-white60 md:text-left">
-            Web3Bridges have top-notch resources, provided by our a poll of
-            blockchain experts and a community driven platform
+          <p className="w-full mb-16 text-xl text-white60">
+            Get the right headstart to launch your career in the Blockchain
+            Development industry by receiving training from industry experts
+            through our 16 weeks hands on bootcamp.
           </p>
-          <div className="flex max-w-xl j justify-between justify-center ">
+          <div className="md:flex w-full md:max-w-xl justify-between">
             <div className="w-full">
               <input
-                className="pl-2 py-3 w-11/12  border-2 border-white10"
+                className="pl-2 py-3 w-full md:w-11/12  border-2 border-white10 mb-5 md:mb-0"
                 placeholder="Enter your email address"
               />
             </div>
             <div className="">
-              <button className="bg-primary  text-white font-base w-32 py-3 border-2 border-primary">
+              <button className="w-full bg-primary  text-white font-base md:w-32 py-3 border-2 border-primary">
                 Register
               </button>
             </div>
           </div>
         </div>
         {/* Hero image */}
-        <div className="">
-          <img src="./heroimage.png" alt="hero image" />
+        <div className="w-full md:w-6/12  lg:w-4/12 ">
+          <img className="w-full" src={currentImage} alt="hero image" />
         </div>
       </div>
     </div>

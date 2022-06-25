@@ -9,9 +9,8 @@ const Testimonial = () => {
           What our students say
         </h1>
         <p className=" w-11/12  m-2/5 mb-20 text-base text-center text-white60 md:w-4/5 ">
-          Consectetur sit lacinia odio sed egestas. Habitant ornare risus donec
-          tristique lobortis egestas amet. In aenean in ut risus pulvinar vitae
-          erat mattis sit fusce ac quisque suspendisse.
+          Hear from our students narrates how their experience has been before
+          and after coming across our program
         </p>
       </div>
       <div className="w-full flex flex-col-reverse  justify-around mt-10 md:flex-row dark:bg-base md:w-10/12">
