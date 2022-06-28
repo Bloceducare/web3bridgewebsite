@@ -151,7 +151,7 @@ const Dapps: NextPage = () => {
                 </button>
 
                 <p className="text-white50 text-base mb-6">{item?.desc}</p>
-                <a href={item.link} target="_blank">
+                <a href={item.link} target="_blank" rel="noreferrer">
                   <Button
                     class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
                     type="background"

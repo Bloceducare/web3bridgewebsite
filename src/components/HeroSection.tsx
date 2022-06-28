@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { images } from '../Data'
 
 const HeroSection = () => {
-  const [currentImage, setCurrentImage] = useState(null)
+  const [currentImage, setCurrentImage] = useState<any>(null)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
