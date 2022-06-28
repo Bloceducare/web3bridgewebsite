@@ -104,6 +104,9 @@ const Navbar = () => {
           {menuItems.map((menuItem, index) => {
             return (
               <div
+                onClick={() => {
+                  setDisplay((display: any) => !display)
+                }}
                 key={index}
                 className="w-full pl-10 py-3 text-base dark:text-white hover:text-primary items-start"
               >
