@@ -1,3 +1,5 @@
+export const images = ['./heroimage.png', './web2cohort.png']
+
 export const menuItems = [
   {
     menu: 'Home',
@@ -59,6 +61,8 @@ export const missionData = [
     './turing.png',
     './ladies.png',
     './cdin.png',
+    './nahmii.png',
+    './crevatal.png',
   ]
   
 
@@ -150,14 +154,14 @@ export const missionData = [
         'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
       name: 'Perry Scope',
       position: 'CEO Darco',
-      image: 'web3cohort.png',
+      image: 'testimonial2.png',
     },
     {
       text:
         'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
       name: 'Perry Scope',
       position: 'CEO Darco',
-      image: 'web3cohort.png',
+      image: 'testimonial3.png',
     },
   ]
 
@@ -174,25 +178,25 @@ export const missionData = [
                 "Nunc maximus, magna at ultricies elementum, risus turpis vulputate quam, vitae convallis ex tortor sed dolor.",
         },
         {
-            title: "Curabitur laoreet, mauris vel blandit fringilla",
+            title: "Is there a fee?",
             content: `Curabitur laoreet, mauris vel blandit 
             Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
             Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
         },
         {
-          title: "Curabitur laoreet, mauris vel blandit fringilla",
+          title: "Can i join?",
           content: `Curabitur laoreet, mauris vel blandit 
           Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
           Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
       },
       {
-        title: "Curabitur laoreet, mauris vel blandit fringilla",
+        title: "How long is the cohort",
         content: `Curabitur laoreet, mauris vel blandit 
         Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
         Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
     },
     {
-      title: "Curabitur laoreet, mauris vel blandit fringilla",
+      title: "Is it onsite or remote?",
       content: `Curabitur laoreet, mauris vel blandit 
       Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
       Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,

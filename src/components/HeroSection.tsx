@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { teamImages } from '../Data'
+import { images } from '../Data'
 
-const images = ['./web3cohort.png', './web2cohort.png']
 const HeroSection = () => {
   const [currentImage, setCurrentImage] = useState(null)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentImage(teamImages[Math.floor(Math.random() * teamImages.length)])
+      setCurrentImage(images[Math.floor(Math.random() * images.length)])
     }, 1000)
 
     return () => clearInterval(intervalId)
