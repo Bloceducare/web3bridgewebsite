@@ -5,39 +5,9 @@ import Image from 'next/image'
 import DarkLogo from '../../../assests/logo-dark.svg'
 import LightLogo from '../../../assests/logo-light.svg'
 import { DarkModeIcon, LightModeIcon } from './icons'
-<<<<<<< HEAD
 import { menuItems } from '../../Data'
 import { FaTimes } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi'
-=======
-
-const menuItems = [
-  {
-    menu: 'Home',
-    link: '/',
-  },
-  {
-    menu: 'About Us',
-    link: '/about-us',
-  },
-  {
-    menu: 'Cohorts',
-    link: '/cohorts',
-  },
-  {
-    menu: 'dApps',
-    link: '/dapps',
-  },
-  {
-    menu: 'Alumni',
-    link: '/alumni',
-  },
-  {
-    menu: 'Hire us',
-    link: '/hire',
-  },
-]
->>>>>>> dapp page and screen responsiveness
 
 const Navbar = () => {
   const [display, setDisplay] = useState<any>(true)
