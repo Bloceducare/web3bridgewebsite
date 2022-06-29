@@ -5,7 +5,7 @@ import Layout from '../components/globals/Layout'
 import { ThemeProvider } from '../components/ThemeContext'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider>
+    <ThemeProvider >
       <Layout>
         <Component {...pageProps} />
       </Layout>

@@ -36,22 +36,8 @@ export const ModeIcon = () => {
         fill="#151515"
       />
     </svg>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   )
 }
-=======
-  );
-};
-=======
-  )
-}
->>>>>>> I fixed eslint issues
-=======
-  )
-}
->>>>>>> fb8e348bfa984b889fc46e65ac60720dea71d0ae
 
 export const LinkedInIcon = () => (
   <svg
@@ -214,23 +200,7 @@ export const DropDown = () => (
       stroke="#444444"
       strokeWidth="2"
       strokeLinecap="round"
-<<<<<<< HEAD
-<<<<<<< HEAD
-      strokeLinejoin="round"
-=======
-      stroke-Linejoin="round"
->>>>>>> dapp page and screen responsiveness
-    />
-  </svg>
-<<<<<<< HEAD
-);
->>>>>>> hire us and cohorts pages
-=======
-)
->>>>>>> I fixed eslint issues
-=======
       strokeLinejoin="round"
     />
   </svg>
 )
->>>>>>> fb8e348bfa984b889fc46e65ac60720dea71d0ae

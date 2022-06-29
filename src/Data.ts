@@ -39,6 +39,7 @@ export const missionData = [
       icon: './stats.png',
       title: 'Statistics.',
       text: `We have intorduced  880 students Web3 and 1808 trained in web2 technologies.
+
       Graduated: 150+
       
       Dapps built: 7+`,

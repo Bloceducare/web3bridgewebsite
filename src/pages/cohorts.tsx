@@ -1,9 +1,9 @@
-import React from 'react'
-import Image from 'next/image'
-import CohortsImage from '../../assests/cohorts/cohorts.svg'
-import ProfileImg from '../../assests/cohorts/profile.svg'
-import Button from '../components/Button'
-import type { NextPage } from 'next'
+import React from "react";
+import Image from "next/image";
+import CohortsImage from "../../assests/cohorts/cohorts.svg";
+import ProfileImg from "../../assests/cohorts/profile.svg";
+import Button from "../components/Button";
+import type { NextPage } from "next";
 
 const Cohorts: NextPage = () => {
   return (
@@ -69,7 +69,7 @@ const Cohorts: NextPage = () => {
         type="background"
       />
     </section>
-  )
-}
+  );
+};
 
-export default Cohorts
+export default Cohorts;
