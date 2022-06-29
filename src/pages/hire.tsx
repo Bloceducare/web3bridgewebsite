@@ -1,18 +1,20 @@
-import React from "react";
-import Input from "../components/Input";
-import { DropDown } from "../components/globals/icons";
-import Image from "next/image";
-import HireImage from "../../assests/hire/illustration.svg";
-import type { NextPage } from "next";
+import React from 'react'
+import Input from '../components/Input'
+import { DropDown } from '../components/globals/icons'
+import Image from 'next/image'
+import HireImage from '../../assests/hire/illustration.svg'
+import type { NextPage } from 'next'
 
 const HireUs: NextPage = () => {
   return (
-    <section className="px-[10rem] py-[5rem]">
-      <h2 className="dark:text-primary font-bold mb-1">Hire US!!!</h2>
-      <h1 className="dark:text-white text-[2rem]">Lets build some magic</h1>
-      <h1 className="dark:text-white text-[2rem]">together</h1>
-      <div className="flex items-start w-full mt-8">
-        <div className="bg-[#FDFCFC] dark:bg-base flex flex-col items-center w-[50%] px-6 py-8">
+    <section className="px-[1rem] md:px-[5rem] py-[5rem]">
+      <div className="sm:mb-32 lg:mb-0 ml-5 sm:ml-10 md:ml-[5rem] lg:ml-0">
+        <h2 className="dark:text-primary font-bold mb-1">Hire US!!!</h2>
+        <h1 className="dark:text-white text-[2rem]">Lets build some magic</h1>
+        <h1 className="dark:text-white text-[2rem]">together</h1>
+      </div>
+      <div className="flex flex-col-reverse sm:flex-row flex-wrap justify-center lg:justify-start items-start w-full mt-8">
+        <div className="bg-[#FDFCFC] dark:bg-base flex flex-col items-center w-full sm:w-[80%] lg:w-[50%] px-6 py-8">
           <label className="self-start text-base90 dark:text-white font-bold">
             Full name
           </label>
@@ -43,7 +45,7 @@ const HireUs: NextPage = () => {
             placeholder="Tell us more about your business idea"
           ></textarea>
         </div>
-        <div className="w-[50% flex ml-[4rem] h-[20rem]">
+        <div className="w-full sm:w-[80%] lg:w-[40%] flex sm:ml-[4rem] h-[20rem] mt-12 lg:mt-0 mb-20 sm:mb-0">
           <Image src={HireImage} />
           <div className="flex flex-col justify-between  h-full ">
             <div className="mt-[1rem]">
@@ -65,7 +67,7 @@ const HireUs: NextPage = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default HireUs;
+export default HireUs
