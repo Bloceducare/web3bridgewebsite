@@ -1,5 +1,5 @@
-import React from 'react'
 import type { NextPage } from 'next'
+import React from 'react'
 import HeroSection from '../components/HeroSection'
 import Mission from '../components/Mission'
 import Partners from '../components/Partners'

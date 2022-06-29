@@ -209,7 +209,11 @@ export const DropDown = () => (
       stroke="#444444"
       strokeWidth="2"
       strokeLinecap="round"
+<<<<<<< HEAD
       strokeLinejoin="round"
+=======
+      stroke-Linejoin="round"
+>>>>>>> dapp page and screen responsiveness
     />
   </svg>
 <<<<<<< HEAD

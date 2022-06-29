@@ -1,22 +1,4 @@
-<<<<<<< HEAD:pages/about-us.tsx
-import Nav from "../components/Nav";
-import Background from "../components/Background";
-import HeaderImg from "../assests/about-us/about-header-image.svg";
-import GroupImg from "../assests/about-us/group-image.svg";
-import Founder from "../assests/about-us/Founder.svg";
-import Cofounder from "../assests/about-us/Cofounder.svg";
-import Head from "../assests/about-us/Head.svg";
-import LeadDev from "../assests/about-us/LeadDev.svg";
-import Developer1 from "../assests/about-us/Developer1.svg";
-import Developer2 from "../assests/about-us/Developer2.svg";
-import Developer3 from "../assests/about-us/Developer3.svg";
-import Developer4 from "../assests/about-us/Developer4.svg";
-import Developer5 from "../assests/about-us/Developer5.svg";
-import Investor from "../assests/about-us/Investor.svg";
-import Image from "next/image";
-import Button from "../components/Button";
-import Footer from "../components/Footer";
-=======
+import React, { Fragment } from 'react'
 import HeaderImg from '../../assests/about-us/about-header-image.svg'
 import GroupImg from '../../assests/about-us/group-image.svg'
 import Founder from '../../assests/about-us/Founder.svg'
@@ -31,13 +13,13 @@ import Developer5 from '../../assests/about-us/Developer5.svg'
 import Investor from '../../assests/about-us/Investor.svg'
 import Image from 'next/image'
 import Button from '../components/Button'
->>>>>>> I fixed eslint issues:src/pages/about-us.tsx
+import type { NextPage } from 'next'
 type Images = {
   name: string
   role: string
   image: any
 }
-const About = () => {
+const About: NextPage = () => {
   const images: Images[] = [
     {
       name: 'Awosika Israel Ayodeji',
@@ -101,11 +83,13 @@ const About = () => {
     },
   ]
   return (
-    <Background>
-      <Nav />
-      <header className="flex w-[80%] items-center justify-around  mt-12 mx-auto">
-        <Image src={HeaderImg} height={326} width={326} />
-        <div className="w-[50%]">
+    <Fragment>
+      <header className="flex flex-wrap w-[100%] lg:w-[80%] items-center justify-around  mt-12 mx-auto">
+        <div className="mb-8 md:mb-auto">
+          <Image src={HeaderImg} height={326} width={326} />
+        </div>
+
+        <div className="w-[80%] md:w-[50%]">
           <h1 className="text-[2rem] font-bold mb-6 text-[#151515] dark:text-[#D0D0D0]">
             Hey! I'm Ayodeji, business developer, Blockchain Educator and
             founder of Web 3 bridge.
@@ -118,8 +102,8 @@ const About = () => {
           </p>
         </div>
       </header>
-      <section className="flex mt-24 mb-12 items-start justify-around  px-8 ">
-        <div className="bg-[#F3F3F3] dark:bg-[#111111] px-14 py-12 dark:border dark:border-[#444444]">
+      <section className="flex flex-wrap mt-24 mb-12 items-start justify-around  px-1 lg:px-8 ">
+        <div className="mb-11 md:mb-auto bg-[#F3F3F3] dark:bg-[#111111] px-8 sm:px-14 py-12 dark:border dark:border-[#444444]">
           <h1 className="text-center dark:text-white border-b border-b-[#A0A0A0] pb-6 px-4">
             OUR STORY IN TO THE WEB 3
           </h1>
@@ -146,7 +130,7 @@ const About = () => {
             content="View Cohorts"
           />
         </div>
-        <div className="w-[50%]">
+        <div className="w-[90%] sm:w-[70%] md:w-[50%]">
           <Image src={GroupImg} className={'w-full'} />
           <h1 className="mb-6 mt-4 font-bold text-2xl text-[#151515] dark:text-[#D0D0D0]">
             Developers dont have to pay so much to learn web 3
@@ -166,12 +150,22 @@ const About = () => {
         </div>
       </section>
       <section className="mt-[10rem] px-12">
-        <h1 className="dark:text-[#D0D0D0] font-bold text-[2rem] ml-8 my-12">Pioneered By Awesome Team</h1>
-        <div className=" flex flex-wrap w-full justify-between">
+        <h1 className="dark:text-[#D0D0D0] text-center mb-28 font-bold text-2xl md:text-[2rem] ml-8 my-12">
+          Pioneered By Awesome Team
+        </h1>
+        <div className=" flex flex-wrap w-full justify-around">
           {images.map((items, index) => {
             return (
-              <div key={index} className="w-30% text-center mb-24 text-white">
-                <Image src={items?.image} height={400} width={400} />
+              <div
+                key={index}
+                className="w-30% text-center mb-11 sm:mb-24 text-white"
+              >
+                <Image
+                  key={index}
+                  src={items?.image}
+                  height={400}
+                  width={400}
+                />
                 <h1 className="text-xl text-[#151515] dark:text-white font-bold">
                   {items?.name}
                 </h1>
@@ -181,15 +175,8 @@ const About = () => {
           })}
         </div>
       </section>
-<<<<<<< HEAD:pages/about-us.tsx
-      <Footer />
-    </Background>
-  );
-};
-=======
-    </>
+    </Fragment>
   )
 }
->>>>>>> I fixed eslint issues:src/pages/about-us.tsx
 
 export default About
