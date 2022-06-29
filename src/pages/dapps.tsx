@@ -10,6 +10,7 @@ import TechImg from "../../assests/dapps/tech.svg";
 import HydroImg from "../../assests/dapps/hydro.png";
 import ChainedImg from "../../assests/dapps/chained.png";
 import SafeKeepImg from "../../assests/dapps/safekeep.png";
+import Link from "next/link";
 
 const Dapps: NextPage = () => {
   const workingList = [
@@ -19,6 +20,7 @@ const Dapps: NextPage = () => {
       desc: "Swap your tokens with ease. A community favourite that allows you to trade tokens with folks across the network.",
       buttonContent: "OPEN HYDROSWAP",
       plate: "FINANCE",
+      link: "https://www.hydroswap.org/",
     },
     {
       image: ChainedImg,
@@ -26,6 +28,7 @@ const Dapps: NextPage = () => {
       desc: "Play against others to conquer planets and try out bleeding-edge Ethereum scaling/privacy technology. Maybe one for those already familiar with Ethereum.",
       buttonContent: "Coming soon",
       plate: "FINANCE",
+      link: "/",
     },
     {
       image: SafeKeepImg,
@@ -33,6 +36,7 @@ const Dapps: NextPage = () => {
       desc: "Get your digital assets locked in a sfe protcol and prevent loss.",
       buttonContent: "Coming soon",
       plate: "COLLECTILES",
+      link: "/",
     },
   ];
   return (
@@ -51,12 +55,12 @@ const Dapps: NextPage = () => {
           </p>
           <div className="flex flex-wrap items-center">
             <Button
-              class=" w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
+              class=" w-full sm:w-auto py-4 sm:py-2 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
               type="background"
               content="Explore Dapps"
             />
             <Button
-              class="w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
+              class="w-full sm:w-auto py-4 sm:py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
               content="Build Software"
             />
@@ -121,7 +125,7 @@ const Dapps: NextPage = () => {
         <div className="flex flex-wrap w-full justify-center lg:justify-between">
           {workingList.map((item, index) => {
             return (
-              <div className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-[#78787835] dark:border-white60">
+              <div key={index} className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-[#78787835] dark:border-white60">
                 <div className="w-full mx-auto block mb-10" key={index}>
                   <Image src={item?.image} alt="img" />
                 </div>
@@ -140,11 +144,15 @@ const Dapps: NextPage = () => {
                   </p>
                 </button>
                 <p className="text-white50 text-base mb-6">{item?.desc}</p>
-                <Button
-                  class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
-                  type="background"
-                  content={item?.buttonContent}
-                />
+                <Link href={item?.link}>
+                  <a>
+                    <Button
+                      class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
+                      type="background"
+                      content={item?.buttonContent}
+                    />
+                  </a>
+                </Link>
               </div>
             );
           })}
