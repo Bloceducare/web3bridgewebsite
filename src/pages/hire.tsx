@@ -1,73 +1,75 @@
 import React from 'react'
-import Input from '../components/Input'
-import { DropDown } from '../components/globals/icons'
 import Image from 'next/image'
-import HireImage from '../../assests/hire/illustration.svg'
+import CohortsImage from '../../assests/cohorts/cohorts.svg'
+import ProfileImg from '../../assests/cohorts/profile.svg'
+import Button from '../components/Button'
 import type { NextPage } from 'next'
 
-const HireUs: NextPage = () => {
+const Cohorts: NextPage = () => {
   return (
-    <section className="px-[1rem] md:px-[5rem] py-[5rem]">
-      <div className="sm:mb-32 lg:mb-0 ml-5 sm:ml-10 md:ml-[5rem] lg:ml-0">
-        <h2 className="dark:text-primary font-bold mb-1">Hire US!!!</h2>
-        <h1 className="dark:text-white text-[2rem]">Lets build some magic</h1>
-        <h1 className="dark:text-white text-[2rem]">together</h1>
-      </div>
-      <div className="flex flex-col-reverse sm:flex-row flex-wrap justify-center lg:justify-start items-start w-full mt-8">
-        <div className="bg-[#FDFCFC] dark:bg-base flex flex-col items-center w-full sm:w-[80%] lg:w-[50%] px-6 py-8">
-          <label className="self-start text-base90 dark:text-white font-bold">
-            Full name
-          </label>
-          <Input type="text" placeholder="Enter your full name" />
-          <label className="self-start text-base90 dark:text-white font-bold">
-            Email Address
-          </label>
-          <Input type="email" placeholder="Enter your email address here" />
-          <label className="self-start text-base90 dark:text-white font-bold">
-            Product Type
-          </label>
-          <button className="text-white10 px-6 py-2 w-full flex items-center border bg-[#0000] border-white10 rounded-md my-4 ">
-            <p className="mr-auto">Choose Project</p>
-            <DropDown />
-          </button>
-          <label className="self-start text-base90 dark:text-white font-bold">
-            Budget
-          </label>
-          <button className="text-white10 px-6 py-2 w-full flex items-center border bg-[#0000] border-white10 rounded-md my-4 ">
-            <p className="mr-auto">$4,000.00 - $1,000,000.00</p>
-            <DropDown />
-          </button>
-          <label className="self-start text-base90 dark:text-white font-bold">
-            Unique Value Proposition (UVP)
-          </label>
-          <textarea
-            className="text-white10 px-6 py-2 w-full h-[10rem] bg-[#0000] border border-white10 rounded-md my-4"
-            placeholder="Tell us more about your business idea"
-          ></textarea>
+    <section className="py-4">
+      <div className="w-full flex flex-wrap justify-center ">
+        <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[30%]  self-end">
+          <h1 className="text-base90 dark:text-white10 font-bold text-3xl mb-4">
+            Cohort Explainer
+          </h1>
+          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+            Do you want to build for the the blockchain?
+          </p>
+          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+            Do you desire to land a good paying job?
+          </p>
+          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+            Do you desire to upgrade from trenches?
+          </p>
+          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+            and you don’t know how to go about this?.
+          </p>
+          <p className="block md:hidden px-6 ml-[8%] lg:ml-[15%] text-xl text-base dark:text-[#A1A1A1]">
+            worry no more because Web3bridge can make this desires a reality.
+          </p>
         </div>
-        <div className="w-full sm:w-[80%] lg:w-[40%] flex sm:ml-[4rem] h-[20rem] mt-12 lg:mt-0 mb-20 sm:mb-0">
-          <Image src={HireImage} />
-          <div className="flex flex-col justify-between  h-full ">
-            <div className="mt-[1rem]">
-              <h1 className="text-base90 dark:text-white10 mb-4">
-                Pay us a visit
-              </h1>
-              <p className="text-white60">
-                No. 3 Abadek Avenue Ogunlewe Street, Ikorodu Lagos
-              </p>
-            </div>
-            <div className="">
-              <h1 className="text-base90 dark:text-white10 mb-4">
-                Beep us on Whatsapp
-              </h1>
-              <p className="text-white60">Support@web3bridge.com</p>
-              <p className="text-white60">+2348 109 945 686</p>
-            </div>
-          </div>
+        <div className="w-[80%] md:w-[40%] md:ml-10 lg:ml-0 ">
+          <Image src={CohortsImage} />
         </div>
       </div>
+      <p className="hidden md:block ml-[8%] lg:ml-[15%] text-xl text-base dark:text-[#A1A1A1]">
+        worry no more because Web3bridge can make this desires a reality.
+      </p>
+      <div className="px-7 sm:px-[5rem] lg:px-[12rem]">
+        <h2 className="text-base90 dark:text-white10 mt-[5rem] font-bold mb-10 text-2xl">
+          How?
+        </h2>
+        <p className="text-base dark:text-[#A1A1A1] my-6">
+          Web3bridge runs a 16weeks cohort based training that will hold you by
+          the hand to give you the right head start to launch your Blockchain
+          Development as we help navigate you from the state of the known to the
+          fiery edge of the unknown.
+        </p>
+        <p className="text-base dark:text-[#A1A1A1] my-6">
+          Within this 16weeks you are going to give you an immersive learning
+          experience on what it takes to be a Blockchain Developer and we are
+          not just going to develop your technical skills but also help build
+          your soft skills to be able to compete in the global market.
+        </p>
+        <p className="text-base dark:text-[#A1A1A1] my-6">
+          Graduates from our program have gone to work with global brands such
+          as Aavegotchi, Consensys, Nahmii, Nethermind, Polygon and lots more.
+          So be rest assured that you are going to have the best learning
+          experience with our program.
+        </p>
+      </div>
+      <div className="w-ful flex items-center justify-center mt-16">
+        <Image src={ProfileImg} />
+        <p className="text-base dark:text-white10">230+ Students enrolled</p>
+      </div>
+      <Button
+        class="py-2 px-12 mx-auto block mt-4 mb-40"
+        content="Enroll Now"
+        type="background"
+      />
     </section>
   )
 }
 
-export default HireUs
+export default Cohorts

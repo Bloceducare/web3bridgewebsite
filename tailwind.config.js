@@ -1,6 +1,6 @@
 module.exports = {
-  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     screens: {
       sm: '480px',
@@ -14,6 +14,7 @@ module.exports = {
       base90: '#151515',
       white: '#ffffff',
       white10: '#D0D0D0',
+      white20: '#CFCFCF',
       white60: '#737373',
       white50: '#A1A1A1',
     },

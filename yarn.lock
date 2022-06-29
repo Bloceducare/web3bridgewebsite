@@ -1981,4 +1981,8 @@
 "yaml@^1.10.2":
   "integrity" "sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg=="
   "resolved" "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
+<<<<<<< HEAD
   "version" "1.10.2"
+=======
+  "version" "1.10.2"
+>>>>>>> fb8e348bfa984b889fc46e65ac60720dea71d0ae

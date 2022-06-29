@@ -38,6 +38,7 @@ export const ModeIcon = () => {
     </svg>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   )
 }
 =======
@@ -47,6 +48,10 @@ export const ModeIcon = () => {
   )
 }
 >>>>>>> I fixed eslint issues
+=======
+  )
+}
+>>>>>>> fb8e348bfa984b889fc46e65ac60720dea71d0ae
 
 export const LinkedInIcon = () => (
   <svg
@@ -210,6 +215,7 @@ export const DropDown = () => (
       strokeWidth="2"
       strokeLinecap="round"
 <<<<<<< HEAD
+<<<<<<< HEAD
       strokeLinejoin="round"
 =======
       stroke-Linejoin="round"
@@ -222,3 +228,9 @@ export const DropDown = () => (
 =======
 )
 >>>>>>> I fixed eslint issues
+=======
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+>>>>>>> fb8e348bfa984b889fc46e65ac60720dea71d0ae
