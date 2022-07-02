@@ -1,16 +1,20 @@
 import React, { Fragment } from "react";
 import HeaderImg from "../../assests/about-us/about-header-image.svg";
 import GroupImg from "../../assests/about-us/group-image.svg";
-import Founder from "../../assests/about-us/Founder.svg";
+import Founder from "../../assests/about-us/founder.png";
 import Cofounder from "../../assests/about-us/Cofounder.svg";
 import Head from "../../assests/about-us/Head.svg";
 import LeadDev from "../../assests/about-us/LeadDev.svg";
-import Developer1 from "../../assests/about-us/Developer1.svg";
-import Developer2 from "../../assests/about-us/Developer2.svg";
-import Developer3 from "../../assests/about-us/Developer3.svg";
-import Developer4 from "../../assests/about-us/Developer4.svg";
-import Developer5 from "../../assests/about-us/Developer5.svg";
+import Oke from "../../assests/about-us/Oke.png";
+import Pelumi from "../../assests/about-us/Pelumi.png";
+import Abims from "../../assests/about-us/Abims.png";
+import Falilat from "../../assests/about-us/Falilat.png";
+import Kevin from "../../assests/about-us/Kevin.png";
+import Jerry from "../../assests/about-us/jerry.png";
 import Investor from "../../assests/about-us/Investor.svg";
+import Yetunde from "../../assests/about-us/Yetunde.png"
+import Ezra from "../../assests/about-us/Ezra.png"
+import Marek from "../../assests/about-us/marek.png"
 import Image from "next/image";
 import Button from "../components/Button";
 import type { NextPage } from "next";
@@ -22,66 +26,76 @@ type Images = {
 const About: NextPage = () => {
   const images: Images[] = [
     {
-      name: 'Awosika Israel Ayodeji',
-      role: 'Founder, Program Manger',
+      name: "Awosika Israel Ayodeji",
+      role: "Founder, Program Manger",
       image: Founder,
     },
     {
-      name: 'Akinnusotu Temitayo Daniel',
-      role: 'Co-founder, Lead Dev/Mentor',
+      name: "Akinnusotu Temitayo Daniel",
+      role: "Co-founder, Lead Dev/Mentor",
       image: Cofounder,
     },
     {
-      name: 'Katangole Allan',
-      role: 'Head, Technical Training',
+      name: "Katangole Allan",
+      role: "Head, Technical Training",
       image: Head,
     },
     {
-      name: 'Jeremiah Noah',
-      role: 'Lead dev/ Mentor',
+      name: "Jeremiah Noah",
+      role: "Lead dev/ Mentor",
       image: LeadDev,
     },
     {
-      name: 'Oke Kehinde',
-      role: 'Developer',
-      image: Developer1,
+      name: "Oke Kehinde",
+      role: "Developer",
+      image: Oke,
     },
     {
-      name: 'Fatolu Pelumi',
-      role: 'Developer',
-      image: Developer2,
+      name: "Fatolu Pelumi",
+      role: "Developer",
+      image: Pelumi,
     },
     {
-      name: 'Abimbola Adebayo',
-      role: 'Devloper/ Mentor',
-      image: Developer3,
+      name: "Abimbola Adebayo",
+      role: "Devloper/ Mentor",
+      image: Abims,
     },
     {
-      name: 'Falilat Owolabi',
-      role: 'Developer',
-      image: Developer4,
+      name: "Falilat Owolabi",
+      role: "Developer",
+      image: Falilat,
     },
     {
-      name: 'Ademola Kelvin',
-      role: 'Developer',
-      image: Developer5,
+      name: "Ademola Kelvin",
+      role: "Developer",
+      image: Kevin,
     },
     {
-      name: 'Michael Jerry',
-      role: 'Community/ Social Media Lead',
-      image: Developer3,
+      name: "Michael Jerry",
+      role: "Community/ Social Media Lead",
+      image: Jerry,
     },
     {
-      name: 'Billy Luedtke',
-      role: 'Advisor & Angel investor',
+      name: "Suleman U. Ezra",
+      role: "Developer",
+      image: Ezra,
+    },
+    {
+      name: "Yetunde Ige",
+      role: "Project Mamager",
+      image: Yetunde,
+    },
+    {
+      name: "Billy Luedtke",
+      role: "Advisor & Angel investor",
       image: Investor,
     },
     {
-      name: 'Ademola Kelvin',
-      role: 'Developer',
-      image: Developer5,
+      name: "Marek Laskowski, PhD",
+      role: "Advisor, Founder Blockchain.lab (York University). Founder Blockchain Hub. Vice Chair, UN/CEFACT (Methodology & Technology)",
+      image: Marek,
     },
-  ]
+  ];
   return (
     <Fragment>
       <header className="flex flex-wrap w-[100%] lg:w-[80%] items-center justify-around  mt-12 mx-auto">
@@ -156,7 +170,10 @@ const About: NextPage = () => {
         <div className=" flex flex-wrap w-full justify-around">
           {images.map((items, index) => {
             return (
-              <div key={index} className="w-30% text-center mb-11 sm:mb-24 text-white">
+              <div
+                key={index}
+                className="w-[30%] text-center mb-11 sm:mb-24 text-white"
+              >
                 <Image
                   key={index}
                   src={items?.image}
@@ -166,9 +183,9 @@ const About: NextPage = () => {
                 <h1 className="text-xl text-[#151515] dark:text-white font-bold">
                   {items?.name}
                 </h1>
-                <p className="text-[#A1A1A1]">{items?.role}</p>
+                <p className="text-[#A1A1A1] w-full">{items?.role}</p>
               </div>
-            )
+            );
           })}
         </div>
       </section>
@@ -176,4 +193,4 @@ const About: NextPage = () => {
   );
 };
 
-export default About
+export default About;
