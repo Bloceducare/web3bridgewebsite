@@ -172,7 +172,7 @@ const About: NextPage = () => {
             return (
               <div
                 key={index}
-                className="w-[30%] text-center mb-11 sm:mb-24 text-white"
+                className=" w-[90%] sm:w-[45%] md:w-[30%] text-center mb-11 sm:mb-24 text-white"
               >
                 <Image
                   key={index}
