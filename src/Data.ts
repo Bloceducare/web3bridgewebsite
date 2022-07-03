@@ -1,4 +1,4 @@
-export const images = ['./heroimage.png', './web2cohort.png']
+export const images = ['./hero1.png', './hero2.png', './hero3.png']
 
 export const menuItems = [
   {
@@ -53,16 +53,19 @@ export const missionData = [
 
   export const partnerIcons = [
     './eth.png',
-    './Gitcoin.png',
+    './polygon.png',
     './hydro.png',
+    './nahmii.png',
     './Epns.png',
     './kernel.png',
+    './orbit.png',
     './academy.png',
     './turing.png',
+    './crevatal.png',
+    './Gitcoin.png',
     './ladies.png',
     './cdin.png',
-    './nahmii.png',
-    './crevatal.png',
+    
   ]
   
 
@@ -144,24 +147,24 @@ export const missionData = [
   export const Testimonials = [
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Percy Vere',
-      position: 'Product Manager, Okwar',
+        'It is an awesome program that makes one to focus on learning industry standard BlockchainDevelopment, Without having to worry about basic amenities. I had an awesome experience during the cohort V.',
+      name: 'John Odey',
+      position: 'Blockchain Developer, Lagos',
+      image: 'john.png',
+    },
+    {
+      text:
+        'Web3bridge Blockchain Developer Training is an amazing program, it contributed 100% to professional career as a Blockchain Developer.',
+      name: 'Ifeanyi Uzor',
+      position: 'Blockchain Developer, Lagos',
       image: 'web3cohort.png',
     },
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'testimonial2.png',
-    },
-    {
-      text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'testimonial3.png',
+        'Web3bridge is the best place to start your web3 journey.',
+      name: 'Eniola Agbola',
+      position: 'Blockchain Developer, Lagos',
+      image: 'eniola.png',
     },
   ]
 
@@ -169,38 +172,24 @@ export const missionData = [
   
     rows: [
         {
-            title: "What is Cohorts?",
-            content: `The cohort is the Web3Bridge program, where participants through a process are admitted to learn about Blockchain development for free. We currently have the sixth edition ongoing.`,
+            title: "Criteria ",
+            content: `To be a part of our cohort based programs you will have to go through some rounds of technical test which helps us ascertain that you have what it takes to be dedicated  to complete the  program`,
         },
         {
-            title: "Nunc maximus, magna at ultricies elementum",
+            title: "How much does the training cost? ",
             content:
-                "Nunc maximus, magna at ultricies elementum, risus turpis vulputate quam, vitae convallis ex tortor sed dolor.",
+                "It’s absolutely free to join our cohort based  trainings, this is to help us lower entry barriers and make it easy for you to be a world class Blockchain Developer.",
         },
         {
-            title: "Is there a fee?",
-            content: `Curabitur laoreet, mauris vel blandit 
-            Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
-            Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+            title: "Whats the duration of a cohort",
+            content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more.`,
         },
-        {
-          title: "Can i join?",
-          content: `Curabitur laoreet, mauris vel blandit 
-          Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
-          Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
-      },
+        
       {
-        title: "How long is the cohort",
-        content: `Curabitur laoreet, mauris vel blandit 
-        Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
-        Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+        title: "Can I Join Virtually",
+        content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more `,
     },
-    {
-      title: "Is it onsite or remote?",
-      content: `Curabitur laoreet, mauris vel blandit 
-      Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
-      Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
-  },
+  
     ],
 }
 

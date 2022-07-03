@@ -1,9 +1,10 @@
 import React from 'react'
 import { web3Courses, web2Courses } from '../Data'
+import { motion } from 'framer-motion'
 
 const Career = () => {
   return (
-    <div className="mt-12 w-full flex flex-col justify-center items-center">
+    <div className="mt-24 w-full flex flex-col justify-center items-center">
       <div className=" w-5/6 ">
         <h1 className="mb-6 font-secondary text-base dark:text-white10 text-center  text-xl font-semibold md:text-4xl ">
           Change your life and start your career in web 3
@@ -18,7 +19,7 @@ const Career = () => {
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 3 Cohort ongoing
           </h2>
-          <p className=" md:text-center font-primary text-xl text-white60 font-normal mb-10">
+          <p className="font-primary text-xl text-white60 font-normal mb-10">
             Get everything you need to launch your career in Blockchain
             Development through our trainings that gives you the nitty gritty of
             experience through practical classes.
@@ -40,7 +41,7 @@ const Career = () => {
               </span>
             </p>
           </div>
-          <div className=" w-full flex flex-wrap lg:w-3/4">
+          <div className="w-full flex flex-wrap md:w-full xl:w-2/4">
             {web3Courses.map((course, index) => {
               return (
                 <div key={index} className="">
@@ -55,17 +56,17 @@ const Career = () => {
             })}
           </div>
           <div className=" mt-10">
-            <button className=" py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base md:py-4 md:px-14 ">
+            <motion.button
+              whileTap={{ scale: 0.3 }}
+              transition={{ duration: 0.4 }}
+              className=" py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base md:py-4 md:px-14 "
+            >
               View Cohort
-            </button>
+            </motion.button>
           </div>
         </div>
         <div className=" w-full md:w-5/12">
-          <img
-            className="w-full"
-            src="./web3cohort.png"
-            alt="web3 cohort Image"
-          />
+          <img className="w-full" src="./hero1.png" alt="web3 cohort Image" />
         </div>
         {/* web 2 Cohort */}
       </div>
@@ -82,7 +83,7 @@ const Career = () => {
           <h2 className="text-2xl text-base90 dark:text-white10 text-center mt-7  font-semibold font-secondary mb-10 md:text-4xl">
             Web 2 Cohort ongoing now!
           </h2>
-          <p className=" md:text-center font-primary md:text-xl text-white60 font-normal mb-10">
+          <p className="font-primary md:text-xl text-white60 font-normal mb-10">
             Want to get started in coding but don’t know where to start, You can
             get all the needed trainigs to make you a proficient Web Developer
             through our 6 months handson training on web2 technologies.
@@ -119,9 +120,13 @@ const Career = () => {
             })}
           </div>
           <div className=" my-10">
-            <button className="  py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base  md:py-4 md:px-14">
+            <motion.button
+              whileTap={{ scale: 0.3 }}
+              transition={{ duration: 0.4 }}
+              className="py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base  md:py-4 md:px-14"
+            >
               View Cohort
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

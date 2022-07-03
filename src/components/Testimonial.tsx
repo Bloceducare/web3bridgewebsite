@@ -18,9 +18,9 @@ const Testimonial = () => {
           return (
             <div
               key={index}
-              className=" 3/12 bg-white dark:bg-base p-5 m-3 shadow-2xl rounded-md"
+              className=" 3/12 bg-white dark:bg-base p-5 m-3 shadow-2xl md:w-10/12 rounded-md"
             >
-              <p className="w-full p-2 font-secondary text-base text-white60 dark:text-white20 mb-1 md:w-full">
+              <p className="w-full p-2 font-secondary text-base text-white60 dark:text-white20 mb-1 md:w-11/12">
                 {testimonial.text}
               </p>
               <div className="flex items-center ">

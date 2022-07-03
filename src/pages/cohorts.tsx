@@ -1,9 +1,9 @@
-import React from "react";
-import Image from "next/image";
-import CohortsImage from "../../assests/cohorts/cohorts.svg";
-import ProfileImg from "../../assests/cohorts/profile.svg";
-import Button from "../components/Button";
-import type { NextPage } from "next";
+import React from 'react'
+import Image from 'next/image'
+import CohortsImage from '../../assests/cohorts/cohorts.svg'
+import ProfileImg from '../../assests/cohorts/profile.svg'
+import Button from '../components/Button'
+import type { NextPage } from 'next'
 
 const Cohorts: NextPage = () => {
   return (
@@ -37,19 +37,19 @@ const Cohorts: NextPage = () => {
         <h2 className="text-base90 dark:text-white10 mt-[5rem] font-bold mb-10 text-2xl">
           How?
         </h2>
-        <p className="text-base dark:text-[#A1A1A1] my-6">
+        <p className="text-base md:text-xl dark:text-[#A1A1A1] my-6">
           Web3bridge runs a 16weeks cohort based training that will hold you by
           the hand to give you the right head start to launch your Blockchain
           Development as we help navigate you from the state of the known to the
           fiery edge of the unknown.
         </p>
-        <p className="text-base dark:text-[#A1A1A1] my-6">
+        <p className="text-base md:text-xl dark:text-[#A1A1A1] my-6">
           Within this 16weeks you are going to give you an immersive learning
           experience on what it takes to be a Blockchain Developer and we are
           not just going to develop your technical skills but also help build
           your soft skills to be able to compete in the global market.
         </p>
-        <p className="text-base dark:text-[#A1A1A1] my-6">
+        <p className="text-base md:text-xl dark:text-[#A1A1A1] my-6">
           Graduates from our program have gone to work with global brands such
           as Aavegotchi, Consensys, Nahmii, Nethermind, Polygon and lots more.
           So be rest assured that you are going to have the best learning
@@ -66,7 +66,7 @@ const Cohorts: NextPage = () => {
         type="background"
       />
     </section>
-  );
-};
+  )
+}
 
-export default Cohorts;
+export default Cohorts

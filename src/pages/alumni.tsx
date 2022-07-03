@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import Image from 'next/image'
-import HeaderImg from '../../assests/alumni/headerImg.svg'
+import HeaderImg from '../../assests/alumni/alumnihero.png'
 import GroupImg from '../../assests/alumni/group-image.svg'
 import Button from '../components/Button'
 import type { NextPage } from 'next'
@@ -16,10 +16,10 @@ const Alumni: NextPage = () => {
           <h2 className="text-[#FA0101] text-sm lg:text-[1rem] ">
             JOIN OUR ALUMNI COMMUNITY
           </h2>
-          <h1 className=" dark:text-[#D0D0D0] text-xl lg:text-3xl font-bold py-8">
+          <h1 className=" dark:text-[#D0D0D0] text-xl lg:text-3xl font-bold py-8 md:w-[70%]">
             Welcome to Web 3 Bridge Alumni Community Hub
           </h1>
-          <p className="text-[#737373]">
+          <p className="text-[#737373] md:w-[70%]">
             The community is home to hundreds of thousands of developers,
             technologists, and enthusiasts. People who have graduated our
             cohort, feel free to mingle please.

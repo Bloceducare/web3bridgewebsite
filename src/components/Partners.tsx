@@ -4,7 +4,7 @@ import { partnerIcons } from '../Data'
 
 const Partners = () => {
   return (
-    <div className="mt-12 w-full flex flex-col justify-center items-center ">
+    <div className="mt-24 w-full flex flex-col justify-center items-center ">
       <div className=" w-5/6 ">
         <h1 className="mb-6 font-secondary text-base dark:text-white10 text-center  text-xl font-semibold md:text-4xl ">
           We Collaborate with
@@ -28,13 +28,13 @@ const Partners = () => {
           })}
         </div>
       </Marquee> */}
-      <div className="with-full  justify-center items-center  flex flex-wrap bg-red  mx-auto">
-        <div className="flex flex-wrap justify-center items-center ">
+      <div className="mt-12 w-11/12  justify-center items-center flex flex-wrap ml-auto ">
+        <div className="flex flex-wrap  flex-start">
           {partnerIcons.map((icon, index) => {
             return (
               <div
                 key={index}
-                className=" w-12 h-10 my-6 mx-5 md:w-44 md:h-16 md:my-10 md:mx-10"
+                className=" w-12 h-10 my-6 mx-5 md:w-44 md:h-16 md:my-10 md:mx-22 xl:mx-28"
               >
                 <img src={icon} alt="partner icons" />
               </div>
