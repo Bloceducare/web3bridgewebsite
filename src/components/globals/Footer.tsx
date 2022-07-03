@@ -18,17 +18,38 @@ const Footer = () => {
       </div>
       <div className="w-full flex flex-wrap justify-center items-start mt-4 text-white">
         <div className=" w-[80%] md:w-[25%] mr-auto ml-8 md:ml-0">
-          <p className="text-[1.2rem] md:text-[1rem] text-white mb-8">Support@web3bridge.com</p>
+          <p className="text-[1.2rem] md:text-[1rem] text-white mb-8">
+            Support@web3bridge.com
+          </p>
           <div className="flex items-center w-full lg:w-[80%] justify-between mb-12">
-            <TwitterIcon />
-            <LinkedInIcon />
-            <FacebookIcon />
-            <InstagramIcon />
-            <YoutubeIcon />
+            <Link href={"https://twitter.com/Web3Bridge"}>
+              <a>
+                <TwitterIcon />
+              </a>
+            </Link>
+            <Link href={"https://www.linkedin.com/company/web3bridge/"}>
+              <a>
+                <LinkedInIcon />
+              </a>
+            </Link>
+            <Link href={"https://instagram.com/web3bridge"}>
+              <a>
+                <InstagramIcon />
+              </a>
+            </Link>
+            <Link
+              href={"https://www.youtube.com/channel/UCrXJHMI98Y3LI9ljrmEeY3g"}
+            >
+              <a>
+                <YoutubeIcon />
+              </a>
+            </Link>
           </div>
         </div>
         <div className="w-[60%] md:w-[20%]">
-          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 text-left">Web 3 Bridge</h1>
+          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 text-left">
+            Web 3 Bridge
+          </h1>
           <ul className="text-[1.2rem] md:text-xs md:text-left mb-12 md:mb-auto">
             <li className="my-1">
               <Link href={"/"}>
@@ -53,7 +74,9 @@ const Footer = () => {
           </ul>
         </div>
         <div className="w-[60%]  md:w-[20%]">
-          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">Support</h1>
+          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">
+            Support
+          </h1>
           <ul className="text-[1.2rem] md:text-xs md:text-left mb-12 md:mb-auto">
             <li className="my-1">
               <Link href={"/"}>
@@ -78,7 +101,9 @@ const Footer = () => {
           </ul>
         </div>
         <div className="w-[60%] md:w-[20%]">
-          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">General</h1>
+          <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">
+            General
+          </h1>
           <ul className="text-[1.2rem] md:text-xs text-left mb-12 md:mb-auto">
             <li className="my-1">
               <Link href={"/"}>

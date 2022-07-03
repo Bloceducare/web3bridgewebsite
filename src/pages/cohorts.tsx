@@ -9,7 +9,7 @@ const Cohorts: NextPage = () => {
   return (
     <section className="py-4">
       <div className="w-full flex flex-wrap justify-center items-center xl:px-[10rem]">
-        <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[50%]">
+        <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[50%] xl:w-[40%]">
           <h1 className="text-base90 dark:text-white10 font-bold text-3xl mb-4">
             Cohort Explainer
           </h1>

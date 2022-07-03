@@ -1,45 +1,44 @@
-import React, { Fragment } from 'react'
-import type { NextPage } from 'next'
-import HeroImg from '../../assests/dapps/hero.svg'
-import Image from 'next/image'
-import Button from '../components/Button'
-import FinanceImg from '../../assests/dapps/finance.svg'
-import ArtImg from '../../assests/dapps/art.svg'
-import GamingImg from '../../assests/dapps/image.svg'
-import TechImg from '../../assests/dapps/tech.svg'
-import HydroImg from '../../assests/dapps/hydro.png'
-import ChainedImg from '../../assests/dapps/chained.png'
-import SafeKeepImg from '../../assests/dapps/safekeep.png'
+import React, { Fragment } from "react";
+import type { NextPage } from "next";
+import HeroImg from "../../assests/dapps/hero.svg";
+import Image from "next/image";
+import Button from "../components/Button";
+import FinanceImg from "../../assests/dapps/finance.svg";
+import ArtImg from "../../assests/dapps/art.svg";
+import GamingImg from "../../assests/dapps/image.svg";
+import TechImg from "../../assests/dapps/tech.svg";
+import HydroImg from "../../assests/dapps/hydro.png";
+import ChainedImg from "../../assests/dapps/chained.png";
+import SafeKeepImg from "../../assests/dapps/safekeep.png";
+
 
 const Dapps: NextPage = () => {
   const workingList = [
     {
       image: HydroImg,
-      name: 'HydroSwap',
-      desc:
-        'Swap your tokens with ease. A community favourite that allows you to trade tokens with folks across the network.',
-      buttonContent: 'OPEN HYDROSWAP',
-      plate: 'FINANCE',
-      link: 'https://www.hydroswap.org/',
+      name: "HydroSwap",
+      desc: "Swap your tokens with ease. A community favourite that allows you to trade tokens with folks across the network.",
+      buttonContent: "OPEN HYDROSWAP",
+      plate: "FINANCE",
+      link: "https://www.hydroswap.org/",
     },
     {
       image: ChainedImg,
-      name: 'CHAINED THRIFT',
-      desc:
-        'Chained Thrift is a decentralized finance application built using blockchain technology. Chained Thrift helps its users achieve their financial goals through a decentralized thrift saving scheme.',
-      buttonContent: 'Coming soon',
-      plate: 'FINANCE',
-      link: '#',
+      name: "CHAINED THRIFT",
+      desc: "Chained Thrift is a decentralized finance application built using blockchain technology. Chained Thrift helps its users achieve their financial goals through a decentralized thrift saving scheme.",
+      buttonContent: "Coming soon",
+      plate: "FINANCE",
+      link: "/",
     },
     {
       image: SafeKeepImg,
-      name: 'SAFEKEEP',
-      desc: 'Get your digital assets locked in a sfe protcol and prevent loss.',
-      buttonContent: 'Coming soon',
-      plate: 'COLLECTILES',
-      link: '#',
+      name: "SAFEKEEP",
+      desc: "Get your digital assets locked in a sfe protcol and prevent loss.",
+      buttonContent: "Coming soon",
+      plate: "COLLECTILES",
+      link: "/",
     },
-  ]
+  ];
   return (
     <Fragment>
       <header className="flex w-full flex-wrap justify-center px-2 sm:px-5 lg:px-[5rem] py-[4rem] lg:py-[1rem] items-center">
@@ -55,11 +54,12 @@ const Dapps: NextPage = () => {
             disrupt business models or invent new ones.
           </p>
           <div className="flex flex-wrap w-full items-center">
-            <Button
-              class=" w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
-              type="background"
-              content="Explore Dapps"
-            />
+              <Button
+                class=" w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
+                type="background"
+                content="Explore Dapps"
+                link="dapps"
+              />
             <Button
               class="w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
@@ -91,13 +91,13 @@ const Dapps: NextPage = () => {
             <Image src={FinanceImg} /> <p className="ml-4">De Finance</p>
           </div>
           <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
-            <Image src={ArtImg} /> <p className="ml-4">Art & Collectibles</p>{' '}
+            <Image src={ArtImg} /> <p className="ml-4">Art & Collectibles</p>{" "}
           </div>
           <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
-            <Image src={GamingImg} /> <p className="ml-4">Gaming</p>{' '}
+            <Image src={GamingImg} /> <p className="ml-4">Gaming</p>{" "}
           </div>
           <div className="border w-full sm:w-auto hover:border-primary mb-4 lg:mb-0 hover:shadow-[#ffffff15] shadow-md flex items-center rounded-full px-6 py-2">
-            <Image src={TechImg} /> <p className="ml-4">Technology</p>{' '}
+            <Image src={TechImg} /> <p className="ml-4">Technology</p>{" "}
           </div>
         </div>
         <div className="mx-8 md:mx-16 sm:border flex flex-wrap items sm:border-white60 px-6 py-8">
@@ -121,7 +121,7 @@ const Dapps: NextPage = () => {
           </div>
         </div>
       </section>
-      <section className="py-20 mt-10 px-6">
+      <section id="dapps" className="py-20 mt-10 px-6">
         <h1 className="text-3xl mb-16 text-base90 dark:text-white10 font-bold text-center">
           Check out what we are working on
         </h1>
@@ -142,9 +142,9 @@ const Dapps: NextPage = () => {
                 <button className="bg-white block rounded-sm w-auto mb-4">
                   <p
                     className={`text-sm px-2 py-2  ${
-                      item?.plate === 'FINANCE'
-                        ? 'text-primary'
-                        : 'text-[#5C5ACA]'
+                      item?.plate === "FINANCE"
+                        ? "text-primary"
+                        : "text-[#5C5ACA]"
                     }`}
                   >
                     {item?.plate}
@@ -154,13 +154,13 @@ const Dapps: NextPage = () => {
                 <p className="text-white50 text-base mb-6">{item?.desc}</p>
                 <a href={item.link} target="_blank" rel="noreferrer">
                   <Button
-                    class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
+                    class=" py-2 font-bold absolute bottom-4 w-[90%]"
                     type="background"
                     content={item?.buttonContent}
                   />
                 </a>
               </div>
-            )
+            );
           })}
         </div>
       </section>
@@ -171,12 +171,12 @@ const Dapps: NextPage = () => {
         <p className="text-white60 text-center w-[85%] lg:w-[55%] mx-auto">
           To try a dapp, you'll need a wallet and some ETH. A wallet will allow
           you to connect, or log in. And you'll need ETH to pay any transaction
-          fees.{' '}
+          fees.{" "}
           <span>
             <a className="underline text-[#5C5ACA]" href="/">
               What are transaction fees?
             </a>
-          </span>{' '}
+          </span>{" "}
         </p>
         <div className="sm:border border-[#CDCDCD] my-24 w-[90%] sm:w-[80%] md:w-full mx-auto flex flex-wrap">
           <div className="w-[100%] mb-10 sm:mb-0 md:w-[33.3%] py-4 px-4 border sm:border-0 md:border-r border-[#CDCDCD]">
@@ -221,7 +221,7 @@ const Dapps: NextPage = () => {
         </div>
       </section>
     </Fragment>
-  )
-}
+  );
+};
 
-export default Dapps
+export default Dapps;
