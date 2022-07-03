@@ -1,12 +1,12 @@
-import Head from "next/head";
-import Navbar from "./Navbar";
-import React, { ReactNode } from "react";
-import Footer from "./Footer";
-import Background from "../Background";
-import TopHeader from "./TopHeader";
+import Head from 'next/head'
+import Navbar from './Navbar'
+import React, { ReactNode } from 'react'
+import Footer from './Footer'
+import Background from '../Background'
+import TopHeader from './TopHeader'
 
 interface Props {
-  children?: ReactNode;
+  children?: ReactNode
   // any props that come into the component
 }
 const Layout = ({ children }: Props) => {
@@ -27,15 +27,12 @@ const Layout = ({ children }: Props) => {
           href="https://fonts.googleapis.com/css2?family=DM+Sans&family=Poppins&display=swap"
           rel="stylesheet"
         ></link>
-         <link
+        <link
           rel="apple-touch-icon"
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
-        <link
-          rel="shortcut icon"
-          href="/favicon/favicon.ico"
-        />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <link
           rel="icon"
           type="image/png"
@@ -57,7 +54,7 @@ const Layout = ({ children }: Props) => {
         <Footer />
       </Background>
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout
