@@ -47,12 +47,12 @@ const About: NextPage = () => {
     },
     {
       name: 'Oke Kehinde',
-      role: 'Developer',
+      role: 'Developer/Mentor',
       image: Oke,
     },
     {
       name: 'Fatolu Pelumi',
-      role: 'Developer',
+      role: 'Developer/Mentor',
       image: Pelumi,
     },
     {
@@ -62,12 +62,12 @@ const About: NextPage = () => {
     },
     {
       name: 'Falilat Owolabi',
-      role: 'Developer',
+      role: 'Developer/Mentor',
       image: Falilat,
     },
     {
       name: 'Ademola Kelvin',
-      role: 'Developer',
+      role: 'Developer/Mentor',
       image: Kevin,
     },
     {
@@ -77,12 +77,12 @@ const About: NextPage = () => {
     },
     {
       name: 'Suleman U. Ezra',
-      role: 'Developer',
+      role: 'Lead Designer',
       image: Ezra,
     },
     {
       name: 'Yetunde Ige',
-      role: 'Project Mamager',
+      role: 'Project Manager',
       image: Yetunde,
     },
     {

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import Image from 'next/image'
-import HeaderImg from '../../assests/alumni/headerImg.svg'
+import HeaderImg from '../../assests/alumni/alumnihero.png'
 import GroupImg from '../../assests/alumni/group-image.svg'
 import AbdurImg from '../../assests/alumni/abdur.svg'
 import AyoImg from '../../assests/alumni/ayodeji.svg'
