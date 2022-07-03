@@ -28,8 +28,8 @@ const Partners = () => {
           })}
         </div>
       </Marquee> */}
-      <div className="mt-12 with-full  justify-center items-center flex flex-wrap bg-red  ">
-        <div className="flex flex-wrap justify-center  flex-start">
+      <div className="mt-12 w-11/12  justify-center items-center flex flex-wrap ml-auto ">
+        <div className="flex flex-wrap  flex-start">
           {partnerIcons.map((icon, index) => {
             return (
               <div
