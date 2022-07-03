@@ -8,34 +8,31 @@ import type { NextPage } from "next";
 const Cohorts: NextPage = () => {
   return (
     <section className="py-4">
-      <div className="w-full flex flex-wrap justify-center ">
-        <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[30%]  self-end">
+      <div className="w-full flex flex-wrap justify-center items-center xl:px-[10rem]">
+        <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[50%]">
           <h1 className="text-base90 dark:text-white10 font-bold text-3xl mb-4">
             Cohort Explainer
           </h1>
-          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+          <p className="text-base dark:text-[#A1A1A1] py-3 lg:text-xl">
             Do you want to build for the the blockchain?
           </p>
-          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+          <p className="text-base dark:text-[#A1A1A1] py-3 lg:text-xl">
             Do you desire to land a good paying job?
           </p>
-          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
+          <p className="text-base dark:text-[#A1A1A1] py-3 lg:text-xl">
             Do you desire to upgrade from trenches?
           </p>
-          <p className="text-base dark:text-[#A1A1A1] py-3 text-xl">
-            and you don’t know how to go about this?.
+          <p className="text-base dark:text-[#A1A1A1] py-3 lg:text-xl">
+            and you don’t know how to go about this?
           </p>
-          <p className="block md:hidden px-6 ml-[8%] lg:ml-[15%] text-xl text-base dark:text-[#A1A1A1]">
+          <p className="lg:text-xl text-base dark:text-[#A1A1A1]">
             worry no more because Web3bridge can make this desires a reality.
           </p>
         </div>
-        <div className="w-[80%] md:w-[40%] md:ml-10 lg:ml-0 ">
+        <div className="w-[80%] md:w-[40%] md:ml-10 lg:m=l-0 ">
           <Image src={CohortsImage} />
         </div>
       </div>
-      <p className="hidden md:block ml-[8%] lg:ml-[15%] text-xl text-base dark:text-[#A1A1A1]">
-        worry no more because Web3bridge can make this desires a reality.
-      </p>
       <div className="px-7 sm:px-[5rem] lg:px-[12rem]">
         <h2 className="text-base90 dark:text-white10 mt-[5rem] font-bold mb-10 text-2xl">
           How?

@@ -2,17 +2,17 @@ import React, { Fragment } from 'react'
 import Image from 'next/image'
 import HeaderImg from '../../assests/alumni/headerImg.svg'
 import GroupImg from '../../assests/alumni/group-image.svg'
-import AbdurImg from '../../assests/alumni/abdur.svg'
-import AyoImg from '../../assests/alumni/ayodeji.svg'
-import OlaImg from '../../assests/alumni/olayinka.svg'
 import Button from '../components/Button'
 import type { NextPage } from 'next'
+import John from "../../assests/alumni/john.png"
+import Blessing from "../../assests/alumni/blessing.png"
+import Emma from "../../assests/alumni/emma.png"
 
 const Alumni: NextPage = () => {
   return (
     <Fragment>
-      <header className="flex flex-wrap pt-10 px-6 lg:px-16 items-center">
-        <div className="w-full sm:w-[80%] md:w-[50%] px-4 sm:px-8 lg:px-16">
+      <header className="flex flex-wrap w-full justify-center pt-10 px-2 lg:px-16 items-center">
+        <div className=" w-[90%] md:w-[80%] lg:w-[50%] px-1 sm:px-4 lg:px-16">
           <h2 className="text-[#FA0101] text-sm lg:text-[1rem] ">
             JOIN OUR ALUMNI COMMUNITY
           </h2>
@@ -25,7 +25,7 @@ const Alumni: NextPage = () => {
             cohort, feel free to mingle please.
           </p>
         </div>
-        <div className="w-[100%] sm:w-[80%] mx-auto mt-16 md:mt-0 md:w-[45%]">
+        <div className=" w-[100%] flex justify-center lg:w-[45%] mx-auto mt-10 lg:mt-0 ">
           <Image src={HeaderImg} />
         </div>
       </header>
@@ -55,25 +55,25 @@ const Alumni: NextPage = () => {
         </h2>
         <div className="flex flex-wrap items-start justify-around ">
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
-            <Image src={AbdurImg} />
+            <Image src={John} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-              Abdur-rasheed Idris
+              John Odey
             </h1>
             <p className="text-[#A1A1A1] text-sm">
-              Cohort II, Web 2 dark:text-[#D0D0D0] Mentee{' '}
+              Web3 Cohort V 
             </p>
-            <p className="text-[#A1A1A1] text-sm">(2019)</p>
+            <p className="text-[#A1A1A1] text-sm">Student(2021)</p>
           </div>
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
-            <Image src={AyoImg} />
+            <Image src={Blessing} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-              Ayodeji Ayomide
+              Blessing Emah
             </h1>
-            <p className="text-[#A1A1A1] text-sm">Cohort III, Web 3</p>
-            <p className="text-[#A1A1A1] text-sm"> Mentee (2020)</p>
+            <p className="text-[#A1A1A1] text-sm">Web3 Cohort VI</p>
+            <p className="text-[#A1A1A1] text-sm"> Student(2020)</p>
           </div>
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
-            <Image src={OlaImg} />
+            <Image src={Emma} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
               Olayinka Ademola
             </h1>

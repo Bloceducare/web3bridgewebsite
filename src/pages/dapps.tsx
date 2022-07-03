@@ -40,8 +40,8 @@ const Dapps: NextPage = () => {
   ];
   return (
     <Fragment>
-      <header className="flex flex-wrap justify-center px-2 sm:px-7 lg:px-[5rem] py-[5rem] items-center">
-        <div className="w-[90%] md:w-[70%] lg:w-[49%] mb-24  lg:mb-0">
+      <header className="flex w-full flex-wrap justify-center px-2 sm:px-5 lg:px-[5rem] py-[4rem] lg:py-[1rem] items-center">
+        <div className="  w-[90%] md:w-[80%] lg:w-[50%]  lg:mb-0">
           <h2 className="text-primary mb-6">
             DECENTRALIZED APPLICATIONS (DAPPS)
           </h2>
@@ -52,21 +52,23 @@ const Dapps: NextPage = () => {
             Dapps are a growing movement of applications that use Ethereum to
             disrupt business models or invent new ones.
           </p>
-          <div className="flex flex-wrap items-center">
+          <div className="flex flex-wrap w-full items-center">
             <Button
-              class=" w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
+              class=" w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
               type="background"
               content="Explore Dapps"
             />
             <Button
-              class="w-full sm:w-auto py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
+              class="w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
               content="Build Software"
             />
           </div>
         </div>
-        <div className="w-full mx-auto flex lg:block justify-center lg:w-[49%] ml-4">
-          <Image src={HeroImg} alt="hero-image" />
+        <div className=" justify-center flex w-[100%] lg:w-[45%] xl:w-[35%] mt-8 lg:ml-4">
+          <div className="">
+            <Image src={HeroImg} alt="hero-image" />
+          </div>
         </div>
       </header>
       <section className="mt-12">
