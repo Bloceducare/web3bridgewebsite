@@ -47,27 +47,27 @@ const About: NextPage = () => {
     },
     {
       name: 'Oke Kehinde',
-      role: 'Developer/Mentor',
+      role: 'Blockchain Developer/Mentor',
       image: Oke,
     },
     {
       name: 'Fatolu Pelumi',
-      role: 'Developer/Mentor',
+      role: 'Blockchain Developer/Mentor',
       image: Pelumi,
     },
     {
       name: 'Abimbola Adebayo',
-      role: 'Devloper/ Mentor',
+      role: 'Blockchain Developer/ Mentor',
       image: Abims,
     },
     {
       name: 'Falilat Owolabi',
-      role: 'Developer/Mentor',
+      role: 'Blockchain Developer/Mentor',
       image: Falilat,
     },
     {
       name: 'Ademola Kelvin',
-      role: 'Developer/Mentor',
+      role: 'Blockchain Developer/Mentor',
       image: Kevin,
     },
     {

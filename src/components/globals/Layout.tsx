@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react'
 import Footer from './Footer'
 import Background from '../Background'
 import TopHeader from './TopHeader'
+import { AnimatePresence } from 'framer-motion'
 
 interface Props {
   children?: ReactNode
@@ -47,12 +48,14 @@ const Layout = ({ children }: Props) => {
         />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      <Background>
-        <TopHeader />
-        <Navbar />
-        {children}
-        <Footer />
-      </Background>
+      <AnimatePresence>
+        <Background>
+          <TopHeader />
+          <Navbar />
+          {children}
+          <Footer />
+        </Background>
+      </AnimatePresence>
     </>
   )
 }

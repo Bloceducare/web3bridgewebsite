@@ -8,6 +8,7 @@ import { DarkModeIcon, LightModeIcon } from './icons'
 import { menuItems } from '../../Data'
 import { FaTimes } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi'
+import { motion } from 'framer-motion'
 
 const Navbar = () => {
   const [display, setDisplay] = useState<any>(true)
@@ -44,12 +45,20 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
-            <button className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary">
+            <motion.button
+              whileTap={{ scale: 0.1 }}
+              transition={{ duration: 0.6 }}
+              className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary"
+            >
               Sign in
-            </button>
-            <button className=" hidden md:block px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.1 }}
+              transition={{ duration: 0.6 }}
+              className=" hidden md:block px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
+            >
               Register
-            </button>
+            </motion.button>
             {isLight ? (
               <button
                 className="hidden md:block"

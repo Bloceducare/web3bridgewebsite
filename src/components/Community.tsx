@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaTelegram } from 'react-icons/fa'
 import { teamImages } from '../Data'
+import { motion } from 'framer-motion'
 
 const Community = () => {
   return (
@@ -13,12 +14,22 @@ const Community = () => {
         minds and get the needed support for your growth.
       </p>
       <div className="mt-14">
-        <button className="flex px-3 py-1 items-center border-2 border-white10">
-          <FaTelegram color="#D2E5F1" size="1.5rem" />
-          <p className="ml-4 text-base dark:text-white20 ">
-            Join our Community
-          </p>
-        </button>
+        <motion.button
+          whileTap={{ scale: 0.3 }}
+          className=" px-3 py-1  border-2 border-white10"
+        >
+          <a
+            href="https://t.me/web3bridge"
+            target="_blank"
+            rel="noreferrer"
+            className="flex first-line:items-center "
+          >
+            <FaTelegram color="#D2E5F1" size="1.8rem" />
+            <p className="ml-4 text-base dark:text-white20 ">
+              Join our Community
+            </p>
+          </a>
+        </motion.button>
       </div>
       <div className="w-full md:w-11/12 grid gap-2 grid-cols-2  md:grid-cols-6 md:gap-4 mt-14 justify-center items-center px-5">
         {teamImages.map((image, index) => {

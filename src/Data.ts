@@ -147,24 +147,24 @@ export const missionData = [
   export const Testimonials = [
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Percy Vere',
-      position: 'Product Manager, Okwar',
+        'It is an awesome program that makes one to focus on learning industry standard BlockchainDevelopment, Without having to worry about basic amenities. I had an awesome experience during the cohort V.',
+      name: 'John Odey',
+      position: 'Blockchain Developer, Lagos',
+      image: 'john.png',
+    },
+    {
+      text:
+        'Web3bridge Blockchain Developer Training is an amazing program, it contributed 100% to professional career as a Blockchain Developer.',
+      name: 'Ifeanyi Uzor',
+      position: 'Blockchain Developer, Lagos',
       image: 'web3cohort.png',
     },
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'testimonial2.png',
-    },
-    {
-      text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'testimonial3.png',
+        'Web3bridge is the best place to start your web3 journey.',
+      name: 'Eniola Agbola',
+      position: 'Blockchain Developer, Lagos',
+      image: 'eniola.png',
     },
   ]
 

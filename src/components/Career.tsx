@@ -1,5 +1,6 @@
 import React from 'react'
 import { web3Courses, web2Courses } from '../Data'
+import { motion } from 'framer-motion'
 
 const Career = () => {
   return (
@@ -55,9 +56,13 @@ const Career = () => {
             })}
           </div>
           <div className=" mt-10">
-            <button className=" py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base md:py-4 md:px-14 ">
+            <motion.button
+              whileTap={{ scale: 0.3 }}
+              transition={{ duration: 0.4 }}
+              className=" py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base md:py-4 md:px-14 "
+            >
               View Cohort
-            </button>
+            </motion.button>
           </div>
         </div>
         <div className=" w-full md:w-5/12">
@@ -115,9 +120,13 @@ const Career = () => {
             })}
           </div>
           <div className=" my-10">
-            <button className="  py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base  md:py-4 md:px-14">
+            <motion.button
+              whileTap={{ scale: 0.3 }}
+              transition={{ duration: 0.4 }}
+              className="py-2 px-7 border-base dark:border-white20 border-2 text-base90 dark:text-white20 font-secondary text-base  md:py-4 md:px-14"
+            >
               View Cohort
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
