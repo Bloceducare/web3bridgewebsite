@@ -1,4 +1,4 @@
-export const images = ['./heroimage.png', './web2cohort.png']
+export const images = ['./hero1.png', './hero2.png', './hero3.png']
 
 export const menuItems = [
   {

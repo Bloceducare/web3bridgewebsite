@@ -61,11 +61,7 @@ const Career = () => {
           </div>
         </div>
         <div className=" w-full md:w-5/12">
-          <img
-            className="w-full"
-            src="./web3cohort.png"
-            alt="web3 cohort Image"
-          />
+          <img className="w-full" src="./hero1.png" alt="web3 cohort Image" />
         </div>
         {/* web 2 Cohort */}
       </div>
