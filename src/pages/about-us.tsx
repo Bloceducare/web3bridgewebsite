@@ -159,7 +159,7 @@ const About: NextPage = () => {
           <p className="mt-6 text-[#737373] dark:text-[#D0D0D0]">
             And we take care of accomodation, feeding and data expenses for all
             our onsite participants during the program to make it easier for
-            them to learn
+            them to learn.
           </p>
         </div>
       </section>

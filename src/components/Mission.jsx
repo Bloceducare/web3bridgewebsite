@@ -7,14 +7,14 @@ const Mission = () => {
       <div className="mt-20 mx-auto  flex justify-center align-center">
         <div className="font-secondary text-4xl text-base90 font-bold">
           <h1 className="flex justify-center align-center dark:text-white20">
-            What is our story
+            Here is our story
           </h1>
           <div className="mt-10 w-11/12 text-lg text-center font-secondary text-white60  font-medium mx-auto md:w-4/6 xl:w-3/6 md:text-xl">
             Web3bridge is a program created in 2019 to train Web3 developers in
             Africa. We are working on building sustainable Web3 economy in
             Africa through remote and onsite Web3 development training,
             supporting web3 developers and startups, and lowering barriers of
-            entry into the Web3 ecosystem
+            entry into the Web3 ecosystem.
           </div>
         </div>
       </div>

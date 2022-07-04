@@ -35,7 +35,7 @@ const Alumni: NextPage = () => {
         </h1>
         <p className="mb-20 mx-auto text-[#737373] w-full sm:w-[80%] md:w-[50%] text-sm sm:text-[1rem]">
           Participants of our Web3Bridge program will be participating in Catch
-          the flag; where they will be hacking a smart contract with rewards
+          the flag; where they will be hacking a smart contract with rewards.
         </p>
         <Image src={GroupImg} />
         <div className="w-full flex justify-center mt-4">
@@ -50,7 +50,7 @@ const Alumni: NextPage = () => {
           Past Mentees of our cohorts
         </h1>
         <h2 className="text-[#737373] px-4 mb-24">
-          Take a sneak peaks at our amazing  students who hve gone through our trainings to become a world-class Blockchain Developer
+          Take a sneak peak at our amazing  students who have gone through our trainings to become world-class Blockchain Developers.
         </h2>
         <div className="flex flex-wrap items-start justify-around ">
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
