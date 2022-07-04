@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
         <div className="w-[60%] md:w-[20%]">
           <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 text-left">
-            Web 3 Bridge
+            Web3Bridge
           </h1>
           <ul className="text-[1.2rem] md:text-xs md:text-left mb-12 md:mb-auto">
             <li className="my-1">

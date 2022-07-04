@@ -106,11 +106,11 @@ const About: NextPage = () => {
         <div className="w-[80%] md:w-[50%]">
           <h1 className="text-[2rem] font-bold mb-6 text-[#151515] dark:text-[#D0D0D0]">
             Hey! I'm Ayodeji, business developer, Blockchain Educator and
-            founder of Web 3 bridge.
+            founder of Web3bridge.
           </h1>
           <p className="text-[#737373]">
             If you've got a couple of minutes I'd love to share the story of how
-            web 3 bridge has grown as a bootstrapped startup. It's been an
+            web3bridge has grown as a bootstrapped startup. It's been an
             awesome journey and I couldn't have done it without the support of
             my team around me.
           </p>

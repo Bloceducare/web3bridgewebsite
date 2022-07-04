@@ -47,7 +47,7 @@ const Dapps: NextPage = () => {
             DECENTRALIZED APPLICATIONS (DAPPS)
           </h2>
           <h1 className="text-base90 dark:text-white10 text-4xl">
-            Web 3 Bridge build tools and services for people
+            Web3Bridge build tools and services for people
           </h1>
           <p className="text-base90 dark:text-white10 py-8">
             Dapps are a growing movement of applications that use Ethereum to
