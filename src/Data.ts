@@ -38,7 +38,7 @@ export const missionData = [
     {
       icon: './stats.png',
       title: 'Statistics.',
-      text: `We have intorduced  880 students Web3 and 1808 trained in web2 technologies.
+      text: `We have introduced  880 students Web3 and 1808 trained in web2 technologies.
 
       Graduated: 150+
       
@@ -172,7 +172,7 @@ export const missionData = [
   
     rows: [
         {
-            title: "Criteria ",
+            title: "FAQs  ",
             content: `To be a part of our cohort based programs you will have to go through some rounds of technical test which helps us ascertain that you have what it takes to be dedicated  to complete the  program`,
         },
         {
@@ -187,7 +187,7 @@ export const missionData = [
         
       {
         title: "Can I Join Virtually",
-        content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more `,
+        content: `Definitely you can, our training model  enables anyone from any part of the world to learn with ease, as we support both onsite and Virtual Learnng for the Program.  `,
     },
   
     ],

@@ -47,12 +47,12 @@ const About: NextPage = () => {
     },
     {
       name: "Oke Kehinde",
-      role: "Blockchain Developer/Mentor",
+      role: "Blockchain Developer/ Mentor",
       image: Oke,
     },
     {
       name: "Fatolu Pelumi",
-      role: "Blockchain Developer/Mentor",
+      role: "Blockchain Developer/ Mentor",
       image: Pelumi,
     },
     {
@@ -62,12 +62,12 @@ const About: NextPage = () => {
     },
     {
       name: "Falilat Owolabi",
-      role: "Blockchain Developer/Mentor",
+      role: "Blockchain Developer/ Mentor",
       image: Falilat,
     },
     {
       name: "Ademola Kelvin",
-      role: "Blockchain Developer/Mentor",
+      role: "Blockchain Developer/ Mentor",
       image: Kevin,
     },
     {
@@ -157,7 +157,7 @@ const About: NextPage = () => {
             entry into the Web3 ecosystem.
           </p>
           <p className="mt-6 text-[#737373] dark:text-[#D0D0D0]">
-            And we take care of Accomodation Feeding and data expenses for all
+            And we take care of accomodation, feeding and data expenses for all
             our onsite participants during the program to make it easier for
             them to learn
           </p>
