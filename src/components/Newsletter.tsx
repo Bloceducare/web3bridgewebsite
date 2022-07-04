@@ -17,6 +17,7 @@ const Newsletter = () => {
               className="pl-2 py-3 w-11/12  border-2 bg-base90"
               placeholder="Enter your email address here"
             />
+            
           </div>
           <div className="">
             <button className="bg-white  text-base font-base w-28 py-3 border-2 md:w-48">

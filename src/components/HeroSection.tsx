@@ -25,15 +25,15 @@ const HeroSection = () => {
             through our 16 weeks hands on bootcamp.
           </p>
           <div className="md:flex w-full md:max-w-xl justify-between">
-            <div className="w-full">
+            {/* <div className="w-full">
               <input
                 className="pl-2 py-3 w-full md:w-11/12  border-2 border-white10 mb-5 md:mb-0"
                 placeholder="Enter your email address"
               />
-            </div>
+            </div> */}
             <div className="">
               <button className="w-full bg-primary  text-white font-base md:w-32 py-3 border-2 border-primary">
-                Register
+                Learn More
               </button>
             </div>
           </div>
