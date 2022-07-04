@@ -74,7 +74,7 @@ const Alumni: NextPage = () => {
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={Emma} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-              Olayinka Ademola
+            Emmanuel Chinatuka
             </h1>
             <p className="text-[#A1A1A1] text-sm">Cohort IV, Web 2</p>
             <p className="text-[#A1A1A1] text-sm"> Mentee (2021)</p>
