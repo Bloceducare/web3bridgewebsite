@@ -1,5 +1,6 @@
 import React from 'react'
 import { ArrowRight } from './icons'
+import { motion } from 'framer-motion'
 
 const TopHeader = () => {
   return (
@@ -10,9 +11,13 @@ const TopHeader = () => {
           <a href="https://google.com">here</a>
         </span>
       </div>
-      <div className="hidden md:block ">
+      <motion.div
+        animate={{ x: -10 }}
+        transition={{ yoyo: Infinity, duration: 1 }}
+        className="hidden md:block "
+      >
         <ArrowRight />
-      </div>
+      </motion.div>
     </div>
   )
 }

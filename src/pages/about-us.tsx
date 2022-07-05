@@ -1,101 +1,102 @@
-import React, { Fragment } from "react";
-import HeaderImg from "../../assests/about-us/about-header-image.svg";
-import GroupImg from "../../assests/about-us/group-image.svg";
-import Founder from "../../assests/about-us/founder.png";
-import Cofounder from "../../assests/about-us/Cofounder.svg";
-import Head from "../../assests/about-us/Head.svg";
-import LeadDev from "../../assests/about-us/LeadDev.svg";
-import Oke from "../../assests/about-us/oke.png";
-import Pelumi from "../../assests/about-us/Pelumi.png";
-import Abims from "../../assests/about-us/Abims.png";
-import Falilat from "../../assests/about-us/Falilat.png";
-import Kevin from "../../assests/about-us/Kevin.png";
-import Jerry from "../../assests/about-us/jerry.png";
-import Billy from "../../assests/about-us/billy.png";
-import Yetunde from "../../assests/about-us/Yetunde.png";
-import Ezra from "../../assests/about-us/Ezra.png";
-import Marek from "../../assests/about-us/marek.png";
-import Image from "next/image";
-import Button from "../components/Button";
-import type { NextPage } from "next";
+import React, { Fragment } from 'react'
+import HeaderImg from '../../assests/about-us/about-header-image.svg'
+import GroupImg from '../../assests/about-us/group-image.svg'
+import Founder from '../../assests/about-us/founder.png'
+import Cofounder from '../../assests/about-us/Cofounder.svg'
+import Head from '../../assests/about-us/Head.svg'
+import LeadDev from '../../assests/about-us/LeadDev.svg'
+import Oke from '../../assests/about-us/oke.png'
+import Pelumi from '../../assests/about-us/Pelumi.png'
+import Abims from '../../assests/about-us/Abims.png'
+import Falilat from '../../assests/about-us/Falilat.png'
+import Kevin from '../../assests/about-us/Kevin.png'
+import Jerry from '../../assests/about-us/jerry.png'
+import Billy from '../../assests/about-us/billy.png'
+import Yetunde from '../../assests/about-us/Yetunde.png'
+import Ezra from '../../assests/about-us/Ezra.png'
+import Marek from '../../assests/about-us/marek.png'
+import Image from 'next/image'
+import Button from '../components/Button'
+import type { NextPage } from 'next'
 type Images = {
-  name: string;
-  role: string;
-  image: any;
-};
+  name: string
+  role: string
+  image: any
+}
 const About: NextPage = () => {
   const images: Images[] = [
     {
-      name: "Awosika Israel Ayodeji",
-      role: "Founder, Program Manger",
+      name: 'Awosika Israel Ayodeji',
+      role: 'Founder, Program Manger',
       image: Founder,
     },
     {
-      name: "Akinnusotu Temitayo Daniel",
-      role: "Co-founder, Lead Dev/Mentor",
+      name: 'Akinnusotu Temitayo Daniel',
+      role: 'Co-founder, Lead Dev/Mentor',
       image: Cofounder,
     },
     {
-      name: "Katangole Allan",
-      role: "Head, Technical Training",
+      name: 'Katangole Allan',
+      role: 'Head, Technical Training',
       image: Head,
     },
     {
-      name: "Jeremiah Noah",
-      role: "Lead dev/ Mentor",
+      name: 'Jeremiah Noah',
+      role: 'Lead dev/ Mentor',
       image: LeadDev,
     },
     {
-      name: "Oke Kehinde",
-      role: "Blockchain Developer/Mentor",
+      name: 'Oke Kehinde',
+      role: 'Blockchain Developer/Mentor',
       image: Oke,
     },
     {
-      name: "Fatolu Pelumi",
-      role: "Blockchain Developer/Mentor",
+      name: 'Fatolu Pelumi',
+      role: 'Blockchain Developer/Mentor',
       image: Pelumi,
     },
     {
-      name: "Abimbola Adebayo",
-      role: "Blockchain Developer/ Mentor",
+      name: 'Abimbola Adebayo',
+      role: 'Blockchain Developer/ Mentor',
       image: Abims,
     },
     {
-      name: "Falilat Owolabi",
-      role: "Blockchain Developer/Mentor",
+      name: 'Falilat Owolabi',
+      role: 'Blockchain Developer/Mentor',
       image: Falilat,
     },
     {
-      name: "Ademola Kelvin",
-      role: "Blockchain Developer/Mentor",
+      name: 'Ademola Kelvin',
+      role: 'Blockchain Developer/Mentor',
       image: Kevin,
     },
     {
-      name: "Michael Jerry",
-      role: "Community/ Social Media Lead",
+      name: 'Michael Jerry',
+      role: 'Community/ Social Media Lead',
       image: Jerry,
     },
     {
-      name: "Suleman U. Ezra",
-      role: "Lead Designer",
+      name: 'Suleman U. Ezra',
+      role: 'Lead Designer',
       image: Ezra,
     },
     {
-      name: "Yetunde Ige",
-      role: "Project Manager",
+      name: 'Yetunde Ige',
+      role: 'Project Manager',
       image: Yetunde,
     },
     {
-      name: "Marek Laskowski, PhD",
-      role: "Advisor, Founder Blockchain.lab (York University). Founder Blockchain Hub. Vice Chair, UN/CEFACT (Methodology & Technology)",
+      name: 'Marek Laskowski, PhD',
+      role:
+        'Advisor, Founder Blockchain.lab (York University). Founder Blockchain Hub. Vice Chair, UN/CEFACT (Methodology & Technology)',
       image: Marek,
     },
     {
-      name: "Billy Luedtke",
-      role: "Advisor & Angel investor",
+      name: 'Billy Luedtke',
+      role: 'Advisor & Angel investor',
       image: Billy,
     },
-  ];
+  ]
   return (
     <Fragment>
       <header className="flex flex-wrap w-[100%] lg:w-[80%] items-center justify-around  mt-12 mx-auto">
@@ -138,14 +139,9 @@ const About: NextPage = () => {
               <p>Physical</p>
             </li>
           </ul>
-          <Button
-            class="text-center block mx-auto w-full py-2 mt-4"
-            type="background"
-            content="View Cohorts"
-          />
         </div>
         <div className="w-[90%] sm:w-[70%] md:w-[50%]">
-          <Image src={GroupImg} className={"w-full"} />
+          <Image src={GroupImg} className={'w-full'} />
           <h1 className="mb-6 mt-4 font-bold text-2xl text-[#151515] dark:text-[#D0D0D0]">
             Developers dont have to pay so much to learn web 3
           </h1>
@@ -185,12 +181,12 @@ const About: NextPage = () => {
                 </h1>
                 <p className="text-[#A1A1A1] w-full">{items?.role}</p>
               </div>
-            );
+            )
           })}
         </div>
       </section>
     </Fragment>
-  );
-};
+  )
+}
 
-export default About;
+export default About

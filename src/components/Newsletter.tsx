@@ -1,6 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
+toast.configure()
 const Newsletter = () => {
+  const [input, setInput] = useState()
+
+  const notify = () =>
+    toast.success('you have successfully registered for our news letter!', {
+      position: toast.POSITION.TOP_CENTER,
+    })
+
+  const inputHandler = (e) => {
+    setInput(e.target.value)
+  }
+  const submitHandler = (e) => {
+    e.preventDefault()
+    if (input) {
+      console.log(input)
+      notify()
+      setInput('')
+    }
+  }
   return (
     <div className="flex flex-col items-center justify-center bg-base py-6 mt-20">
       <div className="flex flex-col items-center justify-center">
@@ -11,19 +32,28 @@ const Newsletter = () => {
           Get occasional news and update from us about the latest trends,
           technology in the web 3 world, we promise not to spam you.
         </p>
-        <div className="w-full md:w-full flex justify-center px-2 ">
+        <form
+          onSubmit={submitHandler}
+          className="w-full md:w-full flex justify-center px-2 "
+        >
           <div className=" w-full  md:w-2/5 px-4">
             <input
-              className="pl-2 py-3 w-11/12  border-2 bg-base90"
+              onChange={inputHandler}
+              value={input}
+              type="email"
+              className="pl-2 py-3 w-11/12  border-2 bg-base90 text-white10"
               placeholder="Enter your email address here"
             />
           </div>
           <div className="">
-            <button className="bg-white  text-base font-base w-28 py-3 border-2 md:w-48">
+            <button
+              type="submit"
+              className="bg-white  text-base font-base w-28 py-3 border-2 md:w-48"
+            >
               Subscribe
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )
