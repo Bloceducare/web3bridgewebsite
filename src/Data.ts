@@ -1,3 +1,5 @@
+export const images = ['./hero1.png', './hero2.png', './hero3.png']
+
 export const menuItems = [
   {
     menu: 'Home',
@@ -31,31 +33,39 @@ export const missionData = [
       icon: './mission.png',
       title: 'Mission.',
       text:
-        'We are on the journey to discover web3 passion, create an African Web3 community, train in a collaborative and supportive environment and in turn develop Africa’s Web3 economy',
+        'We are on the journey to discover web3 passion, create an African Web3 community, train in a collaborative and supportive environment and in turn develop Africa’s Web3 economy.',
     },
     {
       icon: './stats.png',
       title: 'Statistics.',
-      text: `Web4 Trained: 880, web2 trained 1808./n Graduated: 150+ /n
-      Dapps 7+`,
+      text: `We have introduced  880 students Web3 and 1808 trained in web2 technologies.
+
+      Graduated: 150+
+      
+      Dapps built: 7+.`,
     },
     {
       icon: './tools.png',
       title: 'Our Tools.',
-      text: 'Foundry, Hardhat, Diamond Standard, Ethers js,  ',
+      text: 'We have armed our student with the neccesary skills to be amazing Blockchain Developer through our indepth guide into the Ethereun Ecosystem.',
     },
   ]
 
   export const partnerIcons = [
     './eth.png',
-    './Gitcoin.png',
+    './polygon.png',
     './hydro.png',
+    './nahmii.png',
     './Epns.png',
     './kernel.png',
+    './orbit.png',
     './academy.png',
     './turing.png',
+    './crevatal.png',
+    './Gitcoin.png',
     './ladies.png',
     './cdin.png',
+    
   ]
   
 
@@ -82,7 +92,7 @@ export const missionData = [
     },
     {
       bullet: './circle.png',
-      courseTitle: 'Foundry',
+      courseTitle: 'Ethersjs',
     },
     {
       bullet: './circle.png',
@@ -137,24 +147,24 @@ export const missionData = [
   export const Testimonials = [
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Percy Vere',
-      position: 'Product Manager, Okwar',
+        'It is an awesome program that makes one to focus on learning industry standard BlockchainDevelopment, Without having to worry about basic amenities. I had an awesome experience during the cohort V.',
+      name: 'John Odey',
+      position: 'Blockchain Developer, Lagos.',
+      image: 'john.png',
+    },
+    {
+      text:
+        'Web3bridge Blockchain Developer Training is an amazing program, it contributed 100% to professional career as a Blockchain Developer.',
+      name: 'Ifeanyi Uzor',
+      position: 'Blockchain Developer, Lagos.',
       image: 'web3cohort.png',
     },
     {
       text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'web3cohort.png',
-    },
-    {
-      text:
-        'Web3bridge training gave me the oppeorrtunity to access world class training to launch my career with ease.',
-      name: 'Perry Scope',
-      position: 'CEO Darco',
-      image: 'web3cohort.png',
+        'Web3bridge is the best place to start your web3 journey.',
+      name: 'Eniola Agbola',
+      position: 'Blockchain Developer, Lagos.',
+      image: 'eniola.png',
     },
   ]
 
@@ -162,21 +172,24 @@ export const missionData = [
   
     rows: [
         {
-            title: "What is Cohorts?",
-            content: `The cohort is the Web3Bridge program, where participants through a process are admitted to learn about Blockchain development for free. We currently have the sixth edition ongoing.`,
+            title: "FAQs  ",
+            content: `To be a part of our cohort based programs you will have to go through some rounds of technical test which helps us ascertain that you have what it takes to be dedicated  to complete the  program`,
         },
         {
-            title: "Nunc maximus, magna at ultricies elementum",
+            title: "How much does the training cost? ",
             content:
-                "Nunc maximus, magna at ultricies elementum, risus turpis vulputate quam, vitae convallis ex tortor sed dolor.",
+                "It’s absolutely free to join our cohort based  trainings, this is to help us lower entry barriers and make it easy for you to be a world class Blockchain Developer.",
         },
         {
-            title: "Curabitur laoreet, mauris vel blandit fringilla",
-            content: `Curabitur laoreet, mauris vel blandit fringilla, leo elit rhoncus nunc, ac sagittis leo elit vel lorem.
-            Fusce tempor lacus ut libero posuere viverra. Nunc velit dolor, tincidunt at varius vel, laoreet vel quam.
-            Sed dolor urna, lobortis in arcu auctor, tincidunt mattis ante. Vivamus venenatis ultricies nibh in volutpat.
-            Cras eu metus quis leo vestibulum feugiat nec sagittis lacus.Mauris vulputate arcu sed massa euismod dignissim. `,
+            title: "Whats the duration of a cohort?",
+            content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more.`,
         },
+        
+      {
+        title: "Can I Join Virtually?",
+        content: `Definitely you can, our training model  enables anyone from any part of the world to learn with ease, as we support both onsite and Virtual Learnng for the Program.  `,
+    },
+  
     ],
 }
 

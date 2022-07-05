@@ -7,9 +7,11 @@ import LightLogo from '../../../assests/logo-light.svg'
 import { DarkModeIcon, LightModeIcon } from './icons'
 import { menuItems } from '../../Data'
 import { FaTimes } from 'react-icons/fa'
+import { GiHamburgerMenu } from 'react-icons/gi'
+import { motion } from 'framer-motion'
 
 const Navbar = () => {
-  const [display, setDisplay] = useState<any>('hidden')
+  const [display, setDisplay] = useState<any>(true)
   const [isLight, setIsLight] = useState<boolean>(false)
   const { theme, setTheme } = useContext(ThemeContext)
   useEffect(() => {
@@ -21,8 +23,8 @@ const Navbar = () => {
   }, [theme])
   return (
     <>
-      <nav className="w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex items-center justify-center dark:bg-base">
-        <div className=" w-11/12  flex items-center justify-between md:w-full md:p-4 lg:w-11/12 lg:p-0">
+      <nav className="relative w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex flex-col items-center justify-center dark:bg-base">
+        <div className="z-55  w-11/12  flex items-center justify-between md:w-full md:p-4 lg:w-11/12 lg:p-0">
           {/* Logo */}
           {isLight ? (
             <Image src={LightLogo} className="" />
@@ -43,21 +45,30 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
-            <button className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary">
+            <motion.button
+              whileTap={{ scale: 0.1 }}
+              transition={{ duration: 0.6 }}
+              className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary"
+            >
               Sign in
-            </button>
-            <button className="px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.1 }}
+              transition={{ duration: 0.6 }}
+              className=" hidden md:block px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
+            >
               Register
-            </button>
+            </motion.button>
             {isLight ? (
               <button
-                className=""
+                className="hidden md:block"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               >
                 <DarkModeIcon />
               </button>
             ) : (
               <button
+                className="hidden md:block"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               >
                 <LightModeIcon />
@@ -65,42 +76,83 @@ const Navbar = () => {
             )}
 
             {/* hamburger Menu */}
+
             <button
               onClick={() => {
                 setDisplay((display: any) => !display)
               }}
               id="menu-btn"
-              className="block ml-20 hamburger md:hidden focus:outline-none "
+              className="block mb-3 hamburger md:hidden focus:outline-none  "
             >
-              <span className="hamburger-top dark:bg-white"></span>
-              <span className="hamburger-middle dark:bg-white"></span>
-              <span className="hamburger-bottom dark:bg-white"></span>
+              <GiHamburgerMenu className="dark:text-white" size={30} />
             </button>
           </div>
-          {/* mobile menu */}
         </div>
-        <div className={`${display ? 'hidden' : ''} md:hidden`}>
-          <div
-            className={`absolute flex flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md 
-            ${display ? ' ' : 'ease-in-out duration-1000'} `}
-          >
+        {/* mobile menu */}
+        <div
+          className={` ${
+            display ? 'w-0 scale-x-0' : 'w-full z-10'
+          } absolute left-0 top-0  h-[100vh] md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
+        >
+          <div className="w-full flex justify-between px-5 py-3 shadow-md">
+            {isLight ? (
+              <Image src={LightLogo} className="" />
+            ) : (
+              <Image src={DarkLogo} />
+            )}
             <button
               onClick={() => {
                 setDisplay((display: any) => !display)
               }}
-              className="ml-auto mr-5 hamburger left-0 focus:outline-none "
+              className=" focus:outline-none "
             >
               <FaTimes size={20} color="#FA0101" />
             </button>
-            {menuItems.map((menuItem, index) => {
-              return (
-                <div key={index} className=" text-base  hover:text-primary">
-                  <Link href={menuItem.link}>
-                    <a>{menuItem.menu}</a>
-                  </Link>
-                </div>
-              )
-            })}
+          </div>
+
+          {menuItems.map((menuItem, index) => {
+            return (
+              <div
+                onClick={() => {
+                  setDisplay((display: any) => !display)
+                }}
+                key={index}
+                className="w-full pl-10 py-3 text-base dark:text-white hover:text-primary items-start"
+              >
+                <Link href={menuItem.link}>
+                  <a>{menuItem.menu}</a>
+                </Link>
+              </div>
+            )
+          })}
+          <div className="w-full px-10 flex justify-between">
+            <p className="text-base dark:text-white hover:text-primary">
+              Theme
+            </p>
+            <div className="">
+              {isLight ? (
+                <button
+                  className=""
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  <DarkModeIcon />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  <LightModeIcon />
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="w-full py-14 px-10 gap-6 flex flex-col">
+            <button className="  lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
+              Sign in
+            </button>
+            <button className="  md:block px-1 py-2 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+              Register
+            </button>
           </div>
         </div>
       </nav>

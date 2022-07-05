@@ -12,6 +12,7 @@ import ChainedImg from "../../assests/dapps/chained.png";
 import SafeKeepImg from "../../assests/dapps/safekeep.png";
 import Link from "next/link";
 
+
 const Dapps: NextPage = () => {
   const workingList = [
     {
@@ -25,7 +26,7 @@ const Dapps: NextPage = () => {
     {
       image: ChainedImg,
       name: "CHAINED THRIFT",
-      desc: "Play against others to conquer planets and try out bleeding-edge Ethereum scaling/privacy technology. Maybe one for those already familiar with Ethereum.",
+      desc: "Chained Thrift is a decentralized finance application built using blockchain technology. Chained Thrift helps its users achieve their financial goals through a decentralized thrift saving scheme.",
       buttonContent: "Coming soon",
       plate: "FINANCE",
       link: "/",
@@ -41,33 +42,36 @@ const Dapps: NextPage = () => {
   ];
   return (
     <Fragment>
-      <header className="flex flex-wrap justify-center px-2 sm:px-7 lg:px-[5rem] py-[5rem] items-center">
-        <div className="w-[90%] md:w-[70%] lg:w-[49%] mb-24  lg:mb-0">
+      <header className="flex w-full flex-wrap justify-center px-2 sm:px-5 lg:px-[5rem] py-[4rem] lg:py-[1rem] items-center">
+        <div className="  w-[90%] md:w-[80%] lg:w-[50%]  lg:mb-0">
           <h2 className="text-primary mb-6">
             DECENTRALIZED APPLICATIONS (DAPPS)
           </h2>
           <h1 className="text-base90 dark:text-white10 text-4xl">
-            Web 3 Bridge build tools and services for people
+            Web3Bridge build tools and services for people
           </h1>
           <p className="text-base90 dark:text-white10 py-8">
             Dapps are a growing movement of applications that use Ethereum to
             disrupt business models or invent new ones.
           </p>
-          <div className="flex flex-wrap items-center">
+          <div className="flex flex-wrap w-full items-center">
+              <Button
+                class=" w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
+                type="background"
+                content="Explore Dapps"
+                link="dapps"
+              />
             <Button
-              class=" w-full sm:w-auto py-4 sm:py-2 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
-              type="background"
-              content="Explore Dapps"
-            />
-            <Button
-              class="w-full sm:w-auto py-4 sm:py-2 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
+              class="w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
               content="Build Software"
             />
           </div>
         </div>
-        <div className="w-full mx-auto flex lg:block justify-center lg:w-[49%] ml-4">
-          <Image src={HeroImg} alt="hero-image" />
+        <div className=" justify-center flex w-[100%] lg:w-[45%] xl:w-[35%] mt-8 lg:ml-4">
+          <div className="">
+            <Image src={HeroImg} alt="hero-image" />
+          </div>
         </div>
       </header>
       <section className="mt-12">
@@ -118,20 +122,24 @@ const Dapps: NextPage = () => {
           </div>
         </div>
       </section>
-      <section className="py-20 mt-10 px-6">
+      <section id="dapps" className="py-20 mt-10 px-6">
         <h1 className="text-3xl mb-16 text-base90 dark:text-white10 font-bold text-center">
           Check out what we are working on
         </h1>
         <div className="flex flex-wrap w-full justify-center lg:justify-between">
           {workingList.map((item, index) => {
             return (
-              <div key={index} className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-[#78787835] dark:border-white60">
-                <div className="w-full mx-auto block mb-10" key={index}>
+              <div
+                key={index}
+                className="w-[95%] sm:w-[80%] md:w-[50%] mx-6 lg:mx-0 lg:w-[30%] mb-12 relative h-[37rem] py-4 px-4 border border-[#78787835] dark:border-white60"
+              >
+                <div className="w-full mx-auto block mb-10">
                   <Image src={item?.image} alt="img" />
                 </div>
                 <h1 className="text-base90 dark:text-white10 mb-6 font-bold">
                   {item?.name}
                 </h1>
+
                 <button className="bg-white block rounded-sm w-auto mb-4">
                   <p
                     className={`text-sm px-2 py-2  ${
@@ -143,16 +151,15 @@ const Dapps: NextPage = () => {
                     {item?.plate}
                   </p>
                 </button>
+
                 <p className="text-white50 text-base mb-6">{item?.desc}</p>
-                <Link href={item?.link}>
-                  <a>
-                    <Button
-                      class=" py-2 font-bold left-[50%] -translate-x-[50%] absolute bottom-4 w-[90%]"
-                      type="background"
-                      content={item?.buttonContent}
-                    />
-                  </a>
-                </Link>
+                <a href={item.link} target="_blank" rel="noreferrer">
+                  <Button
+                    class=" py-2 font-bold absolute bottom-4 w-[90%]"
+                    type="background"
+                    content={item?.buttonContent}
+                  />
+                </a>
               </div>
             );
           })}

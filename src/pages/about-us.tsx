@@ -1,16 +1,20 @@
 import React, { Fragment } from "react";
 import HeaderImg from "../../assests/about-us/about-header-image.svg";
 import GroupImg from "../../assests/about-us/group-image.svg";
-import Founder from "../../assests/about-us/Founder.svg";
+import Founder from "../../assests/about-us/founder.png";
 import Cofounder from "../../assests/about-us/Cofounder.svg";
 import Head from "../../assests/about-us/Head.svg";
 import LeadDev from "../../assests/about-us/LeadDev.svg";
-import Developer1 from "../../assests/about-us/Developer1.svg";
-import Developer2 from "../../assests/about-us/Developer2.svg";
-import Developer3 from "../../assests/about-us/Developer3.svg";
-import Developer4 from "../../assests/about-us/Developer4.svg";
-import Developer5 from "../../assests/about-us/Developer5.svg";
-import Investor from "../../assests/about-us/Investor.svg";
+import Oke from "../../assests/about-us/oke.png";
+import Pelumi from "../../assests/about-us/Pelumi.png";
+import Abims from "../../assests/about-us/Abims.png";
+import Falilat from "../../assests/about-us/Falilat.png";
+import Kevin from "../../assests/about-us/Kevin.png";
+import Jerry from "../../assests/about-us/jerry.png";
+import Billy from "../../assests/about-us/billy.png";
+import Yetunde from "../../assests/about-us/Yetunde.png";
+import Ezra from "../../assests/about-us/Ezra.png";
+import Marek from "../../assests/about-us/marek.png";
 import Image from "next/image";
 import Button from "../components/Button";
 import type { NextPage } from "next";
@@ -22,66 +26,76 @@ type Images = {
 const About: NextPage = () => {
   const images: Images[] = [
     {
-      name: 'Awosika Israel Ayodeji',
-      role: 'Founder, Program Manger',
+      name: "Awosika Israel Ayodeji",
+      role: "Founder, Program Manger",
       image: Founder,
     },
     {
-      name: 'Akinnusotu Temitayo Daniel',
-      role: 'Co-founder, Lead Dev/Mentor',
+      name: "Akinnusotu Temitayo Daniel",
+      role: "Co-founder, Lead Dev/Mentor",
       image: Cofounder,
     },
     {
-      name: 'Katangole Allan',
-      role: 'Head, Technical Training',
+      name: "Katangole Allan",
+      role: "Head, Technical Training",
       image: Head,
     },
     {
-      name: 'Jeremiah Noah',
-      role: 'Lead dev/ Mentor',
+      name: "Jeremiah Noah",
+      role: "Lead dev/ Mentor",
       image: LeadDev,
     },
     {
-      name: 'Oke Kehinde',
-      role: 'Developer',
-      image: Developer1,
+      name: "Oke Kehinde",
+      role: "Blockchain Developer/ Mentor",
+      image: Oke,
     },
     {
-      name: 'Fatolu Pelumi',
-      role: 'Developer',
-      image: Developer2,
+      name: "Fatolu Pelumi",
+      role: "Blockchain Developer/ Mentor",
+      image: Pelumi,
     },
     {
-      name: 'Abimbola Adebayo',
-      role: 'Devloper/ Mentor',
-      image: Developer3,
+      name: "Abimbola Adebayo",
+      role: "Blockchain Developer/ Mentor",
+      image: Abims,
     },
     {
-      name: 'Falilat Owolabi',
-      role: 'Developer',
-      image: Developer4,
+      name: "Falilat Owolabi",
+      role: "Blockchain Developer/ Mentor",
+      image: Falilat,
     },
     {
-      name: 'Ademola Kelvin',
-      role: 'Developer',
-      image: Developer5,
+      name: "Ademola Kelvin",
+      role: "Blockchain Developer/ Mentor",
+      image: Kevin,
     },
     {
-      name: 'Michael Jerry',
-      role: 'Community/ Social Media Lead',
-      image: Developer3,
+      name: "Michael Jerry",
+      role: "Community/ Social Media Lead",
+      image: Jerry,
     },
     {
-      name: 'Billy Luedtke',
-      role: 'Advisor & Angel investor',
-      image: Investor,
+      name: "Suleman U. Ezra",
+      role: "Lead Designer",
+      image: Ezra,
     },
     {
-      name: 'Ademola Kelvin',
-      role: 'Developer',
-      image: Developer5,
+      name: "Yetunde Ige",
+      role: "Project Manager",
+      image: Yetunde,
     },
-  ]
+    {
+      name: "Marek Laskowski, PhD",
+      role: "Advisor, Founder Blockchain.lab (York University). Founder Blockchain Hub. Vice Chair, UN/CEFACT (Methodology & Technology)",
+      image: Marek,
+    },
+    {
+      name: "Billy Luedtke",
+      role: "Advisor & Angel investor",
+      image: Billy,
+    },
+  ];
   return (
     <Fragment>
       <header className="flex flex-wrap w-[100%] lg:w-[80%] items-center justify-around  mt-12 mx-auto">
@@ -92,11 +106,11 @@ const About: NextPage = () => {
         <div className="w-[80%] md:w-[50%]">
           <h1 className="text-[2rem] font-bold mb-6 text-[#151515] dark:text-[#D0D0D0]">
             Hey! I'm Ayodeji, business developer, Blockchain Educator and
-            founder of Web 3 bridge.
+            founder of Web3bridge.
           </h1>
           <p className="text-[#737373]">
             If you've got a couple of minutes I'd love to share the story of how
-            web 3 bridge has grown as a bootstrapped startup. It's been an
+            web3bridge has grown as a bootstrapped startup. It's been an
             awesome journey and I couldn't have done it without the support of
             my team around me.
           </p>
@@ -143,9 +157,9 @@ const About: NextPage = () => {
             entry into the Web3 ecosystem.
           </p>
           <p className="mt-6 text-[#737373] dark:text-[#D0D0D0]">
-            And we take care of Accomodation Feeding and data expenses for all
+            And we take care of accomodation, feeding and data expenses for all
             our onsite participants during the program to make it easier for
-            them to learn
+            them to learn.
           </p>
         </div>
       </section>
@@ -153,10 +167,13 @@ const About: NextPage = () => {
         <h1 className="dark:text-[#D0D0D0] text-center mb-28 font-bold text-2xl md:text-[2rem] ml-8 my-12">
           Pioneered By Awesome Team
         </h1>
-        <div className=" flex flex-wrap w-full justify-around">
+        <div className=" flex flex-wrap w-full justify-around md:justify-start">
           {images.map((items, index) => {
             return (
-              <div key={index} className="w-30% text-center mb-11 sm:mb-24 text-white">
+              <div
+                key={index}
+                className=" w-[90%] sm:w-[45%] md:w-[30%] text-center mb-11 sm:mb-24  md:mr-[1.5rem] text-white"
+              >
                 <Image
                   key={index}
                   src={items?.image}
@@ -166,9 +183,9 @@ const About: NextPage = () => {
                 <h1 className="text-xl text-[#151515] dark:text-white font-bold">
                   {items?.name}
                 </h1>
-                <p className="text-[#A1A1A1]">{items?.role}</p>
+                <p className="text-[#A1A1A1] w-full">{items?.role}</p>
               </div>
-            )
+            );
           })}
         </div>
       </section>
@@ -176,4 +193,4 @@ const About: NextPage = () => {
   );
 };
 
-export default About
+export default About;
