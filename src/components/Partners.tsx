@@ -9,7 +9,7 @@ const Partners = () => {
         <h1 className="mb-6 font-secondary text-base dark:text-white10 text-center  text-xl font-semibold md:text-4xl ">
           We Collaborate with
           <span className="ml-3 text-primary">
-            200+ Leading tech giant companies
+            Leading tech giant companies
           </span>
         </h1>
         <p className="md:text-center font-primary text-white60 dark:text-white20 text-xl ">

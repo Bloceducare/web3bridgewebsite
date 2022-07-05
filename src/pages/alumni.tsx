@@ -17,7 +17,7 @@ const Alumni: NextPage = () => {
             JOIN OUR ALUMNI COMMUNITY
           </h2>
           <h1 className=" dark:text-[#D0D0D0] text-xl lg:text-3xl font-bold py-8 md:w-[70%]">
-            Welcome to Web 3 Bridge Alumni Community Hub
+            Welcome to Web3Bridge Alumni Community Hub
           </h1>
           <p className="text-[#737373] md:w-[70%]">
             The community is home to hundreds of thousands of developers,
@@ -35,7 +35,7 @@ const Alumni: NextPage = () => {
         </h1>
         <p className="mb-20 mx-auto text-[#737373] w-full sm:w-[80%] md:w-[50%] text-sm sm:text-[1rem]">
           Participants of our Web3Bridge program will be participating in Catch
-          the flag; where they will be hacking a smart contract with rewards
+          the flag; where they will be hacking a smart contract with rewards.
         </p>
         <Image src={GroupImg} />
         <div className="w-full flex justify-center mt-4">
@@ -50,8 +50,7 @@ const Alumni: NextPage = () => {
           Past Mentees of our cohorts
         </h1>
         <h2 className="text-[#737373] px-4 mb-24">
-          Aliquam et in sit libero nisl ultrices morbi. Curabitur ipsum maecenas
-          aliquam commodo.
+          Take a sneak peak at our amazing  students who have gone through our trainings to become world-class Blockchain Developers.
         </h2>
         <div className="flex flex-wrap items-start justify-around ">
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
@@ -75,7 +74,7 @@ const Alumni: NextPage = () => {
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={Emma} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-              Olayinka Ademola
+            Emmanuel Chinatuka
             </h1>
             <p className="text-[#A1A1A1] text-sm">Cohort IV, Web 2</p>
             <p className="text-[#A1A1A1] text-sm"> Mentee (2021)</p>
@@ -92,9 +91,7 @@ const Alumni: NextPage = () => {
           Join our Alumni Club
         </h1>
         <p className="sm:w-[50%] mx-auto mb-12 text-[#737373]">
-          Tellus id nunc vitae pellentesque ornare. Facilisis dignissim nisl hac
-          nascetur facilisis in nisi. Nullam maecenas risus adipiscing nulla
-          integer eget viverra.
+        You can also join our Alumni club by participating in our cohort based trainings for Web3 and Web2.
         </p>
         <Button
           class="text-white bg-[#151515] dark:bg-[#FA0101] dark:border-[#FA0101] px-6 py-2"

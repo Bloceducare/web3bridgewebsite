@@ -18,7 +18,7 @@ const Layout = ({ children }: Props) => {
         <link rel="shortcut icon" href="favicon.png" />
         <meta property="og:url" content="" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="web3bride" />
+        <meta property="og:title" content="web3bridge" />
         <meta property="og:description" content="Welcome to web3bridge" />
         <meta property="og:image" content="" />
 

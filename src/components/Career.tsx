@@ -85,8 +85,8 @@ const Career = () => {
           </h2>
           <p className="font-primary md:text-xl text-white60 font-normal mb-10">
             Want to get started in coding but don’t know where to start, You can
-            get all the needed trainigs to make you a proficient Web Developer
-            through our 6 months handson training on web2 technologies.
+            get all the needed trainings to make you a proficient Web Developer
+            through our 6 months hands-on training on web2 technologies.
           </p>
           <div className="">
             <p className="flex items-center mb-5">
@@ -96,7 +96,7 @@ const Career = () => {
               </span>
             </p>
             <p className="font-primary font-normal, text-white50 text-xl mb-7">
-              Full Time: 6 Months
+              Full Time: 23 weeks
             </p>
             <p className="flex items-center mb-7">
               <img src="./location.PNG" alt="location" />

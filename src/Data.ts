@@ -33,16 +33,16 @@ export const missionData = [
       icon: './mission.png',
       title: 'Mission.',
       text:
-        'We are on the journey to discover web3 passion, create an African Web3 community, train in a collaborative and supportive environment and in turn develop Africa’s Web3 economy',
+        'We are on the journey to discover web3 passion, create an African Web3 community, train in a collaborative and supportive environment and in turn develop Africa’s Web3 economy.',
     },
     {
       icon: './stats.png',
       title: 'Statistics.',
-      text: `We have intorduced  880 students Web3 and 1808 trained in web2 technologies.
+      text: `We have introduced  880 students Web3 and 1808 trained in web2 technologies.
 
       Graduated: 150+
       
-      Dapps built: 7+`,
+      Dapps built: 7+.`,
     },
     {
       icon: './tools.png',
@@ -92,7 +92,7 @@ export const missionData = [
     },
     {
       bullet: './circle.png',
-      courseTitle: 'Foundry',
+      courseTitle: 'Ethersjs',
     },
     {
       bullet: './circle.png',
@@ -149,21 +149,21 @@ export const missionData = [
       text:
         'It is an awesome program that makes one to focus on learning industry standard BlockchainDevelopment, Without having to worry about basic amenities. I had an awesome experience during the cohort V.',
       name: 'John Odey',
-      position: 'Blockchain Developer, Lagos',
+      position: 'Blockchain Developer, Lagos.',
       image: 'john.png',
     },
     {
       text:
         'Web3bridge Blockchain Developer Training is an amazing program, it contributed 100% to professional career as a Blockchain Developer.',
       name: 'Ifeanyi Uzor',
-      position: 'Blockchain Developer, Lagos',
+      position: 'Blockchain Developer, Lagos.',
       image: 'web3cohort.png',
     },
     {
       text:
         'Web3bridge is the best place to start your web3 journey.',
       name: 'Eniola Agbola',
-      position: 'Blockchain Developer, Lagos',
+      position: 'Blockchain Developer, Lagos.',
       image: 'eniola.png',
     },
   ]
@@ -172,7 +172,7 @@ export const missionData = [
   
     rows: [
         {
-            title: "Criteria ",
+            title: "FAQs  ",
             content: `To be a part of our cohort based programs you will have to go through some rounds of technical test which helps us ascertain that you have what it takes to be dedicated  to complete the  program`,
         },
         {
@@ -181,13 +181,13 @@ export const missionData = [
                 "It’s absolutely free to join our cohort based  trainings, this is to help us lower entry barriers and make it easy for you to be a world class Blockchain Developer.",
         },
         {
-            title: "Whats the duration of a cohort",
+            title: "Whats the duration of a cohort?",
             content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more.`,
         },
         
       {
-        title: "Can I Join Virtually",
-        content: `Each cohort is scheduled to  run for 16weeks, covering different areas of Blockhain Development which includes Blockchain Architecture, Smart contract Development, Security, and lots more `,
+        title: "Can I Join Virtually?",
+        content: `Definitely you can, our training model  enables anyone from any part of the world to learn with ease, as we support both onsite and Virtual Learnng for the Program.  `,
     },
   
     ],
