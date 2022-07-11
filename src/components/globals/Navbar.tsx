@@ -9,11 +9,14 @@ import { menuItems } from '../../Data'
 import { FaTimes } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 
 const Navbar = () => {
   const [display, setDisplay] = useState<any>(true)
   const [isLight, setIsLight] = useState<boolean>(false)
   const { theme, setTheme } = useContext(ThemeContext)
+  const router = useRouter()
+
   useEffect(() => {
     if (theme === 'light') {
       setIsLight(true)

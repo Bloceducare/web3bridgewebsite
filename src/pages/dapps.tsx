@@ -60,7 +60,7 @@ const Dapps: NextPage = () => {
               type="background"
               content="Explore Dapps"
               // link="dapps"
-              href=""
+              href="dapps"
             />
             <Button
               class="w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"

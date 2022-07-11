@@ -40,7 +40,7 @@ const HeroSection = () => {
         </div>
         {/* Hero image */}
         <div className="w-full md:w-6/12  lg:w-4/12 ">
-          <img className="object-cover" src={currentImage} alt="hero image" />
+          <img className="w-[100%]" src={currentImage} alt="hero image" />
         </div>
       </div>
     </div>
