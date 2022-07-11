@@ -54,6 +54,7 @@ export const missionData = [
   export const partnerIcons = [
     './eth.png',
     './polygon.png',
+    './polygon2.png',
     './hydro.png',
     './nahmii.png',
     './Epns.png',

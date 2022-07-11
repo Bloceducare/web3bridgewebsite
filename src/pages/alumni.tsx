@@ -4,9 +4,9 @@ import HeaderImg from '../../assests/alumni/alumnihero.png'
 import GroupImg from '../../assests/alumni/group-image.svg'
 import Button from '../components/Button'
 import type { NextPage } from 'next'
-import John from "../../assests/alumni/john.png"
-import Blessing from "../../assests/alumni/blessing.png"
-import Emma from "../../assests/alumni/emma.png"
+import John from '../../assests/alumni/john.png'
+import Blessing from '../../assests/alumni/blessing.png'
+import Emma from '../../assests/alumni/emma.png'
 
 const Alumni: NextPage = () => {
   return (
@@ -50,17 +50,14 @@ const Alumni: NextPage = () => {
           Past Mentees of our cohorts
         </h1>
         <h2 className="text-[#737373] px-4 mb-24">
-          Take a sneak peak at our amazing  students who have gone through our trainings to become world-class Blockchain Developers.
+          Take a sneak peak at our amazing students who have gone through our
+          trainings to become world-class Blockchain Developers.
         </h2>
         <div className="flex flex-wrap items-start justify-around ">
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={John} />
-            <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-              John Odey
-            </h1>
-            <p className="text-[#A1A1A1] text-sm">
-              Web3 Cohort V 
-            </p>
+            <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">John Odey</h1>
+            <p className="text-[#A1A1A1] text-sm">Web3 Cohort V</p>
             <p className="text-[#A1A1A1] text-sm">Student(2021)</p>
           </div>
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
@@ -74,13 +71,14 @@ const Alumni: NextPage = () => {
           <div className="text-center w-[90%] sm:w-[70%] mb-12 md:w-[30%]">
             <Image src={Emma} />
             <h1 className="font-bold mb-2 dark:text-[#D0D0D0]">
-            Emmanuel Chinatuka
+              Emmanuel Chinatuka
             </h1>
             <p className="text-[#A1A1A1] text-sm">Cohort IV, Web 2</p>
             <p className="text-[#A1A1A1] text-sm"> Mentee (2021)</p>
           </div>
         </div>
         <Button
+          href=""
           class="mx-auto block px-10 py-1 mt-12 dark:text-[#D0D0D0] border-[#151515] dark:border-[#D0D0D0]"
           type="transparent"
           content="View More"
@@ -91,9 +89,11 @@ const Alumni: NextPage = () => {
           Join our Alumni Club
         </h1>
         <p className="sm:w-[50%] mx-auto mb-12 text-[#737373]">
-        You can also join our Alumni club by participating in our cohort based trainings for Web3 and Web2.
+          You can also join our Alumni club by participating in our cohort based
+          trainings for Web3 and Web2.
         </p>
         <Button
+          href=""
           class="text-white bg-[#151515] dark:bg-[#FA0101] dark:border-[#FA0101] px-6 py-2"
           type="transparent"
           content="Become a member"

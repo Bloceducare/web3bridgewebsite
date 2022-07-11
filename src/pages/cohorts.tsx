@@ -61,6 +61,7 @@ const Cohorts: NextPage = () => {
         <p className="text-base dark:text-white10">230+ Students enrolled</p>
       </div>
       <Button
+        href=""
         class="py-2 px-12 mx-auto block mt-4 mb-40"
         content="Enroll Now"
         type="background"

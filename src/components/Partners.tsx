@@ -34,7 +34,9 @@ const Partners = () => {
             return (
               <div
                 key={index}
-                className=" w-12 h-10 my-6 mx-5 md:w-44 md:h-16 md:my-10 md:mx-22 xl:mx-28"
+                className={` ${index === 1 ? 'hidden dark:block' : ''} 
+                ${index === 2 ? 'block dark:hidden' : ''} 
+                w-12 h-10 my-6 mx-5 md:w-44 md:h-16 md:my-10 md:mx-22 xl:mx-28`}
               >
                 <img src={icon} alt="partner icons" />
               </div>
