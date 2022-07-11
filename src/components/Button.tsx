@@ -6,13 +6,14 @@ type Props = {
   type: 'background' | 'transparent'
   content: string
   clicked?: (e: any) => void
-  link?: string
-  href?: string
+  // link?: string
+  href: URL | string
 }
 
+// spy={true} smooth={true}
 const Button = (props: Props) => {
   return (
-    <Link href={props.href} to={props.link} spy={true} smooth={true}>
+    <Link href={props.href}>
       <motion.button
         whileTap={{ scale: 0.5 }}
         transition={{ duration: 0.4 }}

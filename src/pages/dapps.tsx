@@ -59,14 +59,14 @@ const Dapps: NextPage = () => {
               class=" w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] mb-8 sm:mb-0"
               type="background"
               content="Explore Dapps"
-              link="dapps"
+              // link="dapps"
               href=""
             />
             <Button
               class="w-full sm:w-auto py-3 px-10 text-xs sm:text-[1rem] border-primary text-primary sm:ml-6"
               type="transparent"
               content="Build Software"
-              link=""
+              // link=""
               href=""
             />
           </div>
