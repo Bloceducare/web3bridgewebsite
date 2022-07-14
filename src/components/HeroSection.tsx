@@ -32,9 +32,11 @@ const HeroSection = () => {
               />
             </div> */}
             <div className="">
-              <button className="w-full bg-primary  text-white font-base md:w-32 py-3 border-2 border-primary">
-                Learn More
+              <a href="https://forms.gle/pc8d31R99fFp4Dzu5" target="_blank" rel="noopener noreferrer">
+              <button className="w-full bg-primary capitalize rounded-sm  text-white font-base md:w-32 py-3 border-2 border-primary">
+                Join wait list
               </button>
+              </a>
             </div>
           </div>
         </div>

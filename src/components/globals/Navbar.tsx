@@ -48,19 +48,23 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
-            <motion.button
+            {/* <motion.button
               whileTap={{ scale: 0.1 }}
               transition={{ duration: 0.6 }}
               className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary"
             >
               Sign in
-            </motion.button>
+            </motion.button> */}
             <motion.button
               whileTap={{ scale: 0.1 }}
               transition={{ duration: 0.6 }}
-              className=" hidden md:block px-1 py-0 xl:block bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
+              className=" hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
             >
-              Register
+               <a href="https://forms.gle/pc8d31R99fFp4Dzu5" target="_blank" rel="noopener noreferrer">
+              <button className="rounde-lg">
+                Join wait list
+              </button>
+              </a>
             </motion.button>
             {isLight ? (
               <button

@@ -13,15 +13,17 @@ import Link from "next/link";
 const Footer = () => {
   return (
     <footer className="bg-base  w-full px-4 md:px-10 py-5">
-      <div className="w-[80%] ml-8 md:ml-auto ">
+      <div className="mb-12">
         <Image src={LogoDark} />
       </div>
-      <div className="w-full flex flex-wrap justify-center items-start mt-4 text-white">
-        <div className=" w-[80%] md:w-[25%] mr-auto ml-8 md:ml-0">
+      {/* <div className="w-full flex flex-wrap justify-center items-start mt-4 text-white"> */}
+      {/* <div className=" md:grid md:grid-cols-2 lg:grid lg:grid-cols-4 justify-center"> */}
+      <div className="flex p-2 justify-between flex-wrap gap-2">
+        <div className="">
           <p className="text-[1.2rem] md:text-[1rem] text-white mb-8">
             Support@web3bridge.com
           </p>
-          <div className="flex items-center w-full lg:w-[80%] justify-between mb-12">
+          <div className="flex items-center w-full space-x-4 mb-12">
             <Link href={"https://twitter.com/Web3Bridge"}>
               <a>
                 <TwitterIcon />
@@ -46,7 +48,7 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-        <div className="w-[60%] md:w-[20%]">
+        <div className="text-white">
           <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 text-left">
             Web3Bridge
           </h1>
@@ -73,7 +75,7 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div className="w-[60%]  md:w-[20%]">
+        <div className="text-white">
           <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">
             Support
           </h1>
@@ -100,7 +102,7 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div className="w-[60%] md:w-[20%]">
+        <div className="text-white">
           <h1 className="font-bold text-[1.5rem] md:text[1rem] mb-4 md:text-left">
             General
           </h1>
@@ -128,8 +130,8 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-      <p className="text-center text-white text-xs py-4 mt-10">
-        All rights reserved 2022
+      <p className="text-center text-white font-bold text-md py-4 mt-10">
+        All rights reserved {new Date().getFullYear()}
       </p>
     </footer>
   );
