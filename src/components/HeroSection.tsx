@@ -32,11 +32,11 @@ const HeroSection = () => {
               />
             </div> */}
             <div className="">
-              <a href="https://forms.gle/pc8d31R99fFp4Dzu5" target="_blank" rel="noopener noreferrer">
-              <button className="w-full bg-primary capitalize rounded-sm  text-white font-base md:w-32 py-3 border-2 border-primary">
+              <button className="w-full bg-primary  rounded-sm  text-white font-base md:w-32 py-3 border-2 border-primary">
+              <a href="https://forms.gle/pc8d31R99fFp4Dzu5" className='capitalize' target="_blank" rel="noopener noreferrer">
                 Join wait list
-              </button>
               </a>
+              </button>
             </div>
           </div>
         </div>
