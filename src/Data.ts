@@ -10,6 +10,10 @@ export const menuItems = [
     link: '/about-us',
   },
   {
+    menu: 'Team',
+    link: '/team',
+  },
+  {
     menu: 'Cohorts',
     link: '/cohorts',
   },

@@ -40,7 +40,7 @@ const Navbar = () => {
               return (
                 <div key={index} className="text-base hover:text-primary">
                   <Link href={menuItem.link}>
-                    <a className="dark:text-white">{menuItem.menu}</a>
+                    <a className={`dark:text-white ${router.pathname == menuItem.link ? "text-primary dark:text-primary" : ""}`}>{menuItem.menu}</a>
                   </Link>
                 </div>
               );
@@ -132,7 +132,7 @@ const Navbar = () => {
                 className="w-full pl-10 py-3 text-base dark:text-white hover:text-primary items-start"
               >
                 <Link href={menuItem.link}>
-                  <a>{menuItem.menu}</a>
+                  <a className={`dark:text-white ${router.pathname == menuItem.link ? "text-primary dark:text-primary" : ""}`}>{menuItem.menu}</a>
                 </Link>
               </div>
             );
