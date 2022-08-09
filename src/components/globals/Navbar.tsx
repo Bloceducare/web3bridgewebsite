@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ThemeContext } from "../ThemeContext";
 import Link from "next/link";
 import Image from "next/image";
-import DarkLogo from "../../../assests/logo-dark.svg";
+import DarkLogo from "../../../assests/logo-dark.png";
 import LightLogo from "../../../assests/logo-light.svg";
 import { DarkModeIcon, LightModeIcon } from "./icons";
 import { menuItems } from "../../Data";
@@ -28,12 +28,15 @@ const Navbar = () => {
     <>
       <nav className="relative w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex flex-col items-center justify-center dark:bg-base">
         <div className="z-55  w-11/12  flex items-center justify-between md:w-full md:p-4 lg:w-11/12 lg:p-0">
-          {/* Logo */}
+          <div className="w-[140px]">
+               {/* Logo */}
           {isLight ? (
             <Image src={LightLogo} className="" />
           ) : (
             <Image src={DarkLogo} />
           )}
+          </div>
+       
           {/* Menu Items */}
           <div className="hidden md:space-x-7 lg:space-x-10 md:flex  ">
             {menuItems.map((menuItem, index) => {
