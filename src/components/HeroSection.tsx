@@ -24,7 +24,7 @@ const HeroSection = () => {
             Development industry by receiving training from industry experts
             through our 16 weeks hands on bootcamp.
           </p>
-          <div className="md:flex w-full md:max-w-xl justify-between">
+          <div className="xl:flex w-full md:max-w-xl justify-between">
             {/* <div className="w-full">
               <input
                 className="pl-2 py-3 w-full md:w-11/12  border-2 border-white10 mb-5 md:mb-0"
@@ -32,9 +32,16 @@ const HeroSection = () => {
               />
             </div> */}
             <div className="">
-              <button className="w-full bg-primary  rounded-sm  text-white font-base md:w-32 py-3 border-2 border-primary">
-              <a href="https://forms.gle/pc8d31R99fFp4Dzu5" className='capitalize' target="_blank" rel="noopener noreferrer">
-                Join wait list
+              <button className="w-full mb-5 bg-primary mr-2 rounded-sm  text-white font-base xl:w-52 py-3 border-2 border-primary">
+              <a href="http://nft.web3bridge.com/ " className='capitalize' target="_blank" rel="noopener noreferrer">
+              Web3bridge Nft
+              </a>
+              </button>
+            </div>
+            <div className="">
+              <button className="w-full bg-secondary  rounded-sm  text-secondary font-base xl:w-52 py-3 border-2  dark:text-primary dark:bg-white dark:border-white">
+              <a href="https://event.web3bridge.com/" className='capitalize' target="_blank" rel="noopener noreferrer">
+              Web3Lagos Conference
               </a>
               </button>
             </div>

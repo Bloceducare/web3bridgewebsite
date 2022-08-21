@@ -51,13 +51,7 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex  space-x-6">
-            {/* <motion.button
-              whileTap={{ scale: 0.1 }}
-              transition={{ duration: 0.6 }}
-              className=" hidden lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-1 border-2 border-primary"
-            >
-              Sign in
-            </motion.button> */}
+          
             <motion.button
               whileTap={{ scale: 0.1 }}
               transition={{ duration: 0.6 }}
@@ -107,14 +101,16 @@ const Navbar = () => {
         <div
           className={` ${
             display ? "w-0 scale-x-0" : "w-full z-10"
-          } absolute left-0 top-0  h-[100vh] md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
+          } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
         >
           <div className="w-full flex justify-between px-5 py-3 shadow-md">
+            <div className="w-[140px]">
             {isLight ? (
-              <Image src={LightLogo} className="" />
+              <Image src={LightLogo} className="w-[140px]" />
             ) : (
               <Image src={DarkLogo} />
             )}
+            </div>
             <button
               onClick={() => {
                 setDisplay((display: any) => !display);
@@ -162,7 +158,27 @@ const Navbar = () => {
             </div>
           </div>
           <div className="w-full py-14 px-10 gap-6 flex flex-col">
-            <button className="rounde-sm lg:block bg-secondary text-primary font-base  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
+            <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
+              <a
+                href="http://nft.web3bridge.com/"
+                className="capitalize"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Web3bridge Nft
+              </a>
+            </button>
+            <button className="rounde-sm lg:block bg-secondary text-primary font-base lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary dark:border-white dark:bg-white dark:text-base">
+              <a
+                href="https://event.web3bridge.com/"
+                className="capitalize"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Web3Lagos Conference
+              </a>
+            </button>
+            <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
                 href="https://forms.gle/pc8d31R99fFp4Dzu5"
                 className="capitalize"
@@ -173,6 +189,7 @@ const Navbar = () => {
               </a>
             </button>
           </div>
+          
         </div>
       </nav>
     </>
