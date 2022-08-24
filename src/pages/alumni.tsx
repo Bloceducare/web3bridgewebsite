@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react'
 import Image from 'next/image'
-import HeaderImg from '../../assests/alumni/alumnihero.png'
-import GroupImg from '../../assests/alumni/group-image.svg'
+import HeaderImg from '../../assets/alumni/alumnihero.png'
+import GroupImg from '../../assets/alumni/group-image.svg'
 import Button from '../components/Button'
 import type { NextPage } from 'next'
-import John from '../../assests/alumni/john.png'
-import Blessing from '../../assests/alumni/blessing.png'
-import Emma from '../../assests/alumni/emma.png'
+import John from '../../assets/alumni/john.png'
+import Blessing from '../../assets/alumni/blessing.png'
+import Emma from '../../assets/alumni/emma.png'
 
 const Alumni: NextPage = () => {
   return (

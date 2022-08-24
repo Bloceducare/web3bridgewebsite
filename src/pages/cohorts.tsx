@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-import CohortsImage from '../../assests/cohorts/cohorts.svg'
-import ProfileImg from '../../assests/cohorts/profile.svg'
+import CohortsImage from '../../assets/cohorts/cohorts.svg'
+import ProfileImg from '../../assets/cohorts/profile.svg'
 import Button from '../components/Button'
 import type { NextPage } from 'next'
 

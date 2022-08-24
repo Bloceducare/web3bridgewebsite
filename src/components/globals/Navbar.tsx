@@ -1,23 +1,23 @@
-import React, { useState, useContext, useEffect } from "react";
+import  { useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { ThemeContext } from "../ThemeContext";
 import Link from "next/link";
 import Image from "next/image";
-import DarkLogo from "../../../assests/logo-dark.png";
-import LightLogo from "../../../assests/logo-light.svg";
+import DarkLogo from "../../../assets/logo-dark.png";
+import LightLogo from "../../../assets/logo-light.svg";
 import { DarkModeIcon, LightModeIcon } from "./icons";
 import { menuItems } from "../../Data";
 import { FaTimes } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
-const Navbar = () => {
+const Navbar = () => {  
   const [display, setDisplay] = useState<any>(true);
   const [isLight, setIsLight] = useState<boolean>(false);
   const { theme, setTheme } = useContext(ThemeContext);
   const router = useRouter();
 
   useEffect(() => {
+    
     if (theme === "light") {
       setIsLight(true);
     } else {
@@ -31,9 +31,9 @@ const Navbar = () => {
           <div className="w-[140px]">
                {/* Logo */}
           {isLight ? (
-            <Image src={LightLogo} className="" />
+            <Image src={LightLogo} className=""  placeholder="blur" />
           ) : (
-            <Image src={DarkLogo} />
+            <Image src={DarkLogo}  placeholder="blur" />
           )}
           </div>
        
@@ -50,14 +50,9 @@ const Navbar = () => {
             })}
           </div>
           {/* Buttons */}
-          <div className="flex  space-x-6">
-          
-            <motion.button
-              whileTap={{ scale: 0.1 }}
-              transition={{ duration: 0.6 }}
-              className=" hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
-            >
-              <button className="rounde-lg">
+          <div className="flex  space-x-6">         
+         
+              <button className="rounde-lg hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
                 <a
                   href="https://forms.gle/pc8d31R99fFp4Dzu5"
                   className="capitalize"
@@ -67,7 +62,7 @@ const Navbar = () => {
                   Join wait list
                 </a>
               </button>
-            </motion.button>
+         
             {isLight ? (
               <button
                 className="hidden md:block"
@@ -108,7 +103,7 @@ const Navbar = () => {
             {isLight ? (
               <Image src={LightLogo} className="w-[140px]" />
             ) : (
-              <Image src={DarkLogo} />
+              <Image src={DarkLogo}  />
             )}
             </div>
             <button

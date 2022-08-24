@@ -1,27 +1,27 @@
-import Head from 'next/head'
-import Navbar from './Navbar'
-import React, { ReactNode } from 'react'
-import Footer from './Footer'
-import Background from '../Background'
-import TopHeader from './TopHeader'
-import { AnimatePresence } from 'framer-motion'
+/* eslint-disable @next/next/no-document-import-in-page */
+// pages/_document.js
+import { Head, Html, Main, NextScript } from 'next/document'
 
-interface Props {
-  children?: ReactNode
-  // any props that come into the component
-}
-const Layout = ({ children }: Props) => {
+const APP_NAME = 'Web3Bridge'
+const APP_DESCRIPTION = 'We are Building a Sustainable web3 community in Africa'
+
+export default function Document() {
   return (
-    <>
+    <Html>
       <Head>
-        <title>Web3bridge</title>
-        {/* <link rel="shortcut icon" href="favicon.png" />
+        <meta name="application-name" content={APP_NAME} />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content={APP_NAME} />
+        <meta name="description" content={APP_DESCRIPTION} />
+
         <meta property="og:url" content="" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="web3bridge" />
         <meta property="og:description" content="Welcome to web3bridge" />
         <meta property="og:image" content="" />
 
+        <link rel="shortcut icon" href="favicon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
@@ -46,18 +46,14 @@ const Layout = ({ children }: Props) => {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-        <link rel="manifest" href="/site.webmanifest" /> */}
+        <link rel="manifest" href="/site.webmanifest" />
+
+
       </Head>
-      <AnimatePresence>
-        <Background>
-          <TopHeader />
-          <Navbar />
-          {children}
-          <Footer />
-        </Background>
-      </AnimatePresence>
-    </>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
   )
 }
-
-export default Layout

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { images } from '../Data'
 
 const HeroSection = () => {
-  const [currentImage, setCurrentImage] = useState<any>(null)
+  const [currentImage, setCurrentImage] = useState<any>(images[0])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -49,7 +50,15 @@ const HeroSection = () => {
         </div>
         {/* Hero image */}
         <div className="w-full md:w-6/12  lg:w-4/12 ">
-          <img className="w-[100%]" src={currentImage} alt="hero image" />
+        <Image
+                        src={currentImage}
+                        alt="Profile"
+                        priority={true}
+                        width={400}
+                        height={400}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRm knyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                    />
         </div>
       </div>
     </div>

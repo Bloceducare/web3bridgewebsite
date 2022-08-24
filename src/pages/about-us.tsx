@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
-import HeaderImg from '../../assests/about-us/about-header-image.svg'
-import GroupImg from '../../assests/about-us/group-image.svg'
+import HeaderImg from '@assets/about-us/about-header-image.svg'
+import GroupImg from '../../assets/about-us/group-image.svg'
 import Image from 'next/image'
 import type { NextPage } from 'next'
 type Images = {
