@@ -29,7 +29,7 @@ const TopHeader = () => {
     <div>
       <div className="bg-base dark:bg-primary flex p-3 justify-center items-center">
         <div className=" px-5 text-sm mr-4 font-normal font-secondary text-white text-center ">
-          🎉Free: Registration for the cohort VIII be live soon
+          🎉Free: Registration for the cohort VIII be live in
           <span className="block text-center  mt-2 text-xl text-white10">
           <Countdown date={daysToMiliseconds(dayToCountdown)} />
           </span>
