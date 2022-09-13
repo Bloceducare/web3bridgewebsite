@@ -16,7 +16,6 @@ specifiers:
   postcss: ^8.4.14
   react: 18.1.0
   react-countdown: ^2.3.2
-  react-date-countdown-timer: ^1.1.0
   react-dom: 18.1.0
   react-faq-component: ^1.3.3
   react-fast-marquee: ^1.3.2
@@ -32,7 +31,6 @@ dependencies:
   next-theme: 0.1.5_2mgcgz5qhsdxw4fgpqzqeafmkq
   react: 18.1.0
   react-countdown: 2.3.2_ef5jwxihqo6n7gxfmzogljlgcm
-  react-date-countdown-timer: 1.1.0
   react-dom: 18.1.0_react@18.1.0
   react-faq-component: 1.3.4_ef5jwxihqo6n7gxfmzogljlgcm
   react-fast-marquee: 1.3.5_ef5jwxihqo6n7gxfmzogljlgcm
@@ -2013,13 +2011,6 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
-  /react-date-countdown-timer/1.1.0:
-    resolution: {integrity: sha512-VoGxLvvR9zdRMiGRnEMTObp2xFzo65+mhOl5Jueio0zZ/7Vc2ntNA5xFsRXy4KMyYR9AGuAWhlEOAfiFmg5sbw==}
-    dependencies:
-      prop-types: 15.8.1
-      react: 16.14.0
-    dev: false
-
   /react-dom/18.1.0_react@18.1.0:
     resolution: {integrity: sha512-fU1Txz7Budmvamp7bshe4Zi32d0ll7ect+ccxNu9FlObT605GOEB8BfO4tmRJ39R5Zj831VCpvQ05QPBW5yb+w==}
     peerDependencies:
@@ -2083,15 +2074,6 @@ packages:
       clsx: 1.2.1
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-    dev: false
-
-  /react/16.14.0:
-    resolution: {integrity: sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      prop-types: 15.8.1
     dev: false
 
   /react/18.1.0:
