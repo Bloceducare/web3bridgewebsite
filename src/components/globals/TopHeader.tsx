@@ -3,9 +3,6 @@ import { ArrowRight } from './icons'
 import { motion } from 'framer-motion'
 import Countdown from 'react-countdown';
 
-// days to miliseconds
-const dayToCountdown = 5
-const daysToMiliseconds = (days: number) => days * 24 * 60 * 60 * 1000 + Date.now()  + 61200000
 
 const TopHeader = () => {
   return (
@@ -31,7 +28,11 @@ const TopHeader = () => {
         <div className=" px-5 text-sm mr-4 font-normal font-secondary text-white text-center ">
           🎉Free: Registration for the cohort VIII be live in
           <span className="block text-center  mt-2 text-xl text-white10">
-          <Countdown date={daysToMiliseconds(dayToCountdown)} />
+          {/* 1663606804000 -> 
+          Timestamp in milliseconds - 1663606804000
+          Monday, September 19, 2022 5:00:04 PM GMT+01:00
+          */}
+          <Countdown date={1663606804000} />
           </span>
           
           </div>
