@@ -54,7 +54,7 @@ const Navbar = () => {
          
               <Link href='/cohort-registration' >
                 <a className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
-              Join Wait List
+              Register for cohort VIII
                 </a>
                  </Link>
               {/* <button className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
@@ -181,7 +181,7 @@ const Navbar = () => {
             </button>
             <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
-                href="https://forms.gle/pc8d31R99fFp4Dzu5"
+                href="/cohort-registration"
                 className="capitalize"
                 target="_blank"
                 rel="noopener noreferrer"
