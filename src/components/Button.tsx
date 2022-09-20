@@ -7,13 +7,13 @@ type Props = {
   content: string
   clicked?: (e: any) => void
   // link?: string
-  href: URL | string
+  href?: URL | string
 }
 
 // spy={true} smooth={true}
 const Button = (props: Props) => {
   return (
-    <Link href={props.href}>
+    <Link href={props.href ?? ""}>
       <motion.button
         whileTap={{ scale: 0.5 }}
         transition={{ duration: 0.4 }}

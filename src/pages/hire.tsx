@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Input from '../components/Input'
 import { DropDown } from '../components/globals/icons'
 import Image from 'next/image'
-import HireImage from '../../assests/hire/illustration.svg'
+import HireImage from '../../assets/hire/illustration.svg'
 import type { NextPage } from 'next'
 import Button from '../components/Button'
 

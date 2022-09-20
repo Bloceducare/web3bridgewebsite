@@ -15,7 +15,7 @@ const Layout = ({ children }: Props) => {
     <>
       <Head>
         <title>Web3bridge</title>
-        <link rel="shortcut icon" href="favicon.png" />
+        {/* <link rel="shortcut icon" href="favicon.png" />
         <meta property="og:url" content="" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="web3bridge" />
@@ -46,7 +46,7 @@ const Layout = ({ children }: Props) => {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="manifest" href="/site.webmanifest" /> */}
       </Head>
       <AnimatePresence>
         <Background>

@@ -1,23 +1,23 @@
-import React, { useState, useContext, useEffect } from "react";
+import  { useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { ThemeContext } from "../ThemeContext";
 import Link from "next/link";
 import Image from "next/image";
-import DarkLogo from "../../../assests/logo-dark.png";
-import LightLogo from "../../../assests/logo-light.svg";
+import DarkLogo from "../../../assets/logo-dark.png";
+import LightLogo from "../../../assets/logo-light.svg";
 import { DarkModeIcon, LightModeIcon } from "./icons";
-import { menuItems } from "../../Data";
+import { blurUrl, menuItems } from "data";
 import { FaTimes } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
-const Navbar = () => {
+const Navbar = () => {  
   const [display, setDisplay] = useState<any>(true);
   const [isLight, setIsLight] = useState<boolean>(false);
   const { theme, setTheme } = useContext(ThemeContext);
   const router = useRouter();
 
   useEffect(() => {
+    
     if (theme === "light") {
       setIsLight(true);
     } else {
@@ -27,18 +27,18 @@ const Navbar = () => {
   return (
     <>
       <nav className="relative w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex flex-col items-center justify-center dark:bg-base">
-        <div className="z-55  w-11/12  flex items-center justify-between md:w-full md:p-4 lg:w-11/12 lg:p-0">
+        <div className="flex items-center justify-between w-11/12 z-55 md:w-full md:p-4 lg:w-11/12 lg:p-0">
           <div className="w-[140px]">
                {/* Logo */}
           {isLight ? (
-            <Image src={LightLogo} className="" />
+            <Image src={LightLogo} className=""  placeholder="blur" blurDataURL={blurUrl} />
           ) : (
-            <Image src={DarkLogo} />
+            <Image src={DarkLogo}  placeholder="blur" blurDataURL={blurUrl} />
           )}
           </div>
        
           {/* Menu Items */}
-          <div className="hidden md:space-x-7 lg:space-x-10 md:flex  ">
+          <div className="hidden md:space-x-7 lg:space-x-10 md:flex ">
             {menuItems.map((menuItem, index) => {
               return (
                 <div key={index} className="text-base hover:text-primary">
@@ -50,24 +50,25 @@ const Navbar = () => {
             })}
           </div>
           {/* Buttons */}
-          <div className="flex  space-x-6">
-          
-            <motion.button
-              whileTap={{ scale: 0.1 }}
-              transition={{ duration: 0.6 }}
-              className=" hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary "
-            >
-              <button className="rounde-lg">
+          <div className="flex space-x-6">         
+         
+              <Link href='/cohort-registration' >
+                <a className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+              Join Wait List
+                </a>
+                 </Link>
+              {/* <button className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+
                 <a
                   href="https://forms.gle/pc8d31R99fFp4Dzu5"
                   className="capitalize"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Join wait list
+                  Join wait list 
                 </a>
-              </button>
-            </motion.button>
+              </button> */}
+         
             {isLight ? (
               <button
                 className="hidden md:block"
@@ -91,7 +92,7 @@ const Navbar = () => {
                 setDisplay((display: any) => !display);
               }}
               id="menu-btn"
-              className="block mb-3 hamburger md:hidden focus:outline-none  "
+              className="block mb-3 hamburger md:hidden focus:outline-none "
             >
               <GiHamburgerMenu className="dark:text-white" size={30} />
             </button>
@@ -103,19 +104,19 @@ const Navbar = () => {
             display ? "w-0 scale-x-0" : "w-full z-10"
           } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
         >
-          <div className="w-full flex justify-between px-5 py-3 shadow-md">
+          <div className="flex justify-between w-full px-5 py-3 shadow-md">
             <div className="w-[140px]">
             {isLight ? (
               <Image src={LightLogo} className="w-[140px]" />
             ) : (
-              <Image src={DarkLogo} />
+              <Image src={DarkLogo}  />
             )}
             </div>
             <button
               onClick={() => {
                 setDisplay((display: any) => !display);
               }}
-              className=" focus:outline-none "
+              className=" focus:outline-none"
             >
               <FaTimes size={20} color="#FA0101" />
             </button>
@@ -128,7 +129,7 @@ const Navbar = () => {
                   setDisplay((display: any) => !display);
                 }}
                 key={index}
-                className="w-full pl-10 py-3 text-base dark:text-white hover:text-primary items-start"
+                className="items-start w-full py-3 pl-10 text-base dark:text-white hover:text-primary"
               >
                 <Link href={menuItem.link}>
                   <a className={`dark:text-white ${router.pathname == menuItem.link ? "text-primary dark:text-primary" : ""}`}>{menuItem.menu}</a>
@@ -136,7 +137,7 @@ const Navbar = () => {
               </div>
             );
           })}
-          <div className="w-full px-10 flex justify-between">
+          <div className="flex justify-between w-full px-10">
             <p className="text-base dark:text-white hover:text-primary">
               Theme
             </p>
@@ -157,7 +158,7 @@ const Navbar = () => {
               )}
             </div>
           </div>
-          <div className="w-full py-14 px-10 gap-6 flex flex-col">
+          <div className="flex flex-col w-full gap-6 px-10 py-14">
             <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
                 href="http://nft.web3bridge.com/"
