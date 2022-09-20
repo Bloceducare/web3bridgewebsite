@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react'
 import type { NextPage } from 'next'
-import HeroImg from '../../assests/dapps/hero.svg'
+import HeroImg from '../../assets/dapps/hero.svg'
 import Image from 'next/image'
 import Button from '../components/Button'
-import FinanceImg from '../../assests/dapps/finance.svg'
-import ArtImg from '../../assests/dapps/art.svg'
-import GamingImg from '../../assests/dapps/image.svg'
-import TechImg from '../../assests/dapps/tech.svg'
-import HydroImg from '../../assests/dapps/hydro.png'
-import ChainedImg from '../../assests/dapps/chained.png'
-import SafeKeepImg from '../../assests/dapps/safekeep.png'
+import FinanceImg from '../../assets/dapps/finance.svg'
+import ArtImg from '../../assets/dapps/art.svg'
+import GamingImg from '../../assets/dapps/image.svg'
+import TechImg from '../../assets/dapps/tech.svg'
+import HydroImg from '../../assets/dapps/hydro.png'
+import ChainedImg from '../../assets/dapps/chained.png'
+import SafeKeepImg from '../../assets/dapps/safekeep.png'
 
 const Dapps: NextPage = () => {
   const workingList = [

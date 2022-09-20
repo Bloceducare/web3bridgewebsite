@@ -2,6 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* input[type="file"] {
+  display: none;
+} */
+
+
+@layer components {
+  .cs-select .react-select__menu{
+    /* color:white!important; */
+    @apply bg-gray-800;
+    @apply text-white20;
+  }
+  .cs-select .react-select__control {
+    @apply bg-transparent;
+  }
+  
+  .cs-select .react-select__input {
+    @apply text-white20;
+  }
+  .cs-select .react-select__placeholder {
+    @apply text-white50;
+  }
+  
+  .cs-select .react-select__single-value {
+    @apply text-white60;
+  }
+
+  .drop-down-custom .country:hover .dial-code {
+    color: white!important;
+    }
+}
+
+
+.react-tel-input .country:hover {
+  background-color: #cbd5e058!important;
+}
+
+
+.react-tel-input .selected-flag {
+  background-color: transparent!important;
+}
+
+.react-tel-input .country-list .search {
+  background-color: transparent;
+}
+
+.react-tel-input .country-list .country.highlight{
+  background-color: #cbd5e058!important;
+}
+
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+    background-color: transparent !important;
+}
+
+input[type='radio'] {
+  opacity: 0;
+}
+
+
+input[type='radio']:focus + label, input[type='radio']:checked  + label {
+  background-color: #2d3035;
+  color: #fff;  
+  width: 95%;  
+}
+
+input[type='radio'] + label {
+   width: 95%;  
+  cursor: pointer;
+  margin-left: -0.5rem;
+  margin-right: 0.35rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  border:1px solid grey;
+}
+
+
+
+.loader div {
+  animation-duration: 0.5s;
+}
+
+.loader div:first-child {
+  animation-delay: 0.1s;
+}
+
+.loader div:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.loader div:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+
 .hamburger {
   cursor: pointer;
   width: 24px;

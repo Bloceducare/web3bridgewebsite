@@ -1,5 +1,5 @@
 import React from "react";
-import LogoDark from "../../../assests/logo-dark.svg";
+import LogoDark from "../../../assets/logo-dark.svg";
 import Image from "next/image";
 import {
   FacebookIcon,

@@ -1,6 +1,7 @@
 type Props = {
   type: string;
   placeholder: string;
+  
 };
 
 const Input = (props: Props) => {
