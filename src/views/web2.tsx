@@ -176,11 +176,11 @@ const onSubmit = async(value)=>{
               {typeof error === "string" ? error : error?.length ? <>
                 {error.map((err:string)=>(<p key={err}>{err}</p>))}
                </>
-               :""
+               :responsePaymentStatus === PaymentStatus.pending && "Payment pending, please try again"
                }
             </div>
-           
-             {responsePaymentStatus ? (
+               
+             
                 <>
                    {responsePaymentStatus ===PaymentStatus.success ? 
             <>
@@ -193,7 +193,7 @@ const onSubmit = async(value)=>{
                      
                        }
                  </>
-             ): ""}
+             
             </>
             )
           }

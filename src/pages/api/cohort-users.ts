@@ -42,13 +42,23 @@ router.use(async (req, res, next) => {
     .status(400)
     .send({ status: false, error: "Invalid track" });
   }
-  const { email, phone, currentTrack,name, profilePicture
+  const { email, phone, currentTrack,
   } = req.body;
   
   try {
     await connectDB();
     const [userExists, phoneExists] = await Promise.all([userDb.findOne({ email }), userDb.findOne({ phone})]);
 
+    if(phoneExists){
+      await closeDB();
+      return res
+        .status(423)
+        .send({ status: false, 
+          error: "This user already exists, click below to complete your payment",
+          paymentStatus:phoneExists.paymentStatus ?? PaymentStatus.pending
+         });
+    }
+   
     if (userExists) {
       await closeDB();
       return res
@@ -56,29 +66,23 @@ router.use(async (req, res, next) => {
         .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
     }
 
-    if(phoneExists){
-      await closeDB();
-      return res
-        .status(423)
-        .send({ status: false, error: "This phone number already exists" });
-    }
+
+
+
+
     
     // const {url} = await cloudinary.uploader.upload(profilePicture, {});
 
     const userData: any = new userDb({
       ...req.body,
       // profilePicture: url,
-    });
+    }, 
+    {
+      $set: {paymentStatus: PaymentStatus.pending}
+  });
 
     const { _doc } = await userData.save();
-    // if(currentTrack === "web3"){
-    //   await Promise.all([
-    //     // send sms
-    //     // send email
-    //     // sendEmail({email, currentTrack, name, file:"registration", }),
-    //     // sendSms({recipients:phone})
-    //   ])
-    // }
+
     await closeDB();
 
     return res.status(201).json({ message: currentTrack==='web3'? "Registration was successful, please check your email for further instructions" : "registration submitted successfully", ..._doc });
