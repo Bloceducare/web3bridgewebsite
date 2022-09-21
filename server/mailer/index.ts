@@ -2,14 +2,15 @@ import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
 import { mailSenderConfig } from "@server/config";
 import fs from "fs";
-import web3Email from "@server/template/web3.js";
-import web2Email from "@server/template/web2.js";
+import web3Email from "@server/template/web3";
+import web2Email from "@server/template/web2";
+import emailTemplate from "@server/template";
 
-const SibApiV3Sdk = require('sib-api-v3-typescript');
+// const SibApiV3Sdk = require('sib-api-v3-typescript');
  
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+// const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
-apiInstance.setApiKey(SibApiV3Sdk.AccountApiApiKeys.apiKey, process.env.SENDINBLUE_API_KEY);
+// apiInstance.setApiKey(SibApiV3Sdk.AccountApiApiKeys.apiKey, process.env.SENDINBLUE_API_KEY);
 
 
 interface ImailgunAuth {
@@ -40,7 +41,8 @@ async function wrappedSendMail(options: any) {
 
 // replace with emailTemplateEmailSource with your own template
 const template = (fileName, object)=>{
-  let template =object.currentTrack === "web2" ? web2Email : web3Email;
+  console.log(fileName, object)
+  let template =emailTemplate[fileName];
 
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
@@ -54,6 +56,7 @@ const template = (fileName, object)=>{
 
 export const sendEmail = async (data) => {
   const info = {...mailSenderConfig, ...data, };
+ 
  const final = {...info, to:info.email,  html:template(info.file, {name:data.name, currentTrack:data.currentTrack})}
 
 

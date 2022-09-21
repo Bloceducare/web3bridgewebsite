@@ -1,5 +1,5 @@
 
-const updateDb = async (req, res) => {}
+const upateDb = async (req, res) => {}
 
 
-export default updateDb
+export default upateDb
