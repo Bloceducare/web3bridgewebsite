@@ -1,11 +1,39 @@
-import { emailConfig } from "@server/config";
+import nodemailer from "nodemailer";
+import mg from "nodemailer-mailgun-transport";
+import { mailSenderConfig } from "@server/config";
 import fs from "fs";
+
 const SibApiV3Sdk = require('sib-api-v3-typescript');
  
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 apiInstance.setApiKey(SibApiV3Sdk.AccountApiApiKeys.apiKey, process.env.SENDINBLUE_API_KEY);
 
+
+interface ImailgunAuth {
+  auth: {
+    api_key: string | undefined;
+    domain: string | undefined;
+  };
+}
+const mailgunAuth = {
+  auth: {
+    api_key: process.env.MAILGUN_API_KEY as string,
+    domain: process.env.MAILGUN_DOMAIN as string,
+  },
+} as ImailgunAuth;
+
+async function wrappedSendMail(options: any) {
+  return new Promise((res, rej) => {
+    // @ts-ignore
+    let transport = nodemailer.createTransport(mg(mailgunAuth));
+    transport.sendMail(options, function (error, response) {
+      if (error) return rej(error);
+
+      return res(response);
+    });
+  });
+}
 
 const emailTemplateSource =(fileName)=> fs.readFileSync(
   `${process.cwd()}/server/template/${fileName}.html`,
@@ -24,37 +52,26 @@ const template = (fileName, object)=>{
 }
 
  
-const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); 
 
-export const sendEmail= async(data) => {
-  const {name:AppName, sender, replyTo} = emailConfig
-  const info = { ...data,}
-  const {
-    email,
-    name,
-    currentTrack,
-    file="",
-    subject="Cohort VIII Registration",
-    type
-  } = info
+export const sendEmail = async (data) => {
+  const info = {...mailSenderConfig, ...data, };
+ const final = {...info, to:info.email,  html:template(info.file, {name:data.name, currentTrack:data.currentTrack})}
 
-if(!file) return;
 
-sendSmtpEmail.subject = subject;
-sendSmtpEmail.htmlContent = template(file, {name, currentTrack});
-sendSmtpEmail.sender = {name:AppName,email:sender};
-sendSmtpEmail.to = [{email,name, type}];
-sendSmtpEmail.replyTo = {email:replyTo.email,name:replyTo.name};
-sendSmtpEmail.headers = {"Content-Type":"text/html; charset=iso-8859-1"};
-  try{
-    
-const data = await apiInstance.sendTransacEmail(sendSmtpEmail)
-// console.log('API called successfully. Returned data: ' + JSON.stringify(data));
-return data
+if(!final?.file) return;
+ 
+  try {
+    const response = await wrappedSendMail(final);
+    return {
+      status: true,
+      message: "Successfully sent email",
+      data: response,
+    };
+  } catch (e) {
+    console.log("error email", e);
+    return {
+      status: false,
+      error: e,
+    };
   }
-  catch(e){
-    console.log(e,'error sendin email')
-    return e
-  }
-
-}
+};

@@ -143,10 +143,10 @@ const onSubmit = async(value)=>{
     //   // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
     // }
     
-    // if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
+     if(response.status === 201){
       // @ts-ignore
       initializePaymentPayStack(onSuccessPayStack, onClose)
-    // }
+     }
     // setMessage("Successfully registered")
 
 }
