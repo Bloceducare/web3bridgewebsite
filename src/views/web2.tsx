@@ -146,7 +146,6 @@ const onSubmit = async(value)=>{
     //   initData()
     //   // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
     // }
-      console.log(list.includes(value.email), list, value.email)
      if(response.status === 201 ){
       
       if(list.includes(value.email)){

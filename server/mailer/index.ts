@@ -37,14 +37,9 @@ async function wrappedSendMail(options: any) {
   });
 }
 
-// const emailTemplateSource =(fileName)=> fs.readFileSync(
-//   `${process.cwd()}/server/template/${fileName}.html`,
-//   "utf8"
-// );
 
 // replace with emailTemplateEmailSource with your own template
 const template = (fileName, object)=>{
-  // let template = emailTemplateSource(fileName);
   let template =object.currentTrack === "web2" ? web2Email : web3Email;
 
   for (const key in object) {
