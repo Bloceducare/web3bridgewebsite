@@ -2,6 +2,8 @@ import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
 import { mailSenderConfig } from "@server/config";
 import fs from "fs";
+import web3Email from "@server/template/web3.js";
+import web2Email from "@server/template/web2.js";
 
 const SibApiV3Sdk = require('sib-api-v3-typescript');
  
@@ -35,14 +37,11 @@ async function wrappedSendMail(options: any) {
   });
 }
 
-const emailTemplateSource =(fileName)=> fs.readFileSync(
-  `${process.cwd()}/server/template/${fileName}.html`,
-  "utf8"
-);
 
 // replace with emailTemplateEmailSource with your own template
 const template = (fileName, object)=>{
-  let template = emailTemplateSource(fileName);
+  let template =object.currentTrack === "web2" ? web2Email : web3Email;
+
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       template =  template.replace(`{{${key}}}`, object[key])       
