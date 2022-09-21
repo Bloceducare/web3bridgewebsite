@@ -1,3 +1,4 @@
+import Button from '@components/commons/Button';
 import Select from 'react-select'
 // import AsyncSelect from 'react-select/async';
 // import CreatableSelect from 'react-select/creatable';
@@ -43,15 +44,19 @@ interface IProps {
     disabled?:boolean;
     label:string;
     isLoading?:boolean;
+    refetchOptions?:any;
+    optionsError?:boolean
     
  }
-const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=false, placeholder, disabled, isLoading, value, label}:IProps)=>{
-
+const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=false, placeholder, disabled, isLoading, value, label, refetchOptions, optionsError}:IProps)=>{
+  // console.log(errors)
     const err =
-    errors?.[name]?.type === "required" || !!errors?.[name]?.message;
-
+    errors?.[name]?.type === "required" || !!errors?.[name]?.value?.message;
+  console.log(err)
     return (
         <div className='relative '>
+          {/* {JSON.stringify(errors)} */}
+          {/* {err} */}
             <label
     
     className={`  relative  ${
@@ -63,8 +68,8 @@ const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=fal
 </label>
               <div>
               {err ? (
-        <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
-          {errors?.[name]?.message}
+        <span className="absolute top-0 right-0 text-sm text-red-500 capitalize label-text-alt">
+          {errors?.[name]?.value?.message}
         </span>
       )
       : ''
@@ -86,6 +91,15 @@ const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=fal
           value={value}
           {...field} 
       />
+   {
+    optionsError && (    <div className='mt-2'>
+        
+    <span className='dark:text-white20'>Error fetching {name}</span>
+    <Button type='button' className='p-1 px-1 ml-2' onClick={refetchOptions}>
+      try again</Button>
+
+</div>)
+   }
       </div>
     )
 }
