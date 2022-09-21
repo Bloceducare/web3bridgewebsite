@@ -115,7 +115,11 @@ const onSuccessPayStack = ({reference=""}):void => {
     //   }});
 
    
+    const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
+  
 const onSubmit = async(value)=>{
+
+
 
 //   if(!value.paymentMethod){
 //     alert("Please select a payment method")
@@ -142,8 +146,15 @@ const onSubmit = async(value)=>{
     //   initData()
     //   // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
     // }
-    
-     if(response.status === 201){
+      console.log(list.includes(value.email), list, value.email)
+     if(response.status === 201 ){
+      
+      if(list.includes(value.email)){
+        router.push("/confirm-payment")
+        return; 
+      }
+
+      
       // @ts-ignore
       initializePaymentPayStack(onSuccessPayStack, onClose)
      }
