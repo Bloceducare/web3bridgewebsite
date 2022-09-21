@@ -98,8 +98,6 @@ const Web3View = () => {
 
 const onSuccessPayStack = ({reference=""}):void => {
   // redirect to verify page
-  console.log(reference, "SUCESSS")
-//   router.push(`/`)
   router.push(`/verify-payment?reference=${reference}&email=${userEmail.email}&paymentMethod=card&currentTrack=web2`)
 };
 

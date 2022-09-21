@@ -77,7 +77,7 @@ router.use(async (req, res, next) => {
 
       const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
      sendSms({recipients:phone}), 
-    sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',}),
+   sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',}),
       ])
 
       return res.status(201).json({
@@ -88,15 +88,7 @@ router.use(async (req, res, next) => {
     }
 
 
-    if(phoneExists){
-      await closeDB();
-      return res
-        .status(423)
-        .send({ status: false, 
-          error: "This user already exists, click below to complete your payment",
-          paymentStatus:phoneExists.paymentStatus ?? PaymentStatus.pending
-         });
-    }
+
    
     if (userExists) {
       await closeDB();
