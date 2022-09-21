@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Link from "next/link";
 import { registrationSchema, validationOpt } from "schema";
 import { useForm, Controller } from "react-hook-form";
-// import { useLazerpay } from 'lazerpay-react'
+import { useLazerpay } from 'lazerpay-react'
 import Input from "@components/commons/Input";
 import Button from "@components/commons/Button";
 import PhoneInput from "@components/commons/PhoneInput";
@@ -35,7 +35,8 @@ const onClose = () => {
 const Web3View = () => {
 
   const lazerPayConfig = {
-    publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
+    publicKey: "pk_test_ZAbdcqhgNmzJUljFjT7NE3GXguVTqqbUTYVeK2GIXUxIKnNIoT",
+    // publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
     currency: "USD", // USD, NGN, AED, GBP, EUR
     // amount: web2Payment.USD, // amount as a number or string
     amount: 0.1, // amount as a number or string
@@ -56,7 +57,6 @@ const Web3View = () => {
   const config = {
     reference: uuidv4(),
     amount: web2Payment.naira*100,
- 
     publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
 };
   const router = useRouter()
@@ -103,14 +103,14 @@ const onSuccessPayStack = ({reference=""}):void => {
 
       const initializePaymentPayStack = usePaystackPayment({...config, ...userEmail,});
       
-    //   const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
-    //     customerName: userEmail.name,
-    //     customerEmail: userEmail.email,
-    //     onSuccess: (response) => {
-    //       // redirect to verify page
-    //       router.push(`/verify-payment?reference=${response}&email=${userEmail.email}&paymentMethod=card`)
-    //     }
-    //   }});
+      const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
+        customerName: userEmail.name,
+        customerEmail: userEmail.email,
+        onSuccess: (response) => {
+          // redirect to verify page
+          router.push(`/verify-payment?reference=${response}&email=${userEmail.email}&paymentMethod=crypto`)
+        }
+      }});
 
    
     const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
@@ -127,23 +127,24 @@ const onSubmit = async(value)=>{
       currentTrack:Tracks.web2,
       country:value?.country?.value,
       city:value?.city?.value,
-      PaymentMethod:PaymentMethod.card
+      paymentMethod:PaymentMethod.crypto
     }
     
     try{
-    const response = await userRegistering(data)
- 
-    // if(response.status === 201 && value.paymentMethod === PaymentMethod.crypto){
-    //   const initData= async ()=>{
-    //     Promise.all([Promise.resolve(initializePaymentLazerPay()), initPayment(
-    //       {reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email}
-    //     ) ])
-    //     initPayment({reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email})
+    // const response = await userRegistering(data)
+    const response = {status:300}
+      console.log(data)
+    if( data.paymentMethod === PaymentMethod.crypto){
+      const initData= async ()=>{
+        Promise.all([Promise.resolve(initializePaymentLazerPay()), initPayment(
+          {reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email}
+        ) ])
+        initPayment({reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email})
 
-    //   }
-    //   initData()
-    //   // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
-    // }
+      }
+      initData()
+      // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
+    }
      if(response.status === 201 ){
       
       if(list.includes(value.email)){
