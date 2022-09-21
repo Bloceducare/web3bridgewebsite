@@ -8,6 +8,7 @@ import { PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
 import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
+import {ISmsData} from "types"
 import cloudinary from "@server/config/cloudinary";
 
 
@@ -36,18 +37,56 @@ router.use(async (req, res, next) => {
   if(req.body.currentTrack === "web3"){
     userDb = web3userDb
   }
+  const list = JSON.parse(process.env.LIST as string)
+
 
   if(Object.values(Tracks).indexOf(req.body.currentTrack) === -1){
     return res
     .status(400)
     .send({ status: false, error: "Invalid track" });
   }
-  const { email, phone, currentTrack,
+  const { email, phone, currentTrack,name
   } = req.body;
   
   try {
     await connectDB();
     const [userExists, phoneExists] = await Promise.all([userDb.findOne({ email }), userDb.findOne({ phone})]);
+
+    if(userExists?.paymentStatus ===PaymentStatus.success){
+      await closeDB();
+      return res
+        .status(423)
+        .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+    }
+
+    if(list.includes(req.body.email) ){
+      const exists = await userDb.findOne({email})
+      if(exists){
+      return res
+        .status(423)
+        .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+      }
+      const userData: any = new userDb({
+        ...req.body,
+        paymentStatus: PaymentStatus.success
+        // profilePicture: url,
+      }, 
+  );
+  
+      const { _doc } = await userData.save();
+
+      const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
+     sendSms({recipients:phone}), 
+    sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',}),
+      ])
+
+      return res.status(201).json({
+        status:true,
+        data:_doc,
+        message:"Registration successful"
+      })
+    }
+
 
     if(phoneExists){
       await closeDB();
@@ -75,11 +114,10 @@ router.use(async (req, res, next) => {
 
     const userData: any = new userDb({
       ...req.body,
+      paymentStatus: PaymentStatus.pending
       // profilePicture: url,
     }, 
-    {
-      $set: {paymentStatus: PaymentStatus.pending}
-  });
+);
 
     const { _doc } = await userData.save();
 
@@ -87,7 +125,7 @@ router.use(async (req, res, next) => {
 
     return res.status(201).json({ message: currentTrack==='web3'? "Registration was successful, please check your email for further instructions" : "registration submitted successfully", ..._doc });
   } catch (e) {
-    console.log("Error", e);
+    console.log("Error occuredd", e);
     return res.status(423).json({
       error: e,
       status: false,

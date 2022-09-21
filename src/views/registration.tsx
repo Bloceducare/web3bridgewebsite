@@ -116,9 +116,12 @@ const onSuccessPayStack = ({reference=""}):void => {
 
       // console.log('initializePaymentLazerPay', initializePaymentLazerPay)
  
-   
+ const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
+    
 const onSubmit = async(value)=>{
 
+
+  
   // if(!value.paymentMethod){
   //   alert("Please select a payment method")
   // }
@@ -147,6 +150,11 @@ const onSubmit = async(value)=>{
     // }
     
     if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
+      
+      if(list.includes(value.email)){
+        router.push("/confirm-payment")
+        return;
+      }
       // @ts-ignore
       initializePaymentPayStack(onSuccessPayStack, onClose)
     }
@@ -171,18 +179,18 @@ const onSubmit = async(value)=>{
         <div className="text-2xl dark:text-white20">
           Cohort VIII Registration
           </div>
+        
           {
             !!error &&  (<>
                  <div className="my-2 text-sm font-semibold text-red-500">
               {typeof error === "string" ? error : error?.length ? <>
                 {error.map((err:string)=>(<p key={err}>{err}</p>))}
                </>
-               :""
-            //    JSON.stringify(error)
+               :responsePaymentStatus === PaymentStatus.pending && "Payment pending, please try again"
                }
             </div>
-           
-             {responsePaymentStatus ? (
+               
+             
                 <>
                    {responsePaymentStatus ===PaymentStatus.success ? 
             <>
@@ -195,7 +203,7 @@ const onSubmit = async(value)=>{
                      
                        }
                  </>
-             ): ""}
+             
             </>
             )
           }

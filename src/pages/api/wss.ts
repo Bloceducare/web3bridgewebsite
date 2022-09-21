@@ -73,6 +73,7 @@ router
     sendSms({recipients:userDetails.phone}), 
     sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
       ])
+      
 
       if(++sms.balance <= 100 ){
         sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
