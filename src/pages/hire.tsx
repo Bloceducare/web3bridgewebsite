@@ -35,7 +35,7 @@ const HireUs: NextPage = () => {
             </label>
             <div className="relative text-white10 px-6 py-2 w-full flex-col items-center justify-start border bg-[#0000] border-white10 rounded-md my-4">
               <div
-                onClick={() => setDropDown(dropDown === 'type' ? '' : 'type')}
+                onClick={() => setDropDown(dropDown === "type" ? "" : "type")}
                 className="flex cursor-pointer items-center w-full"
               >
                 <p className="mr-auto">Choose Project</p>
@@ -43,13 +43,13 @@ const HireUs: NextPage = () => {
               </div>
               <div
                 className={`flex ${
-                  dropDown === 'type' ? 'h-[6rem] mt-6 ' : 'h-0 '
+                  dropDown === "type" ? "h-[6rem] mt-6 " : "h-0 "
                 }  flex-col items-start w-full transition-all`}
               >
                 {projectOps.map((item, index) => (
                   <button
                     className={`${
-                      dropDown === 'type' ? 'block' : 'hidden'
+                      dropDown === "type" ? "block" : "hidden"
                     } hover:text-primary`}
                     key={index}
                   >
@@ -95,13 +95,13 @@ const HireUs: NextPage = () => {
                 Beep us on Whatsapp
               </h1>
               <p className="text-white60">Support@web3bridge.com</p>
-              <p className="text-white60">+2348 109 945 686</p>
+              <p className="text-white60">+2348 066 482 612</p>
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default HireUs
