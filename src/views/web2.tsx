@@ -91,10 +91,11 @@ const Web3View = () => {
       }
 
       const city = getValues("country")?.value
+      console.log('cuty?>>>', city)
       useEffect(()=>{
         setValue('city','')
       },[city])
-      const {cities, loading:cityLoadig, error:cityError}= useCities(city)
+      const {cities, loading:cityLoadig, error:cityError, getCities}= useCities(city)
 
 const onSuccessPayStack = ({reference=""}):void => {
   // redirect to verify page
@@ -289,6 +290,9 @@ name="email" required label="Email" errors={errors} />
            options={countriesData}
            value={getValues("country")?.value}
            placeholder="Select Country"
+           optionsError={false}
+           errors={errors}
+           
          />
     
      }
@@ -298,16 +302,20 @@ name="email" required label="Email" errors={errors} />
 
 
      <div className="relative mb-4"> 
+  
      <Controller
          name="city"
          control={control}
          render={({ field }) => <ReactSelect  
            field={field}  
+           errors={errors}
            name="city"
            label="City"
            options={cities}
            placeholder={cities.length > 0 ? "Select City" : "Select Country First"}
            isLoading={cityLoadig}
+           refetchOptions={()=>getCities(city)}
+           optionsError={cityError}
            value={getValues("city")?.value}
            disabled = {(!!getValues('country')?.value ? false : true) || isSubmitting}
          />

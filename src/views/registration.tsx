@@ -95,7 +95,8 @@ const Web3View = () => {
       useEffect(()=>{
         setValue('city','')
       },[city])
-      const {cities, loading:cityLoadig, error:cityError}= useCities(city)
+      
+      const {cities, loading:cityLoadig, error:cityError, getCities}= useCities(city)
 
 const onSuccessPayStack = ({reference=""}):void => {
   // redirect to verify page
@@ -308,6 +309,8 @@ name="email" required label="Email" errors={errors} />
            name="city"
            label="City"
            options={cities}
+           refetchOptions={()=>getCities(city)}
+           optionsError={cityError}
            placeholder={cities.length > 0 ? "Select City" : "Select Country First"}
            isLoading={cityLoadig}
            value={getValues("city")?.value}
