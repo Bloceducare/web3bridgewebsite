@@ -3,12 +3,9 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3UserDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
-import { sendEmail } from "@server/mailer";
 import {PaymentStatus} from "enums"
 import Paystack from "paystack"
 import { verifyPaymentSchema } from 'schema';
-import {ISmsData} from "types"
-import { sendSms } from "@server/sms";
 import validate from "@server/validate";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -22,8 +19,8 @@ router.use(async (req, res, next) => {
 // verify payment
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
   let userDb;
-
   await connectDB();
+  
   const { reference, email, currentTrack} = req.body;
   if(currentTrack === 'web2'){
     userDb = web2UserDb
@@ -36,8 +33,8 @@ router.use(async (req, res, next) => {
   try {
   // verify payment status
    const data = await  paystack.transaction.verify(reference)
-
-    if(data.status === false){
+  
+    if(data?.data?.status !== 'success'){
       return res.status(423).json({
         status: false,
         message: "payment not valid",
@@ -62,32 +59,14 @@ router.use(async (req, res, next) => {
         })
     }
 
-    if(data.status){
-        // update user payment status
-       const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
-        userDb.updateOne({email}, {
-            $set: {paymentStatus: PaymentStatus.success}
-        }),
-        // send email
-       sendSms({recipients:userDetails.phone}),  // send text message
-       sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
-      ])
-
-      // if(++sms.balance <= 100 ){
-      //   sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
-      // }
-
-
       await closeDB()
     
-
-
-            return res.status(201).json({ message: "payment verified", status: true });
+    if(data?.data?.status === 'success'){
+      return res.status(201).json({ message: "payment verified", status: true });
     }
-
     return res.status(423).json({
         status: false,
-        message: "Payment verification failed",
+        message: "We're currently unable to verify your payment, please reload your page" ,
     })
   } catch (e) {
     console.log(e,'error caused')

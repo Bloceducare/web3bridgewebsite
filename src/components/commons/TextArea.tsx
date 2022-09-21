@@ -28,18 +28,7 @@ const TextArea = ({
 
   return (
     <div className="relative">
-      
-      {err ? (
-        <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
-          {errors[name]?.message}
-        </span>
-      )
-      : currentValue && (
-        <span className="absolute right-0 text-sm text-gray-500 capitalize label-text-alt">
-          All good
-        </span>
-      )
-    }
+
       <label
     
         className={`dark:text-white20 relative  ${
@@ -68,7 +57,18 @@ const TextArea = ({
                 
         }
         />        
-   
+         
+         {err ? (
+        <span className="absolute bottom-0 right-0 text-sm text-red-500 capitalize label-text-alt">
+          {errors[name]?.message}
+        </span>
+      )
+      : currentValue && (
+        <span className="absolute right-0 bottom-0 text-sm text-gray-500 capitalize label-text-alt">
+          All good
+        </span>
+      )
+    }
     </div>
   );
 };

@@ -24,9 +24,9 @@ router
     const getTrack = (track:string) => track.split('/').pop()
     let userDb;
     const { reference,customer:{email}, metadata:{referrer} } = req.body.data;
-
-
+   
     const track = getTrack(referrer)
+    await connectDB();
     if(track===Tracks.web2){
         userDb = web2UserDb
        
@@ -35,11 +35,10 @@ router
     }
     
     
-  await connectDB();
   try {
   // verify payment status
    const data = await  paystack.transaction.verify(reference)
-    if(data.status === false){
+    if(data.data.status !== "success"){
       return res.status(423).json({
         status: false,
         message: "payment not valid",
@@ -50,6 +49,7 @@ router
     const userDetails = await userDb.findOne({ email });
    // check if user exists
     if(!userDetails){
+      await closeDB();
         return res.status(404).json({
             status: false,
             message: "user not found"
@@ -63,23 +63,20 @@ router
             message: "payment already verified"
         })
     }
-        console.log("paysacj data", data)
-    
+       
         // update user payment status
        const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
         userDb.updateOne({email}, {
             $set: {paymentStatus: PaymentStatus.success}
         }),
-        // send email
-      //  sendSms({recipients:userDetails.phone}),  // send text message
-    //    sendEmail({email, name:userDetails.name, currentTrack:track, file:"registration"}),
-    //    sendEmail({email, currentTrack, name, file:"registration", }),
-    //    sendSms({recipients:phone})
+       
+    sendSms({recipients:userDetails.phone}), 
+    sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
       ])
 
-    //   if(++sms.balance <= 100 ){
-    //     sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
-    //   }
+      if(++sms.balance <= 100 ){
+        sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
+      }
 
 
       await closeDB()
@@ -94,7 +91,7 @@ router
 
 
   } catch (e) {
-    console.log(e,'error caused')
+    console.log(e,'error caused wss')
     return res.status(500).json({
       status: false,
       error: e,

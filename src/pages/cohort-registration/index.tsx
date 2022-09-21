@@ -23,7 +23,7 @@ const Card = ({
           </button>
         </a>
       </Link>
-      <p className="text-center p-2">{text}</p>
+      <p className="text-center p-2 dark:text-white20">{text}</p>
     </div>
   );
 };
