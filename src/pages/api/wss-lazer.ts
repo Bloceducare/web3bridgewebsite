@@ -11,6 +11,7 @@ import { sendSms } from "@server/sms";
 import validate from "@server/validate";
 import {webPayment} from "@server/config"
 import LazerPay from "lazerpay-node-sdk";
+const crypto = require('crypto');
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -89,9 +90,9 @@ const payload = {
 };
 const {data} = await lazerpay.Payment.confirmPayment(payload);
 
-if(data.status !== "confirmed" && data.amountReceived !== webPayment.USD){
+if(data.status !== "confirmed" || ((amountReceived - feeInCrypto) !== webPayment.USD)){
   await closeDB();
-  return res.status(423).json({
+  return res.status(400).json({
     status: false,
     message: "payment not valid",
   })
