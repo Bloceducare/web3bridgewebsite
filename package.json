@@ -14,6 +14,7 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.32.0",
     "framer-motion": "^6.3.16",
+    "lazerpay-node-sdk": "^0.2.4",
     "lazerpay-react": "^1.2.5",
     "mongoose": "^6.5.5",
     "next": "12.1.6",

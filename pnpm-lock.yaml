@@ -16,6 +16,7 @@ specifiers:
   eslint-config-next: 12.1.6
   eslint-plugin-react: ^7.30.0
   framer-motion: ^6.3.16
+  lazerpay-node-sdk: ^0.2.4
   lazerpay-react: ^1.2.5
   mongoose: ^6.5.5
   next: 12.1.6
@@ -52,6 +53,7 @@ dependencies:
   bcryptjs: 2.4.3
   cloudinary: 1.32.0
   framer-motion: 6.5.1_ef5jwxihqo6n7gxfmzogljlgcm
+  lazerpay-node-sdk: 0.2.4
   lazerpay-react: 1.2.5_react@18.1.0
   mongoose: 6.6.0
   next: 12.1.6_ef5jwxihqo6n7gxfmzogljlgcm
@@ -913,6 +915,14 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /axios/0.22.0:
+    resolution: {integrity: sha512-Z0U3uhqQeg1oNcihswf4ZD57O3NrR1+ZXhxaROaWpDmsDTx7T2HNBV2ulBtie2hwJptu8UvgnJoK+BIqdzh/1w==}
+    dependencies:
+      follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
@@ -1654,6 +1664,11 @@ packages:
     dependencies:
       '@babel/runtime': 7.19.0
       csstype: 3.1.0
+    dev: false
+
+  /dotenv/16.0.2:
+    resolution: {integrity: sha512-JvpYKUmzQhYoIFgK2MOnF3bciIZoItIIoryihy0rIA+H4Jy0FmgyKYAHCTN98P5ybGSJcIFbh6QKeJdtZd1qhA==}
+    engines: {node: '>=12'}
     dev: false
 
   /ecc-jsbn/0.1.2:
@@ -2811,6 +2826,16 @@ packages:
     dependencies:
       language-subtag-registry: 0.3.22
     dev: true
+
+  /lazerpay-node-sdk/0.2.4:
+    resolution: {integrity: sha512-xCewuHMqk4jBsMmKehRITMEZgYnheW2rKiy43g0ZwUZYNET86jHLQdph3SuAYvQz1XOhw5NdungxOqAdWo8JEg==}
+    engines: {node: '>=10'}
+    dependencies:
+      axios: 0.22.0
+      dotenv: 16.0.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /lazerpay-react/1.2.5_react@18.1.0:
     resolution: {integrity: sha512-Y+r7tc7FsZgLB0X1M97ea1nBQUYj9B7vHQFcfiovxzL7O4Dd4xLIy9Q9UecYKTUr+OLS485KZlsl12D7F7xN8Q==}

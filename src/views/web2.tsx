@@ -11,14 +11,14 @@ import PhoneInput from "@components/commons/PhoneInput";
 import ReactSelect from "@components/commons/ReactSelect";
 import TextArea from "@components/commons/TextArea";
 import { Gender, PaymentMethod, PaymentStatus, Tracks } from "enums";
-import { initPayment, userRegistering } from "./api";
+import { userRegistering } from "./api";
 import { usePaystackPayment } from 'react-paystack';
-import { web2Payment } from "@server/config";
+import { webPayment } from "@server/config";
 import formatToCurrency from "utils/formatToCurrency";
 import Select from "@components/commons/Select";
 import countries from "data/countries.json";
 import useCities from "./hooks/useCities";
-import ImageUpload from "@components/commons/ImageUpload";
+
 
 
 const countriesData = countries.map((country) => ({
@@ -33,18 +33,19 @@ const onClose = () => {
 }
 
 const Web3View = () => {
-
+  const router = useRouter()
+  
   const lazerPayConfig = {
-    publicKey: "pk_test_ZAbdcqhgNmzJUljFjT7NE3GXguVTqqbUTYVeK2GIXUxIKnNIoT",
-    // publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
+    publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
     currency: "USD", // USD, NGN, AED, GBP, EUR
-    // amount: web2Payment.USD, // amount as a number or string
-    amount: 0.1, // amount as a number or string
+    amount: webPayment.USD, // amount as a number or string
     reference:uuidv4(), // unique identifier
-    acceptPartialPayment: true,
+    metadata:{
+      track: Tracks.web2,
+    },
     onSuccess: (response) => {
       // handle response here
-      
+      router.push("/")
     },
     onClose: () => {
       //handle response here
@@ -56,10 +57,10 @@ const Web3View = () => {
 
   const config = {
     reference: uuidv4(),
-    amount: web2Payment.naira*100,
+    amount: webPayment.naira*100,
     publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
 };
-  const router = useRouter()
+
 //   
   const validationOption = validationOpt(registrationSchema.web2);
   
@@ -88,6 +89,7 @@ const Web3View = () => {
         name:watch("name"),
         country:watch("country"),
         city:watch("city"),
+        PaymentMethod:watch("PaymentMethod"),
       }
 
       const city = getValues("country")?.value
@@ -106,58 +108,35 @@ const onSuccessPayStack = ({reference=""}):void => {
       const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
         customerName: userEmail.name,
         customerEmail: userEmail.email,
-        onSuccess: (response) => {
-          // redirect to verify page
-          router.push(`/verify-payment?reference=${response}&email=${userEmail.email}&paymentMethod=crypto`)
-        }
+        onSuccess:()=>router.push('/')
       }});
 
    
-    const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
-  
+const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
 const onSubmit = async(value)=>{
-
-
-
-//   if(!value.paymentMethod){
-//     alert("Please select a payment method")
-//   }
     const data = {
       ...value,
       currentTrack:Tracks.web2,
       country:value?.country?.value,
       city:value?.city?.value,
-      paymentMethod:PaymentMethod.crypto
     }
     
     try{
-    // const response = await userRegistering(data)
-    const response = {status:300}
-      console.log(data)
-    if( data.paymentMethod === PaymentMethod.crypto){
-      const initData= async ()=>{
-        Promise.all([Promise.resolve(initializePaymentLazerPay()), initPayment(
-          {reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email}
-        ) ])
-        initPayment({reference:lazerPayConfig.reference, paymentMethod:PaymentMethod.crypto, email:userEmail.email})
-
-      }
-      initData()
-      // console.log(result, 'crypto', lazerPayConfig.reference, userEmail.email) 
+    const response = await userRegistering(data)
+    
+      if(response.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
+        if(list.includes(value.email)){
+          router.push("/confirm-payment")
+          return; 
+        } 
+        // @ts-ignore
+        initializePaymentPayStack(onSuccessPayStack, onClose)
+       }
+       
+    if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
+      initializePaymentLazerPay()   
     }
-     if(response.status === 201 ){
-      
-      if(list.includes(value.email)){
-        router.push("/confirm-payment")
-        return; 
-      }
-
-      
-      // @ts-ignore
-      initializePaymentPayStack(onSuccessPayStack, onClose)
-     }
-    // setMessage("Successfully registered")
-
+    
 }
     catch(e:any){
         console.log(e.response.data, "Error")
@@ -169,6 +148,18 @@ const onSubmit = async(value)=>{
     finally{
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+}
+
+
+const retryPayment=(payment)=>{
+  if(payment === PaymentMethod.card){
+    // @ts-ignore
+    initializePaymentPayStack(onSuccessPayStack, onClose)
+  }
+  
+  if(payment === PaymentMethod.crypto){
+    initializePaymentLazerPay()
+  }  
 }
     return <>
     <div className="max-w-lg m-12 mx-auto">
@@ -197,9 +188,12 @@ const onSubmit = async(value)=>{
               <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
             </Link>
              </>:
-            //  @ts-ignore
-              <Button onClick={()=>initializePaymentPayStack(onSuccessPayStack, onClose)} className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Retry Payment</Button>
-                     
+           
+            <div>
+              <Button onClick={()=>retryPayment(PaymentMethod.card)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Card</Button>
+                
+              <Button onClick={()=>retryPayment(PaymentMethod.crypto)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Crypto</Button>             
+            </div>
                        }
                  </>
              
@@ -395,14 +389,14 @@ name="email" required label="Email" errors={errors} />
   </>
 
 
-{/* <>
+<>
 
 <fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Payment</legend>
   <div className="relative mb-3">
 
 <label className="block mb-2 dark:text-white20">Payment Method { " "} 
-({`₦${formatToCurrency(web2Payment.naira)}/$${formatToCurrency(web2Payment.USD)}`}) </label>
+({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) </label>
 {
  (errors?.paymentMethod?.type === "required" || !!errors?.paymentMethod?.message) && (
   <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
@@ -449,7 +443,7 @@ name="email" required label="Email" errors={errors} />
 
 </div>
  </fieldset>
-</> */}
+</>
 
 <div className="px-6">
 <Button 
