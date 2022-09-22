@@ -14,14 +14,14 @@ import LazerPay from "lazerpay-node-sdk";
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
-// const paystack = Paystack(process.env.PAYMENT_SECRET);
+
 const lazerpay = new LazerPay(process.env.LAZERPAY_PUBLIC_KEY as string, process.env.LAZERPAY_SECRET_KEY as string);
 
 router
 
 // verify payment
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
-    const {reference, amountReceived, status, metadata:{track=""}={}, customer:{email=''}={} } = req.body
+    const {reference, amountReceived, status, metadata:{track=""}={}, customer:{email=''}={}, feeInCrypto } = req.body
     let userDb;
   if(!track){
     return res.status(404).json({
@@ -37,7 +37,7 @@ router
     })
   }
   
-  if(amountReceived !== webPayment.USD){
+  if((amountReceived - feeInCrypto) !== webPayment.USD){
     return res.status(423).json({
       status: false,
       message: `Amount received is not valid, expected ${webPayment.USD}`,
