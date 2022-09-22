@@ -1,5 +1,5 @@
 
-export const web2Payment = {
+export const webPayment = {
   naira:10000,
   USD: 20,
 };
