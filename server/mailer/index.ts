@@ -1,16 +1,8 @@
 import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
 import { mailSenderConfig } from "@server/config";
-import fs from "fs";
-import web3Email from "@server/template/web3";
-import web2Email from "@server/template/web2";
 import emailTemplate from "@server/template";
 
-// const SibApiV3Sdk = require('sib-api-v3-typescript');
- 
-// const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-// apiInstance.setApiKey(SibApiV3Sdk.AccountApiApiKeys.apiKey, process.env.SENDINBLUE_API_KEY);
 
 
 interface ImailgunAuth {
@@ -39,7 +31,6 @@ async function wrappedSendMail(options: any) {
 }
 
 
-// replace with emailTemplateEmailSource with your own template
 const template = (fileName, object)=>{
   console.log(fileName, object)
   let template =emailTemplate[fileName];

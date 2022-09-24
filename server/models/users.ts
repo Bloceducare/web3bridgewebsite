@@ -4,6 +4,7 @@ const allUserSchema =  {
     name: {
       type: String,
       required: true,
+      trim: true
       
     },
     country:{
@@ -17,6 +18,7 @@ const allUserSchema =  {
       required: true,
       trim: true,
       unique: true,
+      lowercase: true,
     },
 
     twitterHandle: {

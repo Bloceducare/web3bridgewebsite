@@ -84,14 +84,7 @@ router
       await closeDB()
 
         return res.status(201).json({ message: "payment verified", status: true });
-    
-
-    // return res.status(423).json({
-    //     status: false,
-    //     message: "Payment verification failed",
-    // })
-
-
+  
   } catch (e) {
     console.log(e,'error caused wss')
     return res.status(500).json({
