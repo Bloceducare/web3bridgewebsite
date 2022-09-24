@@ -62,7 +62,6 @@ const Web3View = () => {
     publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
 };
   const router = useRouter()
-  // const { regType } = router.query
   const validationOption = validationOpt(registrationSchema.web3);
   
 
@@ -108,7 +107,6 @@ const onSuccessPayStack = ({reference=""}):void => {
       const initializePaymentPayStack = usePaystackPayment({...config, ...userEmail});
       
 
- const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
 
  const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
   customerName: userEmail.name,
@@ -124,6 +122,7 @@ const onSubmit = async(value)=>{
   
     const data = {
       ...value,
+      email: value?.email?.toLowerCase(),
       currentTrack: Tracks.web3,
       country:value?.country?.value,
       city:value?.city?.value,
@@ -136,10 +135,7 @@ const onSubmit = async(value)=>{
     
     if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
       
-      if(list.includes(value.email)){
-        router.push("/confirm-payment")
-        return;
-      }
+  
       // @ts-ignore
       initializePaymentPayStack(onSuccessPayStack, onClose)
     }

@@ -113,7 +113,7 @@ const onSuccessPayStack = ({reference=""}):void => {
       }});
 
    
-const list = JSON.parse(process.env.NEXT_PUBLIC_LIST as string);
+
 const onSubmit = async(value)=>{
     const data = {
       ...value,
@@ -126,10 +126,7 @@ const onSubmit = async(value)=>{
     const response = await userRegistering(data)
     
       if(response.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
-        if(list.includes(value.email)){
-          router.push("/confirm-payment")
-          return; 
-        } 
+     
         // @ts-ignore
         initializePaymentPayStack(onSuccessPayStack, onClose)
        }

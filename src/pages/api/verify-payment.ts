@@ -34,8 +34,7 @@ router.use(async (req, res, next) => {
   // verify payment status
    const data = await  paystack.transaction.verify(reference)
    
-    console.log(data?.data?.status)
-
+   
     if(data?.data?.status !== 'success'){
       return res.status(423).json({
         status: false,

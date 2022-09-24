@@ -28,7 +28,7 @@ router.use(async (req, res, next) => {
 
 // create a user
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
-  // console.log(req.body)
+
   let userDb;
   if(req.body.currentTrack === "web2"){
     userDb = web2UserDb
