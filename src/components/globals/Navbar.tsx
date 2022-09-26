@@ -29,35 +29,47 @@ const Navbar = () => {
       <nav className="relative w-full border-b border-[#D0D0D0] dark:border-0 h-24 flex flex-col items-center justify-center dark:bg-base">
         <div className="flex items-center justify-between w-11/12 z-55 md:w-full md:p-4 lg:w-11/12 lg:p-0">
           <div className="w-[140px]">
-               {/* Logo */}
-          {isLight ? (
-            <Image src={LightLogo} className=""  placeholder="blur" blurDataURL={blurUrl} />
-          ) : (
-            <Image src={DarkLogo}  placeholder="blur" blurDataURL={blurUrl} />
-          )}
+            {/* Logo */}
+            {isLight ? (
+              <Image
+                src={LightLogo}
+                className=""
+                placeholder="blur"
+                blurDataURL={blurUrl}
+              />
+            ) : (
+              <Image src={DarkLogo} placeholder="blur" blurDataURL={blurUrl} />
+            )}
           </div>
-       
+
           {/* Menu Items */}
           <div className="hidden md:space-x-7 lg:space-x-10 md:flex ">
             {menuItems.map((menuItem, index) => {
               return (
                 <div key={index} className="text-base hover:text-primary">
                   <Link href={menuItem.link}>
-                    <a className={`dark:text-white ${router.pathname == menuItem.link ? "text-primary dark:text-primary" : ""}`}>{menuItem.menu}</a>
+                    <a
+                      className={`dark:text-white ${
+                        router.pathname == menuItem.link
+                          ? "text-primary dark:text-primary"
+                          : ""
+                      }`}
+                    >
+                      {menuItem.menu}
+                    </a>
                   </Link>
                 </div>
               );
             })}
           </div>
           {/* Buttons */}
-          <div className="flex space-x-6">         
-         
-              <Link href='/cohort-registration' >
-                <a className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
-              Register for cohort VIII
-                </a>
-                 </Link>
-              {/* <button className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+          <div className="flex space-x-6">
+            <Link href="/cohort-registration">
+              <a className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
+                Register for cohort VIII
+              </a>
+            </Link>
+            {/* <button className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
 
                 <a
                   href="https://forms.gle/pc8d31R99fFp4Dzu5"
@@ -68,7 +80,7 @@ const Navbar = () => {
                   Join wait list 
                 </a>
               </button> */}
-         
+
             {isLight ? (
               <button
                 className="hidden md:block"
@@ -106,11 +118,11 @@ const Navbar = () => {
         >
           <div className="flex justify-between w-full px-5 py-3 shadow-md">
             <div className="w-[140px]">
-            {isLight ? (
-              <Image src={LightLogo} className="w-[140px]" />
-            ) : (
-              <Image src={DarkLogo}  />
-            )}
+              {isLight ? (
+                <Image src={LightLogo} className="w-[140px]" />
+              ) : (
+                <Image src={DarkLogo} />
+              )}
             </div>
             <button
               onClick={() => {
@@ -132,7 +144,15 @@ const Navbar = () => {
                 className="items-start w-full py-3 pl-10 text-base dark:text-white hover:text-primary"
               >
                 <Link href={menuItem.link}>
-                  <a className={`dark:text-white ${router.pathname == menuItem.link ? "text-primary dark:text-primary" : ""}`}>{menuItem.menu}</a>
+                  <a
+                    className={`dark:text-white ${
+                      router.pathname == menuItem.link
+                        ? "text-primary dark:text-primary"
+                        : ""
+                    }`}
+                  >
+                    {menuItem.menu}
+                  </a>
                 </Link>
               </div>
             );
@@ -186,11 +206,10 @@ const Navbar = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Join wait list
+                Register for Cohort VIII
               </a>
             </button>
           </div>
-          
         </div>
       </nav>
     </>
