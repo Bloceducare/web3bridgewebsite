@@ -11,6 +11,7 @@ import { sendSms } from "@server/sms";
 import validate from "@server/validate";
 import {webPayment} from "@server/config"
 import LazerPay from "lazerpay-node-sdk";
+import reportError from "@server/services/report-error";
 const crypto = require('crypto');
 
 
@@ -124,6 +125,8 @@ if(data.status !== "confirmed" || ((amountReceived - feeInCrypto) !== webPayment
 
       }
       catch(error){
+        reportError(`error occurred at ${__filename}\n environment:${process.env.NODE_ENV}\n ${error} `)
+    
         console.log('error lazer', error)
         return res.status(500).json({
           status: false,

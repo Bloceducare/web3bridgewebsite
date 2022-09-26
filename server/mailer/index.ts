@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
 import { mailSenderConfig } from "@server/config";
 import emailTemplate from "@server/template";
+import reportError from "@server/services/report-error"
 
 
 
@@ -61,7 +62,9 @@ if(!final?.file) return;
       message: "Successfully sent email",
       data: response,
     };
+
   } catch (e) {
+  reportError(`error sending email to ${data.email}\n environment:${process.env.NODE_ENV}\n ${e} `)
     console.log("error email", e);
     return {
       status: false,

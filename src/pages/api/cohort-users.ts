@@ -9,6 +9,7 @@ import validate from "@server/validate";
 import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
 import {ISmsData} from "types"
+import reportError from "@server/services/report-error";
 import cloudinary from "@server/config/cloudinary";
 
 
@@ -88,6 +89,9 @@ router.use(async (req, res, next) => {
 
     return res.status(201).json({ message: currentTrack==='web3'? "Registration was successful, please check your email for further instructions" : "registration submitted successfully", ..._doc });
   } catch (e) {
+
+    reportError(`error occurred at ${__filename}\n environment:${process.env.NODE_ENV}\n ${e} `)
+  
     console.log("Error occuredd", e);
     return res.status(423).json({
       error: e,
@@ -141,6 +145,7 @@ router
       data: users,
     });
   } catch (e) {
+    reportError
     return res.status(500).json({
       status: false,
       error: "server error",
@@ -152,6 +157,7 @@ export default router.handler({
   // @ts-ignore
   onError: (err, req, res, next) => {
     console.error(err.stack);
+    reportError(err)
     res.status(500).end("Something broke!");
   },
   onNoMatch: (req, res) => {
