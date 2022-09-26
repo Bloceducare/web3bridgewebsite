@@ -71,7 +71,7 @@ router
             $set: {paymentStatus: PaymentStatus.success}
         }),
        
-  //  sendSms({recipients:userDetails.phone}), 
+   sendSms({recipients:userDetails.phone}), 
     sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',
   }),
       ])
