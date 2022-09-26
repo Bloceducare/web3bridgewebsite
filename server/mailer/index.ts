@@ -33,7 +33,7 @@ async function wrappedSendMail(options: any) {
 
 const template = (fileName, object)=>{
   console.log(fileName, object)
-  let template =emailTemplate.web2;
+  let template =emailTemplate[fileName];
 
 
   for (const key in object) {
