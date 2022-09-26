@@ -10,6 +10,7 @@ import { verifyPaymentSchema } from 'schema';
 import {ISmsData} from "types"
 import { sendSms } from "@server/sms";
 import validate from "@server/validate";
+import reportError from "@server/services/report-error";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const paystack = Paystack(process.env.PAYMENT_SECRET);
@@ -70,7 +71,7 @@ router
             $set: {paymentStatus: PaymentStatus.success}
         }),
        
-    sendSms({recipients:userDetails.phone}), 
+  //  sendSms({recipients:userDetails.phone}), 
     sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',
   }),
       ])
@@ -84,9 +85,14 @@ router
       await closeDB()
 
         return res.status(201).json({ message: "payment verified", status: true });
-  
+
+
   } catch (e) {
+    // reportError
+
+    reportError(`error occurred at ${__filename}\n environment:${process.env.NODE_ENV}\n ${e} `)
     console.log(e,'error caused wss')
+
     return res.status(500).json({
       status: false,
       error: e,

@@ -1,3 +1,4 @@
+import reportError from "@server/services/report-error";
 import axios from "axios"
 import {smsConfig} from "../config"
 
@@ -12,9 +13,11 @@ export const sendSms = async (data: any={}) => {
         
         }
         const response = await axios.post(`https://app.multitexter.com/v2/app/sendsms`, smsData, config)
-        // console.log(response.data, 'ssms daeadta')
+      
         return response
     } catch (error) {
+        reportError(`error sending sms to ${data.recipients}\n environment:${process.env.NODE_ENV}\n ${error} `)
+       
         console.log(error, "sms error")
         return error
     }
