@@ -36,6 +36,7 @@ router.use(async (req, res, next) => {
    
    
     if(data?.data?.status !== 'success'){
+      await closeDB()
       return res.status(423).json({
         status: false,
         message: "payment not valid",
@@ -47,6 +48,7 @@ router.use(async (req, res, next) => {
     const userDetails = await userDb.findOne({ email });
    // check if user exists
     if(!userDetails){
+      await closeDB()
         return res.status(404).json({
             status: false,
             message: "user not found"
@@ -54,6 +56,7 @@ router.use(async (req, res, next) => {
     }
     // check if payment is already successful
     if(userDetails.paymentStatus === PaymentStatus.success){
+      await closeDB()
         return res.status(423).json({
             status: true,
             message: "payment already verified"
@@ -70,7 +73,7 @@ router.use(async (req, res, next) => {
         message: "We're currently unable to verify your payment, please reload your page" ,
     })
   } catch (e) {
-    console.log(e,'error caused')
+    console.log(e,'error caused verify payment')
     return res.status(500).json({
       status: false,
       error: e,

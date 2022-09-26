@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 
-/* input[type="file"] {
-  display: none;
-} */
-
 
 @layer components {
   .cs-select .react-select__menu{
