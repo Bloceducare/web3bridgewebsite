@@ -15,7 +15,7 @@ export const sendSms = async (data: any={}) => {
         // console.log(response.data, 'ssms daeadta')
         return response
     } catch (error) {
-        // console.log(error, "sms error")
+        console.log(error, "sms error")
         return error
     }
 }

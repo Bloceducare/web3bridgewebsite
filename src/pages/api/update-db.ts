@@ -1,5 +1,7 @@
 
-const upateDb = async (req, res) => {}
+const upateDb = async (req, res) => {
+    
+}
 
 
 export default upateDb
