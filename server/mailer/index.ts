@@ -36,7 +36,7 @@ const template = (fileName, object)=>{
   console.log(fileName, object)
   let template =emailTemplate[fileName];
 
-
+ 
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       template =  template.replace(`{{${key}}}`, object[key])       

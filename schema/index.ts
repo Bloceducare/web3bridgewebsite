@@ -21,7 +21,7 @@ export const mainSchema = object().shape({
     .nullable(),
     phone:string()
     .required("Phone is required")
-    .matches(/^[0-9]{13}$/, 'Phone number is not valid'),
+    .matches(/^[0-9]{4,15}$/, 'Phone number is not valid'),
     country: object().shape({
       label: string(), 
       value: string().required("Country is required")
