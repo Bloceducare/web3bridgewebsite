@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { images, blurUrl } from 'data'
+import Link from 'next/link'
 
 const HeroSection = () => {
   const [currentImage, setCurrentImage] = useState<any>(images[0])
@@ -39,12 +40,14 @@ const HeroSection = () => {
               </a>
               </button>
             </div>
-            <div className="">
-              <button className="w-full py-3 border-2 rounded-sm bg-secondary text-secondary font-base xl:w-52 dark:text-primary dark:bg-white dark:border-white">
-              <a href="https://event.web3bridge.com/" className='capitalize' target="_blank" rel="noopener noreferrer">
-              Web3Lagos Conference
-              </a>
-              </button>
+            <div className= "w-full py-3 text-center capitalize border-2 rounded-sm bg-secondary text-secondary font-base xl:w-52 dark:text-primary dark:bg-white dark:border-white">
+              <Link href="/cohort-registration">
+          
+              
+                Cohort VIII Registration
+              
+              </Link>
+              
             </div>
           </div>
         </div>

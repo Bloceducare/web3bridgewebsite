@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import CohortsImage from '../../assets/cohorts/cohorts.svg'
 import ProfileImg from '../../assets/cohorts/profile.svg'
 import Button from '../components/Button'
@@ -10,7 +11,7 @@ const Cohorts: NextPage = () => {
     <section className="py-4">
       <div className="w-full flex flex-wrap justify-center items-center xl:px-[10rem]">
         <div className="px-8 md:px-0 w-full text-center md:text-left mb-8 md:w-[40%] lg:w-[50%] xl:w-[40%]">
-          <h1 className="text-base90 dark:text-white10 font-bold text-3xl mb-4">
+          <h1 className="mb-4 text-3xl font-bold text-base90 dark:text-white10">
             Cohort Explainer
           </h1>
           <p className="text-base dark:text-[#A1A1A1] py-3 lg:text-xl">
@@ -56,12 +57,14 @@ const Cohorts: NextPage = () => {
           experience with our program.
         </p>
       </div>
-      <div className="w-ful flex items-center justify-center mt-16">
+      <div className="flex items-center justify-center mt-16 w-ful">
         <Image src={ProfileImg} />
         <p className="text-base dark:text-white10">230+ Students enrolled</p>
       </div>
+
+     
       <Button
-        href=""
+        href="/cohort-registration"
         class="py-2 px-12 mx-auto block mt-4 mb-40"
         content="Enroll Now"
         type="background"

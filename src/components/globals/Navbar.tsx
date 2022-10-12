@@ -189,16 +189,7 @@ const Navbar = () => {
                 Web3bridge Nft
               </a>
             </button>
-            <button className="rounde-sm lg:block bg-secondary text-primary font-base lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary dark:border-white dark:bg-white dark:text-base">
-              <a
-                href="https://event.web3bridge.com/"
-                className="capitalize"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Web3Lagos Conference
-              </a>
-            </button>
+          
             <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
                 href="/cohort-registration"

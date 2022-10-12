@@ -4,10 +4,10 @@ import { motion } from 'framer-motion'
 
 const TopHeader = () => {
   return (
-    <div className="hidden  bg-base dark:bg-primary md:flex justify-center items-center h-14">
-      <div className=" px-5 text-sm mr-4 font-normal font-secondary text-white ">
+    <div className="flex items-center justify-center text-center bg-base dark:bg-primary h-14">
+      <div className="px-5 mr-4 text-sm font-normal text-white font-secondary">
          Registration for the cohort VII currently ongoing Apply 🎉
-        <span className="underline ml-1 text-white10">
+        <span className="ml-1 underline text-white10">
           <a href="https://www.web3bridge.com/cohort-registration" target="_blank" rel="noopener noreferrer">here</a>
         </span>
       </div>
