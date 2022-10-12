@@ -116,7 +116,7 @@ export const verifyPaymentSchema = object().shape({
     .min(4, "Next of Kin length should be at least 4 characters"),
     nextOfKinPhone:string()
     .required("Next of Kin Phone is required")
-    .matches(/^[0-9]{13}$/, 'Phone number is not valid')
+    .matches(/^[0-9]{4,15}$/, 'Phone number is not valid')
     .notOneOf([ref('nextOfKin'), null], 'next of kin phone cannot be the same as your phone number'),
     nextOfKinAddress:string()
     .required("Next of Kin Address is required")
