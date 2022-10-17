@@ -92,6 +92,7 @@ const Web3View = () => {
         city:watch("city"),
       }
 
+   
       const city = getValues("country")?.value
       useEffect(()=>{
         setValue('city','')
@@ -127,7 +128,8 @@ const onSubmit = async(value)=>{
       country:value?.country?.value,
       city:value?.city?.value,
     }
-    
+
+
     try{
    
     const response = await userRegistering(data)
@@ -434,10 +436,11 @@ name="nextOfKin" required label="Name" errors={errors} />
 list="nextOfKinRelation"
 register={register}
 disabled={isSubmitting}
-placeholder="Father"
+placeholder="Enter Your Answer"
 currentValue={getValues('nextOfKinRelationship')}
 name="nextOfKinRelationship" required label="Relationship" errors={errors} />   
 <datalist id="nextOfKinRelation">
+
     <option value="Father"></option>
     <option value="Mother"></option>
     <option value="Brother"></option>
@@ -466,7 +469,9 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
   <div className="relative mb-3">
  
 <label className="block mb-2 dark:text-white20">Payment Method { " "} 
-({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) </label>
+({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`})
+<span className="ml-1 text-red-500">*</span>
+ </label>
 {
  (errors?.paymentMethod?.type === "required" || !!errors?.paymentMethod?.message) && (
   <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
@@ -517,6 +522,7 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
 
 
 <div className="px-6">
+
 <Button 
 // disabled
 disabled={!isValid || !isDirty ||  isSubmitting} 

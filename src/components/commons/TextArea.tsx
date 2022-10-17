@@ -16,12 +16,13 @@ const TextArea = ({
   placeholder = "",
   className = "",
   name,
-  required=false,
+  required=true,
   label,
   errors,
   disabled = false,
   register,
   currentValue="",
+
 }: ITextAreaProps) => {
   const err =
     errors[name]?.type === "required" || !!errors[name]?.message;
@@ -37,6 +38,7 @@ const TextArea = ({
         htmlFor={name}
       >
         {label}
+        {!!required &&  <span className="ml-1 text-red-500">*</span>}
         </label>
         <textarea
           disabled={disabled}
@@ -64,7 +66,7 @@ const TextArea = ({
         </span>
       )
       : currentValue && (
-        <span className="absolute right-0 bottom-0 text-sm text-gray-500 capitalize label-text-alt">
+        <span className="absolute bottom-0 right-0 text-sm text-gray-500 capitalize label-text-alt">
           All good
         </span>
       )

@@ -9,10 +9,11 @@ interface ISelectProps extends IElementProps {
     label:string
     currentValue:string
     labelClassName?:string
+    required?:boolean
 
 }
 
-const Select = ({options=[], name, className, label,register, errors, currentValue, labelClassName}:ISelectProps)=>{
+const Select = ({options=[], name, className, label,register, errors, currentValue, labelClassName, required=true}:ISelectProps)=>{
     const err = errors[name]?.type === "required" || !!errors[name]?.message;
 
     return (
@@ -39,6 +40,7 @@ const Select = ({options=[], name, className, label,register, errors, currentVal
     htmlFor={name}
   >
     {label}
+    {!!required &&  <span className="ml-1 text-red-500">*</span>}
     </label>
 <div>
          

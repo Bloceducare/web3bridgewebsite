@@ -1,7 +1,7 @@
 import PhoneInput2 from 'react-phone-input-2'
 
 
-const PhoneInput = ({field={}, name, value, handleChange, errors, currentValue="", disabled=false}) => {
+const PhoneInput = ({field={}, name, value, handleChange, errors, currentValue="", disabled=false, required=true}) => {
     const err = errors?.[name]?.type === "required" || !!errors?.[name]?.message;
 
     return (
@@ -19,7 +19,9 @@ const PhoneInput = ({field={}, name, value, handleChange, errors, currentValue="
       )
     }
     </div>
-    <div className='dark:text-white20'>Phone</div>
+    <div className='dark:text-white20'>Phone
+    {!!required &&  <span className="ml-1 text-red-500">*</span>}
+    </div>
              <PhoneInput2  
              containerClass={`my-4 mt-1 pr-6 text-white60 rounded-md outline-none w-full border bg-transparent border-white10  ${
                 err

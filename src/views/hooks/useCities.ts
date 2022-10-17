@@ -12,7 +12,7 @@ export const useCities = (country) => {
         setLoading(true);
         setCities([])
         setError(false)
-        console.log(country)
+   
         try {
           const {data} = await axios.post(`${LOCATION_BASE_URL}countries/cities`, {
             country: country?.toLowerCase(),

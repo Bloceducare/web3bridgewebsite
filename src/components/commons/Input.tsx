@@ -28,13 +28,15 @@ const Input = ({
   register=()=>{},
   currentValue="",
   children,
-  labelClassName=""
+  labelClassName="",
+  required=true
 }: IInputProps) => {
   const err =
     errors[name]?.type === "required" || !!errors[name]?.message;
 
   return (
     <div className="relative ">
+     
       
       {err ? (
         <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
@@ -55,6 +57,7 @@ const Input = ({
         htmlFor={name}
       >
         {label}
+       {!!required &&  <span className="ml-1 text-red-500">*</span>}
         </label>
         <input
         list={list}

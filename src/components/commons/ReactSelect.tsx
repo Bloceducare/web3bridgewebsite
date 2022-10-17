@@ -46,17 +46,17 @@ interface IProps {
     isLoading?:boolean;
     refetchOptions?:any;
     optionsError?:boolean
+    required?:boolean
     
  }
-const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=false, placeholder, disabled, isLoading, value, label, refetchOptions, optionsError}:IProps)=>{
-  // console.log(errors)
+const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=false, placeholder, disabled, isLoading, value, label, refetchOptions, optionsError, required=true}:IProps)=>{
+
     const err =
     errors?.[name]?.type === "required" || !!errors?.[name]?.value?.message;
-  console.log(err)
+
     return (
         <div className='relative '>
-          {/* {JSON.stringify(errors)} */}
-          {/* {err} */}
+        
             <label
     
     className={`  relative  ${
@@ -65,6 +65,7 @@ const ReactSelect=({errors, field={}, name, defaults=[], options=[], isMulti=fal
     htmlFor={name}
   >
     {label}
+    {!!required &&  <span className="ml-1 text-red-500">*</span>}
 </label>
               <div>
               {err ? (

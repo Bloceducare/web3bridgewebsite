@@ -93,7 +93,7 @@ const Web3View = () => {
       }
 
       const city = getValues("country")?.value
-      console.log('cuty?>>>', city)
+     
       useEffect(()=>{
         setValue('city','')
       },[city])
@@ -401,7 +401,9 @@ name="email" required label="Email" errors={errors} />
   <div className="relative mb-3">
 
 <label className="block mb-2 dark:text-white20">Payment Method { " "} 
-({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) </label>
+({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) 
+ <span className="ml-1 text-red-500">*</span>
+</label>
 {
  (errors?.paymentMethod?.type === "required" || !!errors?.paymentMethod?.message) && (
   <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
