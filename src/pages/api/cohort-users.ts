@@ -15,17 +15,18 @@ import cloudinary from "@server/config/cloudinary";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-router.use(async (req, res, next) => {
-  // this serve as the error handling middleware
-  let schema;
-  if(req.body.currentTrack === "web2"){
-    schema =registrationSchema.web2
-  }
-  else{
-    schema =registrationSchema.web3
-  }
-  await validate(schema)(req, res, next)
-})
+router
+// .use(async (req, res, next) => {
+//   // this serve as the error handling middleware
+//   let schema;
+//   if((req.body.currentTrack || req.query.currentTrack) == "web2"){
+//     schema =registrationSchema.web2
+//   }
+//   else{
+//     schema =registrationSchema.web3
+//   }
+//   await validate(schema)(req, res, next)
+// })
 
 // create a user
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
@@ -106,9 +107,36 @@ interface IQuery {
 }
 
 router
+// .get(async (req, res) => {
+//   let userDb;
+//   if(req.query.currentTrack === "web2"){
+//     userDb = web2UserDb
+//   }
+
+//   if(req.query.currentTrack === "web3"){
+//     userDb = web3userDb
+//   }
+  
+//   const { currentTrack }: IQuery = req.query;
+
+//   try {
+//     const data = await web3userDb.find({})
+//     console.log(data, currentTrack)
+//     return res.status(200).json({
+//       status: true,
+//       message:data
+//     })
+//   } catch (e) {
+//     return res.status(500).json({
+//       status: false,
+//       error: "server error",
+//     });
+//   }
+// })
 .get(async (req, res) => {
   let userDb;
-  if(req.query.currentTrack === "web2"){
+
+    if(req.query.currentTrack === "web2"){
     userDb = web2UserDb
   }
 
@@ -116,39 +144,26 @@ router
     userDb = web3userDb
   }
   
-  const { currentTrack }: IQuery = req.query;
-
-  try {
-    return res.status(200).json({
-      status: true,
-      message:"This is a test",
-    })
-  } catch (e) {
-    return res.status(500).json({
-      status: false,
-      error: "server error",
-    });
-  }
-})
-.get(async (req, res) => {
-  let userDb;
 
   const { currentTrack, page }: IQuery = req.query;
 
   try {
-    const users = await userDb.find({
-      ...(!!currentTrack && { currentTrack }),
-    });
+    // const users = await web3userDb.find({
+    //   email:'okel@'
+    //   // ...(!!currentTrack && { currentTrack }),
+    // });
 
+  const re =  await  web2UserDb.find({})
+console.log(web2UserDb, web3userDb, re)
     return res.status(200).json({
       status: true,
-      data: users,
+      data:' users',
     });
   } catch (e) {
     reportError
     return res.status(500).json({
       status: false,
-      error: "server error",
+      error: "server error" + e,
     });
   }
 });

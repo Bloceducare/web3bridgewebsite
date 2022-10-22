@@ -22,8 +22,8 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
     }
   let userDb;
   await connectDB();
-//   userDb = web3UserDb
-  userDb = web2UserDb
+  userDb = web3UserDb
+  // userDb = web2UserDb
   
   try {
 
@@ -38,22 +38,22 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
         })
     }
 
-    // if(userDetails.paymentStatus === PaymentStatus.success){
-    //     return res.status(200).json({
-    //         status: false,
-    //         message: "payment already successful"
-    //     })
-    // }
+    if(userDetails.paymentStatus === PaymentStatus.success){
+        return res.status(200).json({
+            status: false,
+            message: "payment already successful"
+        })
+    }
 
         // update user payment status
-        const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
-            userDb.updateOne({email}, {
-                $set: {paymentStatus: PaymentStatus.success}
-            }),
+        // const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
+        //     userDb.updateOne({email}, {
+        //         $set: {paymentStatus: PaymentStatus.success}
+        //     }),
            
-        sendSms({recipients:userDetails.phone}), 
-        sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
-          ])
+        // sendSms({recipients:userDetails.phone}), 
+        // sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
+        //   ])
 
 
 
