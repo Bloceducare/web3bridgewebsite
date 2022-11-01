@@ -12,7 +12,6 @@ import validate from "@server/validate";
 import {webPayment} from "@server/config"
 import LazerPay from "lazerpay-node-sdk";
 import reportError from "@server/services/report-error";
-const crypto = require('crypto');
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();

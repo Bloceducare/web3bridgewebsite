@@ -46,6 +46,7 @@ specifiers:
   tailwindcss: ^3.0.24
   typescript: 4.7.3
   uuid: ^9.0.0
+  voucher-code-generator: ^1.3.0
   yup: ^0.32.11
 
 dependencies:
@@ -81,6 +82,7 @@ dependencies:
   react-toastify: 8.2.0_ef5jwxihqo6n7gxfmzogljlgcm
   sib-api-v3-typescript: 2.2.2
   uuid: 9.0.0
+  voucher-code-generator: 1.3.0
   yup: 0.32.11
 
 devDependencies:
@@ -4537,6 +4539,10 @@ packages:
       acorn-walk: 8.2.0
     dev: false
     optional: true
+
+  /voucher-code-generator/1.3.0:
+    resolution: {integrity: sha512-t4wnI91KC58LtjX2I0rJDhRm1JTXD+G7A+7iqp0sRSgpeJP4eKLexDRDLe2nedR7xFQcVlZudDZRBLrMP5+KTA==}
+    dev: false
 
   /web-streams-polyfill/3.2.1:
     resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}

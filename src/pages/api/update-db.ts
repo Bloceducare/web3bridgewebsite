@@ -46,14 +46,14 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
     }
 
         // update user payment status
-        // const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
-        //     userDb.updateOne({email}, {
-        //         $set: {paymentStatus: PaymentStatus.success}
-        //     }),
+        const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
+            userDb.updateOne({email}, {
+                $set: {paymentStatus: PaymentStatus.success}
+            }),
            
-        // sendSms({recipients:userDetails.phone}), 
-        // sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
-        //   ])
+        sendSms({recipients:userDetails.phone}), 
+        sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
+          ])
 
 
 

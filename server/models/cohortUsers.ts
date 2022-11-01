@@ -85,7 +85,7 @@ const cohortUsersSchema = new Schema(
     },
     socials: {
       type: [String],
-      default: [((value) => `https:twitter.com/${JSON.stringify(value)}`)(), (value) =>`https:github.com/${value.githubUsername}`],
+ 
 
     },
 

@@ -132,6 +132,15 @@ export const verifyPaymentSchema = object().shape({
 
   })
 
+ export const couponSchema = object().shape({
+    identifier:string()
+    .required("coupon identifier is needed"),
+    email:string()
+    .required("Email is required")
+    .matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/, 'Email is not valid')
+
+  })
+
 export const registrationSchema ={
   web2:mainSchema
   .concat(achievementFromProgramSchema)
@@ -144,4 +153,5 @@ export const registrationSchema ={
   .concat(walletSchema)
   .concat(yearsOfExperienceSchema).
   concat(linkedInProfileSchema),
+
 }

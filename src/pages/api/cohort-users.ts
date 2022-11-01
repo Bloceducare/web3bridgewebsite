@@ -8,25 +8,24 @@ import { PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
 import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
-import {ISmsData} from "types"
 import reportError from "@server/services/report-error";
-import cloudinary from "@server/config/cloudinary";
+import useCoupon from "@server/coupon";
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
-// .use(async (req, res, next) => {
-//   // this serve as the error handling middleware
-//   let schema;
-//   if((req.body.currentTrack || req.query.currentTrack) == "web2"){
-//     schema =registrationSchema.web2
-//   }
-//   else{
-//     schema =registrationSchema.web3
-//   }
-//   await validate(schema)(req, res, next)
-// })
+.use(async (req, res, next) => {
+  // this serve as the error handling middleware
+  let schema;
+  if((req.body.currentTrack || req.query.currentTrack) == "web2"){
+    schema =registrationSchema.web2
+  }
+  else{
+    schema =registrationSchema.web3
+  }
+  await validate(schema)(req, res, next)
+})
 
 // create a user
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
@@ -45,42 +44,50 @@ router
     .status(400)
     .send({ status: false, error: "Invalid track" });
   }
-  const { email, phone, currentTrack,name
-  } = req.body;
-  
+  const { email, phone, currentTrack,name,coupon } = req.body;
+
+
   try {
     await connectDB();
-    const [userExists, phoneExists] = await Promise.all([userDb.findOne({ email }), userDb.findOne({ phone})]);
+
+    if( !!coupon){
+      const  userCoupon = await useCoupon({identifier: coupon, email})
+
+      if(!userCoupon.status){
+        await closeDB;
+        return res.status(userCoupon.code ?? 400).json(userCoupon)
+      } 
+
+      await Promise.all([sendSms({recipients:phone}), 
+        sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',
+      })])
+ 
+    }
+
+  
+    const userExists= await userDb.findOne({ email });
 
     if(userExists?.paymentStatus ===PaymentStatus.success){
       await closeDB();
       return res
         .status(423)
-        .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+        .send({ status: false, error: `This user already exists and your payment has been verified ` , paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
     }
 
 
-
-
-   
     if (userExists) {
       await closeDB();
       return res
         .status(423)
         .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
     }
-
-
-
-
-
     
-    // const {url} = await cloudinary.uploader.upload(profilePicture, {});
-
+    
     const userData: any = new userDb({
       ...req.body,
-      paymentStatus: PaymentStatus.pending
-      // profilePicture: url,
+      paymentStatus: !!coupon ? PaymentStatus.success: PaymentStatus.pending,
+   
+    
     }, 
 );
 

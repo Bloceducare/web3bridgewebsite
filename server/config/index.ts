@@ -21,13 +21,6 @@ export const mailSenderConfig = {
 };
 
 
-// export const mailSenderConfig = {
-//   from: "events@web3bridge.com",
-//   emailSubject: "Web3 Lagos Conference 2022",
-//   replyTo: "events@web3bridge.com",
-// };
-
-
  export const emailConfig ={
   sender:"registration@web3bridge.com",
   name:"Web3Bridge",
