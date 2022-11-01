@@ -32,7 +32,7 @@ const CohortRegistration = () => {
     <>
       <div className="p-12">
         <div className="flex flex-wrap justify-center p-3 ">
-        <h1 className="font-bold text-center my-48">Registration has closed!!</h1>
+        <h1 className="font-bold text-center my-48 dark:text-white20">Registration has closed!!</h1>
           {/* <Card
             imgUrl="/web-2.svg"
             type="web2"
