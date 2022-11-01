@@ -12,6 +12,7 @@ import {ISmsData} from "types"
 import reportError from "@server/services/report-error";
 import cloudinary from "@server/config/cloudinary";
 
+const REGISTRATION_CLOSED=true;
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -30,7 +31,12 @@ router
 
 // create a user
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
-
+ if(REGISTRATION_CLOSED){
+return res.status(423).json({
+      message: "registration closed",
+      status: false,
+    });
+}
   let userDb;
   if(req.body.currentTrack === "web2"){
     userDb = web2UserDb
