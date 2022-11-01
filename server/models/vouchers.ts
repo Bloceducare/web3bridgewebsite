@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
-const couponsSchema = new Schema(
+const vouchersSchema = new Schema(
   {
     identifier: {
       type: String,
@@ -30,7 +30,7 @@ type:Boolean
 );
 
 
-const Coupons =
-  mongoose.models.coupons || mongoose.model("coupons", couponsSchema, "coupons");
+const Vouchers =
+  mongoose.models.vouchers || mongoose.model("vouchers", vouchersSchema, "vouchers");
 
-export default Coupons;
+export default Vouchers;

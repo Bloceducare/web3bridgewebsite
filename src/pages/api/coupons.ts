@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
-import vouchersDb from "@server/models/coupons";
+import vouchersDb from "@server/models/vouchers";
 import reportError from "@server/services/report-error";
 import genVoucher from "utils/genVoucher";
 import { validateCoupon } from "@server/validate";
 import { couponSchema } from "schema";
-import useCoupon from "@server/coupon";
+import useCoupon from "@server/voucher";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -25,16 +25,17 @@ router
 
   try {
 
-    const coupons = await  vouchersDb.find({
-        ...(status=='valid' && {valid:true})
-    })
+    // const coupons = await  vouchersDb.find({
+    //     ...(status=='valid' && {valid:true})
+    // })
 
-    await closeDB()
-    return res.status(200).json({
-      status: true,
-          data:coupons,
-       })
-
+    // await closeDB()
+    // return res.status(200).json({
+    //   status: true,
+    //   number:coupons.length,
+    //       data:coupons,
+    //    })
+    return res.status(200).json({})
   }
 
   catch(e){
@@ -60,24 +61,28 @@ router
 
   try {
   
-    const coupon = genVoucher(Number(number));
-        await Promise.all(
-            coupon.map(async(coup)=>{
-               await new vouchersDb({
-                    valid:true,
-                    identifier:coup
-                }).save()   
-            })
-        )
+    // const coupon = genVoucher(Number(number));
+    //     await Promise.all(
+    //         coupon.map(async(coup)=>{
+    //            await new vouchersDb({
+    //                 valid:true,
+    //                 identifier:coup
+    //             }).save()   
+    //         })
+    //     )
  
-      
-    
-    await closeDB()
+       
+    // await closeDB()
+    // return res.status(200).json({
+    //   status: true,
+    //       data:coupon,
+    //       length:coupon.length
+    //    })
+
     return res.status(200).json({
-      status: true,
-          data:coupon,
-          length:coupon.length
-       })
+      status:true,
+      message:'empty generated'
+    })
 
   }
 
@@ -98,8 +103,9 @@ router
   
     try{
         
-    const data = await useCoupon({identifier, email})
-        res.status(201).json(data)
+    // const data = await useCoupon({identifier, email})
+    //     res.status(201).json(data)
+       res.status(201).json({})
     }
     catch(e){
         res.status(e!.code ?? 500).json(e)

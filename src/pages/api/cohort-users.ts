@@ -9,9 +9,9 @@ import validate from "@server/validate";
 import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
 import reportError from "@server/services/report-error";
-import useCoupon from "@server/coupon";
+import useVoucher from "@server/voucher";
+import {COHORT_REGISTRATION_OPENED} from "config/constant"
 
-const REGISTRATION_CLOSED=true;
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -30,7 +30,7 @@ router
 
 // create a user
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
- if(REGISTRATION_CLOSED){
+ if(!COHORT_REGISTRATION_OPENED){
 return res.status(423).json({
       message: "registration closed",
       status: false,
@@ -50,18 +50,20 @@ return res.status(423).json({
     .status(400)
     .send({ status: false, error: "Invalid track" });
   }
-  const { email, phone, currentTrack,name,coupon } = req.body;
+  const { email, phone, currentTrack,name,voucher } = req.body;
 
 
   try {
     await connectDB();
 
-    if( !!coupon){
-      const  userCoupon = await useCoupon({identifier: coupon, email})
+    if( !!voucher){
+      const  userVoucher = await useVoucher({identifier: voucher, email})
 
-      if(!userCoupon.status){
+      if(!userVoucher.status){
         await closeDB;
-        return res.status(userCoupon.code ?? 400).json(userCoupon)
+        return res.status(userVoucher.code ?? 400).json({
+          ...userVoucher
+        })
       } 
 
       await Promise.all([sendSms({recipients:phone}), 
@@ -77,7 +79,7 @@ return res.status(423).json({
       await closeDB();
       return res
         .status(423)
-        .send({ status: false, error: `This user already exists and your payment has been verified ` , paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+        .send({ status: false, error: `This user already exists  ` , paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
     }
 
 
@@ -91,7 +93,7 @@ return res.status(423).json({
     
     const userData: any = new userDb({
       ...req.body,
-      paymentStatus: !!coupon ? PaymentStatus.success: PaymentStatus.pending,
+      paymentStatus: !!voucher ? PaymentStatus.success: PaymentStatus.pending,
    
     
     }, 
@@ -101,7 +103,7 @@ return res.status(423).json({
 
     await closeDB();
 
-    return res.status(201).json({ message: currentTrack==='web3'? "Registration was successful, please check your email for further instructions" : "registration submitted successfully", ..._doc });
+    return res.status(201).json({ message: "Registration was successful, please check your email for further instructions" , ..._doc });
   } catch (e) {
 
     reportError(`error occurred at ${__filename}\n environment:${process.env.NODE_ENV}\n ${e} `)

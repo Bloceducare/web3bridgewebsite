@@ -122,10 +122,19 @@ const onSubmit = async(value)=>{
       city:value?.city?.value,
     }
     
+    setError('')
+    setResponsePaymentStatus(PaymentStatus.notInitialized)  
     try{
-      return alert("Registration closed !")
+
+      // return alert("Registration closed !")
     // const response = await userRegistering(data)
-    
+  
+    const response = await userRegistering({
+      ...data,
+      paymentMethod:'voucher'
+    })
+    setMessage(response.data.message)
+ 
     //   if(response.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
      
     //     // @ts-ignore
@@ -180,7 +189,7 @@ const retryPayment=(payment)=>{
             </div>
                
              
-                <>
+                {/* <>
                    {responsePaymentStatus ===PaymentStatus.success ? 
             <>
                 <Link href="/">
@@ -194,16 +203,16 @@ const retryPayment=(payment)=>{
               <Button onClick={()=>retryPayment(PaymentMethod.crypto)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Crypto</Button>             
             </div>
                        }
-                 </>
+                 </> */}
              
             </>
             )
           }
         {
-          !!message &&  ( <div className="my-2 text-lg text-center ">{message}
+          !!message &&  ( <div className="capitalize my-2 text-lg text-center  dark:text-white ">{message}
           <div className="mt-4">
             <Link href="/">
-              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
+              <a className=" p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
             </Link>
           </div>
           </div>)
@@ -397,7 +406,7 @@ name="email" required label="Email" errors={errors} />
 
 <>
 
-<fieldset className="p-4 mx-2 mb-4 border rounded-md">
+{/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Payment</legend>
   <div className="relative mb-3">
 
@@ -450,13 +459,44 @@ name="email" required label="Email" errors={errors} />
               </div>
 
 </div>
+ </fieldset> */}
+
+ {/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
+  <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Apply Voucher</legend>
+  <div className="relative mb-3">
+
+
+<Input 
+lowerCase={false}
+register={register}
+disabled={isSubmitting}
+currentValue={getValues('voucher')}
+placeholder="Enter a valid voucher"
+name="voucher" required={false} label="Voucher" errors={errors} />  
+
+</div>
+ </fieldset> */}
+
+<fieldset className="p-4 mx-2 mb-4 border rounded-md">
+  <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Apply Voucher</legend>
+  <div className="relative mb-3">
+
+
+<Input 
+lowerCase={false}
+register={register}
+disabled={isSubmitting}
+currentValue={getValues('voucher')}
+placeholder="Enter a valid voucher"
+name="voucher" required={false} label="Voucher" errors={errors} />  
+
+</div>
  </fieldset>
 </>
 
 <div className="px-6">
 <Button 
-disabled
-// disabled={!isValid || !isDirty ||  isSubmitting} 
+disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >

@@ -12,7 +12,7 @@ export enum Tracks {
 export enum PaymentMethod {
     card="card",
     crypto="crypto",
-    coupon="coupon"
+    coupon="voucher"
 }
 
 export enum PaymentStatus {

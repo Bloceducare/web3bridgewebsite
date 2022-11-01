@@ -52,6 +52,7 @@ const allUserSchema =  {
       required: true,
       
     },
+
     
     // nextOfKin: {
     //   type: String,
@@ -87,7 +88,12 @@ const allUserSchema =  {
     paymentStatus:{
       type: String,
       enum:PaymentStatus,
-    }
+    },
+    paymentMethod:{
+      type: String,
+      enum:PaymentMethod,
+      required:true
+    },
   }
 
 

@@ -89,11 +89,7 @@ const cohortUsersSchema = new Schema(
 
     },
 
-    paymentMethod:{
-      type: String,
-      enum:PaymentMethod,
-      required:true
-    },
+
     paymentStatus:{
       type: String,
       enum:PaymentStatus,

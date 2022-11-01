@@ -19,7 +19,6 @@ import Select from "@components/commons/Select";
 import countries from "data/countries.json";
 import useCities from "./hooks/useCities";
 import {PaymentStatus}from "enums" 
-// import ImageUpload from "@components/commons/ImageUpload";
 
 
 const countriesData = countries.map((country) => ({
@@ -117,9 +116,9 @@ const onSuccessPayStack = ({reference=""}):void => {
 
     
 const onSubmit = async(value)=>{
-  if(!value.paymentMethod){
-    alert("Please select a payment method")
-  }
+  // if(!value.paymentMethod){
+  //   alert("Please select a payment method")
+  // }
   
     const data = {
       ...value,
@@ -132,15 +131,18 @@ const onSubmit = async(value)=>{
 
     try{
 
-      return alert("Registration closed !")
+      // return alert("Registration closed !")
    
-    // const response = await userRegistering(data)
+    const response = await userRegistering({
+      ...data,
+      paymentMethod:'voucher'
+    })
+    setMessage(response.data.message)
 
     
     // if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
       
-  
-    //   // @ts-ignore
+    //  // @ts-ignore
     //   initializePaymentPayStack(onSuccessPayStack, onClose)
     // }
     
@@ -191,7 +193,7 @@ const retryPayment=(payment)=>{
             </div>
                
              
-                <>
+                {/* <>
                    {responsePaymentStatus ===PaymentStatus.success ? 
             <>
                 <Link href="/">
@@ -205,13 +207,13 @@ const retryPayment=(payment)=>{
              </div>
                      
                        }
-                 </>
+                 </> */}
              
             </>
             )
           }
         {
-          !!message &&  ( <div className="my-2 text-lg text-center ">{message}
+          !!message &&  ( <div className="my-2 text-lg text-center dark:text-white ">{message}
           <div className="mt-4">
             <Link href="/">
               <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
@@ -465,8 +467,8 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
   </>
 
 
-<>
-<fieldset className="p-4 mx-2 mb-4 border rounded-md">
+
+{/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Payment</legend>
   <div className="relative mb-3">
  
@@ -519,15 +521,31 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
               </div>
 
 </div>
+ </fieldset> */}
+
+
+<fieldset className="p-4 mx-2 mb-4 border rounded-md">
+  <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Apply Voucher</legend>
+  <div className="relative mb-3">
+
+
+<Input 
+lowerCase={false}
+register={register}
+disabled={isSubmitting}
+currentValue={getValues('voucher')}
+placeholder="Enter a valid voucher"
+name="voucher" required={false} label="Voucher" errors={errors} />  
+
+</div>
  </fieldset>
-</>
 
 
 <div className="px-6">
 
 <Button 
-disabled
-// disabled={!isValid || !isDirty ||  isSubmitting} 
+// disabled
+disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >

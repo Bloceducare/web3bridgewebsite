@@ -29,7 +29,8 @@ const Input = ({
   currentValue="",
   children,
   labelClassName="",
-  required=true
+  required=true,
+  lowerCase=true
 }: IInputProps) => {
   const err =
     errors[name]?.type === "required" || !!errors[name]?.message;
@@ -66,7 +67,7 @@ const Input = ({
           name={name}
           id={name}
           type={type}
-          className={`lowercase my-4 mt-1 px-6 py-2 text-white60 rounded-md outline-none w-full border  border-white10 bg-transparent  ${
+          className={` my-4 mt-1 px-6 py-2 text-white60 rounded-md outline-none w-full border  border-white10 bg-transparent ${lowerCase ? 'lowercase':''} ${
             err
               ? "focus:ring-red-500 focus:border-red-500 ring-red-500 border-red-500"
               :currentValue?.length > 0 ? "border-green-500" : ""          
