@@ -29,31 +29,31 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 
     // user details
-    const userDetails = await userDb.findOne({ email });
-   // check if user exists
-    if(!userDetails){
-        return res.status(404).json({
-            status: false,
-            message: "user not found"
-        })
-    }
+  //   const userDetails = await userDb.findOne({ email });
+  //  // check if user exists
+  //   if(!userDetails){
+  //       return res.status(404).json({
+  //           status: false,
+  //           message: "user not found"
+  //       })
+  //   }
 
-    if(userDetails.paymentStatus === PaymentStatus.success){
-        return res.status(200).json({
-            status: false,
-            message: "payment already successful"
-        })
-    }
+  //   if(userDetails.paymentStatus === PaymentStatus.success){
+  //       return res.status(200).json({
+  //           status: false,
+  //           message: "payment already successful"
+  //       })
+  //   }
 
-        // update user payment status
-        const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
-            userDb.updateOne({email}, {
-                $set: {paymentStatus: PaymentStatus.success}
-            }),
+  //       // update user payment status
+  //       const [,sms={balance:""} as ISmsData] =  await Promise.all<any>([
+  //           userDb.updateOne({email}, {
+  //               $set: {paymentStatus: PaymentStatus.success}
+  //           }),
            
-        sendSms({recipients:userDetails.phone}), 
-        sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
-          ])
+  //       sendSms({recipients:userDetails.phone}), 
+  //       sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',}),
+  //         ])
 
 
 
