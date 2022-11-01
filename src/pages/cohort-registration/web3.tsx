@@ -3,7 +3,8 @@ import CohortRegistration from "@views/registration";
 
 const  Web3Registration = ()=>{
     return (<>
-    <CohortRegistration />
+    {/* <CohortRegistration /> */}
+    <h1 className="font-bold dark:text-white20 text-center my-52">Registration has closed!!</h1>
     </>)
 }
 

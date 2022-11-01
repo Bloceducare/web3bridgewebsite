@@ -32,7 +32,8 @@ const CohortRegistration = () => {
     <>
       <div className="p-12">
         <div className="flex flex-wrap justify-center p-3 ">
-          <Card
+        <h1 className="font-bold text-center my-48 dark:text-white20">Registration has closed!!</h1>
+          {/* <Card
             imgUrl="/web-2.svg"
             type="web2"
             text="Kickstart your career in software development"
@@ -41,7 +42,7 @@ const CohortRegistration = () => {
             imgUrl="/web-3.svg"
             type="web3"
             text="Transistion from web2 to web3"
-          />
+          /> */}
         </div>
       </div>
     </>
