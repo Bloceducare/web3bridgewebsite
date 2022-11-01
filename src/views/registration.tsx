@@ -131,20 +131,22 @@ const onSubmit = async(value)=>{
 
 
     try{
+
+      return alert("Registration closed !")
    
-    const response = await userRegistering(data)
+    // const response = await userRegistering(data)
 
     
-    if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
+    // if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
       
   
-      // @ts-ignore
-      initializePaymentPayStack(onSuccessPayStack, onClose)
-    }
+    //   // @ts-ignore
+    //   initializePaymentPayStack(onSuccessPayStack, onClose)
+    // }
     
-    if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
-      initializePaymentLazerPay()   
-    }
+    // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
+    //   initializePaymentLazerPay()   
+    // }
 
     // setMessage("Registration successful")
     }
@@ -524,8 +526,8 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
 <div className="px-6">
 
 <Button 
-// disabled
-disabled={!isValid || !isDirty ||  isSubmitting} 
+disabled
+// disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >
