@@ -64,11 +64,11 @@ const Navbar = () => {
           </div>
           {/* Buttons */}
           <div className="flex space-x-6">
-            <Link href="/cohort-registration">
+            {/* <Link href="/cohort-registration">
               <a className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
                 Register for cohort VIII
               </a>
-            </Link>
+            </Link> */}
             {/* <button className="hidden md:block px-1 py-0 xl:block rounded-sm bg-primary text-white font-base md:px-2 lg:px-[1rem] xl:px-[2rem] md:py-1 border-2 border-primary ">
 
                 <a
@@ -190,7 +190,7 @@ const Navbar = () => {
               </a>
             </button>
           
-            <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
+            {/* <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
                 href="/cohort-registration"
                 className="capitalize"
@@ -199,7 +199,7 @@ const Navbar = () => {
               >
                 Register for Cohort VIII
               </a>
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>

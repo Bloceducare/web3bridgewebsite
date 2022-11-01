@@ -40,7 +40,7 @@ const HeroSection = () => {
               </a>
               </button>
             </div>
-            <div className= "w-full py-3 text-center capitalize border-2 rounded-sm bg-secondary text-secondary font-base xl:w-52 dark:text-primary dark:bg-white dark:border-white">
+            {/* <div className= "w-full py-3 text-center capitalize border-2 rounded-sm bg-secondary text-secondary font-base xl:w-52 dark:text-primary dark:bg-white dark:border-white">
               <Link href="/cohort-registration">
           
               
@@ -48,7 +48,7 @@ const HeroSection = () => {
               
               </Link>
               
-            </div>
+            </div> */}
           </div>
         </div>
         {/* Hero image */}
