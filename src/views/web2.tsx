@@ -123,17 +123,18 @@ const onSubmit = async(value)=>{
     }
     
     try{
-    const response = await userRegistering(data)
+      return alert("Registration closed !")
+    // const response = await userRegistering(data)
     
-      if(response.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
+    //   if(response.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
      
-        // @ts-ignore
-        initializePaymentPayStack(onSuccessPayStack, onClose)
-       }
+    //     // @ts-ignore
+    //     initializePaymentPayStack(onSuccessPayStack, onClose)
+    //    }
        
-    if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
-      initializePaymentLazerPay()   
-    }
+    // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
+    //   initializePaymentLazerPay()   
+    // }
     
 }
     catch(e:any){
@@ -454,8 +455,8 @@ name="email" required label="Email" errors={errors} />
 
 <div className="px-6">
 <Button 
-// disabled
-disabled={!isValid || !isDirty ||  isSubmitting} 
+disabled
+// disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >
