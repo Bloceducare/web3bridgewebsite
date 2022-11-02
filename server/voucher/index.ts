@@ -7,12 +7,12 @@ const useVoucher = async({identifier, email}) => {
   
     if(!voucher) {
        
-        throw 'invalid voucher'
+        throw  `${identifier} - invalid voucher`
     }
 
     if(voucher.used) {
    
-       throw 'voucher used'
+       throw `${identifier} - voucher used`
     }
 
   try {
