@@ -12,8 +12,7 @@ export function validationOpt(schema) {
 export const mainSchema = object().shape({
   voucher: string()
     .required("voucher is required")
-    .min(8, "voucher length too short")
-    .max(10, "voucher length too long"),
+    .length(6, 'incorrect voucher'),
   name: string()
     .required("Name is required")
     .min(8, "Name length should be at least 4 characters"),

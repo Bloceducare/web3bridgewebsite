@@ -3,8 +3,8 @@ import { COHORT_REGISTRATION_OPENED } from "config/constant"
 
 const  Web2Registration = ()=>{
     return (<>
-      <Web2View />
-   
+    { COHORT_REGISTRATION_OPENED ?   <Web2View />:   <h1 className="font-bold text-center dark:text-white20 my-52">Registration has closed!!</h1>
+   }
   
     </>)
 }
