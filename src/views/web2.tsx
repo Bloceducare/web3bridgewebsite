@@ -209,10 +209,10 @@ const retryPayment=(payment)=>{
             )
           }
         {
-          !!message &&  ( <div className="capitalize my-2 text-lg text-center  dark:text-white ">{message}
+          !!message &&  ( <div className="my-2 text-lg text-center capitalize dark:text-white ">{message}
           <div className="mt-4">
             <Link href="/">
-              <a className=" p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
+              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md ">Go Back Home</a>
             </Link>
           </div>
           </div>)
@@ -488,7 +488,7 @@ register={register}
 disabled={isSubmitting}
 currentValue={getValues('voucher')}
 placeholder="Enter a valid voucher"
-name="voucher" required={false} label="Voucher" errors={errors} />  
+name="voucher"  label="Voucher" errors={errors} />  
 
 </div>
  </fieldset>

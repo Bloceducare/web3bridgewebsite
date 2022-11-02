@@ -535,7 +535,7 @@ register={register}
 disabled={isSubmitting}
 currentValue={getValues('voucher')}
 placeholder="Enter a valid voucher"
-name="voucher" required={false} label="Voucher" errors={errors} />  
+name="voucher"  label="Voucher" errors={errors} />  
 
 </div>
  </fieldset>

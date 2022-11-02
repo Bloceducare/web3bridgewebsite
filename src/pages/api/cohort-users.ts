@@ -52,6 +52,14 @@ return res.status(423).json({
   }
   const { email, phone, currentTrack,name,voucher } = req.body;
 
+  if(!voucher){
+    await closeDB;
+    return res.status(423).json({
+     error:'voucher is required',
+     status:false
+    })
+  }
+
 
   try {
     await connectDB();
@@ -75,19 +83,19 @@ return res.status(423).json({
   
     const userExists= await userDb.findOne({ email });
 
-    if(userExists?.paymentStatus ===PaymentStatus.success){
-      await closeDB();
-      return res
-        .status(423)
-        .send({ status: false, error: `This user already exists  ` , paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
-    }
+    // if(userExists?.paymentStatus ===PaymentStatus.success){
+    //   await closeDB();
+    //   return res
+    //     .status(423)
+    //     .send({ status: false, error: `This user already exists  ` , paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+    // }
 
 
     if (userExists) {
       await closeDB();
       return res
         .status(423)
-        .send({ status: false, error: `This user already exists ${userExists.paymentStatus===PaymentStatus.success ? 'and your payment has been verified' :'click below to complete your payment'}`, paymentStatus:userExists.paymentStatus ?? PaymentStatus.pending });
+        .send({ status: false, error: "This user already exists" });
     }
     
     
