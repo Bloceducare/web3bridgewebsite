@@ -108,7 +108,7 @@ router
        res.status(201).json({})
     }
     catch(e){
-        res.status(e!.code ?? 500).json(e)
+        res.status( 500).json(e)
     }
     
 
