@@ -12,7 +12,7 @@ const useVoucher = async({identifier, email}) => {
 
     if(voucher.used) {
    
-       throw `${identifier} - voucher used`
+       throw `${identifier} - voucher used by ${voucher?.user}`
     }
 
   try {
@@ -24,7 +24,7 @@ const useVoucher = async({identifier, email}) => {
     return {
       status: true,
      code:201,
-     message:'voucher applied successfully',
+     message:`${identifier} voucher applied successfully`,
           data:updated,
        }
 
