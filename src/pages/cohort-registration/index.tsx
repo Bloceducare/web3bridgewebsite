@@ -3,6 +3,7 @@ import Link from "next/link";
 import { blurUrl } from "data";
 import { COHORT_REGISTRATION_OPENED } from "config/constant";
 
+
 const Card = ({
   imgUrl = "",
   type = "web2",

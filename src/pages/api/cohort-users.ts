@@ -64,23 +64,6 @@ return res.status(423).json({
   try {
     await connectDB();
 
-    if( !!voucher){
-      const  userVoucher = await useVoucher({identifier: voucher, email})
-
-      if(!userVoucher.status){
-        await closeDB;
-        return res.status(userVoucher.code ?? 400).json({
-          ...userVoucher
-        })
-      } 
-
-      await Promise.all([sendSms({recipients:phone}), 
-        sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',
-      })])
- 
-    }
-
-  
     const userExists= await userDb.findOne({ email });
 
     // if(userExists?.paymentStatus ===PaymentStatus.success){
@@ -98,6 +81,25 @@ return res.status(423).json({
         .send({ status: false, error: "This user already exists" });
     }
     
+
+    if( !!voucher){
+      const  userVoucher = await useVoucher({identifier: voucher, email})
+
+      if(!userVoucher.status){
+        await closeDB;
+        return res.status(userVoucher.code ?? 400).json({
+          ...userVoucher
+        })
+      } 
+
+      await Promise.all([sendSms({recipients:phone}), 
+        sendEmail({email, name, type:currentTrack, file:currentTrack==='web2'? 'web2': 'web3',
+      })])
+ 
+    }
+
+  
+ 
     
     const userData: any = new userDb({
       ...req.body,

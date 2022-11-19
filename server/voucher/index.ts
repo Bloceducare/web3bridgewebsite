@@ -3,7 +3,7 @@ import vouchersDb from "../models/vouchers"
 
 const useVoucher = async({identifier, email}) => {
  
-    const voucher = await vouchersDb.findOne({identifier})
+    const voucher = await vouchersDb.findOne({identifier:identifier.toLowerCase()})
   
     if(!voucher) {
        

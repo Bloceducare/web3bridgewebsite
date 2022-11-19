@@ -1,9 +1,10 @@
 
 import codes from 'voucher-code-generator'
 
-const genVoucher = (length=5):String[]=>codes.generate({
-    length: 6,
-    count: length
+const genVoucher = (count=5, length=6):String[]=>codes.generate({
+    length,
+    count,
+    charset: "123456789abcdefghijklmnpqwxyz"
 })
 
 
