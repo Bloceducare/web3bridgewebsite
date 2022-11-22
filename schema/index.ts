@@ -6,7 +6,7 @@ import countries from "data/countries.json"
 const mappedCountries = countries.map((country) => country.name)
 
 export function validationOpt(schema) {
-  return { mode: "onTouched", resolver: yupResolver(schema) }
+  return { mode: "all", resolver: yupResolver(schema) }
 };
 
 export const mainSchema = object().shape({
