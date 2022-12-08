@@ -11,7 +11,7 @@ export function validationOpt(schema) {
 
 export const mainSchema = object().shape({
   voucher: string()
-    .required("voucher is required")
+    // .required("voucher is required")
     .length(6, 'incorrect voucher'),
   name: string()
     .required("Name is required")
@@ -36,15 +36,9 @@ export const mainSchema = object().shape({
     .required("City is required")
   }).nullable(),
 
-  // profilePicVal:object()
-  // .shape({
-  //   name: string().required("Profile picture is required"),
-  //   type:mixed().oneOf(["image/jpeg", "image/png", "image/jpg"], "File type is not valid"),
-  // }).nullable(),
-
-  walletAddress: string()
-    .required("Wallet Address is required")
-    .matches(/^0x[a-fA-F0-9]{40}$/, 'Wallet Address is not valid'),
+  // walletAddress: string()
+  //   .required("Wallet Address is required")
+  //   .matches(/^0x[a-fA-F0-9]{40}$/, 'Wallet Address is not valid'),
   // paymentMethod:mixed<PaymentMethod>()
   // .oneOf(Object.values(PaymentMethod), "Payment method is not valid")
   // .required("Payment method is required")
@@ -136,6 +130,12 @@ const linkedInProfileSchema = object().shape({
 
 })
 
+const areaOfInterestSchema = object().shape({
+  AreaOfInterest: string()
+    .required("Area of Interest is required")
+
+})
+
 export const couponSchema = object().shape({
   identifier: string()
     .required("coupon identifier is needed"),
@@ -150,6 +150,7 @@ export const registrationSchema = {
     .concat(achievementFromProgramSchema)
     .concat(inspirationForCodingSchema)
     .concat(dailyCommitmentSchema)
+    .concat(walletSchema)
   ,
   web3: mainSchema
     .concat(technicalSchema)
@@ -157,5 +158,8 @@ export const registrationSchema = {
     .concat(walletSchema)
     .concat(yearsOfExperienceSchema).
     concat(linkedInProfileSchema),
+    specialClass:mainSchema
+    .concat(areaOfInterestSchema)
+    .concat(paymentSchema)
 
 }

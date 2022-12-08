@@ -9,16 +9,16 @@ import Input from "@components/commons/Input";
 import Button from "@components/commons/Button";
 import PhoneInput from "@components/commons/PhoneInput";
 import ReactSelect from "@components/commons/ReactSelect";
-import TextArea from "@components/commons/TextArea";
-import { Gender, PaymentMethod, Tracks } from "enums";
-import {  userRegistering } from "./api";
+import {PaymentMethod, PaymentStatus, Tracks } from "enums";
+import { specialClassRegistering } from "./api";
 import { usePaystackPayment } from 'react-paystack';
 import { webPayment } from "@server/config";
 import formatToCurrency from "utils/formatToCurrency";
 import Select from "@components/commons/Select";
 import countries from "data/countries.json";
 import useCities from "./hooks/useCities";
-import {PaymentStatus}from "enums" 
+import {  specializedClassOptions } from "config/constant";
+
 
 
 const countriesData = countries.map((country) => ({
@@ -32,16 +32,16 @@ const onClose = () => {
   console.log('closed')
 }
 
-const Web3View = () => {
-
-
+const SpecializedClass = () => {
+  const router = useRouter()
+  
   const lazerPayConfig = {
     publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
-    currency: "USD", // USD
-    amount: webPayment.USD, // amount as a number 
+    currency: "USD", // USD, NGN, AED, GBP, EUR
+    amount: webPayment.USD, // amount as a number or string
     reference:uuidv4(), // unique identifier
     metadata:{
-      track: Tracks.web3,
+      track: Tracks.specialClass,
     },
     onSuccess: (response) => {
       // handle response here
@@ -60,19 +60,19 @@ const Web3View = () => {
     amount: webPayment.naira*100,
     publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
 };
-  const router = useRouter()
-  const validationOption = validationOpt(registrationSchema.web3);
-  
 
+//   
+  const validationOption = validationOpt(registrationSchema.specialClass);
+  
+ 
     const [phone, setPhone] = useState("");
     const [error, setError] = useState<any>("");
     const [message, setMessage] = useState("");
+    const [responsePaymentStatus, setResponsePaymentStatus] = useState(PaymentStatus.notInitialized);
+
     const handlePhoneChange = (phone) => {
         setPhone(phone)
     }
-
-    const [responsePaymentStatus, setResponsePaymentStatus] = useState(PaymentStatus.notInitialized);
-
 
     const {
         register,
@@ -84,85 +84,77 @@ const Web3View = () => {
         formState: { errors,isSubmitting, isDirty, isValid },
         // @ts-ignore
       } = useForm<any>(validationOption);
-      
       const userEmail = {
         email:watch("email"),
         name:watch("name"),
         country:watch("country"),
         city:watch("city"),
+        PaymentMethod:watch("PaymentMethod"),
       }
 
-   
       const city = getValues("country")?.value
-      
+    
       useEffect(()=>{
         setValue('city','')
       },[city])
-      
       const {cities, loading:cityLoadig, error:cityError, getCities}= useCities(city)
 
 const onSuccessPayStack = ({reference=""}):void => {
- 
-  router.push(`/verify-payment?reference=${reference}&email=${userEmail.email}&paymentMethod=card&currentTrack=web3`)
+  // redirect to verify page
+  router.push(`/verify-payment?reference=${reference}&email=${userEmail.email}&paymentMethod=card&currentTrack=web2`)
 };
 
-      const initializePaymentPayStack = usePaystackPayment({...config, ...userEmail});
+      const initializePaymentPayStack = usePaystackPayment({...config, ...userEmail,});
       
+      const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
+        customerName: userEmail.name,
+        customerEmail: userEmail.email,
+        onSuccess:()=>router.push('/')
+      }});
 
+   
 
- const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
-  customerName: userEmail.name,
-  customerEmail: userEmail.email,
-  onSuccess:()=>router.push('/')
-}});
-
-    
 const onSubmit = async(value)=>{
-  // if(!value.paymentMethod){
-  //   alert("Please select a payment method")
-  // }
-  
     const data = {
       ...value,
-      email: value?.email?.toLowerCase(),
-      currentTrack: Tracks.web3,
+      currentTrack:Tracks.specialClass,
       country:value?.country?.value,
       city:value?.city?.value,
     }
 
-
+ 
+    setError('')
+    // setResponsePaymentStatus(PaymentStatus.notInitialized)  
     try{
 
       // return alert("Registration closed !")
-   
-    const response = await userRegistering({
-      ...data,
-      paymentMethod:'voucher'
-    })
-    setMessage(response.data.message)
+    const response = await specialClassRegistering(data)
+    // console.log(response, "response ceck")
+  
 
-    
-    // if(response.status === 201 && PaymentMethod.card=== data.paymentMethod){
-      
-    //  // @ts-ignore
-    //   initializePaymentPayStack(onSuccessPayStack, onClose)
-    // }
-    
-    // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
-    //   initializePaymentLazerPay()   
-    // }
-
-    // setMessage("Registration successful")
+      if(response?.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
+     
+        // @ts-ignore
+        initializePaymentPayStack(onSuccessPayStack, onClose)
+       }
+       
+    if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
+      initializePaymentLazerPay()   
     }
+    
+}
     catch(e:any){
+        console.log(e.response.data, "Error")
       setError(e?.response?.data?.error ?? e.response?.data?.errors)
-      setResponsePaymentStatus(e?.response?.data?.paymentStatus) 
+      setResponsePaymentStatus(e?.response?.data?.paymentStatus
+        )  
     }
 
     finally{
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
+
 
 const retryPayment=(payment)=>{
   if(payment === PaymentMethod.card){
@@ -174,16 +166,15 @@ const retryPayment=(payment)=>{
     initializePaymentLazerPay()
   }  
 }
-
     return <>
     <div className="max-w-lg m-12 mx-auto">
       <div> 
       </div>
       <div className='flex flex-col items-center justify-center mb-6'>
         <div className="text-2xl dark:text-white20">
-          Cohort VIII Registration
+         Specialized Class Registration
           </div>
-        
+     
           {
             !!error &&  (<>
                  <div className="my-2 text-sm font-semibold text-red-500">
@@ -192,33 +183,17 @@ const retryPayment=(payment)=>{
                </>
                :responsePaymentStatus === PaymentStatus.pending && "Payment pending, please try again"
                }
-            </div>
-               
-             
-                {/* <>
-                   {responsePaymentStatus ===PaymentStatus.success ? 
-            <>
-                <Link href="/">
-              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
-            </Link>
-             </>:
-               <div>
-               <Button onClick={()=>retryPayment(PaymentMethod.card)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Card</Button>
-                 
-               <Button onClick={()=>retryPayment(PaymentMethod.crypto)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Crypto</Button>             
-             </div>
-                     
-                       }
-                 </> */}
+            </div>       
+      
              
             </>
             )
           }
         {
-          !!message &&  ( <div className="my-2 text-lg text-center dark:text-white ">{message}
+          !!message &&  ( <div className="my-2 text-lg text-center capitalize dark:text-white ">{message}
           <div className="mt-4">
             <Link href="/">
-              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
+              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md ">Go Back Home</a>
             </Link>
           </div>
           </div>)
@@ -237,8 +212,7 @@ register={register}
 disabled={isSubmitting}
 currentValue={getValues('name')}
 placeholder="Jane Doe"
-name="name" required label="Name" errors={errors}
- />       
+name="name" required label="Name" errors={errors} />       
 </div>
 <div>
 <Input 
@@ -299,6 +273,9 @@ name="email" required label="Email" errors={errors} />
            options={countriesData}
            value={getValues("country")?.value}
            placeholder="Select Country"
+           optionsError={false}
+           errors={errors}
+           
          />
     
      }
@@ -308,18 +285,20 @@ name="email" required label="Email" errors={errors} />
 
 
      <div className="relative mb-4"> 
+  
      <Controller
          name="city"
          control={control}
          render={({ field }) => <ReactSelect  
            field={field}  
+           errors={errors}
            name="city"
            label="City"
            options={cities}
-           refetchOptions={()=>getCities(city)}
-           optionsError={cityError}
            placeholder={cities.length > 0 ? "Select City" : "Select Country First"}
            isLoading={cityLoadig}
+           refetchOptions={()=>getCities(city)}
+           optionsError={cityError}
            value={getValues("city")?.value}
            disabled = {(!!getValues('country')?.value ? false : true) || isSubmitting}
          />
@@ -331,154 +310,53 @@ name="email" required label="Email" errors={errors} />
 
      <div className="mb-4">
 
-     <div className="mb-4">
+     {/* <div className="mb-4">
 
-     {/* <ImageUpload label="Upload a profile Picture" 
+     <ImageUpload label="Upload a profile Picture" 
         name="profilePicture"  
         setValues={setValue}
         errors={errors}
         validateName="profilePicVal"       
-    /> */}
+    />
     
-     </div>
+     </div> */}
 
      </div>
 </fieldset>
 
 
   <>
-  <fieldset className="p-4 mx-2 mb-4 border rounded-md">
-  <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Technical Information</legend>
-
- <div>
- <Input 
- currentValue={getValues('githubUsername')}
- register={register}
- disabled={isSubmitting}
- placeholder="Bloceducare"
- name="githubUsername" required label="Github Username" errors={errors} />       
- </div>
-
-
- <div>
- <Input 
- currentValue={getValues('linkedInProfile')}
- register={register}
- disabled={isSubmitting}
- placeholder="https://www.linkedin.com/in/your-profile/"
- name="linkedInProfile" required label="LinkedIn Profile" errors={errors} />       
- </div>
-
- </fieldset>
-
  <fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Other Information</legend>
-  <div>
- <Input 
- currentValue={getValues('walletAddress')}
- register={register}
-//  labelClassName="mb-6 border-red-500"
- disabled={isSubmitting}
- placeholder="0x0000000000000000000000000000000000000000"
- name="walletAddress" required label="Ethereum Wallet Address" errors={errors} >   
- <div className="-mt-4 text-sm font-primary dark:text-white20 ">Don't have an ethereum wallet address? 
-  <a href="https://drive.google.com/file/d/11RLyQcbFUV2A7KViksOAihhRi1Iz9EVB/view" target="_blank" className="ml-1 text-blue-500 underline capitalize">learn more</a>
- </div>
- </Input>    
- </div>
-  <div>
- <Input 
- type="number"
- labelClassName="mt-4 block"
- currentValue={getValues('yearsOfExperience')}
- register={register}
- disabled={isSubmitting}
- className="mt-4"
- placeholder="Experience in months"
- name="yearsOfExperience" required label="Years of Experience in months" errors={errors} 
- />   
  
-   
- </div>
-  </fieldset>
 
-  <fieldset className="p-4 mx-2 mb-4 border rounded-md">
- <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20 ">Next of Kin Information</legend>
-
-<div>
-<Input 
-register={register}
-disabled={isSubmitting}
-currentValue={getValues('nextOfKin')}
-placeholder="John Doe"
-name="nextOfKin" required label="Name" errors={errors} />       
-</div>
-
-<div>
-<Controller
-    control={control}
-    rules={{
-     required: true,
-    }}
-  name="nextOfKinPhone"
-   
-    render={({ field }) => {
-        return (
-
-            <PhoneInput   // @ts-ignore
-            value={phone} 
-            disabled={isSubmitting} 
-            handleChange={handlePhoneChange}
-            field={field}
-            name="nextOfKinPhone"
-            errors={errors}
-            currentValue={getValues('nextOfKinPhone')}
-            />
-        )
-    }}
+ <div className="relative mb-3">
+  <Select 
+  labelClassName="mt-4"
+  name="AreaOfInterest"
+  register={register}
+  disabled={isSubmitting}
+  errors={errors}
+  label="Area of Interest"
+  currentValue={getValues("AreaOfInterest")}
+  options={specializedClassOptions} 
   />
-
-<div>
-<Input 
-list="nextOfKinRelation"
-register={register}
-disabled={isSubmitting}
-placeholder="Enter Your Answer"
-currentValue={getValues('nextOfKinRelationship')}
-name="nextOfKinRelationship" required label="Relationship" errors={errors} />   
-<datalist id="nextOfKinRelation">
-
-    <option value="Father"></option>
-    <option value="Mother"></option>
-    <option value="Brother"></option>
-    <option value="Sister"></option>
-    <option value="Uncle"></option>
-    <option value="Aunt"></option>
-    <option value="Cousin"></option>
-    <option value="Other"></option>
-</datalist>
-<div>
-<TextArea name="nextOfKinAddress" errors={errors} register={register}
-disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ikorodu Lagos" currentValue={getValues("nextOfKinAddress")}/>
 </div>
-</div>
-  
-</div>
-
-</fieldset>
+ </fieldset>
 
   </>
 
 
+<>
 
-{/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
+<fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Payment</legend>
   <div className="relative mb-3">
- 
+
 <label className="block mb-2 dark:text-white20">Payment Method { " "} 
-({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`})
-<span className="ml-1 text-red-500">*</span>
- </label>
+({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) 
+ <span className="ml-1 text-red-500">*</span>
+</label>
 {
  (errors?.paymentMethod?.type === "required" || !!errors?.paymentMethod?.message) && (
   <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
@@ -524,38 +402,18 @@ disabled={isSubmitting} required label="Address" placeholder="1 Lagos street, Ik
               </div>
 
 </div>
- </fieldset> */}
-
-
-<fieldset className="p-4 mx-2 mb-4 border rounded-md">
-  <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Apply Voucher</legend>
-  <div className="relative mb-3">
-
-
-<Input 
-lowerCase={false}
-register={register}
-disabled={isSubmitting}
-currentValue={getValues('voucher')}
-placeholder="Enter a valid voucher"
-name="voucher"  label="Voucher" errors={errors} />  
-
-</div>
  </fieldset>
-
+</>
 
 <div className="px-6">
-
 <Button 
-// disabled
 disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >
-{isSubmitting ? 'Loading...' : 'Submit'}
+{isSubmitting ? 'Loading...' : 'Make Payment'}
 </Button>
 </div>
-
 
 </form>
           
@@ -567,4 +425,4 @@ type="submit"
 }
 
 
-export default Web3View
+export default SpecializedClass
