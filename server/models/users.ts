@@ -44,7 +44,7 @@ const allUserSchema =  {
 
     walletAddress: {
       type: String,
-     required:true
+    //  required:true
     },
 
     phone: {
