@@ -49,7 +49,7 @@ const Nodejs = () => {
       </div>
 
       <Button
-        href="/trainings/special-class/form?type=3"
+        href="/trainings/special-class/specialClass?type=3"
         class="py-2 px-12 mx-auto block mt-4 mb-40"
         content="Enroll Now"
         type="background"

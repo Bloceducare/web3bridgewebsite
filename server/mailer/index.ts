@@ -61,7 +61,7 @@ if(!final?.file) return;
   try {
     // const response = await wrappedSendMail(final);
     const response =   await sendGridMail.send(final)
-    console.log('regitration successful', response)
+    console.log('registration successful', response)
     return {
       status: true,
       message: "Successfully sent email",

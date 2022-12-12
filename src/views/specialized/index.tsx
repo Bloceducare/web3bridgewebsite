@@ -6,23 +6,23 @@ import Button from "@components/commons/Button";
 
 const courseLinks = [
   {
- link:"/trainings/special-class/form?type=1",
+ link:"/trainings/special-class/specialClass?type=1",
  label:"Html, CSS Javascript Intro"
 },
   {
- link:"/trainings/special-class/form?type=2",
+ link:"/trainings/special-class/specialClass?type=2",
  label:"Javascript, React, Typescript "
 },
   {
- link:"/trainings/special-class/form?type=3",
+ link:"/trainings/special-class/specialClass?type=3",
  label:"Javascript, Nodejs "
 },
   {
- link:"/trainings/special-class/form?type=4",
+ link:"/trainings/special-class/specialClass?type=4",
  label:"Golang "
 },
   {
- link:"/trainings/special-class/form?type=5",
+ link:"/trainings/special-class/specialClass?type=5",
  label:"Solidity"
 },
  

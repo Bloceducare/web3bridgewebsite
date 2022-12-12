@@ -10,6 +10,9 @@ const specialClassSchema = new Schema(
         type: String,
         required: true,
     }, 
+    trainingTime: {
+        type: String,        
+    }, 
   
   },
 
