@@ -20,11 +20,8 @@ const  Form = ()=>{
         .then(res =>  setRegStatus(res))
     },[track, typeOfTrack])
 
-  
-   
 
-
-
+console.log(regStatus,"statusss>")
 
     return (<>
     { COHORT_REGISTRATION_OPENED ? <div>

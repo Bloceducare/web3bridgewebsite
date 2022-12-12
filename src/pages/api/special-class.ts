@@ -39,8 +39,10 @@ router.get(async (req: NextApiRequest, res: NextApiResponse)=>{
       })
 
   }
-  catch{
-
+  catch(e){
+    return res.status(500).json({
+      message:e
+      })
   }
   
 
