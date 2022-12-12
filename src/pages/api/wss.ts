@@ -78,14 +78,16 @@ router
     
     
   try {
-    if(!userDb) return res.status(404).json({
-      status:false,
-      message:"payment not found"
-    })
+
+  
   // verify payment status
  
 
    const data = await  paystack.transaction.verify(reference)
+   if(!userDb) return res.status(404).json({
+     status:false,
+     message:"payment not found"
+   })
   //  console.log(data?.data?.status,"Data?????>>>>>")
     if(data?.data?.status !== "success"){
       return res.status(423).json({
