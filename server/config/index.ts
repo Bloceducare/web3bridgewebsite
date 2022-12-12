@@ -4,6 +4,35 @@ export const webPayment = {
   USD: 20,
 };
 
+export const specialClassPayment = {
+  ["Html, CSS, intro to JavaScript"]:{
+    naira:50000,
+    USD:70,   
+  },
+
+  ["JavaScript, react, typescript"]:{
+    naira:70000,
+    USD:100,
+    
+  },
+  ["JavaScript, nodejs"]:{
+    naira:70000,
+    USD:100,
+    
+  },
+  ["Go"]:{
+    naira:210000,
+    USD:300,
+    
+  },
+  ["Solidity"]:{
+    naira:210000,
+    USD:300,
+    
+  },
+}
+
+
 
   export const smsConfig = {
       email:"dev@web3bridge.com",

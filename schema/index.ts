@@ -2,11 +2,12 @@ import { string, object, array, mixed, ref } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PaymentMethod, Tracks } from "enums";
 import countries from "data/countries.json"
+import showTime from "utils/showTimePeriods";
 
 const mappedCountries = countries.map((country) => country.name)
 
-export function validationOpt(schema) {
-  return { mode: "all", resolver: yupResolver(schema) }
+export function validationOpt(schema, options={}) {
+  return { mode: "all", resolver: yupResolver(schema), ...options }
 };
 
 export const mainSchema = object().shape({
@@ -145,6 +146,28 @@ export const couponSchema = object().shape({
 
 })
 
+const timeSchema =object().shape({
+  trainingTime:string()
+  .when('AreaOfInterest', {
+    is: (details) => {   
+
+    return  showTime(details)
+    },
+    then: string()
+      .required('time field is required')
+     
+  })
+  // .when('AreaOfInterest', (details, schema) => {
+  //   console.log(details, schema)
+  //   const showTime = details==="Html, CSS, intro to JavaScript" ||  details==="JavaScript, react, typescript" ||  details==="JavaScript, nodejs"
+
+  //   if (showTime) { return schema.exclusiveTests.
+  //     required; }
+  //   return schema;
+  // }),
+
+})
+
 export const registrationSchema = {
   web2: mainSchema
     .concat(achievementFromProgramSchema)
@@ -161,5 +184,6 @@ export const registrationSchema = {
     specialClass:mainSchema
     .concat(areaOfInterestSchema)
     .concat(paymentSchema)
+    .concat(timeSchema)
 
 }

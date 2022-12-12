@@ -9,16 +9,16 @@ import Input from "@components/commons/Input";
 import Button from "@components/commons/Button";
 import PhoneInput from "@components/commons/PhoneInput";
 import ReactSelect from "@components/commons/ReactSelect";
-import {PaymentMethod, PaymentStatus, Tracks } from "enums";
-import { specialClassRegistering } from "./api";
+import {EspecializedOptions, PaymentMethod, PaymentStatus, Tracks } from "enums";
+import { specialClassRegistering } from "../../api";
 import { usePaystackPayment } from 'react-paystack';
-import { webPayment } from "@server/config";
+import { specialClassPayment, webPayment } from "@server/config";
 import formatToCurrency from "utils/formatToCurrency";
 import Select from "@components/commons/Select";
 import countries from "data/countries.json";
-import useCities from "./hooks/useCities";
-import {  specializedClassOptions } from "config/constant";
-
+import useCities from "../../../views/hooks/useCities";
+import {  specializedClassOptions, trainingTime } from "config/constant";
+import showTimePeriods  from "utils/showTimePeriods";
 
 
 const countriesData = countries.map((country) => ({
@@ -32,39 +32,19 @@ const onClose = () => {
   console.log('closed')
 }
 
-const SpecializedClass = () => {
+const SpecializedClassForm = () => {
   const router = useRouter()
+  const courseChosen = Number(router.query.type)-1 ?? 0
   
-  const lazerPayConfig = {
-    publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
-    currency: "USD", // USD, NGN, AED, GBP, EUR
-    amount: webPayment.USD, // amount as a number or string
-    reference:uuidv4(), // unique identifier
-    metadata:{
-      track: Tracks.specialClass,
-    },
-    onSuccess: (response) => {
-      // handle response here
-      router.push("/")
-    },
-    onClose: () => {
-      //handle response here
-    },
-    onError: (response) => {
-      // handle responsne here
-    }
-  }
-
-  const config = {
-    reference: uuidv4(),
-    amount: webPayment.naira*100,
-    publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
-};
-
 //   
-  const validationOption = validationOpt(registrationSchema.specialClass);
-  
- 
+  const validationOption = validationOpt(registrationSchema.specialClass, {
+    defaultValues: {
+        AreaOfInterest:EspecializedOptions[courseChosen]
+    },
+  });
+
+
+   
     const [phone, setPhone] = useState("");
     const [error, setError] = useState<any>("");
     const [message, setMessage] = useState("");
@@ -93,10 +73,43 @@ const SpecializedClass = () => {
       }
 
       const city = getValues("country")?.value
+      const areaOfInterestValue = watch("AreaOfInterest")    
+      const payment = specialClassPayment[areaOfInterestValue]  
+     
+      const showTime = showTimePeriods(areaOfInterestValue)
+
+
+      const lazerPayConfig = {
+        publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
+        currency: "USD", // USD, NGN, AED, GBP, EUR
+        amount: payment?.USD, // amount as a number or string
+        reference:uuidv4(), // unique identifier
+        metadata:{
+          track: Tracks.specialClass,
+        },
+        onSuccess: (response) => {
+          // handle response here
+          router.push("/")
+        },
+        onClose: () => {
+          //handle response here
+        },
+        onError: (response) => {
+          // handle responsne here
+        }
+      }
     
-      useEffect(()=>{
+      const config = {
+        reference: uuidv4(),
+        amount: payment?.naira*100,
+        publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
+    };
+    
+      useEffect(()=>{       
         setValue('city','')
-      },[city])
+        setValue("AreaOfInterest", EspecializedOptions[courseChosen])
+
+      },[city, courseChosen])
       const {cities, loading:cityLoadig, error:cityError, getCities}= useCities(city)
 
 const onSuccessPayStack = ({reference=""}):void => {
@@ -342,6 +355,24 @@ name="email" required label="Email" errors={errors} />
   options={specializedClassOptions} 
   />
 </div>
+
+
+ {
+    showTime ? <div className="relative mb-3">
+    <Select 
+    labelClassName="mt-4"
+    name="trainingTime"
+    register={register}
+    disabled={isSubmitting}
+    errors={errors}
+    label="Training Time"
+    currentValue={getValues("trainingTime")}
+    options={trainingTime} 
+    />
+  </div> :null
+ }
+
+
  </fieldset>
 
   </>
@@ -354,7 +385,7 @@ name="email" required label="Email" errors={errors} />
   <div className="relative mb-3">
 
 <label className="block mb-2 dark:text-white20">Payment Method { " "} 
-({`₦${formatToCurrency(webPayment.naira)}/$${formatToCurrency(webPayment.USD)}`}) 
+({`₦${formatToCurrency(payment?.naira ?? 0)}/$${formatToCurrency(payment?.USD ?? 0)}`}) 
  <span className="ml-1 text-red-500">*</span>
 </label>
 {
@@ -425,4 +456,4 @@ type="submit"
 }
 
 
-export default SpecializedClass
+export default SpecializedClassForm

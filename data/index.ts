@@ -18,6 +18,10 @@ export const menuItems = [
     link: '/cohorts',
   },
   {
+    menu: 'Trainings',
+    link: '/trainings',
+  },
+  {
     menu: 'dApps',
     link: '/dapps',
   },

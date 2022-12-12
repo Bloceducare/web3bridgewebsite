@@ -10,14 +10,15 @@ interface ISelectProps extends IElementProps {
     currentValue:string
     labelClassName?:string
     required?:boolean
+    disabled?:boolean
 
 }
 
-const Select = ({options=[], name, className, label,register, errors, currentValue, labelClassName, required=true}:ISelectProps)=>{
+const Select = ({options=[], name, className, label,register, errors, currentValue, labelClassName, required=true, disabled=false}:ISelectProps)=>{
     const err = errors[name]?.type === "required" || !!errors[name]?.message;
 
     return (
-        <div>
+        <div className={disabled? "pointer-events-none" :""}>
             
             {err ? (
         <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
