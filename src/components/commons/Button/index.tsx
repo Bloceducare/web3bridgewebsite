@@ -5,6 +5,8 @@ type IProps ={
     onClick?: (e: any) => void
     type?: "button" | "submit" | "reset" 
 }
+
+
 const Button = ({className, disabled, children, onClick, type='button'}:IProps) => {
     return (
         <>

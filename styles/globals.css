@@ -30,6 +30,20 @@
     }
 }
 
+.link-wrapper {
+  opacity: 0.8;
+  position: relative;
+  cursor:pointer;
+}
+.link-wrapper:after{
+  content: "";
+  position: absolute;
+  width: 95%;
+  height: 0.2rem;
+  bottom: -0.2rem;
+  left:0.2rem;
+  background-color: red;
+}
 
 .react-tel-input .country:hover {
   background-color: #cbd5e058!important;

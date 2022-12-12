@@ -13,6 +13,17 @@ export const specializedClassOptions = [
     {label:"Solidity", value:EspecializedOptions[4]},
 ]
 
+export const trainingTime = [ 
+    {
+    label:"morning",
+    value:"0"
+},
+    {
+    label:"evening",
+    value:"1"
+},
+]
+
 // Html, CSS, intro to JavaScript
 
 // JavaScript, react, typescript
