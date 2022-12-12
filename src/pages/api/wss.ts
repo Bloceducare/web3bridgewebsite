@@ -83,8 +83,11 @@ router
       message:"payment not found"
     })
   // verify payment status
+ 
+
    const data = await  paystack.transaction.verify(reference)
-    if(data.data.status !== "success"){
+  //  console.log(data?.data?.status,"Data?????>>>>>")
+    if(data?.data?.status !== "success"){
       return res.status(423).json({
         status: false,
         message: "payment not valid",
