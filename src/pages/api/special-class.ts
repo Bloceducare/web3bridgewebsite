@@ -3,7 +3,7 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import specialClassDb from "@server/models/specialClass"
 import {  registrationSchema } from "schema";
-import { PaymentStatus, Tracks } from "enums";
+import { ETrainingsOptions, PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
 import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
@@ -14,7 +14,37 @@ import {COHORT_REGISTRATION_OPENED} from "config/constant"
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-router
+
+const userMax ={
+  0:20,
+  1:20,
+  2:20,
+  3:10,
+  4:10
+}
+
+router.get(async (req: NextApiRequest, res: NextApiResponse)=>{
+  const p = req.query.type
+  const findType = ETrainingsOptions[+p-1]
+  
+  try{
+
+    const user = await specialClassDb.find({
+      AreaOfInterest:findType
+    }) 
+    
+    return res.status(200).json({
+      left:userMax[+p-1] - user.length,
+      isCompleted:userMax[+p-1] == user.length,
+      })
+
+  }
+  catch{
+
+  }
+  
+
+})
 .use(async (req, res, next) => {
   // this serve as the error handling middleware
  let  schema =registrationSchema.specialClass  
@@ -61,10 +91,10 @@ return res.status(423).json({
         .json({ status: false, error: "This user already exists" });
     }   
 
-      await Promise.all([
-        // sendSms({recipients:phone}), 
-        // sendEmail({email, name, type:currentTrack,file:currentTrack==='specialClass'? 'web2': 'web3', })
-    ])
+    //   await Promise.all([
+    //     sendSms({recipients:phone}), 
+    //     sendEmail({email, name, type:currentTrack,file:"webemail" })
+    // ])
  
     
 
@@ -93,7 +123,9 @@ return res.status(423).json({
       status: false,
     });
   }
-});
+})
+
+
 
 interface IQuery {
   currentTrack?: string | string[] | undefined;

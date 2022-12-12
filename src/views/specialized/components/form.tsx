@@ -395,7 +395,7 @@ name="email" required label="Email" errors={errors} />
   </span>
  )
 }
-<div className="grid grid-cols-2 mb-2 ">
+<div className="grid grid-cols-1 mb-2 ">
 <div className="">
                 <input
                   {...register("paymentMethod")}
@@ -413,7 +413,8 @@ name="email" required label="Email" errors={errors} />
                   <span className="">Card</span>
                 </label>
               </div> 
-<div className="">
+
+{/* <div className="">
                 <input
                   {...register("paymentMethod")}
                   id="paymentMethod-crypto"
@@ -429,7 +430,8 @@ name="email" required label="Email" errors={errors} />
                 >
                   <span className="">Crypto</span>
                 </label>
-              </div>
+         
+              </div> */}
               </div>
 
 </div>

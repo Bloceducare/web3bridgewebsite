@@ -51,7 +51,7 @@ const Golang = () => {
       </div>
 
       <Button
-        href="/trainings/special-class/form?type=1"
+        href="/trainings/special-class/specialClass?type=1"
         class="py-2 px-12 mx-auto block mt-4 mb-40"
         content="Enroll Now"
         type="background"

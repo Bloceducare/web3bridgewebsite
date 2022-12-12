@@ -38,14 +38,14 @@ export const specialClassPayment = {
       email:"dev@web3bridge.com",
      password : process.env.SMS_KEY,
      "sender_name" : "Web3Bridge",
-     "message" : "Welcome to Web3Bridge Cohort VIII 2022. Do check your mail for further information",
+     "message" : "Welcome to Web3Bridge Special Class Training. Do check your mail for further information",
  }
 
  
 export const mailSenderConfig = {
   from: "registration@web3bridge.com",
-  emailSubject: "Cohort VIII Registration",
-  subject: "Cohort VIII Registration",
+  emailSubject: "Acceptance Email",
+  subject: "Acceptance Email",
   replyTo: "registration@web3bridge.com",
 };
 

@@ -11,6 +11,12 @@ export const specialClassRegistering = async(data)=>{
     return user;
 }
 
+export const getTotalLeft = async(track, typeOfTrack)=>{
+    if(track !="specialClass") return null
+    const {data} = await axios.get(`/api/special-class?type=${typeOfTrack}`);   
+    return data ?? null;
+}
+
 export const initPayment = async(data)=>{
     const payment = await axios.post('/api/init-payment', data);
     return payment;

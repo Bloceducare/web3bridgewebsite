@@ -3,6 +3,7 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3UserDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
+import specialClassDb from "@server/models/specialClass";
 import { sendEmail } from "@server/mailer";
 import {PaymentStatus, Tracks} from "enums"
 import Paystack from "paystack"
@@ -12,6 +13,17 @@ import { sendSms } from "@server/sms";
 import validate from "@server/validate";
 import reportError from "@server/services/report-error";
 
+const userEmail = {
+  web2:"web2",
+  web3:"web3",
+  specialClass: {
+    1:"webemail",
+    2:"webemail",
+    3:"webemail",
+    4:"webemail",
+    5:"webemail"
+  }
+}
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const paystack = Paystack(process.env.PAYMENT_SECRET);
 
@@ -22,21 +34,54 @@ router
 // )
 // verify payment
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
-    const getTrack = (track:string) => track.split('/').pop()
+    const getTrack = (trackUrl:string) => {
+      if(!trackUrl) return [0, 0]
+      const tr = trackUrl?.split('/')?.pop()?.split("?") ?? []
+      const [track, type] = tr
+      let sortType;
+      if(type){
+        sortType =  type.split("").slice(-1)
+      }
+        return [track, sortType?.[0]]
+    }
     let userDb;
-    const { reference,customer:{email}, metadata:{referrer} } = req.body.data;
+
+    if(!req?.body?.data?.customer?.email || !req?.body?.data?.reference){
+      return res.status(423).json({
+        status:false,
+        message:"not data sent",
+        data:req.body
+      })
+    }
+    const { reference,customer:{email=""}={}, metadata:{referrer} } = req.body.data;
+
+ 
+
+
    
-    const track = getTrack(referrer)
+    const [track, sortType] = getTrack(referrer)
+  
     await connectDB();
     if(track===Tracks.web2){
         userDb = web2UserDb
        
-    } else {
-        userDb = web3UserDb
+    }
+
+    if(track ===Tracks.web3){
+      userDb = web3UserDb 
+    }
+    if(track ===Tracks.specialClass){
+      userDb = specialClassDb
     }
     
     
+    
+    
   try {
+    if(!userDb) return res.status(404).json({
+      status:false,
+      message:"payment not found"
+    })
   // verify payment status
    const data = await  paystack.transaction.verify(reference)
     if(data.data.status !== "success"){
@@ -56,6 +101,14 @@ router
             message: "user not found"
         })
     }
+
+    if(!userDetails.currentTrack){
+      await closeDB();
+        return res.status(404).json({
+            status: false,
+            message: "track not found"
+        })
+    }
   
     // check if payment is already successful
     if(userDetails.paymentStatus === PaymentStatus.success){
@@ -72,7 +125,8 @@ router
         }),
        
    sendSms({recipients:userDetails.phone}), 
-    sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',
+    sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, 
+      file:userDetails.currentTrack =="specialClass" ? userEmail?.[userDetails?.currentTrack]?.[sortType] :userEmail?.[userDetails?.currentTrack],      
   }),
       ])
 
