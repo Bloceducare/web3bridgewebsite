@@ -12,7 +12,7 @@ export const specialClassPayment = {
 
   ["JavaScript, react, typescript"]:{
     naira:70000,
-    USD:100,
+    USD:1,
     
   },
   ["JavaScript, nodejs"]:{
@@ -58,4 +58,18 @@ export const mailSenderConfig = {
     name:"Support"
   }
  }
+
+
+ export const userEmail = {
+  web2:"web2",
+  web3:"web3",
+  specialClass:{
+    1:"webemail",
+    2:"webemail",
+    3:"webemail",
+    4:"webemail",
+    5:"webemail",
+  }
+ }
+
 

@@ -11,19 +11,10 @@ import { verifyPaymentSchema } from 'schema';
 import {ISmsData} from "types"
 import { sendSms } from "@server/sms";
 import validate from "@server/validate";
+import {userEmail} from "@server/config"
 import reportError from "@server/services/report-error";
 
-const userEmail = {
-  web2:"web2",
-  web3:"web3",
-  specialClass: {
-    1:"webemail",
-    2:"webemail",
-    3:"webemail",
-    4:"webemail",
-    5:"webemail"
-  }
-}
+
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const paystack = Paystack(process.env.PAYMENT_SECRET);
 
@@ -88,7 +79,7 @@ router
      status:false,
      message:"payment not found"
    })
-  //  console.log(data?.data?.status,"Data?????>>>>>")
+
     if(data?.data?.status !== "success"){
       return res.status(423).json({
         status: false,
@@ -130,13 +121,16 @@ router
         }),
        
    sendSms({recipients:userDetails.phone}), 
-    sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, 
+    sendEmail({email, 
+      name:userDetails.name, 
+      type:userDetails.currentTrack, 
+      currentTrack:userDetails.currentTrack,
       file:userDetails.currentTrack =="specialClass" ? userEmail?.[userDetails?.currentTrack]?.[sortType] :userEmail?.[userDetails?.currentTrack],      
   }),
       ])
 
 
-      if(++sms.balance <= 100 ){
+      if(+sms.balance <= 100 ){
         sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
       }
 

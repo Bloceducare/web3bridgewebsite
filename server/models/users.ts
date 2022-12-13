@@ -43,8 +43,7 @@ const allUserSchema =  {
     },
 
     walletAddress: {
-      type: String,
-    //  required:true
+      type: String,   
     },
 
     phone: {
@@ -52,39 +51,6 @@ const allUserSchema =  {
       required: true,
       
     },
-
-    
-    // nextOfKin: {
-    //   type: String,
-    // },
-    // nextOfKinPhone: {
-    //   type: String,
-    //   required:function(){ // @ts-ignore
-    //     return this.nextOfKin !== undefined
-    //   }
-    // },
-    // nextOfKinAddress: {
-    //   type: String,
-    //   required:function(){ // @ts-ignore
-    //     return this.nextOfKin
-    //   }
-    // },
-    // nextOfKinRelationship: {
-    //   type: String,
-    //   required:function(){ // @ts-ignore
-    //     return this.nextOfKin
-    //   }
-    // },
-    // profilePicture:{
-    //   type: String,
-    // },
-
-
-    // paymentMethod:{
-    //   type: String,
-    //   enum:PaymentMethod,
-    //   required:true
-    // },
     paymentStatus:{
       type: String,
       enum:PaymentStatus,
@@ -94,6 +60,10 @@ const allUserSchema =  {
       enum:PaymentMethod,
       required:true
     },
+    acceptanceSent:{
+      type:Boolean,
+      default:false
+    }
   }
 
 

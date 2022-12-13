@@ -5,6 +5,10 @@ import emailTemplate from "@server/template";
 import reportError from "@server/services/report-error"
 import sendGridMail  from '@sendgrid/mail'
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY as string)
+import web2Db from "@server/models/web2";
+import web3Db from "@server/template/web3";
+import specialClassDb from "@server/models/specialClass";
+import { Tracks } from "enums";
 
 
 
@@ -57,11 +61,31 @@ export const sendEmail = async (data) => {
 
 
 if(!final?.file) return;
+
+let userDb
+
+
+if(final.currentTrack ==Tracks.specialClass){
+  userDb = specialClassDb
+  
+}
+if(final.currentTrack==Tracks.web2){
+    userDb = web2Db
+    
+}
+
+if(final.currentTrack==Tracks.web3){
+    userDb = web3Db
+}
  
   try {
-    // const response = await wrappedSendMail(final);
     const response =   await sendGridMail.send(final)
-
+    if(response?.[0]?.statusCode==202){
+      await userDb.updateOne({email:data.email}, {
+       $set: {acceptanceSent: true}
+     })  
+    }
+  
     return {
       status: true,
       message: "Successfully sent email",
