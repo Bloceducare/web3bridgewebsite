@@ -350,7 +350,8 @@ name="email" required label="Email" errors={errors} />
   labelClassName="mt-4"
   name="AreaOfInterest"
   register={register}
-  disabled={isSubmitting}
+  disabled
+  // disabled={isSubmitting}
   errors={errors}
   label="Area of Interest"
   currentValue={getValues("AreaOfInterest")}
