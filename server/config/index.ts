@@ -1,7 +1,7 @@
 
 export const webPayment = {
   naira:10000,
-  USD: 20,
+  USD: 70,
 };
 
 export const specialClassPayment = {
@@ -12,7 +12,7 @@ export const specialClassPayment = {
 
   ["JavaScript, react, typescript"]:{
     naira:70000,
-    USD:1,
+    USD:100,
     
   },
   ["JavaScript, nodejs"]:{
