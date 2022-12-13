@@ -3,15 +3,17 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3UserDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
+import specialClassDb from "@server/models/specialClass"
 import { sendEmail } from "@server/mailer";
 import {PaymentStatus, Tracks} from "enums"
 import { verifyPaymentSchema } from 'schema';
 import {ISmsData} from "types"
 import { sendSms } from "@server/sms";
 import validate from "@server/validate";
-import {webPayment} from "@server/config"
+import {webPayment, specialClassPayment} from "@server/config"
 import LazerPay from "lazerpay-node-sdk";
 import reportError from "@server/services/report-error";
+import {userEmail} from "@server/config"
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -22,8 +24,13 @@ router
 
 // verify payment
 .post(async (req: NextApiRequest, res: NextApiResponse) => {
-    const {reference, amountReceived, status, metadata:{track=""}={}, customer:{email=''}={}, feeInCrypto } = req.body
+    const {reference, amountReceived, status, metadata:{track="", trackType="", trackNumber=0}={}, customer:{email=''}={}, feeInCrypto } = req.body
     let userDb;
+
+    let payment;
+    if(Tracks.specialClass == track){
+       payment = specialClassPayment[trackType]
+    }
   if(!track){
     return res.status(404).json({
       status: false,
@@ -38,10 +45,10 @@ router
     })
   }
   
-  if((amountReceived - feeInCrypto) !== webPayment.USD){
+  if((amountReceived - feeInCrypto) !== payment.USD){
     return res.status(423).json({
       status: false,
-      message: `Amount received is not valid, expected ${webPayment.USD}`,
+      message: `Amount received is not valid, expected ${payment.USD}`,
     })
   }
 
@@ -54,6 +61,11 @@ router
   }
 
 await connectDB();
+
+if(track ===Tracks.specialClass){
+  userDb = specialClassDb
+  
+}
 if(track===Tracks.web2){
     userDb = web2UserDb
     
@@ -84,13 +96,12 @@ if(userDetails.paymentStatus === PaymentStatus.success){
 }
 
 // verify payment
-
 const payload = {
   identifier: reference,
 };
 const {data} = await lazerpay.Payment.confirmPayment(payload);
 
-if(data.status !== "confirmed" || ((amountReceived - feeInCrypto) !== webPayment.USD)){
+if(data.status !== "confirmed" || ((amountReceived - feeInCrypto) !== payment.USD)){
   await closeDB();
   return res.status(400).json({
     status: false,
@@ -106,12 +117,16 @@ if(data.status !== "confirmed" || ((amountReceived - feeInCrypto) !== webPayment
               $set: {paymentStatus: PaymentStatus.success}
           }),
          
-      sendSms({recipients:userDetails.phone}), 
-      sendEmail({email, name:userDetails.name, type:userDetails.currentTrack, file:userDetails.currentTrack==='web2'? 'web2': 'web3',
-    }),
+      sendSms({recipients:userDetails.phone}),
+    sendEmail({email, 
+      name:userDetails.name, 
+      type:userDetails.currentTrack, 
+      currentTrack:userDetails.currentTrack,
+      file:userDetails.currentTrack =="specialClass" ? userEmail?.[userDetails?.currentTrack]?.[trackNumber] :userEmail?.[userDetails?.currentTrack],      
+  })
         ])
      
-        if(++sms.balance <= 100 ){
+        if(+sms?.balance <= 100 ){
           sendSms({recipients:["2348130192777"], message:`low balance, ${++sms.balance-2} sms balance left`})
         }
 
