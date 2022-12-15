@@ -188,11 +188,7 @@ const webEmail = `<!DOCTYPE html>
               I am sure it will be an amazing learning experience for you and us and you will be glad you are taking this journey with Web3bridge. Do join the Web3bridge telegram 
               <a href="t.me/Web3bridge" target="_blank"> t.me/Web3bridge </a>
               and follow us on all other social media @Web3bridge and wait for the onboarding email, if you know someone that needs to benefit from this offer, do them the favour of informing them.
-                </p>  
-
-                <p>
-                Looking forward to having you in the program and seeing your result at the end of the cohort.
-                </p>
+                </p>          
 
             </td>
           </tr>
