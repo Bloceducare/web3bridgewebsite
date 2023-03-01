@@ -58,7 +58,7 @@ const allUserSchema =  {
     paymentMethod:{
       type: String,
       enum:PaymentMethod,
-      required:true
+      // required:true
     },
     acceptanceSent:{
       type:Boolean,

@@ -7,6 +7,7 @@ import sendGridMail  from '@sendgrid/mail'
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 import web2Db from "@server/models/web2";
 import web3Db from "@server/template/web3";
+import cairoUserDb from "@server/models/cairo";
 import specialClassDb from "@server/models/specialClass";
 import { Tracks } from "enums";
 
@@ -77,7 +78,10 @@ if(final.currentTrack==Tracks.web2){
 if(final.currentTrack==Tracks.web3){
     userDb = web3Db
 }
- 
+if(final.currentTrack==Tracks.cairo){
+    userDb = cairoUserDb
+}
+
   try {
     const response =   await sendGridMail.send(final)
     if(response?.[0]?.statusCode==202){

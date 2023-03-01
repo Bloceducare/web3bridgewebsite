@@ -4,6 +4,13 @@ export const LOCATION_BASE_URL = "https://countriesnow.space/api/v0.1/";
 export const  COHORT_REGISTRATION_OPENED=true
 export const SPECIAL_CLASS_OPENED=true
 
+export const TRAINING_CLOSED = {
+    web2:true,
+    web3:true,
+    specialClass:true,
+    cairo:false
+}
+
 
 export const specializedClassOptions = [
     {label:"Html, CSS, intro to JavaScript", value:EspecializedOptions[0]},

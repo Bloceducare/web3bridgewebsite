@@ -38,7 +38,7 @@ export const specialClassPayment = {
       email:"dev@web3bridge.com",
      password : process.env.SMS_KEY,
      "sender_name" : "Web3Bridge",
-     "message" : "Welcome to Web3Bridge Special Class Training. Do check your mail for further information",
+     message : "Welcome to Web3Bridge Special Class Training. Do check your mail for further information",
  }
 
  

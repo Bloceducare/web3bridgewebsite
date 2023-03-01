@@ -219,6 +219,42 @@ export const teamImages =[
   
 ]
 
+export const cohortList =[
+  {
+  value:"1",
+  label:"Cohort I"
+},
+  {
+  value:"2",
+  label:"Cohort II"
+},
+  {
+  value:"3",
+  label:"Cohort III"
+},
+  {
+  value:"4",
+  label:"Cohort IV"
+},
+  {
+  value:"5",
+  label:"Cohort V"
+},
+  {
+  value:"6",
+  label:"Cohort VI"
+},
+  {
+
+  value:"7",
+  label:"Cohort VII"
+},
+  {
+  value:"8",
+  label:"Cohort VIII"
+},
+]
+
 
 
 export const blurUrl = "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRm knyJckliyjqTzSlT54b6bk+h0R//2Q=="

@@ -88,14 +88,17 @@ export const verifyPaymentSchema = object().shape({
     .required("Email is required")
     .email("Email is not valid")
 })
-const technicalSchema = object().shape({
+
+const githubSchema = object().shape({
   githubUsername: string()
-    .required("Github Username is required")
-    .min(4, "Github Username length should be at least 4 characters"),
-  progLang: array()
-    .min(1, 'Please select at least one programming language')
-  // .required("Programming Language is required")
+  .required("Github Username is required")
+  .min(3, "Github Username length should be at least 3 characters")
 })
+const technicalSchema = githubSchema.concat(object().shape({
+  progLang: array()
+  .min(1, 'Please select at least one programming language')
+}))
+
 
 const yearsOfExperienceSchema = object().shape({
   yearsOfExperience: string()
@@ -143,7 +146,17 @@ export const couponSchema = object().shape({
   email: string()
     .required("Email is required")
     .matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/, 'Email is not valid')
+})
 
+export const alumniSchema = object().shape({
+  alumni: string()
+  .required("Alumni Status is required").nullable(), 
+  prevCohort:mixed()
+  .test("alumni", "Cohort Class is required", (value, ot) => {
+    const isAlumni = ot.parent.alumni=="yes"    
+    if(isAlumni && !!!value) return false
+    return true
+  }),
 })
 
 const timeSchema =object().shape({
@@ -157,15 +170,6 @@ const timeSchema =object().shape({
       .required('time field is required')
      
   })
-  // .when('AreaOfInterest', (details, schema) => {
-  //   console.log(details, schema)
-  //   const showTime = details==="Html, CSS, intro to JavaScript" ||  details==="JavaScript, react, typescript" ||  details==="JavaScript, nodejs"
-
-  //   if (showTime) { return schema.exclusiveTests.
-  //     required; }
-  //   return schema;
-  // }),
-
 })
 
 export const registrationSchema = {
@@ -184,6 +188,10 @@ export const registrationSchema = {
     specialClass:mainSchema
     .concat(areaOfInterestSchema)
     .concat(paymentSchema)
-    .concat(timeSchema)
+    .concat(timeSchema),
+    cairo:mainSchema
+    .concat(walletSchema)
+    .concat(githubSchema)
+    .concat(alumniSchema)
 
 }

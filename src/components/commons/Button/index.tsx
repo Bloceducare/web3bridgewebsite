@@ -15,7 +15,10 @@ const Button = ({className, disabled, children, onClick, type='button'}:IProps) 
             onClick={onClick}
             className={`bg-[#FA0101] text-white text-sm px-6 py-2 rounded-md ${disabled ? "cursor-not-allowed bg-red-400":""} ${className}`}
 
-             disabled={disabled}>{children}</button>
+             disabled={disabled}
+             >
+                {children}
+             </button>
         </>
     )
 }

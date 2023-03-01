@@ -1,14 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { blurUrl } from "data";
-import { COHORT_REGISTRATION_OPENED } from "config/constant";
-
+import { COHORT_REGISTRATION_OPENED, TRAINING_CLOSED } from "config/constant";
 
 const Card = ({
   imgUrl = "",
   type = "web2",
   text = "Kickstart your career in software development",
-  link=""
+  link = "",
 }) => {
   return (
     <div className="max-w-sm mx-6 my-3 border rounded-md">
@@ -30,34 +29,91 @@ const Card = ({
     </div>
   );
 };
+
+const trainings = [
+  {
+    component: (
+      <Card
+        imgUrl="/web-2.svg"
+        type="web2"
+        link="/trainings/web2"
+        text="Kickstart your career in software development"
+      />
+    ),
+    id: 0,
+    closed: TRAINING_CLOSED.web2,
+  },
+  {
+    component: (
+      <Card
+        imgUrl="/web-3.svg"
+        type="web3"
+        link="/trainings/web3"
+        text="Transition from web2 to web3"
+      />
+    ),
+    id: 0,
+    closed: TRAINING_CLOSED.web3,
+  },
+  {
+    component: (
+      <Card
+        imgUrl="/programming.svg"
+        type="Specialized Class"
+        link="/trainings/special-class"
+        text="Kickstart your career in software development"
+      />
+    ),
+    id: 0,
+    closed: TRAINING_CLOSED.specialClass,
+  },
+  {
+    component: (
+      <Card
+        imgUrl="/cairo.png"
+        type="Cairo Class"
+        link="/trainings/cairo"
+        text="A language for scaling dApps using STARKs"
+      />
+    ),
+    id: 0,
+    closed: TRAINING_CLOSED.cairo,
+  },
+];
 const CohortRegistration = () => {
   return (
     <>
       <div className="p-12">
         <div className="flex flex-wrap justify-center p-3 ">
-          {COHORT_REGISTRATION_OPENED  ? <>
-            {/* <Card
-            imgUrl="/web-2.svg"
-            type="web2"
-            link="/trainings/web2"
-            text="Kickstart your career in software development"
-          /> */}
-          {/* <Card
-            imgUrl="/web-3.svg"
-            type="web3"
-            link="/trainings/web3"
-            text="Transition from web2 to web3"
-          />  */}
-
-<Card
-            imgUrl="/programming.svg"
-            type="Specialized Class"
-            link="/trainings/special-class"
-            text="Kickstart your career in software development"
-          />
-          </> : <h1 className="my-48 font-bold text-center dark:text-white20">Registration has closed!!</h1>
-         }
-     
+          {trainings
+            .sort((a, b) =>
+              a.closed === true ? 1 : b.closed === true ? -1 : 0
+            )
+            .map((i) => {
+              return (
+                <div className="relative ">
+                  {i.component}
+                  <div
+                    className={`absolute w-full  h-full top-0 ${
+                      i.closed ? "" : "hidden"
+                    }`}
+                  ></div>
+                  <div
+                    className={`
+                    bg-white
+                    p-2
+                    rounded-md
+                    left-1/2
+                    -translate-x-1/2
+                    text-2xl absolute top-1/2 -translate-y-1/2 ${
+                      i.closed ? "" : "hidden"
+                    }`}
+                  >
+                    Closed
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     </>

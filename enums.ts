@@ -7,7 +7,8 @@ export enum Gender  {
 export enum Tracks {
     web2="web2",
     web3="web3",
-    specialClass="specialClass"
+    specialClass="specialClass",
+    cairo="cairo"
 }
 
 export enum PaymentMethod {

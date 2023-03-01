@@ -24,6 +24,7 @@ const Button = (props: Props) => {
             : ' border '
         }
       ${props.class} rounded-sm text-sm outline-none `}
+      
       >
         {props.content}
       </motion.button>
