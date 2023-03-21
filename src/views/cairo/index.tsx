@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 import { registrationSchema, validationOpt } from "schema";
 import { useForm, Controller } from "react-hook-form";
@@ -13,6 +12,7 @@ import Select from "@components/commons/Select";
 import countries from "data/countries.json";
 import useCities from "../hooks/useCities";
 import { cohortList } from "data";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const countriesData = countries.map((country) => ({
   value: country.name,
@@ -89,10 +89,21 @@ const CairoView = () => {
   return (
     <>
       <div className="max-w-lg m-12 mx-auto">
-        <div></div>
         <div className="flex flex-col items-center justify-center mb-6">
-          <div className="text-2xl dark:text-white20">
+          <div className="text-2xl dark:text-white20 flex flex-col items-center">
             Cairo Class Registration
+            <div className="my-2 mt-3">
+              <p className="text-[18px]">
+                Cairo is a language for creating STARK-provable programs for
+                general computation. Cairo powers Starknet and StarkEx, scaling
+                applications on Mainnet, including dYdX, Sorare, ImmutableX, and
+                more.
+              </p>
+              <p className="text-[18px]">
+                Cairo is the native smart contract language for Starknet, a
+                permissionless decentralized Validity-Rollup.
+              </p>
+            </div>
           </div>
 
           {!!error && (
