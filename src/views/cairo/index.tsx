@@ -92,7 +92,7 @@ const CairoView = () => {
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="text-2xl dark:text-white20 flex flex-col items-center">
             Cairo Class Registration
-            <div className="my-2 mt-3">
+            <div className="my-2 mt-3 px-3">
               <p className="text-[18px]">
                 Cairo is a language for creating STARK-provable programs for
                 general computation. Cairo powers Starknet and StarkEx, scaling
