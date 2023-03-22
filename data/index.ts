@@ -74,6 +74,7 @@ export const missionData = [
     './Gitcoin.png',
     './ladies.png',
     './cdin.png',
+    './starkware.svg'
     
   ]
   
