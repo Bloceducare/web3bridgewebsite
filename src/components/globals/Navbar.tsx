@@ -1,4 +1,4 @@
-import  { useState, useContext, useEffect, useMemo, useCallback } from "react";
+import { useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { ThemeContext } from "../ThemeContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,14 +10,14 @@ import { FaTimes } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useRouter } from "next/router";
 
-const Navbar = () => {  
+const Navbar = () => {
   const [display, setDisplay] = useState<any>(true);
   const [isLight, setIsLight] = useState<boolean>(false);
   const { theme, setTheme } = useContext(ThemeContext);
   const router = useRouter();
 
   useEffect(() => {
-    
+
     if (theme === "light") {
       setIsLight(true);
     } else {
@@ -47,17 +47,31 @@ const Navbar = () => {
             {menuItems.map((menuItem, index) => {
               return (
                 <div key={index} className="text-base hover:text-primary">
-                  <Link href={menuItem.link}>
-                    <a
-                      className={`dark:text-white ${
-                        router.pathname == menuItem.link
-                          ? "text-primary dark:text-primary"
-                          : ""
-                      }`}
-                    >
-                      {menuItem.menu}
-                    </a>
-                  </Link>
+                  {
+                    menuItem.externalLink ?
+                      <a
+                        href={menuItem.link}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={`dark:text-white ${router.pathname == menuItem.link
+                            ? "text-primary dark:text-primary"
+                            : ""
+                          }`}
+                      >
+                        {menuItem.menu}
+                      </a> :
+                      <Link href={menuItem.link}>
+                        <a
+                          className={`dark:text-white ${router.pathname == menuItem.link
+                              ? "text-primary dark:text-primary"
+                              : ""
+                            }`}
+                        >
+                          {menuItem.menu}
+                        </a>
+                      </Link>
+
+                  }
                 </div>
               );
             })}
@@ -112,9 +126,8 @@ const Navbar = () => {
         </div>
         {/* mobile menu */}
         <div
-          className={` ${
-            display ? "w-0 scale-x-0" : "w-full z-10"
-          } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
+          className={` ${display ? "w-0 scale-x-0" : "w-full z-10"
+            } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
         >
           <div className="flex justify-between w-full px-5 py-3 shadow-md">
             <div className="w-[140px]">
@@ -145,11 +158,10 @@ const Navbar = () => {
               >
                 <Link href={menuItem.link}>
                   <a
-                    className={`dark:text-white ${
-                      router.pathname == menuItem.link
+                    className={`dark:text-white ${router.pathname == menuItem.link
                         ? "text-primary dark:text-primary"
                         : ""
-                    }`}
+                      }`}
                   >
                     {menuItem.menu}
                   </a>
@@ -189,7 +201,7 @@ const Navbar = () => {
                 Web3bridge Nft
               </a>
             </button>
-          
+
             {/* <button className="rounde-sm lg:block bg-secondary text-primary font-base dark:text-white10 dark:bg-primary  lg:px-[1rem] xl:px-[2rem] py-2 border-2 border-primary">
               <a
                 href="/cohort-registration"

@@ -30,6 +30,11 @@ export const menuItems = [
     link: '/alumni',
   },
   {
+    menu: 'Blog',
+    link: 'https://web3bridge.substack.com/',
+    externalLink: true
+  },
+  {
     menu: 'Hire us',
     link: '/hire',
   },
