@@ -16,12 +16,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Build app
+        run: npm run build
+
+      - name: Copy Server File
+        run: cp -r .next /var/www/web3bridgewebsite
+        
       - name: Clean up folder
         run: rm -vrf node_modules
 
       - name: Restart Server
         run: pm2 restart web3bridgewebsite  || pm2 start --name web3bridgewebsite npm -- start
-      - name: Build app
-        run: npm run build
-      - name: Copy Server File
-        run: cp -r .next /var/www/web3bridgewebsite
