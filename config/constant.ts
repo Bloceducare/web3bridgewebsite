@@ -8,7 +8,7 @@ export const TRAINING_CLOSED = {
   web2: true,
   web3: true,
   specialClass: true,
-  cairo: true,
+  cairo: false,
 };
 
 export const specializedClassOptions = [
