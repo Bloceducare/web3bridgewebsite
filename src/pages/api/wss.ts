@@ -18,6 +18,10 @@ import reportError from "@server/services/report-error";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const paystack = Paystack(process.env.PAYMENT_SECRET);
 
+const Flutterwave = require('flutterwave-node-v3');
+const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+
+
 router
 // .use(async (req, res, next) => {
 //   await validate(verifyPaymentSchema)(req, res, next)
