@@ -5,7 +5,7 @@ export const COHORT_REGISTRATION_OPENED = true;
 export const SPECIAL_CLASS_OPENED = true;
 
 export const TRAINING_CLOSED = {
-  web2: true,
+  web2: false,
   web3: false,
   specialClass: true,
   cairo: true,
