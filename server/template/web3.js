@@ -4,7 +4,7 @@ const web3 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort VIII 2022 Registration</title>
+  <title>Cohort {{CURRENT_COHORT}} {{YEAR}} Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const web3 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort VIII 2022
+    Thank you for registering for Cohort {{CURRENT_COHORT}} {{YEAR}}
   </div>
   <!-- end preheader -->
 
@@ -175,26 +175,38 @@ const web3 = `<!DOCTYPE html>
 
           <!-- start copy -->
           <tr>
-            <td bgcolor="#ffffff" align="left" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+            <td bgcolor="#ffffff" align="left" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;text-align: justify;">
               <h1 style="margin: 0 0 12px; font-size: 32px; font-weight: 400; line-height: 48px;">Hello, {{name}}!</h1>
 
               <p>
                 We are happy to receive your application. At Web3bridge, our goal is to help you become a Web3 developer and guide you to having a proper Web3 career.
               </p>
               <p>
-                Web3bridge cohort VIII opens January 9, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
+                Web3bridge cohort {{CURRENT_COHORT}} opens July 24, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
               </p>
 
               <p>
-                Use the calendly link to choose time for your first assessment test (https://calendly.com/web3bridge/web3-pre-qualification-tests?month=2022-10)
+               Use the calendly link to choose time for your  <a href="https://calendly.com/web3bridge/web3bridge-pre-qualification-interview-clone" target="_blank"   rel="noopener noreferrer">
+first assessment test
+</a>
                 </p>  
 
-                <p>
-                    While you wait, ensure to join our telegram (https://t.me/web3bridge) and follow our twitter account (​​https://twitter.com/Web3Bridge) so as not to miss any major update.
-                </p>
+              
+              <p>
+                While you wait, ensure to join our telegram (<a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
+https://t.me/web3bridge
+</a>) and follow our twitter account (<a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
+https://twitter.com/Web3Bridge
+</a>) so as not to miss any major update.
+                </p>  
+          
+          <p>
+            Do note that we have very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech.
+
+          </p>
 
                 <p>
-                    Support will be provided on telegram or by sending a mail.
+                  Support will be provided on telegram or by sending a mail.
                 </p>
 
             </td>

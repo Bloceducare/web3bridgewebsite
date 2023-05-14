@@ -1,13 +1,7 @@
-// import nodemailer from "nodemailer";
-// import mg from "nodemailer-mailgun-transport";
-import { mailSenderConfig } from "@server/config";
+import { CURRENT_COHORT, mailSenderConfig } from "@server/config";
 import emailTemplate from "@server/template";
 import reportError from "@server/services/report-error";
 import sendGridMail from "@sendgrid/mail";
-import web2Db from "@server/models/web2";
-import web3Db from "@server/template/web3";
-import cairoUserDb from "@server/models/cairo";
-import specialClassDb from "@server/models/specialClass";
 import { Tracks } from "enums";
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY as string);
@@ -33,6 +27,8 @@ export const sendEmail = async (data) => {
     html: template(info.file, {
       name: data.name,
       currentTrack: data.currentTrack,
+      CURRENT_COHORT:CURRENT_COHORT,
+      YEAR:new Date().getFullYear()
     }),
   };
 
