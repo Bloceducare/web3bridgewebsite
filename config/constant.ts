@@ -1,3 +1,4 @@
+import { isOpened } from "@components/globals/TopHeader";
 import { EspecializedOptions } from "enums";
 
 export const LOCATION_BASE_URL = "https://countriesnow.space/api/v0.1/";
@@ -5,8 +6,8 @@ export const COHORT_REGISTRATION_OPENED = true;
 export const SPECIAL_CLASS_OPENED = true;
 
 export const TRAINING_CLOSED = {
-  web2: true,
-  web3: true,
+  web2: !isOpened,
+  web3: !isOpened,
   specialClass: true,
   cairo: false,
 };

@@ -50,7 +50,7 @@ const Layout = ({ children }: Props) => {
       </Head>
       <AnimatePresence>
         <Background>
-          {/* <TopHeader /> */}
+          <TopHeader />
           <Navbar />
           {children}
           <Footer />
