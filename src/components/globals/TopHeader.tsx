@@ -7,7 +7,7 @@ import Link from "next/link";
 const openingTime = 1684166400000;
 const currentTime = Date.parse(String(new Date()));
 // const isOpened = true;
-const isOpened = currentTime > openingTime;
+export const isOpened = currentTime > openingTime;
 const TopHeader = () => {
   return (
     <div className="flex py-4 flex-col items-center justify-center text-center bg-base dark:bg-primary ">
