@@ -3,12 +3,20 @@ import { ArrowRight } from "./icons";
 import { motion } from "framer-motion";
 import Countdown from "./Countdown";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-const openingTime = 1684166400000;
+const openingTime = 1684166400000; // May 15 2023, 5pm  gmt + 1
 const currentTime = Date.parse(String(new Date()));
-// export  const isOpened = true;
 export const isOpened = currentTime > openingTime;
+
 const TopHeader = () => {
+  const { pathname } = useRouter();
+  const trainingsPat = pathname.split("/").includes("trainings");
+
+  if (trainingsPat) {
+    return null;
+  }
+
   return (
     <div className="flex py-4 flex-col items-center justify-center text-center bg-base dark:bg-primary ">
       <div className="px-5 mr-4 text-sm font-normal text-white font-secondary">

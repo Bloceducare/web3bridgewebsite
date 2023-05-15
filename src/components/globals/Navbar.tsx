@@ -17,7 +17,6 @@ const Navbar = () => {
   const router = useRouter();
 
   useEffect(() => {
-
     if (theme === "light") {
       setIsLight(true);
     } else {
@@ -30,16 +29,24 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-11/12 z-55 md:w-full md:p-4 lg:w-11/12 lg:p-0">
           <div className="w-[140px]">
             {/* Logo */}
-            {isLight ? (
-              <Image
-                src={LightLogo}
-                className=""
-                placeholder="blur"
-                blurDataURL={blurUrl}
-              />
-            ) : (
-              <Image src={DarkLogo} placeholder="blur" blurDataURL={blurUrl} />
-            )}
+            <Link href="/">
+              <a>
+                {isLight ? (
+                  <Image
+                    src={LightLogo}
+                    className=""
+                    placeholder="blur"
+                    blurDataURL={blurUrl}
+                  />
+                ) : (
+                  <Image
+                    src={DarkLogo}
+                    placeholder="blur"
+                    blurDataURL={blurUrl}
+                  />
+                )}
+              </a>
+            </Link>
           </div>
 
           {/* Menu Items */}
@@ -47,31 +54,32 @@ const Navbar = () => {
             {menuItems.map((menuItem, index) => {
               return (
                 <div key={index} className="text-base hover:text-primary">
-                  {
-                    menuItem.externalLink ?
+                  {menuItem.externalLink ? (
+                    <a
+                      href={menuItem.link}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className={`dark:text-white ${
+                        router.pathname == menuItem.link
+                          ? "text-primary dark:text-primary"
+                          : ""
+                      }`}
+                    >
+                      {menuItem.menu}
+                    </a>
+                  ) : (
+                    <Link href={menuItem.link}>
                       <a
-                        href={menuItem.link}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className={`dark:text-white ${router.pathname == menuItem.link
+                        className={`dark:text-white ${
+                          router.pathname == menuItem.link
                             ? "text-primary dark:text-primary"
                             : ""
-                          }`}
+                        }`}
                       >
                         {menuItem.menu}
-                      </a> :
-                      <Link href={menuItem.link}>
-                        <a
-                          className={`dark:text-white ${router.pathname == menuItem.link
-                              ? "text-primary dark:text-primary"
-                              : ""
-                            }`}
-                        >
-                          {menuItem.menu}
-                        </a>
-                      </Link>
-
-                  }
+                      </a>
+                    </Link>
+                  )}
                 </div>
               );
             })}
@@ -126,16 +134,26 @@ const Navbar = () => {
         </div>
         {/* mobile menu */}
         <div
-          className={` ${display ? "w-0 scale-x-0" : "w-full z-10"
-            } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
+          className={` ${
+            display ? "w-0 scale-x-0" : "w-full z-10"
+          } absolute left-0 top-0  md:hidden flex flex-col items-center self-end  space-y-6 font-bold bg-white dark:bg-base sm:self-center drop-shadow-md ease-in-out duration-300 `}
         >
           <div className="flex justify-between w-full px-5 py-3 shadow-md">
-            <div className="w-[140px]">
-              {isLight ? (
-                <Image src={LightLogo} className="w-[140px]" />
-              ) : (
-                <Image src={DarkLogo} />
-              )}
+            <div
+              className="w-[140px]"
+              onClick={() => {
+                setDisplay((display: any) => !display);
+              }}
+            >
+              <Link href="/">
+                <a>
+                  {isLight ? (
+                    <Image src={LightLogo} className="w-[140px]" />
+                  ) : (
+                    <Image src={DarkLogo} />
+                  )}
+                </a>
+              </Link>
             </div>
             <button
               onClick={() => {
@@ -158,10 +176,11 @@ const Navbar = () => {
               >
                 <Link href={menuItem.link}>
                   <a
-                    className={`dark:text-white ${router.pathname == menuItem.link
+                    className={`dark:text-white ${
+                      router.pathname == menuItem.link
                         ? "text-primary dark:text-primary"
                         : ""
-                      }`}
+                    }`}
                   >
                     {menuItem.menu}
                   </a>

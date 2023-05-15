@@ -1,10 +1,10 @@
-import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import CohortsImage from '../../assets/cohorts/cohorts.svg'
-import ProfileImg from '../../assets/cohorts/profile.svg'
-import Button from '../components/Button'
-import type { NextPage } from 'next'
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import CohortsImage from "../../assets/cohorts/cohorts.svg";
+import ProfileImg from "../../assets/cohorts/profile.svg";
+import Button from "../components/Button";
+import type { NextPage } from "next";
 
 const Cohorts: NextPage = () => {
   return (
@@ -62,15 +62,14 @@ const Cohorts: NextPage = () => {
         <p className="text-base dark:text-white10">230+ Students enrolled</p>
       </div>
 
-     
       <Button
-        href="/cohort-registration"
+        href="/trainings"
         class="py-2 px-12 mx-auto block mt-4 mb-40"
         content="Enroll Now"
         type="background"
       />
     </section>
-  )
-}
+  );
+};
 
-export default Cohorts
+export default Cohorts;
