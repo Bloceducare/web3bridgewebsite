@@ -52,7 +52,7 @@ router
     if (Object.values(Tracks).indexOf(req.body.currentTrack) === -1) {
       return res.status(400).send({ status: false, error: "Invalid track" });
     }
-    const { email, phone, currentTrack, name, voucher } = req.body;
+    const { email, voucher } = req.body;
 
     // const applyVoucher = req.body.currentTrack  !=='cairo'
     // if(applyVoucher && !voucher){
@@ -87,21 +87,7 @@ router
           });
         }
       }
-      // const smsMessage = req.body.currentTrack == "cairo" && {
-      //   message:
-      //     "Welcome to Web3Bridge Cairo Training. Do check your mail for further information",
-      // };
 
-      // await Promise.all([
-      //   sendSms({ recipients: phone, ...smsMessage }),
-      //   sendEmail({
-      //     email,
-      //     name,
-      //     type: currentTrack,
-      //     file: req.body.currentTrack,
-      //     currentTrack: req.body.currentTrack,
-      //   }),
-      // ]);
       let info = req.body;
       for (const key in info) {
         const element = info[key];
