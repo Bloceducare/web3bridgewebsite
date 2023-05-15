@@ -4,7 +4,7 @@ const web2 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort {{CURRENT_COHORT}} {{YEAR}} Registration</title>
+  <title>Cohort IX 2023 Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -68,7 +68,7 @@ const web2 = `<!DOCTYPE html>
   }
 
   /**
-   * F{{CURRENT_COHORT}} centering issues in Android 4.4.
+   * Fix centering issues in Android 4.4.
    */
   div[style*="margin: 16px 0;"] {
     margin: 0 !important;
@@ -106,7 +106,7 @@ const web2 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort {{CURRENT_COHORT}} {{YEAR}}
+    Thank you for registering for Cohort IX 2023
   </div>
   <!-- end preheader -->
 
@@ -182,7 +182,7 @@ const web2 = `<!DOCTYPE html>
                 We are happy to receive your application. At Web3bridge, our goal is to help you kickstart your journey into tech with the Web2 track of the cohort.
               </p>
               <p>
-                Web3bridge cohort {{CURRENT_COHORT}} opens July 24, {{YEAR}}, the onboarding to the cohort starts immediately after we receive your application and we proceed to
+                Web3bridge cohort IX opens July 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
               <ul> 
                 <li>
                   Grouping every participant
@@ -199,15 +199,23 @@ const web2 = `<!DOCTYPE html>
               </p>
 
               <p>
-                While you wait, ensure to join our telegram (<a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
+                While you wait, ensure to join our telegram <u>
+(<a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
 https://t.me/web3bridge
-</a>) and follow our twitter account (<a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
+</a>)
+                </u> and follow our twitter account (<u> 
+                <a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
 https://twitter.com/Web3Bridge
-</a>) so as not to miss any major update.
+</a>
+                </u>) so as not to miss any major update.
                 </p>  
           
           <p>
-            Do note that we have very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech.
+                 Do note that we have a very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech, also you can design your display picture to show everyone you have registered for the cohort <u>
+<a href="https://getdp.co/Web3bridgeCohortIX" target="_blank"   rel="noopener noreferrer">
+https://getdp.co/Web3bridgeCohortIX
+</a>
+</u>. 
 
           </p>
 
@@ -253,7 +261,7 @@ https://twitter.com/Web3Bridge
           <!-- start permission -->
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for your  cohort viii registration. If you didn't request registration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for your  cohort IX registration. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
           <!-- end permission -->

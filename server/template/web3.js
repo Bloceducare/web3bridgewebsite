@@ -4,7 +4,7 @@ const web3 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort {{CURRENT_COHORT}} {{YEAR}} Registration</title>
+  <title>Cohort IX 2023 Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const web3 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort {{CURRENT_COHORT}} {{YEAR}}
+    Thank you for registering for Cohort IX 2023
   </div>
   <!-- end preheader -->
 
@@ -182,26 +182,41 @@ const web3 = `<!DOCTYPE html>
                 We are happy to receive your application. At Web3bridge, our goal is to help you become a Web3 developer and guide you to having a proper Web3 career.
               </p>
               <p>
-                Web3bridge cohort {{CURRENT_COHORT}} opens July 24, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
+                Web3bridge cohort IX opens July 24, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
               </p>
 
               <p>
-               Use the calendly link to choose time for your  <a href="https://calendly.com/web3bridge/web3bridge-pre-qualification-interview-clone" target="_blank"   rel="noopener noreferrer">
+               Use the calendly link to choose time for your
+                <u>
+                <a href="https://calendly.com/web3bridge/web3bridge-pre-qualification-interview-clone" target="_blank"   rel="noopener noreferrer">
 first assessment test
 </a>
+                </u>
                 </p>  
 
               
               <p>
-                While you wait, ensure to join our telegram (<a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
+                While you wait, ensure to join our telegram (
+                <u>
+                <a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
 https://t.me/web3bridge
-</a>) and follow our twitter account (<a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
+</a>
+                </u>
+                  ) and follow our twitter account (
+                <u>
+                <a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
 https://twitter.com/Web3Bridge
-</a>) so as not to miss any major update.
+</a>
+                </u>
+                ) so as not to miss any major update.
                 </p>  
           
           <p>
-            Do note that we have very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech.
+         Do note that we have a very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech, also you can design your display picture to show everyone you have registered for the cohort <u>
+<a href="https://getdp.co/Web3bridgeCohortIX" target="_blank"   rel="noopener noreferrer">
+https://getdp.co/Web3bridgeCohortIX
+</a>
+</u>. 
 
           </p>
 
@@ -247,7 +262,7 @@ https://twitter.com/Web3Bridge
           <!-- start permission -->
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for your  cohort viii registration. If you didn't request registration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for your  cohort IX registration. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
           <!-- end permission -->

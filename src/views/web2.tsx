@@ -11,13 +11,17 @@ import ReactSelect from "@components/commons/ReactSelect";
 import TextArea from "@components/commons/TextArea";
 import { Gender, PaymentMethod, PaymentStatus, Tracks } from "enums";
 import { userRegistering } from "./api";
-import { webPayment } from "@server/config";
+import { CURRENT_COHORT, webPayment } from "@server/config";
 import formatToCurrency from "utils/formatToCurrency";
 import Select from "@components/commons/Select";
 import countries from "data/countries.json";
 import useCities from "./hooks/useCities";
 import usePayment from "./hooks/usePayment";
+import { TRAINING_CLOSED } from "config/constant";
+import TrainingPyt from "@components/TrainingPyt";
+import Tooltip from "@components/commons/Tooltip";
 
+const userTrack = Tracks.web2;
 const countriesData = countries.map((country) => ({
   value: country.name,
   label: country.name,
@@ -32,7 +36,7 @@ const Web2View = () => {
     amount: webPayment.USD, // amount as a number or string
     reference: uuidv4(), // unique identifier
     metadata: {
-      track: Tracks.web2,
+      track: userTrack,
     },
     onSuccess: (response) => {
       // handle response here
@@ -48,7 +52,7 @@ const Web2View = () => {
 
   const config = {
     reference: uuidv4(),
-    amount: webPayment.naira * 100,
+    amount: webPayment.naira,
     publicKey: process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
   };
 
@@ -65,7 +69,7 @@ const Web2View = () => {
   const handlePhoneChange = (phone) => {
     setPhone(phone);
   };
-
+  const [retry, setRetry] = useState(false);
   const {
     register,
     handleSubmit,
@@ -73,9 +77,13 @@ const Web2View = () => {
     watch,
     setValue,
     control,
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: { errors, isSubmitting: formSubmitting, isDirty, isValid },
+
     // @ts-ignore
   } = useForm<any>(validationOption);
+
+  const isSubmitting = retry || formSubmitting;
+
   const userEmail = {
     email: watch("email"),
     name: watch("name"),
@@ -84,6 +92,8 @@ const Web2View = () => {
     pyt_method: watch("PaymentMethod"),
     phone: watch("phone"),
   };
+
+  userEmail.pyt_method = PaymentMethod.card;
 
   const city = getValues("country")?.value;
 
@@ -105,32 +115,35 @@ const Web2View = () => {
       name: userEmail.name,
     },
     meta: {
-      track: Tracks.web2,
+      track: "web2",
     },
   });
 
   const onSubmit = async (value) => {
     const data = {
       ...value,
-      currentTrack: Tracks.web2,
+      currentTrack: userTrack,
       country: value?.country?.value,
       city: value?.city?.value,
     };
 
     setError("");
     setResponsePaymentStatus(PaymentStatus.notInitialized);
+    if (TRAINING_CLOSED[userTrack]) {
+      return alert("Registration closed!");
+    }
     try {
-      // return alert("Registration closed !")
       const response = await userRegistering(data);
 
       if (
         response.status === 201 &&
-        data.paymentMethod === PaymentMethod.card
+        userEmail.pyt_method === PaymentMethod.card
       ) {
         handlePayment({
           callback: () => {
             setTimeout(() => {
               closePaymentModal();
+
               setMessage(response.data.message);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }, 2000);
@@ -144,67 +157,56 @@ const Web2View = () => {
       // }
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: any) {
-      console.log(e.response.data, "Error");
-      setError(e?.response?.data?.error ?? e.response?.data?.errors);
-      setResponsePaymentStatus(e?.response?.data?.paymentStatus);
+      const isError = e?.response?.data?.error ?? e.response?.data?.errors;
+      setError(!!isError ? isError : "An Error Occurred, Try again");
+      setResponsePaymentStatus(e?.response?.data?.pyt);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } finally {
     }
   };
 
-  const retryPayment = (payment) => {
-    if (payment === PaymentMethod.card) {
-      // @ts-ignore
-      // initializePaymentPayStack(onSuccessPayStack, onClose);
-    }
+  const retryPayment = async (payment) => {
+    setRetry(false);
 
-    // if(payment === PaymentMethod.crypto){
-    //   initializePaymentLazerPay()
-    // }
+    try {
+      setRetry(true);
+      if (payment === PaymentMethod.card) {
+        handlePayment({
+          callback: () => {
+            setTimeout(() => {
+              setError("");
+              setResponsePaymentStatus(PaymentStatus.notInitialized);
+              closePaymentModal();
+              setMessage(
+                "Payment Successful, Please check Your Email for Further Instructions"
+              );
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }, 2000);
+          },
+          onClose: () => {},
+        });
+      }
+      setRetry(false);
+    } catch (e) {
+      setRetry(false);
+    }
   };
   return (
     <>
       <div className="max-w-lg m-12 mx-auto">
         <div></div>
-        <div className="flex flex-col items-center justify-center mb-6">
+        <div className="flex flex-col items-center justify-center mb-6 text-center">
           <div className="text-2xl dark:text-white20">
-            Cohort VIII Registration
+            Cohort {CURRENT_COHORT} Registration
           </div>
+          <TrainingPyt
+            user={userEmail}
+            userTrack={userTrack}
+            error={error}
+            pytStatus={responsePaymentStatus}
+            retry={retry}
+            retryPayment={retryPayment}
+          />
 
-          {!!error && (
-            <>
-              <div className="my-2 text-sm font-semibold text-red-500">
-                {typeof error === "string" ? (
-                  error
-                ) : error?.length ? (
-                  <>
-                    {error.map((err: string) => (
-                      <p key={err}>{err}</p>
-                    ))}
-                  </>
-                ) : (
-                  responsePaymentStatus === PaymentStatus.pending &&
-                  "Payment pending, please try again"
-                )}
-              </div>
-
-              {/* <>
-                   {responsePaymentStatus ===PaymentStatus.success ? 
-            <>
-                <Link href="/">
-              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
-            </Link>
-             </>:
-           
-            <div>
-              <Button onClick={()=>retryPayment(PaymentMethod.card)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Card</Button>
-                
-              <Button onClick={()=>retryPayment(PaymentMethod.crypto)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Crypto</Button>             
-            </div>
-                       }
-                 </> */}
-            </>
-          )}
           {!!message && (
             <div className="my-2 text-lg text-center capitalize dark:text-white ">
               {message}
@@ -320,7 +322,9 @@ const Web2View = () => {
                         label="City"
                         options={cities}
                         placeholder={
-                          cities.length > 0
+                          cityLoadig
+                            ? "Loading Cities"
+                            : cities.length > 0
                             ? "Select City"
                             : "Select Country First"
                         }
@@ -335,19 +339,6 @@ const Web2View = () => {
                       />
                     )}
                   />
-                </div>
-
-                <div className="mb-4">
-                  {/* <div className="mb-4">
-
-     <ImageUpload label="Upload a profile Picture" 
-        name="profilePicture"  
-        setValues={setValue}
-        errors={errors}
-        validateName="profilePicVal"       
-    />
-    
-     </div> */}
                 </div>
               </fieldset>
 
@@ -380,7 +371,57 @@ const Web2View = () => {
                     </Input>
                   </div>
 
-                  <div className="relative mb-3">
+                  <div className="relative my-5">
+                    <label className="block mb-2 dark:text-white20">
+                      <Tooltip text={<ClassCat />}>
+                        What Category will you like to apply for
+                      </Tooltip>
+                    </label>
+                    {(errors?.classCat?.type === "required" ||
+                      !!errors?.classCat?.message) && (
+                      <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
+                        <>{errors?.classCat?.message}</>
+                      </span>
+                    )}
+                    <div className="gap-2  grid grid-flow-col justify-stretch">
+                      <div className="flex items-center justify-center">
+                        <input
+                          {...register("classCat")}
+                          id="classCat-basic"
+                          type="radio"
+                          disabled={isSubmitting}
+                          className="form-radio"
+                          name="classCat"
+                          value="basic"
+                        />
+                        <label
+                          htmlFor="classCat-basic"
+                          className="inline-flex items-center dark:text-white10  "
+                        >
+                          <span className="">Beginner</span>
+                        </label>
+                      </div>
+                      <div className=" flex items-center justify-center">
+                        <input
+                          {...register("classCat")}
+                          id="classCat-advanced"
+                          type="radio"
+                          disabled={isSubmitting}
+                          className="form-radio"
+                          name="classCat"
+                          value="advanced"
+                        />
+                        <label
+                          htmlFor="classCat-advanced"
+                          className="inline-flex items-center dark:text-white10 "
+                        >
+                          <span className="">Adanced</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative mb-5">
                     <Select
                       labelClassName="mt-4"
                       name="twoHrMinDailyCommitment"
@@ -422,7 +463,7 @@ const Web2View = () => {
                 </fieldset>
               </>
 
-              <>
+              {/* <>
                 <fieldset className="p-4 mx-2 mb-4 border rounded-md">
                   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">
                     Payment
@@ -477,23 +518,23 @@ const Web2View = () => {
                         </label>
                       </div>
 
-                      {/* <div className=" flex items-center justify-center">
-                    <input
-                      {...register("paymentMethod")}
-                      id="paymentMethod-voucher"
-                      type="radio"
-                      disabled={isSubmitting}
-                      className="form-radio"
-                      name="paymentMethod"
-                      value="voucher"
-                    />
-                    <label
-                      htmlFor="paymentMethod-voucher"
-                      className="inline-flex items-center dark:text-white10 "
-                    >
-                      <span className="">Voucher</span>
-                    </label>
-                  </div> */}
+                      <div className=" flex items-center justify-center">
+                        <input
+                          {...register("paymentMethod")}
+                          id="paymentMethod-voucher"
+                          type="radio"
+                          disabled={isSubmitting}
+                          className="form-radio"
+                          name="paymentMethod"
+                          value="voucher"
+                        />
+                        <label
+                          htmlFor="paymentMethod-voucher"
+                          className="inline-flex items-center dark:text-white10 "
+                        >
+                          <span className="">Voucher</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </fieldset>
@@ -520,7 +561,7 @@ const Web2View = () => {
                     </fieldset>
                   </>
                 )}
-              </>
+              </> */}
 
               <div className="px-6">
                 <Button
@@ -528,7 +569,13 @@ const Web2View = () => {
                   className="w-full py-3 "
                   type="submit"
                 >
-                  {isSubmitting ? "Loading..." : "Submit"}
+                  {isSubmitting
+                    ? "Loading..."
+                    : `Pay Application Fee of ${
+                        userEmail.pyt_method === PaymentMethod.card
+                          ? `N${webPayment.naira}`
+                          : `USD${webPayment.USD}`
+                      }`}
                 </Button>
               </div>
             </form>
@@ -540,3 +587,24 @@ const Web2View = () => {
 };
 
 export default Web2View;
+
+export const ClassCat = () => {
+  return (
+    <div>
+      <div className="mb-2">
+        <span className="underline"> Beginner</span>
+        <div>
+          You are not comfortable with html css and/or barely used Javascript.
+          Heck, you don't even know what those means.
+        </div>
+      </div>
+      <div>
+        <span className="underline"> Advanced</span>
+        <div>
+          You have some experience with html, css and javascript and you're
+          comfortable building a simple weather app
+        </div>
+      </div>
+    </div>
+  );
+};

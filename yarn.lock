@@ -3328,6 +3328,11 @@ lazerpay-node-sdk@^0.2.4:
     axios "^0.22.0"
     dotenv "^16.0.0"
 
+lazerpay-react@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/lazerpay-react/-/lazerpay-react-1.2.5.tgz#fce6d3f4a05cab75ff1d745e1913d2f73d61a707"
+  integrity sha512-Y+r7tc7FsZgLB0X1M97ea1nBQUYj9B7vHQFcfiovxzL7O4Dd4xLIy9Q9UecYKTUr+OLS485KZlsl12D7F7xN8Q==
+
 levn@^0.4.1:
   version "0.4.1"
   resolved "https://registry.npmjs.org/levn/-/levn-0.4.1.tgz"

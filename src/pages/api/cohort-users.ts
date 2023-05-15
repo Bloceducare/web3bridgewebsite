@@ -70,13 +70,11 @@ router
 
       if (userExists) {
         await closeDB();
-        return res
-          .status(423)
-          .send({
-            status: false,
-            error: "This user already exists",
-            pyt: userExists._doc.paymentStatus,
-          });
+        return res.status(423).send({
+          status: false,
+          error: "This user already exists",
+          pyt: userExists._doc.paymentStatus,
+        });
       }
 
       if (!!voucher) {
@@ -112,6 +110,7 @@ router
       }
       const userData: any = new userDb({
         ...info,
+        paymentStatus: PaymentStatus.pending,
       });
 
       const { _doc } = await userData.save();
@@ -139,71 +138,43 @@ router
 interface IQuery {
   currentTrack?: string | string[] | undefined;
   page?: number | string;
+  email?: string;
 }
 
-router
-  // .get(async (req, res) => {
-  //   let userDb;
-  //   if(req.query.currentTrack === "web2"){
-  //     userDb = web2UserDb
-  //   }
+router.get(async (req, res) => {
+  const dbs = {
+    web2: web2UserDb,
+    web3: web3userDb,
+    cairo: cairoUserDb,
+  };
 
-  //   if(req.query.currentTrack === "web3"){
-  //     userDb = web3userDb
-  //   }
+  const { currentTrack, page, email }: IQuery = req.query;
+  // @ts-ignore
+  const userDb = dbs[currentTrack];
+  if (!userDb) {
+    return res.status(404).json({
+      message: "user track not found",
+      error: "user track not found",
+    });
+  }
 
-  //   const { currentTrack }: IQuery = req.query;
+  try {
+    const data = email
+      ? await userDb.findOne({ email })
+      : await userDb.find({});
 
-  //   try {
-  //     const data = await web3userDb.find({})
-  //     console.log(data, currentTrack)
-  //     return res.status(200).json({
-  //       status: true,
-  //       message:data
-  //     })
-  //   } catch (e) {
-  //     return res.status(500).json({
-  //       status: false,
-  //       error: "server error",
-  //     });
-  //   }
-  // })
-  .get(async (req, res) => {
-    let userDb;
-
-    if (req.query.currentTrack === "web2") {
-      userDb = web2UserDb;
-    }
-
-    if (req.query.currentTrack === "web3") {
-      userDb = web3userDb;
-    }
-    if (req.query.currentTrack === "cairo") {
-      userDb = cairoUserDb;
-    }
-
-    const { currentTrack, page }: IQuery = req.query;
-
-    try {
-      // const users = await web3userDb.find({
-      //   email:'okel@'
-      //   // ...(!!currentTrack && { currentTrack }),
-      // });
-
-      const re = await web2UserDb.find({});
-
-      return res.status(200).json({
-        status: true,
-        data: " users",
-      });
-    } catch (e) {
-      reportError;
-      return res.status(500).json({
-        status: false,
-        error: "server error" + e,
-      });
-    }
-  });
+    return res.status(200).json({
+      status: true,
+      data,
+    });
+  } catch (e) {
+    reportError;
+    return res.status(500).json({
+      status: false,
+      error: "server error" + e,
+    });
+  }
+});
 
 export default router.handler({
   // @ts-ignore

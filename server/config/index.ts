@@ -1,8 +1,9 @@
-const isDev = process.env.NODE_ENV === "development";
+// export const isDev = false;
+export const isDev = process.env.NODE_ENV === "development";
 
 export const CURRENT_COHORT = "IX";
 export const webPayment = {
-  naira: isDev ? 100 : 10000,
+  naira: isDev ? 10 : 10000,
   USD: 70,
 };
 
@@ -39,9 +40,9 @@ export const smsConfig = {
 };
 
 export const mailSenderConfig = {
-  from: "registration@web3bridge.com",
+  from: { email: "registration@web3bridge.com", name: "Web3bridge" },
   emailSubject: "Acceptance Email",
-  subject: "Acceptance Email",
+  subject: "Application Received",
   replyTo: "registration@web3bridge.com",
 };
 

@@ -6,7 +6,7 @@ import { Tracks } from "enums";
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
-const template = (fileName, object) => {
+const mailTemplate = (fileName, object) => {
   let template = emailTemplate[fileName];
   if (!template) return;
 
@@ -24,11 +24,11 @@ export const sendEmail = async (data) => {
   const final = {
     ...info,
     to: info.email,
-    html: template(info.file, {
+    html: mailTemplate(info.file, {
       name: data.name,
       currentTrack: data.currentTrack,
-      CURRENT_COHORT:CURRENT_COHORT,
-      YEAR:new Date().getFullYear()
+      CURRENT_COHORT: CURRENT_COHORT,
+      YEAR: new Date().getFullYear(),
     }),
   };
 
@@ -45,7 +45,7 @@ export const sendEmail = async (data) => {
           $set: { acceptanceSent: true },
         }
       );
-      console.log(data, "mailer user data ");
+      // console.log(data, "mailer user data ");
     }
 
     return {

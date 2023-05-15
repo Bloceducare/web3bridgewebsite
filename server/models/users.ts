@@ -57,6 +57,7 @@ const allUserSchema = {
   paymentStatus: {
     type: String,
     enum: PaymentStatus,
+    default: PaymentStatus.notInitialized,
   },
   paymentMethod: {
     type: String,

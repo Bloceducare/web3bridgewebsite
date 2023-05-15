@@ -1,6 +1,6 @@
 import { string, object, array, mixed, ref } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { PaymentMethod, Tracks } from "enums";
+import { EClassCat, PaymentMethod, Tracks } from "enums";
 import countries from "data/countries.json";
 import showTime from "utils/showTimePeriods";
 
@@ -47,7 +47,7 @@ export const mainSchema = object().shape({
   //   .matches(/^0x[a-fA-F0-9]{40}$/, 'Wallet Address is not valid'),
   paymentMethod: mixed<PaymentMethod>()
     .oneOf(Object.values(PaymentMethod), "Payment method is not valid")
-    .required("Payment method is required")
+    // .required("Payment method is required")
     .nullable(),
 });
 
@@ -173,12 +173,20 @@ const timeSchema = object().shape({
   }),
 });
 
+const web2ClassCatSchema = object().shape({
+  classCat: mixed<EClassCat>()
+    .oneOf(Object.values(EClassCat), "Category is not valid")
+    .required("Training Category is required")
+    .nullable(),
+});
+
 export const registrationSchema = {
   web2: mainSchema
     .concat(achievementFromProgramSchema)
     .concat(inspirationForCodingSchema)
     .concat(dailyCommitmentSchema)
-    .concat(walletSchema),
+    .concat(walletSchema)
+    .concat(web2ClassCatSchema),
   web3: mainSchema
     .concat(technicalSchema)
     .concat(nextOfKinSchema)

@@ -18,11 +18,14 @@ import useCities from "./hooks/useCities";
 import { PaymentStatus } from "enums";
 import usePayment from "./hooks/usePayment";
 import { TRAINING_CLOSED } from "config/constant";
+import TrainingPyt from "@components/TrainingPyt";
 
 const countriesData = countries.map((country) => ({
   value: country.name,
   label: country.name,
 }));
+
+const userTrack = Tracks.web3;
 
 const Web3View = () => {
   const lazerPayConfig = {
@@ -31,7 +34,7 @@ const Web3View = () => {
     amount: webPayment.USD, // amount as a number
     // reference: uuidv4(), // unique identifier
     metadata: {
-      track: Tracks.web3,
+      track: userTrack,
     },
     onSuccess: (response) => {
       // handle response here
@@ -56,6 +59,8 @@ const Web3View = () => {
     setPhone(phone);
   };
 
+  const [retry, setRetry] = useState(false);
+
   const [responsePaymentStatus, setResponsePaymentStatus] = useState(
     PaymentStatus.notInitialized
   );
@@ -67,9 +72,11 @@ const Web3View = () => {
     watch,
     setValue,
     control,
-    formState: { errors, isSubmitting, isDirty, isValid },
+    formState: { errors, isSubmitting: formSubmitting, isDirty, isValid },
     // @ts-ignore
   } = useForm<any>(validationOption);
+
+  const isSubmitting = retry || formSubmitting;
 
   const userDetails = {
     email: watch("email"),
@@ -79,6 +86,7 @@ const Web3View = () => {
     phone: watch("phone"),
     pyt_method: watch("paymentMethod"),
   };
+  userDetails.pyt_method = PaymentMethod.card;
 
   const city = getValues("country")?.value;
 
@@ -101,45 +109,41 @@ const Web3View = () => {
       name: userDetails.name,
     },
     meta: {
-      track: Tracks.web3,
+      track: "web3",
     },
   });
 
   const onSubmit = async (value) => {
     setError("");
     setResponsePaymentStatus(PaymentStatus.notInitialized);
-
-    if (!value.paymentMethod) {
-      alert("Please select a payment method");
-      return;
-    }
-    if (TRAINING_CLOSED.web3) {
+    // if (!value.paymentMethod) {
+    //   alert("Please select a payment method");
+    //   return;
+    // }
+    if (TRAINING_CLOSED[userTrack]) {
       return alert("Registration closed !");
     }
 
     const data = {
       ...value,
       email: value?.email?.toLowerCase(),
-      currentTrack: Tracks.web3,
+      currentTrack: userTrack,
       country: value?.country?.value,
       city: value?.city?.value,
     };
 
     try {
-      const response = await userRegistering({
-        ...data,
-      });
+      const response = await userRegistering(data);
 
       if (
         response.status === 201 &&
-        PaymentMethod.card === data.paymentMethod
+        PaymentMethod.card === userDetails.pyt_method
       ) {
         handlePayment({
           callback: (resp) => {
             setTimeout(() => {
               closePaymentModal();
               setMessage(response.data.message);
-              // setMessage("Registration successful");
               window.scrollTo({ top: 0, behavior: "smooth" });
             }, 2000);
           },
@@ -152,22 +156,36 @@ const Web3View = () => {
       // }
     } catch (e: any) {
       setError(e?.response?.data?.error ?? e.response?.data?.errors);
-      setResponsePaymentStatus(e?.response?.data?.paymentStatus);
+      setResponsePaymentStatus(e?.response?.data?.pyt);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } finally {
-      // window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const retryPayment = (payment) => {
-    if (payment === PaymentMethod.card) {
-      // @ts-ignore
-      // initializePaymentPayStack(onSuccessPayStack, onClose);
-    }
+  const retryPayment = async (payment) => {
+    setRetry(false);
 
-    // if (payment === PaymentMethod.crypto) {
-    //   initializePaymentLazerPay();
-    // }
+    try {
+      setRetry(true);
+      if (payment === PaymentMethod.card) {
+        handlePayment({
+          callback: () => {
+            setTimeout(() => {
+              setError("");
+              setResponsePaymentStatus(PaymentStatus.notInitialized);
+              closePaymentModal();
+              setMessage(
+                "Payment Successful, Please check Your Email for Further Instructions"
+              );
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }, 2000);
+          },
+          onClose: () => {},
+        });
+      }
+      setRetry(false);
+    } catch (e) {
+      setRetry(false);
+    }
   };
 
   return (
@@ -179,40 +197,15 @@ const Web3View = () => {
             Cohort {CURRENT_COHORT} Registration
           </div>
 
-          {!!error && (
-            <>
-              <div className="my-2 text-sm font-semibold text-red-500">
-                {typeof error === "string" ? (
-                  error
-                ) : error?.length ? (
-                  <>
-                    {error.map((err: string) => (
-                      <p key={err}>{err}</p>
-                    ))}
-                  </>
-                ) : (
-                  responsePaymentStatus === PaymentStatus.pending &&
-                  "Payment pending, please try again"
-                )}
-              </div>
+          <TrainingPyt
+            user={userDetails}
+            userTrack={userTrack}
+            error={error}
+            pytStatus={responsePaymentStatus}
+            retry={retry}
+            retryPayment={retryPayment}
+          />
 
-              {/* <>
-                   {responsePaymentStatus ===PaymentStatus.success ? 
-            <>
-                <Link href="/">
-              <a className="p-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Go Back Home</a>
-            </Link>
-             </>:
-               <div>
-               <Button onClick={()=>retryPayment(PaymentMethod.card)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Card</Button>
-                 
-               <Button onClick={()=>retryPayment(PaymentMethod.crypto)} className="p-2 mx-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-md">Crypto</Button>             
-             </div>
-                     
-                       }
-                 </> */}
-            </>
-          )}
           {!!message ? (
             <div className="my-2 text-lg text-center dark:text-white ">
               {message}
@@ -325,7 +318,9 @@ const Web3View = () => {
                           refetchOptions={() => getCities(city)}
                           optionsError={cityError}
                           placeholder={
-                            cities.length > 0
+                            cityLoadig
+                              ? "Loading Cities"
+                              : cities.length > 0
                               ? "Select City"
                               : "Select Country First"
                           }
@@ -498,7 +493,7 @@ const Web3View = () => {
                   </fieldset>
                 </>
 
-                <fieldset className="p-4 mx-2 mb-4 border rounded-md">
+                {/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
                   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">
                     Payment
                   </legend>
@@ -552,7 +547,7 @@ const Web3View = () => {
                         </label>
                       </div>
 
-                      {/* <div className=" flex items-center justify-center">
+                      <div className=" flex items-center justify-center">
                     <input
                       {...register("paymentMethod")}
                       id="paymentMethod-voucher"
@@ -568,10 +563,10 @@ const Web3View = () => {
                     >
                       <span className="">Voucher</span>
                     </label>
-                  </div> */}
+                  </div>
                     </div>
                   </div>
-                </fieldset>
+                </fieldset> */}
 
                 {userDetails.pyt_method === "voucher" && (
                   <>
@@ -603,7 +598,13 @@ const Web3View = () => {
                     className="w-full py-3 "
                     type="submit"
                   >
-                    {isSubmitting ? "Loading..." : "Submit"}
+                    {isSubmitting
+                      ? "Loading..."
+                      : `Pay Application Fee of ${
+                          userDetails.pyt_method === PaymentMethod.card
+                            ? `N${webPayment.naira}`
+                            : `USD${webPayment.USD}`
+                        }`}
                   </Button>
                 </div>
               </form>
