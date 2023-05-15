@@ -4,7 +4,7 @@ const web2 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort VIII 2022 Registration</title>
+  <title>Cohort IX 2023 Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const web2 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort VIII 2022
+    Thank you for registering for Cohort IX 2023
   </div>
   <!-- end preheader -->
 
@@ -175,22 +175,49 @@ const web2 = `<!DOCTYPE html>
 
           <!-- start copy -->
           <tr>
-            <td bgcolor="#ffffff" align="left" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+            <td bgcolor="#ffffff" align="left" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; text-align: justify;">
               <h1 style="margin: 0 0 12px; font-size: 32px; font-weight: 400; line-height: 48px;">Hello, {{name}}!</h1>
 
               <p>
                 We are happy to receive your application. At Web3bridge, our goal is to help you kickstart your journey into tech with the Web2 track of the cohort.
               </p>
               <p>
-                Web3bridge cohort VIII opens January 9, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to grouping every participant, minting the token for discord onboarding which will be sent to the wallet you submitted during registration (make sure to double check and be sure the wallet submitted is an erc20 wallet, if not reach out the admin to rectify it before November 5).
+                Web3bridge cohort IX opens July 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
+              <ul> 
+                <li>
+                  Grouping every participant
+                </li>
+                <li>
+                  Minting the token for discord onboarding which will be sent to the wallet you submitted during registration (make sure to double check and be sure the wallet submitted is an erc20 wallet, if not reach out the admin to rectify it before June 12th).
+
+                </li>
+              </ul>
+              
               </p>
               <p>
-                 We will proceed to discord onboarding by December 16, to ensure that you and everyone in your cohort/group bond well before the cohort starts in January.
+                 Do note that Discord onboarding will start from July 12 to ensure that you and everyone in your cohort/group bond well before the cohort starts in July.
               </p>
 
               <p>
-                While you wait, ensure to join our telegram (https://t.me/web3bridge) and follow our twitter account (​​https://twitter.com/Web3Bridge) so as not to miss any major update.
+                While you wait, ensure to join our telegram <u>
+(<a href="https://t.me/web3bridge" target="_blank" rel="noopener noreferrer">
+https://t.me/web3bridge
+</a>)
+                </u> and follow our twitter account (<u> 
+                <a href="https://twitter.com/Web3Bridge" target="_blank" rel="noopener noreferrer">
+https://twitter.com/Web3Bridge
+</a>
+                </u>) so as not to miss any major update.
                 </p>  
+          
+          <p>
+                 Do note that we have a very limited number to be admitted into this cohort, ensure to share with friends and families who are interested in getting started in tech, also you can design your display picture to show everyone you have registered for the cohort <u>
+<a href="https://getdp.co/Web3bridgeCohortIX" target="_blank"   rel="noopener noreferrer">
+https://getdp.co/Web3bridgeCohortIX
+</a>
+</u>. 
+
+          </p>
 
                 <p>
                   Support will be provided on telegram or by sending a mail.
@@ -234,7 +261,7 @@ const web2 = `<!DOCTYPE html>
           <!-- start permission -->
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for your  cohort viii registration. If you didn't request registration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for your  cohort IX registration. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
           <!-- end permission -->
