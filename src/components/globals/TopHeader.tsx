@@ -17,12 +17,10 @@ const TopHeader = () => {
           <span className="relative md:inline block ">
             {" "}
             currently ongoing
-            <span className="ml-1 underline text-white10 block mt-2 md:inline md:mt-0">
-              Apply 🎉
+            <span className="ml-1 md:text-[1rem] text-xl underline text-white10 block mt-2 md:inline md:mt-0">
               <Link href="/trainings">
-                <a className=" inline-flex ">
-                  {" "}
-                  here
+                <a className=" inline-flex items-center ">
+                  Apply 🎉 here
                   <motion.span
                     animate={{ x: -10 }}
                     transition={{ yoyo: Infinity, duration: 1 }}
