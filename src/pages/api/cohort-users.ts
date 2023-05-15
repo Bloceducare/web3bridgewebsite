@@ -11,7 +11,11 @@ import { sendSms } from "@server/sms";
 import { sendEmail } from "@server/mailer";
 import reportError from "@server/services/report-error";
 import useVoucher from "@server/voucher";
-import { COHORT_REGISTRATION_OPENED, TRAINING_CLOSED } from "config/constant";
+import {
+  COHORT_REGISTRATION_OPENED,
+  registrationPaused,
+  TRAINING_CLOSED,
+} from "config/constant";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -29,6 +33,12 @@ router
 
   // create a user
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
+    if (registrationPaused) {
+      return res.status(423).json({
+        message: "Registration paused , Please check back later",
+        status: false,
+      });
+    }
     if (TRAINING_CLOSED[req.body.currentTrack]) {
       return res.status(423).json({
         message: "registration closed",

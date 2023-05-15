@@ -573,8 +573,10 @@ const Web2View = () => {
                     ? "Loading..."
                     : `Pay Application Fee of ${
                         userEmail.pyt_method === PaymentMethod.card
-                          ? `N${webPayment.naira}`
-                          : `USD${webPayment.USD}`
+                          ? `₦${new Intl.NumberFormat().format(
+                              webPayment.naira
+                            )}`
+                          : `USD${webPayment.USD} `
                       }`}
                 </Button>
               </div>

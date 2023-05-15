@@ -602,7 +602,9 @@ const Web3View = () => {
                       ? "Loading..."
                       : `Pay Application Fee of ${
                           userDetails.pyt_method === PaymentMethod.card
-                            ? `N${webPayment.naira}`
+                            ? `₦${new Intl.NumberFormat().format(
+                                webPayment.naira
+                              )}`
                             : `USD${webPayment.USD}`
                         }`}
                   </Button>

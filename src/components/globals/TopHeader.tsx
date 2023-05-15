@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const openingTime = 1684166400000;
 const currentTime = Date.parse(String(new Date()));
-// const isOpened = true;
+// export  const isOpened = true;
 export const isOpened = currentTime > openingTime;
 const TopHeader = () => {
   return (
@@ -14,10 +14,11 @@ const TopHeader = () => {
       <div className="px-5 mr-4 text-sm font-normal text-white font-secondary">
         Registration for the cohort IX
         {isOpened ? (
-          <span className="relative ">
+          <span className="relative md:inline block ">
             {" "}
-            currently ongoing Apply 🎉
-            <span className="ml-1 underline text-white10">
+            currently ongoing
+            <span className="ml-1 underline text-white10 block mt-2 md:inline md:mt-0">
+              Apply 🎉
               <Link href="/trainings">
                 <a className=" inline-flex ">
                   {" "}
