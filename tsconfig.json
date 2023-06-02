@@ -25,7 +25,7 @@
       "@hooks/*": ["src/hooks/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types.d.ts", "src/pages/trainings/special-class"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types.d.ts", "src/pages/trainings/special-class", "sendEmail.mjs"],
   "exclude": ["node_modules"],
   "rules": {
     "semi": ["error", "always"],

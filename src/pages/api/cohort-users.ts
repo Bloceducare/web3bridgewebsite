@@ -19,6 +19,48 @@ import {
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
+router.get(async (req, res) => {
+  const dbs = {
+    web2: web2UserDb,
+    web3: web3userDb,
+    cairo: cairoUserDb,
+  };
+
+  const { currentTrack, page, email }: IQuery = req.query;
+  // @ts-ignore
+  const userDb = dbs[currentTrack];
+  if (!userDb) {
+    return res.status(404).json({
+      message: "user track not found",
+      error: "user track not found",
+    });
+  }
+
+  await connectDB();
+
+  try {
+    const data = email
+      ? await userDb.findOne({ email })
+      : await userDb.find({ paymentStatus: "success" });
+
+    closeDB();
+    return res.status(200).json({
+      status: true,
+      data,
+    });
+
+    // return res.status(200).json({
+    //   status: true,
+    // });
+  } catch (e) {
+    reportError;
+    return res.status(500).json({
+      status: false,
+      error: "server error" + e,
+    });
+  }
+});
+
 router
   .use(async (req, res, next) => {
     let schema;
@@ -135,42 +177,8 @@ interface IQuery {
   currentTrack?: string | string[] | undefined;
   page?: number | string;
   email?: string;
+  status?: string;
 }
-
-router.get(async (req, res) => {
-  const dbs = {
-    web2: web2UserDb,
-    web3: web3userDb,
-    cairo: cairoUserDb,
-  };
-
-  const { currentTrack, page, email }: IQuery = req.query;
-  // @ts-ignore
-  const userDb = dbs[currentTrack];
-  if (!userDb) {
-    return res.status(404).json({
-      message: "user track not found",
-      error: "user track not found",
-    });
-  }
-
-  try {
-    const data = email
-      ? await userDb.findOne({ email })
-      : await userDb.find({});
-
-    return res.status(200).json({
-      status: true,
-      data,
-    });
-  } catch (e) {
-    reportError;
-    return res.status(500).json({
-      status: false,
-      error: "server error" + e,
-    });
-  }
-});
 
 export default router.handler({
   // @ts-ignore
