@@ -86,7 +86,7 @@ const Web3View = () => {
     phone: watch("phone"),
     pyt_method: watch("paymentMethod"),
   };
-  userDetails.pyt_method = PaymentMethod.card;
+  userDetails.pyt_method = PaymentMethod.coupon;
 
   const city = getValues("country")?.value;
 
@@ -600,6 +600,8 @@ const Web3View = () => {
                   >
                     {isSubmitting
                       ? "Loading..."
+                      : userDetails.pyt_method === PaymentMethod.coupon
+                      ? "Submit"
                       : `Pay Application Fee of ${
                           userDetails.pyt_method === PaymentMethod.card
                             ? `₦${new Intl.NumberFormat().format(

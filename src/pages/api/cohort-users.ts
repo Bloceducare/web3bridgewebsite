@@ -81,7 +81,7 @@ router
         status: false,
       });
     }
-    if (TRAINING_CLOSED[req.body.currentTrack]) {
+    if (TRAINING_CLOSED[req.body.currentTrack] && !req.body.voucher) {
       return res.status(423).json({
         message: "registration closed",
         status: false,
@@ -130,7 +130,15 @@ router
       }
 
       if (!!voucher) {
-        const userVoucher = await useVoucher({ identifier: voucher, email });
+        const userVoucher = await useVoucher({
+          identifier: voucher,
+          email,
+          userDetails: {
+            userDb,
+            currentTrack: req.body.currentTrack,
+            name:`${req.body.name}`
+          },
+        });
 
         if (!userVoucher.status) {
           await closeDB;
@@ -148,7 +156,7 @@ router
       }
       const userData: any = new userDb({
         ...info,
-        paymentStatus: PaymentStatus.pending,
+        paymentStatus: voucher ? PaymentStatus.success : PaymentStatus.pending,
       });
 
       const { _doc } = await userData.save();

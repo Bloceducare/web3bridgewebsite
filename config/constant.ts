@@ -7,7 +7,7 @@ export const SPECIAL_CLASS_OPENED = true;
 export const registrationPaused = false;
 export const TRAINING_CLOSED = {
   web2: !isOpened,
-  web3: !isOpened,
+  web3: true,
   specialClass: true,
   cairo: true,
 };
