@@ -117,7 +117,7 @@ router
         status: false,
       });
     }
-    if (TRAINING_CLOSED[req.body.currentTrack] && !req.body.voucher) {
+    if (TRAINING_CLOSED[req.body.currentTrack]) {
       return res.status(423).json({
         message: "registration closed",
         status: false,

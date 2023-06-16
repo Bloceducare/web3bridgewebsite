@@ -66,6 +66,8 @@ const Web2View = () => {
     PaymentStatus.notInitialized
   );
 
+  const [userPaymentMethod, setUserPaymentMethod] = useState(PaymentMethod.na)
+
   const handlePhoneChange = (phone) => {
     setPhone(phone);
   };
@@ -89,17 +91,17 @@ const Web2View = () => {
     name: watch("name"),
     country: watch("country"),
     city: watch("city"),
-    pyt_method: watch("PaymentMethod"),
+    pyt_method: watch("paymentMethod"),
     phone: watch("phone"),
   };
 
-  userEmail.pyt_method = PaymentMethod.card;
-
+  // userEmail.pyt_method = PaymentMethod.card;
   const city = getValues("country")?.value;
 
   useEffect(() => {
     setValue("city", "");
   }, [city]);
+
   const {
     cities,
     loading: cityLoadig,
@@ -119,6 +121,8 @@ const Web2View = () => {
     },
   });
 
+ 
+
   const onSubmit = async (value) => {
     const data = {
       ...value,
@@ -128,10 +132,12 @@ const Web2View = () => {
     };
 
     setError("");
+    setUserPaymentMethod(PaymentMethod.na)
     setResponsePaymentStatus(PaymentStatus.notInitialized);
     if (TRAINING_CLOSED[userTrack]) {
       return alert("Registration closed!");
     }
+   
     try {
       const response = await userRegistering(data);
 
@@ -150,16 +156,19 @@ const Web2View = () => {
           },
           onClose: () => {},
         });
+        return;
       }
 
       // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
       //   initializePaymentLazerPay()
       // }
+      setMessage(response.data.message);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: any) {
       const isError = e?.response?.data?.error ?? e.response?.data?.errors;
       setError(!!isError ? isError : "An Error Occurred, Try again");
       setResponsePaymentStatus(e?.response?.data?.pyt);
+      setUserPaymentMethod(e?.response?.data?.pytMethod)
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -205,6 +214,7 @@ const Web2View = () => {
             pytStatus={responsePaymentStatus}
             retry={retry}
             retryPayment={retryPayment}
+            userPaymentMethod={userPaymentMethod}
           />
 
           {!!message && (
@@ -415,7 +425,7 @@ const Web2View = () => {
                           htmlFor="classCat-advanced"
                           className="inline-flex items-center dark:text-white10 "
                         >
-                          <span className="">Adanced</span>
+                          <span className="">Advanced</span>
                         </label>
                       </div>
                     </div>
@@ -461,9 +471,11 @@ const Web2View = () => {
                     />
                   </div>
                 </fieldset>
+
+                
               </>
 
-              {/* <>
+              <>
                 <fieldset className="p-4 mx-2 mb-4 border rounded-md">
                   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">
                     Payment
@@ -485,7 +497,8 @@ const Web2View = () => {
                     <div className="gap-2  grid grid-flow-col justify-stretch">
                       <div className="flex items-center justify-center">
                         <input
-                          {...register("paymentMethod")}
+                       
+                       {...register("paymentMethod")}
                           id="paymentMethod-card"
                           type="radio"
                           disabled={isSubmitting}
@@ -500,7 +513,7 @@ const Web2View = () => {
                           <span className="">Card</span>
                         </label>
                       </div>
-                      <div className=" flex items-center justify-center">
+                      {/* <div className=" flex items-center justify-center">
                         <input
                           {...register("paymentMethod")}
                           id="paymentMethod-crypto"
@@ -516,11 +529,12 @@ const Web2View = () => {
                         >
                           <span className="">Crypto</span>
                         </label>
-                      </div>
-
+                      </div> */}
+                         
                       <div className=" flex items-center justify-center">
                         <input
-                          {...register("paymentMethod")}
+                        {...register("paymentMethod")}
+                        
                           id="paymentMethod-voucher"
                           type="radio"
                           disabled={isSubmitting}
@@ -561,7 +575,9 @@ const Web2View = () => {
                     </fieldset>
                   </>
                 )}
-              </> */}
+              </>
+
+
 
               <div className="px-6">
                 <Button
@@ -569,15 +585,14 @@ const Web2View = () => {
                   className="w-full py-3 "
                   type="submit"
                 >
-                  {isSubmitting
-                    ? "Loading..."
-                    : `Pay Application Fee of ${
-                        userEmail.pyt_method === PaymentMethod.card
-                          ? `₦${new Intl.NumberFormat().format(
-                              webPayment.naira
-                            )}`
-                          : `USD${webPayment.USD} `
-                      }`}
+                  {
+                    isSubmitting
+                                        ? "Submitting..."
+                                          : userEmail.pyt_method === PaymentMethod.card ? `Pay Application Fee of ₦${new Intl.NumberFormat().format(
+                                            webPayment.naira
+                                          )}` :userEmail.pyt_method === PaymentMethod.coupon ? "Pay Application Fee of ₦0.00" :`Choose Payment Method `
+                  }                
+               
                 </Button>
               </div>
             </form>

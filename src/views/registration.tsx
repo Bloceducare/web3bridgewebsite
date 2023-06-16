@@ -122,9 +122,9 @@ const Web3View = () => {
     //   alert("Please select a payment method");
     //   return;
     // }
-    // if (TRAINING_CLOSED[userTrack]) {
-    //   return alert("Registration closed !");
-    // }
+    if (TRAINING_CLOSED[userTrack]) {
+      return alert("Registration closed !");
+    }
 
     const data = {
       ...value,
@@ -152,6 +152,7 @@ const Web3View = () => {
           },
           onClose: () => {},
         });
+        return;
       }
 
       // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
