@@ -1,9 +1,11 @@
 import { Gender, PaymentMethod, PaymentStatus, Tracks } from "enums";
 import mongoose from "mongoose";
+import allUserSchema from "./users";
 
 const Schema = mongoose.Schema;
 const cohortUsersSchema = new Schema(
   {
+    ...allUserSchema,
     name: {
       type: String,
       required: true,
@@ -88,7 +90,6 @@ const cohortUsersSchema = new Schema(
  
 
     },
-
 
     paymentStatus:{
       type: String,

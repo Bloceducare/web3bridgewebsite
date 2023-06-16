@@ -64,6 +64,7 @@ const Web3View = () => {
   const [responsePaymentStatus, setResponsePaymentStatus] = useState(
     PaymentStatus.notInitialized
   );
+  const [userPaymentMethod, setUserPaymentMethod] = useState<PaymentMethod>(PaymentMethod.na)
 
   const {
     register,
@@ -116,13 +117,14 @@ const Web3View = () => {
   const onSubmit = async (value) => {
     setError("");
     setResponsePaymentStatus(PaymentStatus.notInitialized);
+    setUserPaymentMethod(PaymentMethod.na)
     // if (!value.paymentMethod) {
     //   alert("Please select a payment method");
     //   return;
     // }
-    if (TRAINING_CLOSED[userTrack]) {
-      return alert("Registration closed !");
-    }
+    // if (TRAINING_CLOSED[userTrack]) {
+    //   return alert("Registration closed !");
+    // }
 
     const data = {
       ...value,
@@ -134,6 +136,7 @@ const Web3View = () => {
 
     try {
       const response = await userRegistering(data);
+    
 
       if (
         response.status === 201 &&
@@ -154,10 +157,12 @@ const Web3View = () => {
       // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
       //   initializePaymentLazerPay()
       // }
+      setMessage(response.data.message);
     } catch (e: any) {
       setError(e?.response?.data?.error ?? e.response?.data?.errors);
       setResponsePaymentStatus(e?.response?.data?.pyt);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setUserPaymentMethod(e?.response?.data?.pytMethod);
+      window.scrollTo({ top: 0, behavior: "smooth" });     
     }
   };
 
@@ -176,7 +181,7 @@ const Web3View = () => {
               setMessage(
                 "Payment Successful, Please check Your Email for Further Instructions"
               );
-              window.scrollTo({ top: 0, behavior: "smooth" });
+            
             }, 2000);
           },
           onClose: () => {},
@@ -185,6 +190,8 @@ const Web3View = () => {
       setRetry(false);
     } catch (e) {
       setRetry(false);
+    } finally {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -203,6 +210,7 @@ const Web3View = () => {
             error={error}
             pytStatus={responsePaymentStatus}
             retry={retry}
+            userPaymentMethod={userPaymentMethod}
             retryPayment={retryPayment}
           />
 

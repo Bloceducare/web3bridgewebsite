@@ -1,5 +1,5 @@
 import { CURRENT_COHORT } from "@server/config";
-import { PaymentStatus } from "enums";
+import { PaymentMethod, PaymentStatus } from "enums";
 import Button from "./commons/Button";
 
 const TrainingPyt = ({
@@ -9,7 +9,9 @@ const TrainingPyt = ({
   error,
   userTrack,
   user,
+  userPaymentMethod=PaymentMethod.na
 }) => {
+
   return (
     <>
       {!!error ? (
@@ -24,7 +26,7 @@ const TrainingPyt = ({
             </>
           ) : null}
 
-          {pytStatus === PaymentStatus.success && (
+          {pytStatus === PaymentStatus.success && PaymentMethod.coupon !==userPaymentMethod && (
             <div className="dark:text-white20 mt-2 font-normal max-w-xs">
               We have received your payment, relax and expect to hear from us
               soon!

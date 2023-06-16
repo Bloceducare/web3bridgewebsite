@@ -62,6 +62,7 @@ const allUserSchema = {
   paymentMethod: {
     type: String,
     enum: PaymentMethod,
+    // default:PaymentMethod.na
     // required:true
   },
   acceptanceSent: {

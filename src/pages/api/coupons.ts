@@ -6,7 +6,6 @@ import reportError from "@server/services/report-error";
 import genVoucher from "utils/genVoucher";
 import { validateCoupon } from "@server/validate";
 import { couponSchema } from "schema";
-import useCoupon from "@server/voucher";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -54,30 +53,43 @@ router
     }
 
     try {
-      // const coupon = genVoucher(Number(number));
-      // await Promise.all(
-      //   coupon.map(async (coup) => {
-      //     await new vouchersDb({
-      //       valid: true,
-      //       identifier: coup,
-      //     }).save();
-      //   })
-      // );
+      let coupon:String[] =[];
+      coupon = genVoucher(Number(number));
+      await Promise.all(
+        coupon.map(async (coup) => {
+          await new vouchersDb({
+            valid: true,
+            identifier: coup,
+          }).save();
+        })
+      );
 
-      // await closeDB()
-      // return res.status(200).json({
-      //   status: true,
-      //   data: coupon,
-      //   length: coupon.length,
-      // });
-
+      await closeDB()
       return res.status(200).json({
         status: true,
-        message: "empty generated",
+        data: coupon,
+        length: coupon.length,
       });
+
+      // return res.status(200).json({
+      //   status: true,
+      //   message: "empty generated",
+      // });
     } catch (e) {}
   })
 
+  // .delete(async (req, res) => {
+  //   const { identifier } = req.query;
+
+  //   try {
+  //     // const data = await useCoupon({identifier, email})
+  //     //     res.status(201).json(data)
+  //     const deleted = await vouchersDb.deleteOne({ identifier})
+  //     res.status(201).json({data:deleted});
+  //   } catch (e) {
+  //     res.status(500).json(e);
+  //   }
+  // })
   .use(async (req, res, next) => {
     await validateCoupon(couponSchema)(req, res, next);
   })

@@ -14,6 +14,7 @@ export enum PaymentMethod {
   card = "card",
   crypto = "crypto",
   coupon = "voucher",
+  na="na"
 }
 
 export enum EspecializedOptions {

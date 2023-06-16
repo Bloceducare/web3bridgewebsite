@@ -5,10 +5,8 @@ import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
 import cairoUserDb from "@server/models/cairo";
 import { registrationSchema } from "schema";
-import { PaymentStatus, Tracks } from "enums";
+import { PaymentMethod, PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
-import { sendSms } from "@server/sms";
-import { sendEmail } from "@server/mailer";
 import reportError from "@server/services/report-error";
 import useVoucher from "@server/voucher";
 import {
@@ -61,6 +59,44 @@ router.get(async (req, res) => {
   }
 });
 
+// router.delete(async (req, res) => {
+//   const dbs = {
+//     web2: web2UserDb,
+//     web3: web3userDb,
+//     cairo: cairoUserDb,
+//   };
+
+//   const { currentTrack, page, email }: IQuery = req.query;
+//   // @ts-ignore
+//   const userDb = dbs[currentTrack];
+//   if (!userDb) {
+//     return res.status(404).json({
+//       message: "user track not found",
+//       error: "user track not found",
+//     });
+//   }
+
+//   await connectDB();
+
+//   try {
+//     const data = await userDb.deleteOne({ email })
+     
+//     closeDB();
+//     return res.status(200).json({
+//       status: true,
+//       data,
+//       message:'deleted'
+//     });
+//   } catch (e) {
+//     reportError;
+//     return res.status(500).json({
+//       status: false,
+//       error: "server error" + e,
+//     });
+//   }
+// });
+
+
 router
   .use(async (req, res, next) => {
     let schema;
@@ -106,26 +142,19 @@ router
     }
     const { email, voucher } = req.body;
 
-    // const applyVoucher = req.body.currentTrack  !=='cairo'
-    // if(applyVoucher && !voucher){
-    //   await closeDB;
-    //   return res.status(423).json({
-    //    error:'voucher is required',
-    //    status:false
-    //   })
-    // }
+   
 
     try {
       await connectDB();
 
       const userExists = await userDb.findOne({ email });
-
       if (userExists) {
         await closeDB();
         return res.status(423).send({
           status: false,
           error: "This user already exists",
           pyt: userExists._doc.paymentStatus,
+          pytMethod: userExists._doc.paymentMethod
         });
       }
 
@@ -154,9 +183,12 @@ router
         info[key] =
           typeof element === "string" ? element?.toLowerCase() : element;
       }
+     
       const userData: any = new userDb({
         ...info,
         paymentStatus: voucher ? PaymentStatus.success : PaymentStatus.pending,
+        
+        ...(voucher && {paymentMethod:PaymentMethod.coupon})
       });
 
       const { _doc } = await userData.save();
