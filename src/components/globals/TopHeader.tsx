@@ -13,7 +13,7 @@ const TopHeader = () => {
   const { pathname } = useRouter();
   const trainingsPat = pathname.split("/").includes("trainings");
 
-  if (trainingsPat) {
+  if (trainingsPat || !isOpened) {
     return null;
   }
 
