@@ -7,13 +7,13 @@ import { useRouter } from "next/router";
 
 const openingTime = 1684166400000; // May 15 2023, 5pm  gmt + 1
 const currentTime = Date.parse(String(new Date()));
-export const isOpened = currentTime > openingTime;
+export const isOpened = false
 
 const TopHeader = () => {
   const { pathname } = useRouter();
   const trainingsPat = pathname.split("/").includes("trainings");
 
-  if (trainingsPat) {
+  if (trainingsPat || !isOpened) {
     return null;
   }
 
