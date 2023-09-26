@@ -2,6 +2,9 @@ import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
 import { CURRENT_COHORT } from "@server/config";
 
 const config = {
+  meta:{
+    paymentFor:"trainings"
+  },
   public_key: process.env.NEXT_PUBLIC_FLW_PUBLIC_KEY as string,
   tx_ref: String(Date.now()),
   currency: "NGN",
@@ -15,7 +18,10 @@ const config = {
 };
 
 const usePayment = (cardConfig) => {
-  const userCardConfig = { ...config, ...cardConfig };
+  const userCardConfig = { ...config, ...cardConfig,  meta:{
+    ...config.meta,
+    ...cardConfig.meta
+} };
 
   const handlePayment = useFlutterwave(userCardConfig);
 

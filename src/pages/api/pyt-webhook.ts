@@ -60,9 +60,8 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
     };
 
     const track = result?.data?.meta?.track;
-
     const userDb = tracks[track];
-
+    
     if (!userDb)
       return res.status(404).json({
         status: false,
@@ -125,7 +124,7 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
           }
         ),
 
-        sendSms({ recipients: userDetails.phone }),
+        // sendSms({ recipients: userDetails.phone }),
         sendEmail({
           email,
           name: userDetails.name,
