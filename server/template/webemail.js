@@ -199,7 +199,7 @@ const webEmail = `<!DOCTYPE html>
           <!-- start copy -->
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-              <p style="margin: 0;">With Love,<br>Ayodeji Awosik 
+              <p style="margin: 0;">With Love,<br>Ayodeji Awosika 
                 <br>Founder, Web3bridge</p>
             </td>
           </tr>
