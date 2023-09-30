@@ -9,25 +9,25 @@ export const webPayment = {
 
 export const specialClassPayment = {
   ["Html, CSS, intro to JavaScript"]: {
-    naira: isDev ? 50000 : 500,
-    USD: 70,
+    naira: isDev ? 500 : 142500,
+    USD: 150,
   },
 
   ["JavaScript, react, typescript"]: {
-    naira: isDev ? 700 : 70000,
-    USD: 100,
+    naira: isDev ? 700 : 142500,
+    USD: 150,
   },
   ["JavaScript, nodejs"]: {
-    naira: isDev ? 700 : 70000,
-    USD: 100,
+    naira: isDev ? 700 : 142500,
+    USD: 150,
   },
   ["Go"]: {
-    naira: isDev ? 210 : 210000,
-    USD: 300,
+    naira: isDev ? 210 : 142500,
+    USD: 150,
   },
   ["Solidity"]: {
-    naira: isDev ? 210 : 210000,
-    USD: 300,
+    naira: isDev ? 210 : 142500,
+    USD: 150,
   },
 };
 

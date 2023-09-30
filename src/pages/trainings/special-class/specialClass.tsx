@@ -9,6 +9,7 @@ import { getTotalLeft } from "@views/api";
 const Form = () => {
   const { query = {}, asPath } = useRouter();
   const [track, typeOfTrack] = getTrack(asPath);
+
   const [regStatus, setRegStatus] = useState({
     left: null,
     isCompleted: false,

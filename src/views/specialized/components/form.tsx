@@ -4,14 +4,14 @@ import { useRouter } from 'next/router'
 import Link from "next/link";
 import { registrationSchema, validationOpt } from "schema";
 import { useForm, Controller } from "react-hook-form";
-import { useLazerpay } from 'lazerpay-react'
+// import { useLazerpay } from 'lazerpay-react'
 import Input from "@components/commons/Input";
 import Button from "@components/commons/Button";
 import PhoneInput from "@components/commons/PhoneInput";
 import ReactSelect from "@components/commons/ReactSelect";
 import {EspecializedOptions, PaymentMethod, PaymentStatus, Tracks } from "enums";
 import { specialClassRegistering } from "../../api";
-import { usePaystackPayment } from 'react-paystack';
+// import { usePaystackPayment } from 'react-paystack';
 import { specialClassPayment, webPayment } from "@server/config";
 import formatToCurrency from "utils/formatToCurrency";
 import Select from "@components/commons/Select";
@@ -19,6 +19,8 @@ import countries from "data/countries.json";
 import useCities from "../../../views/hooks/useCities";
 import {  specializedClassOptions, trainingTime } from "config/constant";
 import showTimePeriods  from "utils/showTimePeriods";
+import usePayment from "@views/hooks/usePayment";
+import useCountry from "@views/hooks/useCountry";
 
 
 const countriesData = countries.map((country) => ({
@@ -27,16 +29,13 @@ const countriesData = countries.map((country) => ({
 }))
 
 
-const onClose = () => {
-  // implementation for  whatever you want to do when the Paystack dialog closed.
-  console.log('closed')
-}
-
 const SpecializedClassForm = () => {
   const router = useRouter()
   const courseChosen = Number(router.query.type)-1 ?? 0
-  
-//   
+    const country = useCountry()
+    const isNaira = country.currency.code =="NGN"
+
+    
   const validationOption = validationOpt(registrationSchema.specialClass, {
     defaultValues: {
         AreaOfInterest:EspecializedOptions[courseChosen]
@@ -79,53 +78,36 @@ const SpecializedClassForm = () => {
       const showTime = showTimePeriods(areaOfInterestValue)
 
 
-      const lazerPayConfig = {
-        publicKey: process.env.NEXT_PUBLIC_LAZERPAY_PUBLIC_KEY as string,
-        currency: "USD", // USD, NGN, AED, GBP, EUR
-        amount: payment?.USD, // amount as a number or string
-        reference:uuidv4(), // unique identifier
-        metadata:{
-          track: Tracks.specialClass,
-          trackType:areaOfInterestValue,
-          trackNumber:Number(router.query.type)
-        },
-        onSuccess: (response) => {
-          // handle response here
-          router.push("/")
-        },
-        onClose: () => {
-          //handle response here
-        },
-        onError: (response) => {
-          // handle responsne here
-        }
-      }
-    
-      const config = {
-        reference: uuidv4(),
-        amount: payment?.naira*100,
-        publicKey:process.env.NEXT_PUBLIC_PAYMENT_PUBLIC_KEY as string,
-    };
+   
     
       useEffect(()=>{       
         setValue('city','')
         setValue("AreaOfInterest", EspecializedOptions[courseChosen])
+        setValue("paymentMethod", PaymentMethod.card)
 
       },[city, courseChosen])
       const {cities, loading:cityLoadig, error:cityError, getCities}= useCities(city)
 
-const onSuccessPayStack = ({reference=""}):void => {
-  // redirect to verify page
-  router.push(`/verify-payment?reference=${reference}&email=${userEmail.email}&paymentMethod=card&currentTrack=web2`)
-};
-
-      const initializePaymentPayStack = usePaystackPayment({...config, ...userEmail,});
-      
-      const initializePaymentLazerPay = useLazerpay({...lazerPayConfig, ...{
-        customerName: userEmail.name,
-        customerEmail: userEmail.email,
-        onSuccess:()=>router.push('/')
-      }});
+      const { card: handlePayment, cardClose: closePaymentModal } = usePayment({
+        amount: isNaira ? payment?.naira :payment?.USD,
+        customer: {
+          email: userEmail.email,
+          phone_number: phone,
+          name: userEmail.name,
+        },
+        meta: {
+          track: "specialClass",
+          isNaira
+        },
+        currency:isNaira ? "NGN" :"USD",
+        payment_options: isNaira ? "card,mobilemoney,ussd" :"card",
+        customizations: {
+          title: `Web3Bridge Trainings`,
+          description: `Web3Bridge Special Class Trainings`,
+          logo: "https://www.web3bridge.com/web3bridge-logo.png",
+          // logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
+        },
+      });
 
    
 
@@ -135,31 +117,42 @@ const onSubmit = async(value)=>{
       currentTrack:Tracks.specialClass,
       country:value?.country?.value,
       city:value?.city?.value,
+      paymentMethod:PaymentMethod.card
     }
+    
 
  
     setError('')
     // setResponsePaymentStatus(PaymentStatus.notInitialized)  
     try{
 
-      // return alert("Registration closed !")
     const response = await specialClassRegistering(data)
-    // console.log(response, "response ceck")
-  
 
-      if(response?.status === 201 && data.paymentMethod ===PaymentMethod.card ){     
-     
-        // @ts-ignore
-        initializePaymentPayStack(onSuccessPayStack, onClose)
-       }
-       
-    if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
-      initializePaymentLazerPay()   
+    if (
+      response.status === 201 &&
+      data.paymentMethod === PaymentMethod.card
+    ) {
+      handlePayment({
+        callback: () => {
+          setTimeout(() => {
+            closePaymentModal();
+
+            setMessage(response.data.message);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }, 2000);
+        },
+        onClose: () => {},
+      });
+      return;
     }
+       
+    // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
+    //   initializePaymentLazerPay()   
+    // }
     
 }
     catch(e:any){
-        console.log(e.response.data, "Error")
+      console.log(e.response.data, "Error")
       setError(e?.response?.data?.error ?? e.response?.data?.errors)
       setResponsePaymentStatus(e?.response?.data?.paymentStatus
         )  
@@ -172,14 +165,27 @@ const onSubmit = async(value)=>{
 
 
 const retryPayment=(payment)=>{
-  if(payment === PaymentMethod.card){
-    // @ts-ignore
-    initializePaymentPayStack(onSuccessPayStack, onClose)
+  // if(payment === PaymentMethod.card){
+  //   // @ts-ignore
+  //   initializePaymentPayStack(onSuccessPayStack, onClose)
+  // }
+
+  if (   
+    payment === PaymentMethod.card
+  ) {
+    handlePayment({
+      callback: () => {
+        setTimeout(() => {
+          closePaymentModal();
+          setMessage("Payment Successfull");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }, 2000);
+      },
+      onClose: () => {},
+    });
+    return;
   }
-  
-  if(payment === PaymentMethod.crypto){
-    initializePaymentLazerPay()
-  }  
+ 
 }
     return <>
     <div className="max-w-lg m-12 mx-auto">
@@ -381,7 +387,7 @@ name="email" required label="Email" errors={errors} />
   </>
 
 
-<>
+{/* <>
 
 <fieldset className="p-4 mx-2 mb-4 border rounded-md">
   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">Payment</legend>
@@ -439,15 +445,18 @@ name="email" required label="Email" errors={errors} />
 
 </div>
  </fieldset>
-</>
+</> */}
 
 <div className="px-6">
+
 <Button 
 disabled={!isValid || !isDirty ||  isSubmitting} 
 className="w-full py-3 "
 type="submit"
  >
-{isSubmitting ? 'Loading...' : 'Make Payment'}
+
+
+{isSubmitting ? 'Loading...' : `Pay  ${ isNaira ? `₦${formatToCurrency(payment?.naira ?? 0)}` :`$${formatToCurrency(payment?.USD ?? 0)}`}`}
 </Button>
 </div>
 

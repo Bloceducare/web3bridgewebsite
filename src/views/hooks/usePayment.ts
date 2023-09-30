@@ -18,6 +18,7 @@ const config = {
 };
 
 const usePayment = (cardConfig) => {
+
   const userCardConfig = { ...config, ...cardConfig,  meta:{
     ...config.meta,
     ...cardConfig.meta

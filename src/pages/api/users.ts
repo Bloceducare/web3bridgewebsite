@@ -3,11 +3,12 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
+import specialClassDb from "@server/models/specialClass";
 import { PaymentStatus, Tracks } from "enums";
 import reportError from "@server/services/report-error";
+import { isDev } from "@server/config";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
-
 
 interface IQuery {
   currentTrack?: Tracks | undefined;
@@ -36,14 +37,17 @@ router
   let userDb;
   const { currentTrack, paymentStatus }: IQuery = req.query;
 
-  if(currentTrack === "web2"){
+  if(currentTrack === Tracks.web2){
     userDb = web2UserDb
   }
 
-  if(currentTrack === "web3"){
+  if(currentTrack ===Tracks.web3){
     userDb = web3userDb
   }
 
+  if(currentTrack ===Tracks.specialClass){
+    userDb = specialClassDb
+  }
 
     
   try {
@@ -51,6 +55,7 @@ router
     const users = await userDb.find({
       ...(!!paymentStatus && {paymentStatus})
       })
+
       await closeDB()
     return res.status(200).json({
       status: true,

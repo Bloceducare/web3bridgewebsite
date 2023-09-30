@@ -10,7 +10,7 @@ import { verifyPaymentSchema } from "schema";
 import { ISmsData } from "types";
 import { sendSms } from "@server/sms";
 import validate from "@server/validate";
-import { isDev, userEmail, webPayment } from "@server/config";
+import { isDev, specialClassPayment, userEmail, webPayment } from "@server/config";
 import reportError from "@server/services/report-error";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -61,7 +61,7 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
 
     const track = result?.data?.meta?.track;
     const userDb = tracks[track];
-    
+
     if (!userDb)
       return res.status(404).json({
         status: false,
@@ -97,14 +97,23 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     let expectedAmount = 0;
-    const expectedCurrency = "NGN";
+    let expectedCurrency = Boolean(result?.data?.meta?.isNaira) ? "NGN" : "USD";
 
     if (track === Tracks.web2 || track === Tracks.web3) {
-      expectedAmount = webPayment.naira;
+      expectedCurrency ="NGN"
+      expectedAmount = webPayment.naira;    
+    }
+
+    if(track===Tracks.specialClass){
+      if(Boolean(result?.data?.meta?.isNaira)){
+        expectedAmount = specialClassPayment.Solidity.naira
+      } else {
+        expectedAmount = specialClassPayment.Solidity.USD
+      }
     }
 
     if (expectedAmount === 0) {
-      return res.status(429).json({
+      return res.status(422).json({
         message: "amount can not be zero",
       });
     }
@@ -130,7 +139,7 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
           name: userDetails.name,
           type: userDetails.currentTrack,
           currentTrack: userDetails.currentTrack,
-          file: userEmail?.[userDetails?.currentTrack],
+          file: userDetails?.currentTrack==Tracks.specialClass ? "webemail":userEmail?.[userDetails?.currentTrack],
           userDb,
         }),
       ]);
