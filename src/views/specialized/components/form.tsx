@@ -97,6 +97,7 @@ const SpecializedClassForm = () => {
         },
         meta: {
           track: "specialClass",
+          AOI:EspecializedOptions[courseChosen],
           isNaira
         },
         currency:isNaira ? "NGN" :"USD",

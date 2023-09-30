@@ -22,12 +22,12 @@ export const specialClassPayment = {
     USD: 150,
   },
   ["Go"]: {
-    naira: isDev ? 210 : 142500,
-    USD: 150,
+    naira: isDev ? 210 : 475000,
+    USD: 500,
   },
   ["Solidity"]: {
-    naira: isDev ? 210 : 142500,
-    USD: 150,
+    naira: isDev ? 210 : 475000,
+    USD: 500,
   },
 };
 

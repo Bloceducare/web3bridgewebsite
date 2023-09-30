@@ -180,7 +180,7 @@ const SpecializedClass = () => {
        <Link href="/trainings/special-class/go">
           <span className="link-wrapper">
         <a className="">
-        Go
+        Go-ethereum
         </a>
 
           </span>
@@ -188,7 +188,7 @@ const SpecializedClass = () => {
         </Link>
 
        {" "}
-       , a popular language for building high-performance applications. These courses will give you the skills and knowledge you need to develop blockchain and cloud-native applications.
+       , Official Golang implementation of the Ethereum protocol
         </p>
         <p className="text-base md:text-xl dark:text-[#A1A1A1] my-6">
         Throughout our courses, you'll have plenty of opportunities to practice what you've learned through hands-on exercises and projects. You'll also receive personalized feedback and support from our instructors, ensuring that you stay on track and make the most of your learning experience.

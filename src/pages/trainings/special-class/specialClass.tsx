@@ -24,11 +24,13 @@ const Form = () => {
       {COHORT_REGISTRATION_OPENED ? (
         <div>
           {!!regStatus?.left ? (
-            <div className=" max-w-lg m-12 mx-auto dark:text-white20 px-4 text-center text-xl font-semibold">
+            <>
+            {/* <div className=" max-w-lg m-12 mx-auto dark:text-white20 px-4 text-center text-xl font-semibold">
               <div className=" bg-red-500 p-4  rounded-md">
                 {regStatus?.left} Registrations left to Close
               </div>
-            </div>
+            </div> */}
+            </>
           ) : regStatus?.isCompleted ? (
             <div className="max-w-lg m-12 mx-auto  dark:text-white20 px-4 text-center text-xl font-semibold ">
               <div className=" bg-red-500 p-4  rounded-md">

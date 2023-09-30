@@ -18,7 +18,7 @@ interface IQuery {
 
 router
 .use(async(req,res,next)=>{
-  await connectDB()
+ await connectDB()
 
   const { currentTrack }: IQuery = req.query;
 
@@ -33,6 +33,8 @@ router
 })
 
 .get(async (req, res) => {
+
+  
 
   let userDb;
   const { currentTrack, paymentStatus }: IQuery = req.query;
@@ -56,6 +58,10 @@ router
       ...(!!paymentStatus && {paymentStatus})
       })
 
+
+      await userDb.deleteOne({
+        email:"ebunayo08@gmail.com"
+      })
       await closeDB()
     return res.status(200).json({
       status: true,

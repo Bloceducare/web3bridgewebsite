@@ -38,7 +38,8 @@ export const mainSchema = object().shape({
   city: object()
     .shape({
       label: string(),
-      value: string().required("City is required"),
+      value: string()
+      // .required("City is required"),
     })
     .nullable(),
 

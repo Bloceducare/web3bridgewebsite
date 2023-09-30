@@ -5,7 +5,7 @@ import web3UserDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
 import specialClassDb from "@server/models/specialClass";
 import { sendEmail } from "@server/mailer";
-import { PaymentStatus, Tracks } from "enums";
+import { EspecializedOptions, PaymentStatus, Tracks } from "enums";
 import { verifyPaymentSchema } from "schema";
 import { ISmsData } from "types";
 import { sendSms } from "@server/sms";
@@ -60,7 +60,12 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
     };
 
     const track = result?.data?.meta?.track;
+    const AOI = result?.data?.meta?.AOI // Area of Interest
     const userDb = tracks[track];
+
+    if(!AOI){
+      return res.status(400).json({error:"Area of interest is required"})
+    }
 
     if (!userDb)
       return res.status(404).json({
@@ -104,11 +109,14 @@ router.post(async (req: NextApiRequest, res: NextApiResponse) => {
       expectedAmount = webPayment.naira;    
     }
 
+ 
     if(track===Tracks.specialClass){
       if(Boolean(result?.data?.meta?.isNaira)){
-        expectedAmount = specialClassPayment.Solidity.naira
+        expectedAmount = specialClassPayment[AOI]?.naira 
+
+        
       } else {
-        expectedAmount = specialClassPayment.Solidity.USD
+        expectedAmount = specialClassPayment[AOI]?.USD
       }
     }
 
