@@ -20,7 +20,6 @@ import useCities from "../../../views/hooks/useCities";
 import {  specializedClassOptions, trainingTime } from "config/constant";
 import showTimePeriods  from "utils/showTimePeriods";
 import usePayment from "@views/hooks/usePayment";
-import useCountry from "@views/hooks/useCountry";
 
 
 const countriesData = countries.map((country) => ({
@@ -32,8 +31,7 @@ const countriesData = countries.map((country) => ({
 const SpecializedClassForm = () => {
   const router = useRouter()
   const courseChosen = Number(router.query.type)-1 ?? 0
-    const country = useCountry()
-    const isNaira = country.currency.code =="NGN"
+    // const country = useCountry()
 
     
   const validationOption = validationOpt(registrationSchema.specialClass, {
@@ -72,6 +70,9 @@ const SpecializedClassForm = () => {
       }
 
       const city = getValues("country")?.value
+ 
+      const isNaira = city==="Nigeria"
+
       const areaOfInterestValue = watch("AreaOfInterest")    
       const payment = specialClassPayment[areaOfInterestValue]  
      
