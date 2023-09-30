@@ -21,7 +21,7 @@ export enum EspecializedOptions {
   "Html, CSS, intro to JavaScript",
   "JavaScript, react, typescript",
   "JavaScript, nodejs",
-  "Go",
+  "GETH",
   "Solidity",
 }
 
@@ -29,7 +29,7 @@ export enum ETrainingsOptions {
   "Html, CSS, intro to JavaScript",
   "JavaScript, react, typescript",
   "JavaScript, nodejs",
-  "Go",
+  "GETH",
   "Solidity",
 }
 

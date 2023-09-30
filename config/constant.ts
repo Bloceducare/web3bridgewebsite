@@ -16,7 +16,7 @@ export const specializedClassOptions = [
   { label: "Html, CSS, intro to JavaScript", value: EspecializedOptions[0] },
   { label: "JavaScript, react, typescript", value: EspecializedOptions[1] },
   { label: "JavaScript, nodejs", value: EspecializedOptions[2] },
-  { label: "GO", value: EspecializedOptions[3] },
+  { label: "GETH", value: EspecializedOptions[3] },
   { label: "Solidity", value: EspecializedOptions[4] },
 ];
 

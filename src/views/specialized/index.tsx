@@ -19,7 +19,7 @@ const courseLinks = [
 },
   {
  link:"/trainings/special-class/specialClass?type=4",
- label:"Golang "
+ label:"GETH "
 },
   {
  link:"/trainings/special-class/specialClass?type=5",
@@ -177,7 +177,7 @@ const SpecializedClass = () => {
          {" "}
        , the language of the Ethereum blockchain, and {" "}
        
-       <Link href="/trainings/special-class/go">
+       <Link href="/trainings/special-class/geth">
           <span className="link-wrapper">
         <a className="">
         Go-ethereum

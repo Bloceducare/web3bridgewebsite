@@ -21,7 +21,7 @@ export const specialClassPayment = {
     naira: isDev ? 700 : 142500,
     USD: 150,
   },
-  ["Go"]: {
+  ["GETH"]: {
     naira: isDev ? 210 : 475000,
     USD: 500,
   },
