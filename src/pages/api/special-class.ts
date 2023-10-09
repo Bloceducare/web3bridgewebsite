@@ -16,11 +16,11 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 
 const userMax ={
-  0:20,
-  1:20,
-  2:20,
-  3:10,
-  4:10
+  0:50, // 20
+  1:50, // 20
+  2:50, // 20
+  3:50, //10
+  4:50 //10
 }
 
 router.get(async (req: NextApiRequest, res: NextApiResponse)=>{

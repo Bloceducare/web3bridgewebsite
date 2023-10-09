@@ -167,10 +167,7 @@ const onSubmit = async(value)=>{
 
 
 const retryPayment=(payment)=>{
-  // if(payment === PaymentMethod.card){
-  //   // @ts-ignore
-  //   initializePaymentPayStack(onSuccessPayStack, onClose)
-  // }
+  setError("")
 
   if (   
     payment === PaymentMethod.card
@@ -201,7 +198,10 @@ const retryPayment=(payment)=>{
           {
             !!error &&  (<>
                  <div className="my-2 text-sm font-semibold text-red-500">
-              {typeof error === "string" ? error : error?.length ? <>
+              {typeof error === "string" ?<> 
+              {error}
+              {error==="This user already exists" &&  <Button className="ml-2" onClick={()=>retryPayment(PaymentMethod.card)}>Retry Payment</Button> }
+               </> : error?.length ? <>
                 {error.map((err:string)=>(<p key={err}>{err}</p>))}
                </>
                :responsePaymentStatus === PaymentStatus.pending && "Payment pending, please try again"
