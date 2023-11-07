@@ -4,7 +4,7 @@ const web2 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort IX 2023 Registration</title>
+  <title>Cohort X 2023 Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const web2 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort IX 2023
+    Thank you for registering for Cohort X 2023
   </div>
   <!-- end preheader -->
 
@@ -182,7 +182,7 @@ const web2 = `<!DOCTYPE html>
                 We are happy to receive your application. At Web3bridge, our goal is to help you kickstart your journey into tech with the Web2 track of the cohort.
               </p>
               <p>
-                Web3bridge cohort IX opens July 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
+                Web3bridge cohort X opens July 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
               <ul> 
                 <li>
                   Grouping every participant

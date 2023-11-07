@@ -4,7 +4,7 @@ const web3 = `<!DOCTYPE html>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cohort IX 2023 Registration</title>
+  <title>Cohort X 2023 Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const web3 = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Cohort IX 2023
+    Thank you for registering for Cohort X 2023
   </div>
   <!-- end preheader -->
 
@@ -182,7 +182,7 @@ const web3 = `<!DOCTYPE html>
                 We are happy to receive your application. At Web3bridge, our goal is to help you become a Web3 developer and guide you to having a proper Web3 career.
               </p>
               <p>
-                Web3bridge cohort IX opens July 24, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
+                Web3bridge cohort X opens July 24, 2023, however before then you will be going through a 3 stage pre-qualification phase after which you will be onboarded if you are successful at all the stages.
               </p>
 
               <p>
@@ -262,7 +262,7 @@ https://getdp.co/Web3bridgeCohortIX
           <!-- start permission -->
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for your  cohort IX registration. If you didn't request registration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for your  cohort X registration. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
           <!-- end permission -->

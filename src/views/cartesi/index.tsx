@@ -20,7 +20,7 @@ const countriesData = countries.map((country) => ({
 }));
 
 const MasterClassView = () => {
-  const validationOption = validationOpt(registrationSchema.cairo);
+  const validationOption = validationOpt(registrationSchema.cartesi);
 
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<any>("");
@@ -64,7 +64,7 @@ const MasterClassView = () => {
   const onSubmit = async (value) => {
     const data = {
       ...value,
-      currentTrack: Tracks.cairo,
+      currentTrack: Tracks.cartesi,
       country: value?.country?.value,
       city: value?.city?.value,
     };
@@ -93,18 +93,39 @@ const MasterClassView = () => {
           <div className="text-2xl dark:text-white20 flex flex-col items-center">
             Cartesi Masterclass Registration
             <div className="my-2 mt-3 px-3">
-              <p className="text-[16px]">
-                <b>Cartesi: Application-specific rollups with a Linux
-                runtime.</b>
+              <p className="text-[18px]">
+                Cartesi is an app-specific rollup protocol with a virtual
+                machine that runs Linux distributions, creating a richer and
+                broader design space for DApp developers.
+                <br /> Cartesi Rollups offer a modular scaling solution,
+                deployable as L2, L3, or sovereign rollups, while maintaining
+                strong base layer security guarantees.
               </p>
               <p className="text-[18px]">
-                Cartesi provides your DApp with a dedicated CPU and rollup,
-                enhancing computational scalability while preserving
-                decentralization, security, and censorship resistance.
-              </p>
-              <p className="text-[18px]">
-                With the Cartesi Virtual Machine, you can use familiar
-                libraries, languages and tooling, moving beyond the EVM.
+                To learn more about Cartesi, visit
+                <span>
+                  {" "}
+                  <a
+                    className="text-blue-300 underline"
+                    href="https://cartesi.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    about
+                  </a>{" "}
+                </span>
+                <span> and</span>
+                <span>
+                  {" "}
+                  <a
+                  className="text-blue-300 underline"
+                    href="https://docs.cartesi.io/cartesi-rollups/build-dapps/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    doc
+                  </a>
+                </span>
               </p>
             </div>
           </div>

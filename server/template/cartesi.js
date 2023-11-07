@@ -1,10 +1,10 @@
-const cairo = `<!DOCTYPE html>
+const cartesi = `<!DOCTYPE html>
 <html>
 <head>
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Cairo Class</title>
+  <title>Cartesi Masterclass</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@ const cairo = `<!DOCTYPE html>
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    Thank you for registering for Web3Bridge Cairo Class
+    Thank you for registering for Web3Bridge Cartesi Class
   </div>
   <!-- end preheader -->
 
@@ -122,13 +122,7 @@ const cairo = `<!DOCTYPE html>
         <td align="center" valign="top" width="600">
         <![endif]-->
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-          <tr>
-            <td align="center" valign="top" style="padding: 36px 24px;">
-              <a href="https://www.cairobridge.com/" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
-                <img src="https://i.postimg.cc/cLR6n5Nm/log-web.png" alt="Logo" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
-              </a>
-            </td>
-          </tr>
+
         </table>
         <!--[if (gte mso 9)|(IE)]>
         </td>
@@ -179,19 +173,19 @@ const cairo = `<!DOCTYPE html>
               <h1 style="margin: 0 0 12px; font-size: 32px; font-weight: 400; line-height: 48px;">Hello, {{name}}!</h1>
 
               <p>
-              We are happy to receive your application for the Cairo masterclass, do note that the selection and interview will hold from April 28th to May 15th, while the class will start on May 22.
+              We are happy to receive your application for the Cartesi masterclass, do note that the selection and interview will hold from April 28th to May 15th, while the class will start on May 22.
               </p>
               <p>
               Ensure to pay close attention to your email, in order not to miss the updates.
               </p>
               <p>
-              Telegram: https://t.me/Web3bridge, https://t.me/StarkNetAfrica 
+              Telegram: https://t.me/Web3bridge, https://t.me/CartesiProject
               </p>
               <p>
-              Twitter: https://twitter.com/Web3bridge, https://twitter.com/StarkNetAfrica 
+              Twitter: https://twitter.com/Web3bridge, https://twitter.com/cartesiproject
               </p>
               <p>
-              Instagram: https://instagram.com/starknetafrica
+              Discord: https://discord.com/invite/eZ6HehDzYK
               </p>          
 
              
@@ -204,7 +198,7 @@ const cairo = `<!DOCTYPE html>
           <!-- start copy -->
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-              <p style="margin: 0;">With Love,<br>Ayodeji Awosik 
+              <p style="margin: 0;">With Love,<br>Ayodeji Awosika
                 <br>Founder, web3bridge</p>
             </td>
           </tr>
@@ -255,4 +249,4 @@ const cairo = `<!DOCTYPE html>
 </body>
 </html>`;
 
-export default cairo;
+export default cartesi;

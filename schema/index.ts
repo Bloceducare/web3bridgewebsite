@@ -198,7 +198,7 @@ export const registrationSchema = {
     .concat(areaOfInterestSchema)
     .concat(paymentSchema)
     .concat(timeSchema),
-  cairo: mainSchema
+  cartesi: mainSchema
     .concat(walletSchema)
     .concat(githubSchema)
     .concat(alumniSchema),
