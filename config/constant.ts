@@ -6,8 +6,8 @@ export const COHORT_REGISTRATION_OPENED = true;
 export const SPECIAL_CLASS_OPENED = true;
 export const registrationPaused = false;
 export const TRAINING_CLOSED = {
-  web2: isOpened,
-  web3: false,
+  web2: !isOpened,
+  web3: true,
   specialClass:false,
   cartesi: false,
 };
