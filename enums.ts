@@ -7,7 +7,7 @@ export enum Tracks {
   web2 = "web2",
   web3 = "web3",
   specialClass = "specialClass",
-  cairo = "cairo",
+  cartesi = "cartesi",
 }
 
 export enum PaymentMethod {

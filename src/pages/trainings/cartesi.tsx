@@ -1,7 +1,7 @@
 import MasterclassView from "@views/cartesi";
 import { TRAINING_CLOSED } from "config/constant";
 
-const CairoRegistration = () => {
+const CartesiRegistration = () => {
   return (
     <>
       {!TRAINING_CLOSED.cartesi ? (
@@ -14,4 +14,4 @@ const CairoRegistration = () => {
     </>
   );
 };
-export default CairoRegistration;
+export default CartesiRegistration;

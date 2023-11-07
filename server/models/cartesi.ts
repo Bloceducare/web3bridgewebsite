@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import  allUsersSChema  from "./users";
 
 const Schema = mongoose.Schema;
-const cairoUsersSchema = new Schema(
+const cartesiUsersSchema = new Schema(
   {
     ...allUsersSChema,
     prevCohort:{
@@ -24,6 +24,6 @@ const cairoUsersSchema = new Schema(
 );
 
 
-const cairoUsers =
-  mongoose.models.cairoUsers || mongoose.model("cairoUsers", cairoUsersSchema, "cairoUsers");
-export default cairoUsers;
+const cartesiUsers =
+  mongoose.models.cartesiUsers || mongoose.model("cartesiUsers", cartesiUsersSchema, "cartesiUsers");
+export default cartesiUsers;

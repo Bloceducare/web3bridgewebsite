@@ -3,7 +3,7 @@ import  { createRouter }  from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
-import cairoUserDb from "@server/models/cairo";
+import cartesiUserDb from "@server/models/cartesi";
 import reportError from "@server/services/report-error";
 
 
@@ -23,8 +23,8 @@ router.get(async (req, res) => {
   if(req.query.currentTrack === "web3"){
     userDb = web3userDb
   }
-  if(req.query.currentTrack === "cairo"){
-    userDb =cairoUserDb
+  if(req.query.currentTrack === "cartesi"){
+    userDb =cartesiUserDb
   }
   
 
@@ -37,7 +37,7 @@ router.get(async (req, res) => {
     //   // ...(!!currentTrack && { currentTrack }),
     // });
 
-  const re =  await  cairoUserDb.find({})
+  const re =  await  cartesiUserDb.find({})
   
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   const template = (array)=>{

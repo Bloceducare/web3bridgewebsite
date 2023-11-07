@@ -242,6 +242,10 @@ export const cohortList = [
     value: "8",
     label: "Cohort VIII",
   },
+  {
+    value: "9",
+    label: "Cohort IX",
+  },
 ];
 
 export const blurUrl =

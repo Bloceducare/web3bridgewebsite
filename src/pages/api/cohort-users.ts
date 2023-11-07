@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 import connectDB, { closeDB } from "@server/config/database";
 import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
-import cairoUserDb from "@server/models/cairo";
+import cartesiUserDb from "@server/models/cartesi";
 import { registrationSchema } from "schema";
 import { PaymentMethod, PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
@@ -21,7 +21,7 @@ router.get(async (req, res) => {
   const dbs = {
     web2: web2UserDb,
     web3: web3userDb,
-    cairo: cairoUserDb,
+    cartesi: cartesiUserDb,
   };
 
   const { currentTrack, page, email }: IQuery = req.query;
@@ -127,7 +127,7 @@ router
     const dbs = {
       web2: web2UserDb,
       web3: web3userDb,
-      cairo: cairoUserDb,
+      cartesi: cartesiUserDb,
     };
     const userDb = dbs[req.body.currentTrack];
 
