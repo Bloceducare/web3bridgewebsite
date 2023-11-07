@@ -70,14 +70,14 @@ const trainings = [
   {
     component: (
       <Card
-        imgUrl="/cairo.png"
-        type="Cairo Class"
-        link="/trainings/cairo"
-        text="A language for scaling dApps using STARKs"
+        imgUrl="/cartesi.png"
+        type="Cartesi  Masterclass"
+        link="/trainings/cartesi"
+        text="Cartesi Masterclass training program"
       />
     ),
     id: 0,
-    closed: TRAINING_CLOSED.cairo,
+    closed: TRAINING_CLOSED.cartesi,
   },
 ];
 const CohortRegistration = () => {

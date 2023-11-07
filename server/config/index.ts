@@ -1,7 +1,7 @@
 // export const isDev = false;
 export const isDev = process.env.NODE_ENV === "development";
 
-export const CURRENT_COHORT = "IX";
+export const CURRENT_COHORT = "X";
 export const webPayment = {
   naira: isDev ? 10 : 10000,
   USD: 70,

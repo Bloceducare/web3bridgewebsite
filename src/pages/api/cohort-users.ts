@@ -158,24 +158,24 @@ router
         });
       }
 
-      if (!!voucher) {
-        const userVoucher = await useVoucher({
-          identifier: voucher,
-          email,
-          userDetails: {
-            userDb,
-            currentTrack: req.body.currentTrack,
-            name:`${req.body.name}`
-          },
-        });
+      // if (!!voucher) {
+      //   const userVoucher = await useVoucher({
+      //     identifier: voucher,
+      //     email,
+      //     userDetails: {
+      //       userDb,
+      //       currentTrack: req.body.currentTrack,
+      //       name:`${req.body.name}`
+      //     },
+      //   });
 
-        if (!userVoucher.status) {
-          await closeDB;
-          return res.status(userVoucher.code ?? 400).json({
-            ...userVoucher,
-          });
-        }
-      }
+      //   // if (!userVoucher.status) {
+      //   //   await closeDB;
+      //   //   return res.status(userVoucher.code ?? 400).json({
+      //   //     ...userVoucher,
+      //   //   });
+      //   // }
+      // }
 
       let info = req.body;
       for (const key in info) {

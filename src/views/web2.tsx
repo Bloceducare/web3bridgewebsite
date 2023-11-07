@@ -66,7 +66,7 @@ const Web2View = () => {
     PaymentStatus.notInitialized
   );
 
-  const [userPaymentMethod, setUserPaymentMethod] = useState(PaymentMethod.na)
+  const [userPaymentMethod, setUserPaymentMethod] = useState(PaymentMethod.na);
 
   const handlePhoneChange = (phone) => {
     setPhone(phone);
@@ -121,8 +121,6 @@ const Web2View = () => {
     },
   });
 
- 
-
   const onSubmit = async (value) => {
     const data = {
       ...value,
@@ -132,32 +130,32 @@ const Web2View = () => {
     };
 
     setError("");
-    setUserPaymentMethod(PaymentMethod.na)
-    setResponsePaymentStatus(PaymentStatus.notInitialized);
+    // setUserPaymentMethod(PaymentMethod.na);
+    // setResponsePaymentStatus(PaymentStatus.notInitialized);
     if (TRAINING_CLOSED[userTrack]) {
       return alert("Registration closed!");
     }
-   
+
     try {
       const response = await userRegistering(data);
 
-      if (
-        response.status === 201 &&
-        userEmail.pyt_method === PaymentMethod.card
-      ) {
-        handlePayment({
-          callback: () => {
-            setTimeout(() => {
-              closePaymentModal();
+      // if (
+      //   response.status === 201 &&
+      //   userEmail.pyt_method === PaymentMethod.card
+      // ) {
+      //   handlePayment({
+      //     callback: () => {
+      //       setTimeout(() => {
+      //         closePaymentModal();
 
-              setMessage(response.data.message);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }, 2000);
-          },
-          onClose: () => {},
-        });
-        return;
-      }
+      //         setMessage(response.data.message);
+      //         window.scrollTo({ top: 0, behavior: "smooth" });
+      //       }, 2000);
+      //     },
+      //     onClose: () => {},
+      //   });
+      //   return;
+      // }
 
       // if(response.status === 201 && data.paymentMethod === PaymentMethod.crypto){
       //   initializePaymentLazerPay()
@@ -167,8 +165,8 @@ const Web2View = () => {
     } catch (e: any) {
       const isError = e?.response?.data?.error ?? e.response?.data?.errors;
       setError(!!isError ? isError : "An Error Occurred, Try again");
-      setResponsePaymentStatus(e?.response?.data?.pyt);
-      setUserPaymentMethod(e?.response?.data?.pytMethod)
+      // setResponsePaymentStatus(e?.response?.data?.pyt);
+      // setUserPaymentMethod(e?.response?.data?.pytMethod);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -207,7 +205,7 @@ const Web2View = () => {
           <div className="text-2xl dark:text-white20">
             Cohort {CURRENT_COHORT} Registration
           </div>
-          <TrainingPyt
+          {/* <TrainingPyt
             user={userEmail}
             userTrack={userTrack}
             error={error}
@@ -215,7 +213,7 @@ const Web2View = () => {
             retry={retry}
             retryPayment={retryPayment}
             userPaymentMethod={userPaymentMethod}
-          />
+          /> */}
 
           {!!message && (
             <div className="my-2 text-lg text-center capitalize dark:text-white ">
@@ -471,12 +469,10 @@ const Web2View = () => {
                     />
                   </div>
                 </fieldset>
-
-                
               </>
 
               <>
-                <fieldset className="p-4 mx-2 mb-4 border rounded-md">
+                {/* <fieldset className="p-4 mx-2 mb-4 border rounded-md">
                   <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">
                     Payment
                   </legend>
@@ -493,8 +489,8 @@ const Web2View = () => {
                       <span className="absolute right-0 text-sm text-red-500 capitalize label-text-alt">
                         <>{errors?.paymentMethod?.message}</>
                       </span>
-                    )}
-                    <div className="gap-2  grid grid-flow-col justify-stretch">
+                    )} */}
+                {/* <div className="gap-2  grid grid-flow-col justify-stretch">
                       <div className="flex items-center justify-center">
                         <input
                        
@@ -512,8 +508,8 @@ const Web2View = () => {
                         >
                           <span className="">Card</span>
                         </label>
-                      </div>
-                      {/* <div className=" flex items-center justify-center">
+                      </div> */}
+                {/* <div className=" flex items-center justify-center">
                         <input
                           {...register("paymentMethod")}
                           id="paymentMethod-crypto"
@@ -530,8 +526,8 @@ const Web2View = () => {
                           <span className="">Crypto</span>
                         </label>
                       </div> */}
-                         
-                      <div className=" flex items-center justify-center">
+
+                {/* <div className=" flex items-center justify-center">
                         <input
                         {...register("paymentMethod")}
                         
@@ -548,12 +544,12 @@ const Web2View = () => {
                         >
                           <span className="">Voucher</span>
                         </label>
-                      </div>
-                    </div>
-                  </div>
-                </fieldset>
+                      </div> */}
+                {/* </div> */}
+                {/* </div>
+                </fieldset> */}
 
-                {userEmail.pyt_method === "voucher" && (
+                {/* {userEmail.pyt_method === "voucher" && (
                   <>
                     {" "}
                     <fieldset className="p-4 mx-2 mb-4 border rounded-md">
@@ -574,10 +570,8 @@ const Web2View = () => {
                       </div>
                     </fieldset>
                   </>
-                )}
+                )} */}
               </>
-
-
 
               <div className="px-6">
                 <Button
@@ -586,13 +580,11 @@ const Web2View = () => {
                   type="submit"
                 >
                   {
-                    isSubmitting
-                                        ? "Submitting..."
-                                          : userEmail.pyt_method === PaymentMethod.card ? `Pay Application Fee of ₦${new Intl.NumberFormat().format(
-                                            webPayment.naira
-                                          )}` :userEmail.pyt_method === PaymentMethod.coupon ? "Pay Application Fee of ₦0.00" :`Choose Payment Method `
-                  }                
-               
+                    isSubmitting ? "Submitting....." : "Submit"
+                    // : userEmail.pyt_method === PaymentMethod.card ? `Pay Application Fee of ₦${new Intl.NumberFormat().format(
+                    // webPayment.naira
+                    // )}` :userEmail.pyt_method === PaymentMethod.coupon ? "Pay Application Fee of ₦0.00" :`Choose Payment Method `
+                  }
                 </Button>
               </div>
             </form>
