@@ -19,7 +19,7 @@ const countriesData = countries.map((country) => ({
   label: country.name,
 }));
 
-const CairoView = () => {
+const MasterClassView = () => {
   const validationOption = validationOpt(registrationSchema.cairo);
 
   const [phone, setPhone] = useState("");
@@ -91,17 +91,20 @@ const CairoView = () => {
       <div className="max-w-lg m-12 mx-auto">
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="text-2xl dark:text-white20 flex flex-col items-center">
-            Cairo Class Registration
+            Cartesi Masterclass Registration
             <div className="my-2 mt-3 px-3">
-              <p className="text-[18px]">
-                Cairo is a language for creating STARK-provable programs for
-                general computation. Cairo powers Starknet and StarkEx, scaling
-                applications on Mainnet, including dYdX, Sorare, ImmutableX, and
-                more.
+              <p className="text-[16px]">
+                <b>Cartesi: Application-specific rollups with a Linux
+                runtime.</b>
               </p>
               <p className="text-[18px]">
-                Cairo is the native smart contract language for Starknet, a
-                permissionless decentralized Validity-Rollup.
+                Cartesi provides your DApp with a dedicated CPU and rollup,
+                enhancing computational scalability while preserving
+                decentralization, security, and censorship resistance.
+              </p>
+              <p className="text-[18px]">
+                With the Cartesi Virtual Machine, you can use familiar
+                libraries, languages and tooling, moving beyond the EVM.
               </p>
             </div>
           </div>
@@ -382,4 +385,4 @@ const CairoView = () => {
   );
 };
 
-export default CairoView;
+export default MasterClassView;

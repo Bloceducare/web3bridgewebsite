@@ -205,7 +205,7 @@ const Web3View = () => {
             Cohort {CURRENT_COHORT} Registration
           </div>
 
-          <TrainingPyt
+          {/* <TrainingPyt
             user={userDetails}
             userTrack={userTrack}
             error={error}
@@ -213,7 +213,7 @@ const Web3View = () => {
             retry={retry}
             userPaymentMethod={userPaymentMethod}
             retryPayment={retryPayment}
-          />
+          /> */}
 
           {!!message ? (
             <div className="my-2 text-lg text-center dark:text-white ">
@@ -577,7 +577,7 @@ const Web3View = () => {
                   </div>
                 </fieldset> */}
 
-                {userDetails.pyt_method === "voucher" && (
+                {/* {userDetails.pyt_method === "voucher" && (
                   <>
                     {" "}
                     <fieldset className="p-4 mx-2 mb-4 border rounded-md">
@@ -598,7 +598,7 @@ const Web3View = () => {
                       </div>
                     </fieldset>
                   </>
-                )}
+                )} */}
 
                 <div className="px-6">
                   <Button
@@ -607,7 +607,10 @@ const Web3View = () => {
                     className="w-full py-3 "
                     type="submit"
                   >
-                    {isSubmitting
+                    {
+                      isSubmitting ? 'Submitting' : 'Submit'
+                    }
+                    {/* {isSubmitting
                       ? "Loading..."
                       : userDetails.pyt_method === PaymentMethod.coupon
                       ? "Submit"
@@ -617,7 +620,7 @@ const Web3View = () => {
                                 webPayment.naira
                               )}`
                             : `USD${webPayment.USD}`
-                        }`}
+                        }`} */}
                   </Button>
                 </div>
               </form>
