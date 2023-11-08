@@ -173,7 +173,7 @@ const cartesi = `<!DOCTYPE html>
               <h1 style="margin: 0 0 12px; font-size: 32px; font-weight: 400; line-height: 48px;">Hello, {{name}}!</h1>
 
               <p>
-              We are happy to receive your application for the Cartesi masterclass, do note that the selection and interview will hold from April 28th to May 15th, while the class will start on May 22.
+              We are happy to receive your application for the Cartesi masterclass, do note that the selection and assessment will hold from December 11th - 23rd, while the class will start on January 8,2024.
               </p>
               <p>
               Ensure to pay close attention to your email, in order not to miss the updates.

@@ -90,7 +90,7 @@ const MasterClassView = () => {
     <>
       <div className="max-w-lg m-12 mx-auto">
         <div className="flex flex-col items-center justify-center mb-6">
-          <div className="text-2xl dark:text-white20 flex flex-col items-center">
+          {/* <div className="text-2xl dark:text-white20 flex flex-col items-center">
             Cartesi Masterclass Registration
             <div className="my-2 mt-3 px-3">
               <p className="text-[18px]">
@@ -102,7 +102,7 @@ const MasterClassView = () => {
                 strong base layer security guarantees.
               </p>
               <p className="text-[18px]">
-                To learn more about Cartesi, visit
+                Learn more about 
                 <span>
                   {" "}
                   <a
@@ -111,10 +111,10 @@ const MasterClassView = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    about
+                    Cartesi
                   </a>{" "}
                 </span>
-                <span> and</span>
+                <span> and see the </span>
                 <span>
                   {" "}
                   <a
@@ -123,12 +123,64 @@ const MasterClassView = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    doc
-                  </a>
+                    documentation
+                  </a>.
                 </span>
               </p>
+
+              <p className="text-[18px]">Join our <a
+                  className="text-blue-300 underline"
+                    href="https://t.me/CartesiProject"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Telegram</a> and <a
+                  className="text-blue-300 underline"
+                    href="https://discord.com/invite/pfXMwXDDfW"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Discord</a> channel</p>
             </div>
-          </div>
+          </div> */}
+
+<div className="text-2xl dark:text-white20 flex flex-col items-center">
+  <h1 className="my-2 mt-3 px-3 text-3xl font-bold">Cartesi Masterclass Registration</h1>
+  <div className="my-2 mt-3 px-3">
+    <p className="text-[18px]">
+      Cartesi is an app-specific rollup protocol with a virtual
+      machine that runs Linux distributions, creating a richer and
+      broader design space for DApp developers.
+    </p>
+    <p className="text-[18px]">
+      Cartesi Rollups offer a modular scaling solution,
+      deployable as L2, L3, or sovereign rollups, while maintaining
+      strong base layer security guarantees.
+    </p>
+    <p className="text-[18px]">
+      Learn more about 
+      <span className="mx-1">
+        <a className="text-blue-300 underline" href="https://cartesi.io/" target="_blank" rel="noopener noreferrer">
+          Cartesi
+        </a>
+      </span>
+      and see the
+      <span className="mx-1">
+        <a className="text-blue-300 underline" href="https://docs.cartesi.io/cartesi-rollups/build-dapps/" target="_blank" rel="noopener noreferrer">
+          documentation
+        </a>.
+      </span>
+    </p>
+    <p className="text-[18px]">Join our
+      <a className="text-blue-300 underline mx-1" href="https://t.me/CartesiProject" target="_blank" rel="noopener noreferrer">
+        Telegram
+      </a>
+      and
+      <a className="text-blue-300 underline mx-1" href="https://discord.com/invite/pfXMwXDDfW" target="_blank" rel="noopener noreferrer">
+        Discord
+      </a> channel.
+    </p>
+  </div>
+</div>
+
 
           {!!error && (
             <>
