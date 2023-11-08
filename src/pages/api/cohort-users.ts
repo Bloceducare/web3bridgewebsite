@@ -8,12 +8,13 @@ import { registrationSchema } from "schema";
 import { PaymentMethod, PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
 import reportError from "@server/services/report-error";
-import useVoucher from "@server/voucher";
 import {
   COHORT_REGISTRATION_OPENED,
   registrationPaused,
   TRAINING_CLOSED,
 } from "config/constant";
+import { sendSms } from "@server/sms";
+import { sendEmail } from "@server/mailer";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -59,44 +60,6 @@ router.get(async (req, res) => {
   }
 });
 
-// router.delete(async (req, res) => {
-//   const dbs = {
-//     web2: web2UserDb,
-//     web3: web3userDb,
-//     cairo: cairoUserDb,
-//   };
-
-//   const { currentTrack, page, email }: IQuery = req.query;
-//   // @ts-ignore
-//   const userDb = dbs[currentTrack];
-//   if (!userDb) {
-//     return res.status(404).json({
-//       message: "user track not found",
-//       error: "user track not found",
-//     });
-//   }
-
-//   await connectDB();
-
-//   try {
-//     const data = await userDb.deleteOne({ email })
-     
-//     closeDB();
-//     return res.status(200).json({
-//       status: true,
-//       data,
-//       message:'deleted'
-//     });
-//   } catch (e) {
-//     reportError;
-//     return res.status(500).json({
-//       status: false,
-//       error: "server error" + e,
-//     });
-//   }
-// });
-
-
 router
   .use(async (req, res, next) => {
     let schema;
@@ -140,9 +103,8 @@ router
     if (Object.values(Tracks).indexOf(req.body.currentTrack) === -1) {
       return res.status(400).send({ status: false, error: "Invalid track" });
     }
-    const { email, voucher } = req.body;
 
-   
+    const { email, phone, currentTrack, name } = req.body;
 
     try {
       await connectDB();
@@ -154,43 +116,29 @@ router
           status: false,
           error: "This user already exists",
           pyt: userExists._doc.paymentStatus,
-          pytMethod: userExists._doc.paymentMethod
+          pytMethod: userExists._doc.paymentMethod,
         });
       }
 
-      // if (!!voucher) {
-      //   const userVoucher = await useVoucher({
-      //     identifier: voucher,
-      //     email,
-      //     userDetails: {
-      //       userDb,
-      //       currentTrack: req.body.currentTrack,
-      //       name:`${req.body.name}`
-      //     },
-      //   });
+      const smsMessage = req.body.currentTrack == "cartesi" && {
+        message:
+          "Welcome to Web3Bridge Cartesi Masterclass Training. Do check your mail for further information",
+      };
 
-      //   // if (!userVoucher.status) {
-      //   //   await closeDB;
-      //   //   return res.status(userVoucher.code ?? 400).json({
-      //   //     ...userVoucher,
-      //   //   });
-      //   // }
-      // }
+      await Promise.all([
+        sendSms({ recipients: phone, ...smsMessage }),
+        sendEmail({
+          email,
+          name,
+          type: currentTrack,
+          file: req.body.currentTrack,
+          currentTrack: req.body.currentTrack,
+        }),
+      ]);
 
-      let info = req.body;
-      for (const key in info) {
-        const element = info[key];
-        info[key] =
-          typeof element === "string" ? element?.toLowerCase() : element;
-      }
-     
       const userData: any = new userDb({
-        ...info,
-        paymentStatus: voucher ? PaymentStatus.success : PaymentStatus.pending,
-        
-        ...(voucher && {paymentMethod:PaymentMethod.coupon})
+        ...req.body,
       });
-
       const { _doc } = await userData.save();
 
       await closeDB();
