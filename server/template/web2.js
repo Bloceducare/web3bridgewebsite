@@ -182,7 +182,7 @@
 //                 We are happy to receive your application. At Web3bridge, our goal is to help you kickstart your journey into tech with the Web2 track of the cohort.
 //               </p>
 //               <p>
-//                 Web3bridge cohort X opens July 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
+//                 Web3bridge cohort X opens January 24, 2023, the onboarding to the cohort starts immediately after we receive your application and we proceed to
 //               <ul> 
 //                 <li>
 //                   Grouping every participant
@@ -195,7 +195,7 @@
               
 //               </p>
 //               <p>
-//                  Do note that Discord onboarding will start from July 12 to ensure that you and everyone in your cohort/group bond well before the cohort starts in July.
+//                  Do note that Discord onboarding will start from January 12 to ensure that you and everyone in your cohort/group bond well before the cohort starts in January.
 //               </p>
 
 //               <p>
@@ -482,7 +482,7 @@ const web2 = `<!DOCTYPE html>
               
               </p>
               <p>
-                 Do note that Discord onboarding will start from December 15th to ensure that you and everyone in your cohort/group bond well before the cohort starts in July.
+                 Do note that Discord onboarding will start from December 15th to ensure that you and everyone in your cohort/group bond well before the cohort starts in January.
               </p>
 
               <p>

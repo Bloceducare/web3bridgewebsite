@@ -133,6 +133,7 @@ router
           type: currentTrack,
           file: req.body.currentTrack,
           currentTrack: req.body.currentTrack,
+          userDb:req.body.currentTrack
         }),
       ]);
 
