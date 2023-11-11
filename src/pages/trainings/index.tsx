@@ -7,6 +7,7 @@ const Card = ({
   imgUrl = "",
   type = "web2",
   text = "Kickstart your career in software development",
+  deadline = "",
   link = "",
 }) => {
   return (
@@ -26,6 +27,7 @@ const Card = ({
         </a>
       </Link>
       <p className="p-2 text-center dark:text-white20">{text}</p>
+      <p className="p-2 text-center border text-red-500 font-bold dark:text-white20">{deadline}</p>
     </div>
   );
 };
@@ -36,6 +38,7 @@ const trainings = [
       <Card
         imgUrl="/web-2.svg"
         type="web2"
+        deadline="Registration closes on: December 15th, 2023"
         link="/trainings/web2"
         text="Kickstart your career in software development"
       />
@@ -48,6 +51,7 @@ const trainings = [
       <Card
         imgUrl="/web-3.svg"
         type="web3"
+        deadline="Registration closes on: December 8th, 2023"
         link="/trainings/web3"
         text="Transition from web2 to web3"
       />
@@ -72,6 +76,7 @@ const trainings = [
       <Card
         imgUrl="/cartesi.png"
         type="Cartesi  Masterclass"
+        deadline="Registration closes on: November 30th, 2023"
         link="/trainings/cartesi"
         text="Cartesi Masterclass training program"
       />
