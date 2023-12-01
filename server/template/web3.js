@@ -208,9 +208,12 @@ const web3 = `<!DOCTYPE html>
               </ul>
               
               </p>
-<p>Use the calendly link to choose time for your first assessment test                 <a href="https://forms.gle/GUWCJp66mzZWb2YM7" target="_blank" rel="noopener noreferrer">
+<p>Use the calendly link to choose time for your first assessment test     
+  (<a href="https://forms.gle/GUWCJp66mzZWb2YM7" target="_blank" rel="noopener noreferrer">
  link to booking assessment
-</a>
+</a>)
+  
+
           </p>
               <p>
                 While you wait, ensure to join our telegram <u>

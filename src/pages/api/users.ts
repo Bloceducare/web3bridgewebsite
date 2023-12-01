@@ -4,6 +4,7 @@ import connectDB, { closeDB } from "@server/config/database";
 import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
 import specialClassDb from "@server/models/specialClass";
+import cartesiDb from "@server/models/cartesi"
 import { PaymentStatus, Tracks } from "enums";
 import reportError from "@server/services/report-error";
 import { isDev } from "@server/config";
@@ -49,6 +50,10 @@ router
 
   if(currentTrack ===Tracks.specialClass){
     userDb = specialClassDb
+  }
+
+  if(currentTrack ===Tracks.cartesi){
+    userDb = cartesiDb
   }
 
     
