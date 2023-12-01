@@ -9,7 +9,7 @@ export const TRAINING_CLOSED = {
   web2: isOpened,
   web3: false,
   specialClass:false,
-  cartesi: false,
+  cartesi: true,
 };
 
 export const specializedClassOptions = [
