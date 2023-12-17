@@ -22,6 +22,12 @@ const Newsletter = () => {
       setInput('')
     }
   }
+  const iframeStyle = {
+    display: "block",
+    marginLeft: "auto",
+    marginRight: "auto",
+    maxWidth: "100%"
+  };
   return (
     <div className="flex flex-col items-center justify-center bg-base py-12 mt-20">
       <div className="flex flex-col items-center justify-center">
@@ -32,30 +38,12 @@ const Newsletter = () => {
           Get occasional news and update from us about the latest trends,
           technology in the web 3 world, we promise not to spam you.
         </p>
-        <form
-          onSubmit={submitHandler}
-          className="w-full md:w-full flex justify-center px-2 "
-        >
-          <div className=" w-full  md:w-2/5 px-4">
-            <input
-              onChange={inputHandler}
-              value={input}
-              type="email"
-              className="pl-2 py-3 w-11/12  border-2 bg-base90 text-white10"
-              placeholder="Enter your email address here"
-            />
-          </div>
-          <div className="">
-            <button
-              type="submit"
-              className="bg-white  text-base font-base w-28 py-3 border-2 md:w-48"
-            >
-              Subscribe
-            </button>
-          </div>
-        </form>
+        <div>
+          <iframe width="840" height="500" src="https://c75e802e.sibforms.com/serve/MUIFALe4lAOyLtL5vTm4hUf2XWF8FBC_TcuQ0kg1mauaBFLU8O8M5dnWtIJRiLGFZb3FDU-mU-H6Je0wsVrAV_5fBy6Xxt9j3xLoBuy_DWo7I2HJ7rNIDyBGPsBx_ZO_UDXheNqbd0vZKQiZCZBAwWNw0H0FwGt10qUK-VRlj807pjEZfs_uJqM8CK2gVfF9BL0pv9DohGVZYrwK" frameBorder="0" scrolling="auto" allowFullScreen style={iframeStyle}></iframe>
+        </div>
       </div>
     </div>
+
   )
 }
 
