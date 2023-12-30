@@ -8,6 +8,7 @@ export enum Tracks {
   web3 = "web3",
   specialClass = "specialClass",
   cartesi = "cartesi",
+  zkclass = "zkclass",
 }
 
 export enum PaymentMethod {

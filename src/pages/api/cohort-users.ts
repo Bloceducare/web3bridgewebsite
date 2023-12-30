@@ -4,6 +4,7 @@ import connectDB, { closeDB } from "@server/config/database";
 import web3userDb from "@server/models/cohortUsers";
 import web2UserDb from "@server/models/web2";
 import cartesiUserDb from "@server/models/cartesi";
+import zkclassUserDb from "@server/models/zkclass";
 import { registrationSchema } from "schema";
 import { PaymentMethod, PaymentStatus, Tracks } from "enums";
 import validate from "@server/validate";
@@ -23,6 +24,7 @@ router.get(async (req, res) => {
     web2: web2UserDb,
     web3: web3userDb,
     cartesi: cartesiUserDb,
+    zkclass: zkclassUserDb,
   };
 
   const { currentTrack, page, email }: IQuery = req.query;
@@ -62,6 +64,7 @@ router.get(async (req, res) => {
 
 router
   .use(async (req, res, next) => {
+    console.log('request..',req.body)
     let schema;
     if (req.body.currentTrack || req.query.currentTrack) {
       schema =
@@ -81,6 +84,7 @@ router
       });
     }
     if (TRAINING_CLOSED[req.body.currentTrack]) {
+      console.log('error encounterred')
       return res.status(423).json({
         message: "registration closed",
         status: false,
@@ -91,6 +95,7 @@ router
       web2: web2UserDb,
       web3: web3userDb,
       cartesi: cartesiUserDb,
+      zkclass: zkclassUserDb,
     };
     const userDb = dbs[req.body.currentTrack];
 
@@ -108,9 +113,12 @@ router
 
     try {
       await connectDB();
+      console.log('db connected successfully');
 
       const userExists = await userDb.findOne({ email });
+      
       if (userExists) {
+        
         await closeDB();
         return res.status(423).send({
           status: false,
@@ -140,6 +148,8 @@ router
       const userData: any = new userDb({
         ...req.body,
       });
+
+      console.log('data:::', userData);
       const { _doc } = await userData.save();
 
       await closeDB();
@@ -150,11 +160,12 @@ router
         ..._doc,
       });
     } catch (e) {
+      
       reportError(
         `error occurred at ${__filename}\n environment:${process.env.NODE_ENV}\n ${e} `
       );
 
-      console.log("Error occuredd", e);
+      
       return res.status(423).json({
         error: e,
         status: false,

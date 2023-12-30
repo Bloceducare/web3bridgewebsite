@@ -84,6 +84,18 @@ const trainings = [
     id: 0,
     closed: TRAINING_CLOSED.cartesi,
   },
+  {
+  component: (
+    <Card
+      imgUrl="/zkclass.jpg"
+      type="ZK Class"
+      link="/trainings/zk-class"
+      text="ZK (zero knowledge) Masterclass Training Program"
+    />
+  ),
+  id: 0,
+  closed: TRAINING_CLOSED.zkclass,
+},
 ];
 const CohortRegistration = () => {
   return (
