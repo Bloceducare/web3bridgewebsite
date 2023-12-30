@@ -202,4 +202,8 @@ export const registrationSchema = {
     .concat(walletSchema)
     .concat(githubSchema)
     .concat(alumniSchema),
+  zkclass: mainSchema
+    .concat(walletSchema)
+    .concat(githubSchema)
+    .concat(alumniSchema),
 };
