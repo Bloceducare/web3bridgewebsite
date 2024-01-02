@@ -5,6 +5,8 @@
 /.pnp
 .pnp.js
 
+dataextract.py
+zkclass_data.csv
 # testing
 /coverage
 

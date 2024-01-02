@@ -146,6 +146,7 @@ const ZkClassView = () => {
             <h1 className="my-2 mt-3 px-3 text-3xl font-bold">
               ZK Masterclass Registration
             </h1>
+            <p className="text-red-500 italic text-[0.8em]">Registration Ends on 20th of january 2024</p>
             <div className="my-2 mt-3 px-3">
             {!message && (
               <p className="text-[18px]">
@@ -154,9 +155,16 @@ const ZkClassView = () => {
                 African continent to learn ZK to be relevant and contribute to
                 the growth of the ecosystem. We are teaming up with protocols
                 building on zero knowledge to get developers to know ZK! Join us
-                for an amazing learning experience, <span className="font-bold text-[1em]">
+                for an amazing learning experience, <a href="#registration" className="font-bold text-[1em]">
                   signup here
-                  </span>
+                  </a>
+                  <h1 className="font-bold text-center text-[1.2em] mt-4 italic">Requirements</h1>
+                  <p className="italic font-bold">
+
+                  Knowledge of either <span className="">
+                    Rust, Go, Solidity and familiarity with linear algebra and eliptic curves would be a plus!
+                    </span> 
+                  </p>
               </p>
             )}
             </div>
@@ -194,7 +202,7 @@ const ZkClassView = () => {
         </div>
         {!message && (
           <>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} id="registration">
               <fieldset className="p-4 mx-2 mb-4 border rounded-md">
                 <legend className="block px-1 mb-4 text-sm font-semibold text-gray-700 uppercase dark:text-white20">
                   Personal Information
