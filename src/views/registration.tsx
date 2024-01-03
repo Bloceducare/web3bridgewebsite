@@ -391,11 +391,11 @@ const Web3View = () => {
                         placeholder="0x0000000000000000000000000000000000000000"
                         name="walletAddress"
                         required
-                        label="Ethereum Wallet Address"
+                        label="ERC20 address (Metamask or any other decentralised wallet address)"
                         errors={errors}
                       >
                         <div className="-mt-4 text-sm font-primary dark:text-white20 ">
-                          Don't have an ethereum wallet address?
+                          Don't have a wallet address?
                           <a
                             href="https://drive.google.com/file/d/11RLyQcbFUV2A7KViksOAihhRi1Iz9EVB/view"
                             target="_blank"
