@@ -66,12 +66,17 @@ const About: NextPage = () => {
       role: 'Blockchain Developer/ Mentor',
       image: Falilat,
     },
+        {
+      name: 'Ajayi Adekunle Michael',
+      role: 'Web3 Frontend Developer/Mentor',
+      image: MikeAdekunle,
+    },
     {
       name: 'Ademola Kelvin',
       role: 'Blockchain Developer/ Mentor',
       image: Kevin,
     },
-    {
+        {
       name: 'Michael Jerry',
       role: 'Community/ Social Media Lead',
       image: Jerry,
@@ -97,11 +102,7 @@ const About: NextPage = () => {
       role: 'Advisor & Angel investor',
       image: Billy,
     },
-    {
-      name: 'Ajayi Adekunle Michael',
-      role: 'Web3 Frontend Developer/Mentor',
-      image: MikeAdekunle,
-    },
+
   ]
   return (
     <Fragment>
