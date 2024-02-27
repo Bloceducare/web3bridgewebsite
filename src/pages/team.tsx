@@ -14,6 +14,7 @@ import Jerry from '../../assets/about-us/jerry.png'
 import Billy from '../../assets/about-us/billy.png'
 import Yetunde from '../../assets/about-us/Yetunde.png'
 import Ezra from '../../assets/about-us/Ezra.png'
+import MikeAdekunle from '../../assests/about-us/Mikeadekunle.png'
 import Marek from '../../assets/about-us/marek.png'
 import Image from 'next/image'
 import Button from '../components/Button'
@@ -95,6 +96,11 @@ const About: NextPage = () => {
       name: 'Billy Luedtke',
       role: 'Advisor & Angel investor',
       image: Billy,
+    },
+    {
+      name: 'Ajayi Adekunle Michael',
+      role: 'Web3 Frontend Developer/Mentor',
+      image: MikeAdekunle,
     },
   ]
   return (
