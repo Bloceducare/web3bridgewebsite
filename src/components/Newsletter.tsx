@@ -29,7 +29,7 @@ const Newsletter = () => {
     maxWidth: "100%"
   };
   return (
-    <div className="flex flex-col items-center justify-center bg-base py-12 mt-20">
+    <div className="flex flex-col items-center justify-center bg-base py-12 mt-20" id="newsletter">
       <div className="flex flex-col items-center justify-center">
         <h1 className=" text-white mt-7 mb-6 text-2xl font-bold text-center md:mt-0 md:text-5xl ">
           Subscribe to our Newsletter
