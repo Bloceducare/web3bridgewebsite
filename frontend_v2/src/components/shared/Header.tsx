@@ -11,9 +11,9 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <div className="sticky top-0 inset-x-0 w-full py-3 lg:pt-5">
+    <div className="sticky top-0 inset-x-0 z-20 w-full py-3 lg:pt-5 bg-background/70 backdrop-blur-xl">
       <MaxWrapper className="h-full w-full flex items-center justify-between gap-10">
-        <Logo />
+        <Logo shouldChange />
 
         <div className="h-14 border rounded-full hidden bg-background lg:flex items-center justify-center gap-6 px-6">
           {navLinks.map((link) => (

@@ -39,3 +39,69 @@ export const navLinks = [
     href: "/hire",
   },
 ];
+
+export const footerLinks = [
+  {
+    title: "Web3Bridge",
+    links: [
+      {
+        name: "About Us",
+        path: "/about",
+      },
+      {
+        name: "Courses",
+        path: "/courses",
+      },
+      {
+        name: "Partners",
+        path: "/partners",
+      },
+      {
+        name: "Alumni",
+        path: "/alumni",
+      },
+    ],
+  },
+  {
+    title: "Supports",
+    links: [
+      {
+        name: "DApps",
+        path: "/dapps",
+      },
+      {
+        name: "Terms of Use",
+        path: "/terms-of-use",
+      },
+      {
+        name: "Privacy Policy",
+        path: "/privacy-policy",
+      },
+      {
+        name: "FAQ",
+        path: "/faq",
+      },
+    ],
+  },
+  {
+    title: "general",
+    links: [
+      {
+        name: "Join Community",
+        path: "/community",
+      },
+      {
+        name: "Events",
+        path: "/events",
+      },
+      {
+        name: "Resources",
+        path: "/resources",
+      },
+      {
+        name: "Blog",
+        path: "/blog",
+      },
+    ],
+  },
+];
