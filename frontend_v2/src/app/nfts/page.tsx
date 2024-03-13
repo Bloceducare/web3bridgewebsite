@@ -2,6 +2,7 @@ import { Art } from "@/components/nft/Art";
 import { Banner } from "@/components/nft/Banner";
 import HeroSection from "@/components/nft/HeroSection";
 import NFTDisplays from "@/components/nft/NFTDisplays";
+import { Utility } from "@/components/nft/Utility";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 
@@ -17,5 +18,9 @@ export default function NFTs() {
         </MaxWrapper>
         {/* banner */}
         <Banner />
+        <MaxWrapper className="flex flex-col w-full">
+            {/* Utility  */}
+            <Utility />
+        </MaxWrapper>
     </main>)
 }
