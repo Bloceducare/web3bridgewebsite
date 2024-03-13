@@ -11,12 +11,12 @@ export const Art = () => {
 
             <main className='w-full flex lg:flex-row flex-col-reverse lg:gap-28 gap-10 justify-between items-center py-6'>
                 <div className='md:flex-1 w-full flex flex-col gap-4 items-start'>
-                    <p className='leading-relaxed text-justify md:text-left'>The art’s major components include the globe, with Africa very pronounced, a growing and fruit-bearing fig tree, and fruits on the tree shown as Web3bridge logo dropping across the globe. Each dropping fruit represents Web3bridge Alumnis that are already in the global ecosystem contributing while the smaller fruits that are yet to form into Web3bridge logo symbolizes devs in training and those that are yet to come out of the program.</p>
-                    <div className="mt-2 flex items-center md:gap-8 gap-4">
-                        <Button className="rounded-full md:px-8 px-4 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
-                            Get Whitelisted <MoveRight className="w-5 h-5 ml-2 hidden md:flex" />
+                    <p className='leading-relaxed text-left'>The art’s major components include the globe, with Africa very pronounced, a growing and fruit-bearing fig tree, and fruits on the tree shown as Web3bridge logo dropping across the globe. Each dropping fruit represents Web3bridge Alumnis that are already in the global ecosystem contributing while the smaller fruits that are yet to form into Web3bridge logo symbolizes devs in training and those that are yet to come out of the program.</p>
+                    <div className="mt-6 w-full flex md:flex-row flex-col items-center md:gap-8 gap-4">
+                        <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
+                            Get Whitelisted <MoveRight className="w-5 h-5 ml-2" />
                         </Button>
-                        <Button className="rounded-full md:px-8 px-4 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
+                        <Button className="rounded-full px-12 py-6 border-2 ring-4 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
                             Comfirm Whitelist
                         </Button>
                     </div>

@@ -13,11 +13,11 @@ export default function HeroSection() {
             <div className="lg:w-1/2 md:w-[70%] w-full flex flex-col items-center gap-4 justify-center">
                 <h1 className="font-semibold leading-tight md:text-5xl text-3xl text-center">The <span className=" text-bridgeRed">BLOSSOMING</span> Web3bridge NFT</h1>
                 <p className="text-center dark:text-muted-foreground"> The art tells the story of Web3bridge grooming developers from Africa and are all over the world literally or remotely contributing to the growth of the blockchain ecosystem.</p>
-                <div className="mt-4 flex items-center md:gap-8 gap-4">
-                    <Button className="rounded-full px-8 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
-                        Mint NFT <MoveRight className="w-5 h-5 ml-2 hidden md:flex" />
+                <div className="mt-4 flex md:flex-row flex-col items-center md:gap-8 gap-4">
+                    <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
+                        Mint NFT <MoveRight className="w-5 h-5 ml-2 " />
                     </Button>
-                    <Button className="rounded-full px-8 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
+                    <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
                         Connect Wallet
                     </Button>
                 </div>
@@ -26,7 +26,7 @@ export default function HeroSection() {
                 priority
                 src={Tube}
                 alt="shape"
-                className=" absolute lg:left-[17%] md:left-[10%] left-0 lg:bottom-[40%] bottom-[60%] md:w-[90px] w-[70px] md:h-[90px] h-[70px]"
+                className=" absolute lg:left-[17%] md:left-[10%] left-0 lg:bottom-[40%] md:bottom-[60%] bottom-[70%] md:w-[90px] w-[70px] md:h-[90px] h-[70px]"
             />
             <Image
                 priority
@@ -38,13 +38,13 @@ export default function HeroSection() {
                 priority
                 src={Pill}
                 alt="shape"
-                className=" absolute lg:right-[18%] right-[5%] md:bottom-[50%] bottom-[70%] scale-75"
+                className=" absolute lg:right-[18%] right-[5%] md:bottom-[50%] bottom-[75%] scale-75"
             />
             <Image
                 priority
                 src={SemiCircle}
                 alt="shape"
-                className=" absolute md:right-[20%] right-[30%] md:bottom-[63%] bottom-[70%] scale-75"
+                className=" absolute md:right-[20%] right-[30%] md:bottom-[63%] bottom-[75%] scale-75"
             />
         </section>
     )

@@ -1,3 +1,4 @@
+'use client';
 import Link from "next/link";
 import Image from "next/image";
 
@@ -17,8 +18,8 @@ export default function Logo() {
           theme === "dark"
             ? logoDark
             : theme === "system"
-            ? logoDark
-            : logoLight
+              ? logoDark
+              : logoLight
         }
         alt="Web3Bridge Logo"
         className="h-12 w-36 lg:h-14 lg:w-40"

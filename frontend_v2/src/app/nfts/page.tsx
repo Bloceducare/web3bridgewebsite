@@ -1,7 +1,7 @@
-import { Art } from "@/components/about/Art";
-import { Banner } from "@/components/about/Banner";
-import HeroSection from "@/components/about/HeroSection";
-import NFTDisplays from "@/components/about/NFTDisplays";
+import { Art } from "@/components/nft/Art";
+import { Banner } from "@/components/nft/Banner";
+import HeroSection from "@/components/nft/HeroSection";
+import NFTDisplays from "@/components/nft/NFTDisplays";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 
