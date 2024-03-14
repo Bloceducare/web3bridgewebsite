@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { Encode_Sans_Expanded as FontSans } from "next/font/google";
+import { Encode_Sans_Expanded } from "next/font/google";
 import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/shared/Header";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import Footer from "@/components/shared/Footer";
 
-export const fontSans = FontSans({
+const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
-  variable: "--font-sans",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
@@ -26,12 +25,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased overflow-x-hidden flex flex-col",
-          fontSans.variable
+          "min-h-screen bg-background font-sans antialiased flex flex-col",
+          fontSans.className
         )}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange>
           <Header />

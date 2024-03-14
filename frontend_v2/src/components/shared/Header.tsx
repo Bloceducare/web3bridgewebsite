@@ -25,11 +25,11 @@ export default function Header() {
   }, []);
 
   return (
-    <div className={`sticky top-0 inset-x-0 z-50 w-full py-3 lg:pt-5 ${navBarColor ? "bg-background" : "bg-transparent"} transition-all`}>
+    <div className="sticky top-0 inset-x-0 z-20 w-full py-3 lg:pt-5 bg-background/70 backdrop-blur-xl">
       <MaxWrapper className="h-full w-full flex items-center justify-between gap-10">
         <Logo />
 
-        <div className="h-14 border rounded-full hidden bg-background lg:flex items-center justify-center gap-6 px-6">
+        <div className="h-14 border rounded-full hidden bg-[#FB8888]/5 lg:flex items-center justify-center gap-6 px-6">
           {navLinks.map((link) => (
             <Link
               href={link.href}
@@ -54,7 +54,6 @@ export default function Header() {
             <MobileNavToggler />
           </div>
         </div>
-
       </MaxWrapper>
     </div>
   );
