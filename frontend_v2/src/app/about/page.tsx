@@ -1,4 +1,4 @@
-import { HeroSection } from "@/components/about/HeroSection";
+import  HeroSection  from "@/components/about/HeroSection";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 export default function About() {
