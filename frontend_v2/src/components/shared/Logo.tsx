@@ -12,29 +12,19 @@ export default function Logo() {
 
   return (
     <Link href="/">
-      {shouldChange ? (
-        <Image
-          priority
-          quality={100}
-          src={
-            theme == "system"
-              ? logoLight
-              : theme == "dark"
+      <Image
+        priority
+        quality={100}
+        src={
+          theme == "system"
+            ? logoLight
+            : theme == "dark"
               ? logoLight
               : logoDark
-          }
-          alt="Web3Bridge Logo"
-          className="h-14 w-40"
-        />
-      ) : (
-        <Image
-          priority
-          quality={100}
-          src={logoDark}
-          alt="Web3Bridge Logo"
-          className="h-14 w-40"
-        />
-      )}
+        }
+        alt="Web3Bridge Logo"
+        className="h-14 w-40"
+      />
     </Link>
   );
 }
