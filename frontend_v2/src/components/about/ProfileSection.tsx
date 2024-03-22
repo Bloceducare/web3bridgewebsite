@@ -30,7 +30,7 @@ export default function ProfileSection() {
       />
       <Image
         priority
-        src={ProfileImg3}
+        src={ProfileImg4}
         alt="shape"
         className="w-50 h-50 border-2 rounded-full dark:border-gray-800"
       />
