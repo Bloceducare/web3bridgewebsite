@@ -16,9 +16,9 @@ export default function Logo() {
         priority
         quality={100}
         src={
-          theme == "system"
-            ? logoLight
-            : theme == "dark"
+          theme == "dark"
+            ? logoDark
+            : theme == "light"
               ? logoLight
               : logoDark
         }
