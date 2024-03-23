@@ -6,23 +6,9 @@ import Link from "next/link";
 import { cn, navLinks } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { MobileNavToggler } from "./MobileNavToggler";
-import { useEffect, useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
-
-  const [navBarColor, setNavBarColor] = useState(false);
-
-  const listenScrollEvent = () => {
-    window.scrollY > 10 ? setNavBarColor(true) : setNavBarColor(false);
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", listenScrollEvent);
-    return () => {
-      window.removeEventListener("scroll", listenScrollEvent);
-    };
-  }, []);
 
   return (
     <div className="sticky top-0 inset-x-0 z-40 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">

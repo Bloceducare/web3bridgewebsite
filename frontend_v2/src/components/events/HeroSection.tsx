@@ -13,9 +13,9 @@ import shape4 from "../../../public/events/5.png";
 
 const HeroSection = () => {
     return (
-        <section className="grid md:grid-cols-2 lg:h-[85vh] md:h-[60vh] h-auto pt-10 md:pt-0 w-full relative gap-10 md:gap-0">
+        <section className="grid md:grid-cols-2 lg:h-[85vh] md:h-[60vh] h-auto pt-12 md:pt-0 w-full relative gap-10 md:gap-0">
             {/* text */}
-            <div className="w-full flex flex-col justify-center items-center md:items-start gap-3 lg:px-10 md:px-6 px-2">
+            <div className="w-full flex flex-col justify-center items-center md:items-start md:gap-3 gap-4 lg:px-10 md:px-6 px-2">
                 <h1 className="font-semibold leading-tight lg:text-5xl md:text-4xl text-center md:text-start text-3xl">The Web3 Lagos Conference</h1>
                 <CountDown targetDate={`2024-06-16T09:59:59`} />
                 <h3 className="text-foreground font-medium text-2xl">Happening live at</h3>
@@ -35,12 +35,12 @@ const HeroSection = () => {
                 </div>
             </div>
             {/* image */}
-            <div className="w-full md:h-full flex flex-col md:flex-row md:justify-end md:items-end items-center justify-center">
+            <div className="w-full md:h-full flex flex-col md:flex-row md:justify-end md:items-end items-center justify-center gap-5 md:gap-0">
                 <div className="w-[80%] h-[85%] relative md:before:w-[85%] before:w-full lg:before:h-full md:before:h-[70%] before:h-full before:border-2 before:border-bridgeRed/50 before:absolute md:before:-top-8 before:-top-4 md:before:-left-2 before:-left-4 before:-z-10 before:rounded-lg">
                     <Image src={HeroImg} alt="image" className="w-full lg:h-full md:h-auto h-full lg:object-contain md:object-fill object-contain" priority />
                 </div>
 
-                <div className="my-4 md:hidden flex flex-col items-center md:gap-8 gap-4">
+                <div className="my-4 md:hidden flex flex-col items-center gap-6">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
                         Register for Event <MoveRight className="w-5 h-5 ml-2 " />
                     </Button>
