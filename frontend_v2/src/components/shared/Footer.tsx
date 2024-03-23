@@ -5,14 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
-import Logo from "./Logo";
 import { cn, footerLinks } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import logoLight from "../../../public/logo-light.svg";
 
 import { FaSquareTwitter } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
 import { TbBrandYoutubeFilled } from "react-icons/tb";
+import Image from "next/image";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -65,7 +66,15 @@ export default function Footer() {
               </div>
             ))}
 
-            <Logo />
+            <Link href="/">
+              <Image
+                priority
+                quality={100}
+                src={logoLight}
+                alt="Web3Bridge Logo"
+                className="h-14 w-40"
+              />
+            </Link>
           </div>
 
           <div className="flex items-center justify-between gap-3 flex-wrap mt-10">
