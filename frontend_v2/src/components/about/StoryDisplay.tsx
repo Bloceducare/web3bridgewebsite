@@ -6,7 +6,7 @@ import StoryImage3 from "../../../public/about/StoryImage3.png";
 
 export default function StoryDisplay() {
   return (
-    <section className="w-full flex flex-col mt-8 gap-8 justify-center md:px-16 md:py-20 py-3">
+    <section className="w-full flex flex-col mt-8 gap-1 md:gap-10 justify-center md:px-16 md:py-20 py-10 radial-gradient ">
       <StorySection
         title="Where We Started from"
         pillText="Our Journey"

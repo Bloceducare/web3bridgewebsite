@@ -9,7 +9,7 @@ import ProfileImg5 from "../../../public/about/ProfileImage5.png";
 
 export default function ProfileSection() {
   return (
-    <div className="flex -space-x-6 md:-space-x-12 rtl:space-x-reverse mt-[40px]">
+    <div className="flex -space-x-8 md:-space-x-12 rtl:space-x-reverse mt-[40px]">
       <Image
         priority
         src={ProfileImg1}

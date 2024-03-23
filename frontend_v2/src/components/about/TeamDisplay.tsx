@@ -3,11 +3,11 @@ import { TeamMembers } from "@/lib/utils";
 
 export default function TeamDisplay() {
   return (
-    <section className="w-full flex flex-col gap-8 justify-center md:px-4 md:py-20 py-3">
+    <section className="w-full flex flex-col gap-2 lg:gap-6 justify-center py-10 md:px-4 md:py-20 radial-gradient ">
       <h1 className="font-semibold md:text-4xl text-2xl text-center capitalize ">
         Meet Our Amazing Team
       </h1>
-      <p className="text-xl font-light text-center">We have a diverse dev team of amazing humans</p>
+      <p className="text-md lg:text-xl font-light text-center">We have a diverse dev team of amazing humans</p>
       <div className="flex flex-wrap gap-8 w-fit mx-auto justify-center">
         {TeamMembers.map((member, index) => (
           <TeamCard
