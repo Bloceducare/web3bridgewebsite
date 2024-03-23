@@ -58,3 +58,68 @@ export const utilityIndex = [
     text: "Annual return on all development contract fund taken by Web3bridge dev team",
   },
 ];
+
+export const TeamMembers = [
+  {
+    name: "Awosika Israel Ayodeji",
+    role: "Founder, Program Manager",
+    image: "/about/Team1.png"
+  },
+
+  {
+    name: "Akinnusotu Temitayo",
+    role: "Co-founder, Lead Dev/Mentor",
+    image: "/about/Team2.png"
+  },
+  {
+    name: "Katangole Allan",
+    role: "Head, Technical Training",
+    image: "/about/Team3.png"
+  },
+  {
+    name: "Jeremiah Noah",
+    role: "Lead dev/ Mentor",
+    image: "/about/Team4.png"
+  },
+
+  {
+    name: "Oke Kehinde",
+    role: "Blockchain Developer/ Mentor",
+    image: "/about/Team5.png"
+  },
+  {
+    name: "Abimbola Adebayo",
+    role: "Blockchain Developer/ Mentor",
+    image: "/about/Team6.png"
+  },
+  {
+    name: "Falilat Owolabi",
+    role: "Blockchain Developer/ Mentor",
+    image: "/about/Team7.png"
+  },
+  {
+    name: "Ademola Kelvin",
+    role: "Blockchain Developer/ Mentor",
+    image: "/about/Team8.png"
+  },
+  {
+    name: "Yetunde Ige",
+    role: "Project Manager",
+    image: "/about/Team9.png"
+  },
+  {
+    name: "Michael Jerry",
+    role: "Community/ Social Media Lead",
+    image: "/about/Team10.png"
+  },
+  {
+    name: "Billy Luedtke",
+    role: "Advisor & Angel investor",
+    image: "/about/Team11.png"
+  },
+  {
+    name: "Marek Laskowski, PhD",
+    role: "Advisor, Founder Blockchain.lab",
+    image: "/about/Team12.png"
+  }
+  ];

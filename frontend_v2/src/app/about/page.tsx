@@ -1,4 +1,7 @@
+import Documentaries from "@/components/about/Documentaries";
 import  HeroSection  from "@/components/about/HeroSection";
+import StoryDisplay from "@/components/about/StoryDisplay";
+import TeamDisplay from "@/components/about/TeamDisplay";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 export default function About() {
@@ -6,6 +9,9 @@ export default function About() {
         <MaxWrapper className="flex flex-col w-full">
             {/* Hero section */}
             <HeroSection />
+            <StoryDisplay/>
+            <TeamDisplay/>
+            <Documentaries/>
         </MaxWrapper>
     </main>;
 }
