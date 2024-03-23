@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 
 import logoDark from "../../../public/logo-dark.svg";
 import logoLight from "../../../public/logo-light.svg";
+import { useMemo, useState } from "react";
 
 export default function Logo() {
   const { theme } = useTheme();
@@ -18,9 +19,7 @@ export default function Logo() {
         src={
           theme == "dark"
             ? logoDark
-            : theme == "light"
-              ? logoLight
-              : logoDark
+            : logoLight
         }
         alt="Web3Bridge Logo"
         className="h-14 w-40"

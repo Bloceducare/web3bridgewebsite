@@ -25,7 +25,7 @@ export default function Header() {
   }, []);
 
   return (
-    <div className="sticky top-0 inset-x-0 z-20 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">
+    <div className="sticky top-0 inset-x-0 z-40 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">
       <MaxWrapper className="h-full w-full flex items-center justify-between gap-10">
         <Logo />
 
