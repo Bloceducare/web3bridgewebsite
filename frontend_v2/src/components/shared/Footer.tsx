@@ -19,7 +19,7 @@ export default function Footer() {
   const pathname = usePathname();
 
   return (
-    <footer className="border-t border-[#6E6E6E] text-black w-full py-10 bg-gradient-to-b from-red-100 via-red-200 to-background mt-44">
+    <footer className="border-t border-[#6E6E6E]/50 text-black w-full py-10 bg-gradient-to-b from-red-100 via-red-200 to-background mt-20">
       <MaxWrapper className="flex gap-6 flex-col lg:flex-row">
         <div className="w-full lg:w-[451px] rounded-2xl bg-[#1B1B1B] p-6 flex flex-col gap-2">
           <h1 className="font-bold text-2xl w-full lg:w-[225px] text-[#FFFBF3]">
