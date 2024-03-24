@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     "apps.cohort",
     "apps.event",
-    "apps.utils"
+    "apps.utils",
 ]
 
 INSTALLED_APPS += PROJECT_APPS
