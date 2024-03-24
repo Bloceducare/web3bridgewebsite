@@ -11,7 +11,7 @@ import { MoveRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <main className=" pt-28  pb-6 ">
+    <main className="pt-14 lg:pt-20  pb-6 ">
       <div className="w-full flex lg:flex-row flex-col gap-4 md:gap-10justify-between items-center">
         <div className={`basis-1/2 text-[#1B1B1B] order-first`}>
           <Pill text="Decentralized Networks" />
