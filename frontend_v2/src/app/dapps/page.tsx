@@ -1,3 +1,4 @@
+import HeroSection from "@/components/dapps/HeroSection";
 import Join from "@/components/events/Join";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
@@ -7,7 +8,7 @@ export default function Dapps() {
         <main className="min-h-screen flex flex-col">
             <MaxWrapper className="flex flex-col w-full">
                 {/* Hero section */}
-                <div></div>
+            <HeroSection/>
             </MaxWrapper>
             <Join />
         </main>
