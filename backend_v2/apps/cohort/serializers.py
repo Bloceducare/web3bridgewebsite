@@ -1,14 +1,47 @@
 from rest_framework import serializers
 from cohort import models
 
+# Serializer 
+# Course Serializer
 class CourseSerializer:
-    pass
+    class List(serializers.ModelSerializer):
+        pass
+    
+    class Retrieve(serializers.ModelSerializer):
+        pass
+    
+    class Update(serializers.ModelSerializer):
+        pass
 
+# Registration Serializer
 class RegistrationSerializer:
-    pass
+    class List(serializers.ModelSerializer):
+        pass
+    
+    class Retrieve(serializers.ModelSerializer):
+        pass
+    
+    class Update(serializers.ModelSerializer):
+        pass
 
+# Participant Serializer
 class ParticipantSerializer:
-    pass
+    class List(serializers.ModelSerializer):
+        pass
+    
+    class Retrieve(serializers.ModelSerializer):
+        pass
+    
+    class Update(serializers.ModelSerializer):
+        pass
 
+# Testimonial Serializer
 class TestimonialSerializer:
-    pass
+    class List(serializers.ModelSerializer):
+        pass
+    
+    class Retrieve(serializers.ModelSerializer):
+        pass
+    
+    class Update(serializers.ModelSerializer):
+        pass
