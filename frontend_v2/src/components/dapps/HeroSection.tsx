@@ -50,11 +50,12 @@ export default function HeroSection() {
         </div>
       </div>
       <div className="my-4 flex items-center gap-6">
-        <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
-          Register for Event <MoveRight className="w-5 h-5 ml-2 " />
+        <Button className="rounded-full px-12 py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
+          Explore dApps <MoveRight className="w-5 h-5 ml-2 " />
         </Button>
-        <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
-          Learn More
+
+        <Button className="rounded-full px-12  py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
+          Build dApps
         </Button>
       </div>
     </main>
