@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans overflow-x-hidden antialiased flex flex-col",
+          "min-h-screen bg-background overflow-x-hidden antialiased flex flex-col",
           fontSans.className
         )}>
         <ThemeProvider
@@ -35,7 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange>
           <Header />
 
-          <main className="flex-1">{children}</main>
+          <main className={`'flex-1'`}>{children}</main>
 
           <Footer />
         </ThemeProvider>
