@@ -23,23 +23,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background overflow-x-hidden antialiased flex flex-col",
-          fontSans.className
-        )}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem
+        disableTransitionOnChange>
+        <body
+          className={cn(
+            "min-h-screen overflow-x-hidden antialiased flex flex-col",
+            fontSans.className
+          )}>
           <Header />
 
           <main className={`'flex-1'`}>{children}</main>
 
           <Footer />
-        </ThemeProvider>
-      </body>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

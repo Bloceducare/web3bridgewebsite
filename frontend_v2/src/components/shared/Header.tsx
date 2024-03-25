@@ -32,10 +32,9 @@ export default function Header() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center justify-end gap-3 w-full max-w-[160px]">
-            <ModeToggle />
-          </div>
+        <div className="flex items-center justify-end gap-3 w-full max-w-[160px]">
+          <ModeToggle />
+
           <div className=" lg:hidden ">
             <MobileNavToggler />
           </div>
