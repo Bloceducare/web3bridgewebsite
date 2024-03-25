@@ -6,7 +6,7 @@ import shapeDefi from "../../../public/dapps/shape-defi.png";
 
 export const DisplayDappCards = () => {
   return (
-    <section className="w-full flex justify-center gap-8 md:py-16 py-3">
+    <section className="w-full flex items-center md:flex-row flex-col justify-center gap-8 md:py-16 py-3">
       <DappCard
         image={HydroSwap}
         description="Swap your tokens with ease. A community favorite that allows you to trade tokens with folks across the network."

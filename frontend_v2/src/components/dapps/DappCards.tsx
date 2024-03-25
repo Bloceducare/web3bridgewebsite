@@ -12,8 +12,8 @@ export default function DappCard({
   image: StaticImageData;
 }) {
   return (
-    <div className=" w-[405px]">
-      <div className="rounded-xl">
+    <div className="md:w-[405px]">
+      <div className="">
         <Image
           priority
           src={image}
@@ -24,7 +24,7 @@ export default function DappCard({
         />
       </div>
       <div className="mt-3 light:text-[#313131]">
-        <p className="text-lg leading-7 mb-4 font-light">{description}</p>
+        <p className="text-md max-w-[400px] md:text-lg leading-7 mb-4 font-light">{description}</p>
         <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
           {buttonText}
         </Button>

@@ -91,6 +91,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: '__Encode_Sans_Expanded_f3725f';
   }
 }
 
