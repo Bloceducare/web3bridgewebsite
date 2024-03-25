@@ -9,7 +9,7 @@ import ProfileSection from "./ProfileSection";
 
 export default function HeroSection() {
   return (
-    <section className="flex flex-col items-center justify-end lg:h-[70vh] sm:h-[60vh] md:h-[70vh] h-[70vh]  w-full relative radial-gradient">
+    <section className="flex flex-col items-center justify-end xl:h-[650px] lg:h-[700px] md:h-[70vh] sm:h-[60vh]  h-[550px]  w-full relative radial-gradient">
       <div className="xl:w-1/2 md:w-[80%] w-full flex flex-col items-center gap-4 justify-center mt-[30px]">
         <h1 className="font-semibold leading-tight md:text-5xl sm:text-4xl text-3xl text-center">
           {" "}

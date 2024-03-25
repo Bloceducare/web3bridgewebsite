@@ -13,7 +13,7 @@ export default function HeroSection() {
   return (
     <main className="pt-10 lg:pt-20  pb-6 ">
       <div className="w-full flex lg:flex-row flex-col gap-4 md:gap-10justify-between items-center">
-        <div className={`basis-1/2 text-[#1B1B1B] order-first`}>
+        <div className={`basis-1/2 light:text-[#1B1B1B] order-first`}>
           <div className="flex justify-center md:justify-start">
             {" "}
             <Pill text="Decentralized Networks" />
@@ -28,7 +28,7 @@ export default function HeroSection() {
           </p>
           <div className="flex justify-center lg:justify-start mt-4">
             <span className="flex items-center mr-5 md:mr-10">
-              <Image priority src={defi} alt="defi" className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px]" />{" "}
+              <Image priority src={defi} alt="defi" className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px] dark:text-white" />{" "}
               <p className="text-[10px] sm:text-sm md:text-md"> Decentralized Finance</p>
             </span>
             <span className="flex items-center mr-5 md:mr-10">
