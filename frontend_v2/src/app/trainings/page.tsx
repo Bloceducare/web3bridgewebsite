@@ -4,6 +4,7 @@ import MaxWrapper from "@/components/shared/MaxWrapper";
 import { Building2, Calendar, GraduationCap, MoveRight } from "lucide-react";
 import Image from "next/image";
 import Pill from "@/components/shared/pill";
+import { Button } from "@/components/ui/button";
 
 const details = [
   {
@@ -23,8 +24,8 @@ const details = [
 export default function Trainings() {
   return (
     <div className="flex flex-col">
-      <MaxWrapper className="py-10 md:py-20 lg:py-40 w-full flex">
-        <div className="w-full">
+      <MaxWrapper className="py-10 md:py-20 lg:py-40 w-full flex justify-between gap-4 relative">
+        <div className="w-full max-w-[754px]">
           <Pill text="Web 3.0 Made Easy" />
           <div className="flex flex-col my-2 gap-4">
             <h1 className="text-3xl md:text-4xl lg:text-5xl leading-10 font-semibold">
@@ -36,7 +37,7 @@ export default function Trainings() {
             </p>
           </div>
 
-          <ul className="list-item space-y-2 mt-5 md:mt-10">
+          <ul className="list-item space-y-2 my-5 md:my-10">
             {details.map((item) => (
               <li key={item.desc} className="flex items-center">
                 <item.icon className="w-4 h-4 mr-2 text-red-500" />
@@ -44,6 +45,16 @@ export default function Trainings() {
               </li>
             ))}
           </ul>
+
+          <Button className="h-14 px-6 mt-12 md:mt-16 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+            Join The next Cohort <MoveRight className="w-5 h-5 ml-2" />
+          </Button>
+        </div>
+
+        <div className="h-[536px] w-full max-w-[506px] relative flex justify-center mt-20">
+          <div className="h-full w-full bg-red-500 z-10 rounded-[48px]"></div>
+          <div className="absolute h-[341px] top-24 -left-36 w-[464px] rounded-[48px] bg-blue-500"></div>
+          <div className="absolute max-w-[376px] w-full h-[250.7px] -top-24 rounded-[48px] right-0 bg-green-500"></div>
         </div>
       </MaxWrapper>
       <MaxWrapper>

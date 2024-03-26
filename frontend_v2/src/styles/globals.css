@@ -34,14 +34,8 @@
 
     --radius: 0.5rem;
 
-    --gradient1: 0,
-      99%,
-      49%,
-      0.1;
-    --gradient2: 0,
-      99%,
-      49%,
-      0.05;
+    --gradient1: 0, 99%, 49%, 0.1;
+    --gradient2: 0, 99%, 49%, 0.05;
   }
 
   .dark {
@@ -73,14 +67,8 @@
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
 
-    --gradient1: 0,
-      99%,
-      49%,
-      0.09;
-    --gradient2: 0,
-      99%,
-      49%,
-      0.04;
+    --gradient1: 0, 99%, 49%, 0.09;
+    --gradient2: 0, 99%, 49%, 0.04;
   }
 }
 
@@ -91,7 +79,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: '__Encode_Sans_Expanded_f3725f';
+    /* font-family: '__Encode_Sans_Expanded_f3725f'; */
   }
 }
 
@@ -102,5 +90,10 @@
 }
 
 .radial-gradient {
-  background-image: radial-gradient(hsla(var(--gradient1)), hsla(var(--gradient2)), transparent, transparent);
+  background-image: radial-gradient(
+    hsla(var(--gradient1)),
+    hsla(var(--gradient2)),
+    transparent,
+    transparent
+  );
 }
