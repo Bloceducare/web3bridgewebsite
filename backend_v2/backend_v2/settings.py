@@ -58,6 +58,7 @@ PROJECT_APPS = [
     "apps.event",
     "apps.utils",
     "apps.dapp",
+    "apps.operation"
 ]
 
 INSTALLED_APPS += PROJECT_APPS
