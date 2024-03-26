@@ -57,6 +57,7 @@ PROJECT_APPS = [
     "apps.cohort",
     "apps.event",
     "apps.utils",
+    "apps.dapp",
 ]
 
 INSTALLED_APPS += PROJECT_APPS

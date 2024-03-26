@@ -1,4 +1,4 @@
-from rest_framework import decorators, response, status, viewsets
+from rest_framework import decorators, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
@@ -132,7 +132,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
         else:
             return requestUtils.error_response("Error Opening Registration", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
 
-class ParticipantViewSet(viewsets.ViewSet):
+class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
     
@@ -185,7 +185,7 @@ class ParticipantViewSet(viewsets.ViewSet):
         serializer = self.serializer_class.List(query_set, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
 
-class TestimonialViewSet(viewsets.ViewSet):
+class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Testimonial.objects.all()
     serializer_class = serializers.TestimonialSerializer
     
@@ -213,14 +213,14 @@ class TestimonialViewSet(viewsets.ViewSet):
             return requestUtils.error_response("Error Updating Testimonial", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
         
     def destroy(self, request, pk, *args, **kwargs): 
-        testimonialn_object= self.queryset.get(pk=pk)
-        testimonialn_object.delete()
+        testimonial_object= self.queryset.get(pk=pk)
+        testimonial_object.delete()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
     
     def retrieve(self, request, pk, *args, **kwargs): 
         testimonial_object= self.queryset.get(pk=pk)
-        serialized_testimonialn_obj= self.serializer_class.Retrieve(testimonial_object).data
-        return requestUtils.success_response(data=serialized_testimonialn_obj, http_status=status.HTTP_200_OK)
+        serialized_testimonial_obj= self.serializer_class.Retrieve(testimonial_object).data
+        return requestUtils.success_response(data=serialized_testimonial_obj, http_status=status.HTTP_200_OK)
     
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
