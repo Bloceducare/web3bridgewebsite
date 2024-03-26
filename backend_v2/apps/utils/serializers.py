@@ -3,9 +3,9 @@ from rest_framework import serializers
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(max_length=None, allow_empty_file=False)
+    picture = serializers.ImageField(max_length=None, allow_empty_file=False)
     
     class Meta:
         model = Image
-        fields = ['id', 'image']
+        fields = ['id', 'picture']
         

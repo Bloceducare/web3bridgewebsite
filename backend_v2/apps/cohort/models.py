@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from utils.helpers.models import BaseModelBaseMixin
+from utils.helpers.models import BaseModelBaseMixin, CloudinaryDeleteMixin
 from utils.models import Image
 from utils.enums.models import RegistrationStatus
 from .helpers.model import testimonial_image_location
@@ -43,7 +43,7 @@ class Participant(BaseModelBaseMixin, models.Model):
         return f"< {type(self).__name__}({self.last_name} {self.first_name}) >"
     
 # Testimonial model
-class Testimonial(BaseModelBaseMixin, models.Model):  
+class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  
     headline= models.CharField(_('headline'), max_length=1000, blank=False, null=False)
     full_name= models.CharField(_('last name'), max_length=255, blank=False, null=False)
     testimony= models.TextField(_("testimony"), blank=False, null=False)
@@ -51,7 +51,7 @@ class Testimonial(BaseModelBaseMixin, models.Model):
     brief= models.CharField(_('author brief'), max_length=255, blank=False, null=False)
     
     def __str__(self):
-        full_name_proceesed= self.full_name.replace(" ", "_")
-        return f"< {type(self).__name__}({full_name_proceesed})>"
+        full_name_processed= self.full_name.replace(" ", "_")
+        return f"< {type(self).__name__}({full_name_processed})>"
     
     

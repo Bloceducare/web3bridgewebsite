@@ -21,7 +21,7 @@ class CourseSerializer:
             course_obj = models.Course.objects.create(**validated_data)
             
             for image_data in images_data:
-                image_object = Image.objects.create(image=image_data)
+                image_object = Image.objects.create(picture=image_data)
                 image_object.save()
                 course_obj.images.add(image_object)
                 
@@ -55,14 +55,13 @@ class CourseSerializer:
             uploaded_images= []
             
             for image_data in images_data:
-                image_object = Image.objects.create(image=image_data)
+                image_object = Image.objects.create(picture=image_data)
                 image_object.save()
                 uploaded_images.append(image_object)
             
             if len(uploaded_images) > 0:
-                instance.images.clear()     
-                for uploaded_image in uploaded_images:
-                    instance.images.add(uploaded_image)
+                instance.images.clear() 
+                instance.images.set(uploaded_images)    
                 
             instance.name= validated_data.get('name', instance.name)
             instance.status= validated_data.get('status', instance.status)
@@ -159,7 +158,7 @@ class TestimonialSerializer:
     class List(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline" "full_name", "testimony", "picture", "brief"]
+            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
