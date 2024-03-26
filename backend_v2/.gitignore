@@ -1,0 +1,17 @@
+.env
+db.sqlite3
+
+# Ignore Python compiled bytecode files
+*.pyc
+
+# Ignore cache and temporary files
+__pycache__/
+*.py[cod]
+*.log
+*.bak
+*.swp
+*.tmp
+*.cache
+*.vscode/
+*.idea/
+**/__pycache__/
