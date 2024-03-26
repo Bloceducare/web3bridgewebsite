@@ -7,6 +7,7 @@ from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin
 class DappViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Dapp.objects.all()
     serializer_class = serializers.DappSerializer
+    admin_actions= ["create", "update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.DappSerializer.Create())
     def create(self, request, *args, **kwargs): 

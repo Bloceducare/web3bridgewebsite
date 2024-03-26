@@ -7,6 +7,7 @@ from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin
 class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset= models.Course.objects
     serializer_class= serializers.CourseSerializer
+    admin_actions= ["create", "update", "destroy", "open_course", "close_course"]
     
     @swagger_auto_schema(request_body=serializers.CourseSerializer.Create)
     def create(self, request, *args, **kwargs): 
@@ -85,7 +86,7 @@ class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet)
 class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset= models.Registration.objects
     serializer_class= serializers.RegistrationSerializer
-    admin_actions= ["destroy"]
+    admin_actions= ["create", "update", "destroy", "close_registration", "open_registration"]
     
     @swagger_auto_schema(request_body=serializers.RegistrationSerializer.Create)
     def create(self, request, *args, **kwargs): 
@@ -165,6 +166,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
+    admin_actions= ["create", "update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs): 
@@ -218,6 +220,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Testimonial.objects.all()
     serializer_class = serializers.TestimonialSerializer
+    admin_actions= ["create", "update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.TestimonialSerializer.Create())
     def create(self, request, *args, **kwargs): 

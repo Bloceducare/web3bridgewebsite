@@ -7,6 +7,7 @@ from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin
 class TeamViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Team.objects.all()
     serializer_class = serializers.TeamSerializer
+    admin_actions= ["create", "update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.TeamSerializer.Create())
     def create(self, request, *args, **kwargs): 
@@ -50,6 +51,7 @@ class TeamViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
 class MentorViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Mentor.objects.all()
     serializer_class = serializers.MentorSerializer
+    admin_actions= ["create", "update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.MentorSerializer.Create())
     def create(self, request, *args, **kwargs): 
