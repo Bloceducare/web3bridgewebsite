@@ -13,6 +13,7 @@ class Course(BaseModelBaseMixin, models.Model):
     venue= models.JSONField(_("venue"), null=False, blank=False, default=list, editable=True)
     extra_info= models.TextField(_("extra_info"), blank=False, null=False)
     images= models.ManyToManyField(Image, related_name='related_images')
+    status = models.BooleanField(default=True)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
@@ -44,15 +45,13 @@ class Participant(BaseModelBaseMixin, models.Model):
 # Testimonial model
 class Testimonial(BaseModelBaseMixin, models.Model):  
     headline= models.CharField(_('headline'), max_length=1000, blank=False, null=False)
-    last_name= models.CharField(_('last name'), max_length=255, blank=False, null=False)
-    first_name= models.CharField(_('first name'), max_length=255, blank=False, null=False)
+    full_name= models.CharField(_('last name'), max_length=255, blank=False, null=False)
     testimony= models.TextField(_("testimony"), blank=False, null=False)
     picture= models.ImageField(upload_to=testimonial_image_location, blank=False, null=False)
     brief= models.CharField(_('author brief'), max_length=255, blank=False, null=False)
     
     def __str__(self):
-        return f"< {type(self).__name__}({self.last_name} {self.first_name}) >"
+        full_name_proceesed= self.full_name.replace(" ", "_")
+        return f"< {type(self).__name__}({full_name_proceesed})>"
     
-    
-        
     

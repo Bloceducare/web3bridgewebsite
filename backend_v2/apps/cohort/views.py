@@ -50,6 +50,36 @@ class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet)
         serializer = self.serializer_class.List(self.queryset, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
     
+    @decorators.action(detail=False, methods=["get"])
+    def all_opened(self, request):
+        query_set= self.queryset.filter(status= True)
+        serializer = self.serializer_class.List(query_set, many=True)
+        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+    @decorators.action(detail=True, methods=["put"])
+    def open_course(self, request, pk):
+        course_object= self.queryset.get(pk=pk)
+        serializer = self.serializer_class.Update(course_object, data={"status": True})
+        
+        if serializer.is_valid():
+            course_obj= serializer.save()
+            serialized_course_obj= self.serializer_class.Retrieve(course_obj).data
+            return requestUtils.success_response(data=serialized_course_obj, http_status=status.HTTP_200_OK)
+        else:
+            return requestUtils.error_response("Error Opening Course", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
+    
+    @decorators.action(detail=True, methods=["put"])
+    def close_course(self, request, pk):
+        course_object= self.queryset.get(pk=pk)
+        serializer = self.serializer_class.Update(course_object, data={"status": False})
+        
+        if serializer.is_valid():
+            course_obj= serializer.save()
+            serialized_course_obj= self.serializer_class.Retrieve(course_obj).data
+            return requestUtils.success_response(data=serialized_course_obj, http_status=status.HTTP_200_OK)
+        else:
+            return requestUtils.error_response("Error Opening Course", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
+    
 
     
 class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):

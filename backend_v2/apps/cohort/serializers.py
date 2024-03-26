@@ -33,21 +33,21 @@ class CourseSerializer:
         
         class Meta:
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
     
     class Retrieve(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
         
         class Meta:
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
     
     class Update(serializers.ModelSerializer):
         images = serializers.ListField(child=serializers.ImageField(), required=False)
         
         class Meta:
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
             extra_kwargs= { field: {'required': False} for field in fields}
             
         def update(self, instance, validated_data):
@@ -65,6 +65,7 @@ class CourseSerializer:
                     instance.images.add(uploaded_image)
                 
             instance.name= validated_data.get('name', instance.name)
+            instance.status= validated_data.get('status', instance.status)
             instance.description= validated_data.get('description', instance.description)
             instance.venue= validated_data.get('venue', instance.venue)
             instance.extra_info= validated_data.get('extra_info', instance.extra_info)
@@ -147,7 +148,7 @@ class TestimonialSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "last_name", "first_name", "testimony", "picture", "brief"]
+            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
         
         def create(self, validated_data):
@@ -158,26 +159,25 @@ class TestimonialSerializer:
     class List(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "last_name", "first_name", "testimony", "picture", "brief"]
+            fields = ["id", "headline" "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "last_name", "first_name", "testimony", "picture", "brief"]
+            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "last_name", "first_name", "testimony", "picture", "brief"]
+            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
             extra_kwargs= { field: {'required': False} for field in fields}
             
         def update(self, instance, validated_data):
             instance.headline= validated_data.get('headline', instance.headline)
-            instance.last_name= validated_data.get('last_name', instance.last_name)
-            instance.first_name= validated_data.get('first_name', instance.first_name)
+            instance.full_name= validated_data.get('full_name', instance.full_name)
             instance.testimony= validated_data.get('testimony', instance.testimony)
             instance.picture= validated_data.get('picture', instance.picture)
             instance.brief= validated_data.get('brief', instance.brief)
