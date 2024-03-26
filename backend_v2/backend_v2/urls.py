@@ -29,12 +29,12 @@ schema_view = get_schema_view(
       description="WEB3Bridge backend app",
    ),
    public=True,
-   permission_classes=[permissions.AllowAny],
+   permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(f'{settings.API_VERSION}/cohort/', include('apps.cohort.urls', namespace=settings.API_VERSION)),
-    re_path(r"^swagger(?P<format>\.json|\.yaml)$",schema_view.without_ui(cache_timeout=0),name="schema-json",),
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path(f'api/{settings.API_VERSION}/cohort/', include('cohort.urls', namespace=settings.API_VERSION), name='cohort'),
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

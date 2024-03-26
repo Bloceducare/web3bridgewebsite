@@ -10,17 +10,18 @@ from .helpers.model import testimonial_image_location
 class Course(BaseModelBaseMixin, models.Model):  
     name= models.CharField(_('course name'), max_length=1000, blank=False, null=False)
     description= models.TextField(_("description"), blank=False, null=False)
-    venue= models.JSONField(_("venue"), null=True, blank=True, default=list, editable=True)
+    venue= models.JSONField(_("venue"), null=False, blank=False, default=list, editable=True)
     extra_info= models.TextField(_("extra_info"), blank=False, null=False)
-    images= models.ManyToManyField(Image)
+    images= models.ManyToManyField(Image, related_name='related_images')
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
     
 # Registration openings model
 class Registration(BaseModelBaseMixin, models.Model):
+    name= models.CharField(_('registration name'), max_length=1000, blank=False, null=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    is_open = models.BooleanField(default=False)
+    is_open = models.BooleanField(default=True)
     start_date = models.DateField()
     end_date = models.DateField()
     
@@ -35,6 +36,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     email= models.CharField(_('email'), max_length=255, blank=False, null=False)
     registration = models.ForeignKey(Registration, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=RegistrationStatus.choices(), default=RegistrationStatus.PENDING.value) 
+    about= models.TextField(_("about"), blank=False, null=False)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.last_name} {self.first_name}) >"

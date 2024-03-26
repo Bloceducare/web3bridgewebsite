@@ -12,26 +12,29 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
-from .literals import (API_VERSION)
+from .literals import (API_VERSION, ENVIROMENT)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 API_VERSION= config('API_VERSION', default=API_VERSION)
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+ENVIROMENT= config('ENVIROMENT', default=ENVIROMENT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS= [
     "http://localhost:3001",
     "http://localhost:3000", 
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    "utils.authentication.backends.JWTAuthenticationByAuthServer",
 ]
 
 # Application definition
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    "rest_framework_simplejwt",
     'cloudinary_storage',
     "drf_yasg",
 ]
@@ -66,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.middlewares.ErrorMiddleware',
 ]
 
 ROOT_URLCONF = 'backend_v2.urls'
@@ -127,6 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_SERVER_URL = 'https://web3bridgeauth-y4kb.onrender.com/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -153,7 +159,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#-----------------------DRF------------------------------
+#_______________________DRF_________________________
 DEFAULT_RENDERER_CLASSES = (
     'rest_framework.renderers.JSONRenderer',
 )
@@ -164,11 +170,9 @@ if DEBUG:
     )
     
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+        'rest_framework.permissions.AllowAny',),
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 13,
@@ -179,7 +183,7 @@ REST_FRAMEWORK = {
     
 }
 
-#--------------------cloudinary--------------------------
+#______________________cloudinary______________________
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME' : config('cloudinary_cloud_name'),
     'API_KEY' : config('cloudinary_api_key'),
