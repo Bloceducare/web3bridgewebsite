@@ -1,10 +1,9 @@
 import HeroSection from "@/components/home/HeroSection";
 import SponsorLists from "@/components/home/SponsorLists";
 import MaxWrapper from "@/components/shared/MaxWrapper";
-import Image from "next/image";
-import cloud from "../../../public/home/cloud.png";
 import Testimonial from "@/components/home/Testimonial";
 import Counter from "@/components/home/Counter";
+import Essence from "@/components/home/Essence";
 
 
 export default function Home() {
@@ -14,8 +13,9 @@ export default function Home() {
       <div className="w-full radial-gradient">
         <SponsorLists />
         <Testimonial />
-        <Counter />
       </div>
+      <Counter />
+      <Essence />
     </MaxWrapper>
   </main>;
 }

@@ -28,7 +28,7 @@ const Testimonial = () => {
         dots: false,
         infinite: true,
         speed: 2000,
-        autoplay: true,
+        // autoplay: true,
         slidesToShow: 1,
         slidesToScroll: 1,
         initialSlide: 0,
@@ -63,7 +63,7 @@ const Testimonial = () => {
     };
 
     return (
-        <section className="w-full h-auto flex flex-col gap-3 items-center mt-16">
+        <section className="w-full h-auto flex flex-col gap-3 items-center mt-24">
             <h1 className="font-semibold leading-tight lg:text-5xl md:text-3xl text-[1.72rem] text-center">Stories From Our Students</h1>
             <p className="lg:w-[30%] md:w-[70%] w-full text-muted-foreground text-center">All around the world, our students are excemptional. See what they have to say</p>
             <main className="w-full lg:px-12 px-2 mt-6">
