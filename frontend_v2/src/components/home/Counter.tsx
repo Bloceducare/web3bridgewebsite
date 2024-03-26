@@ -28,7 +28,7 @@ const Counter = () => {
                 <ScrollTrigger onEnter={() => setCounterOn(true)} onExit={() => setCounterOn(false)}>
                     <h1 className="text-center lg:text-5xl text-4xl font-semibold text-bridgeRed">
                         {counterOn && <CountUp start={0} end={7}
-                            duration={2} delay={0} useEasing={true} />}
+                            duration={2} delay={0} useEasing={true} />}+
                     </h1>
                 </ScrollTrigger>
                 <p className="text-center text-base">Decentralized apps built</p>
