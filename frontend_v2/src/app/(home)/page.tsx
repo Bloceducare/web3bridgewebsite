@@ -2,8 +2,8 @@ import HeroSection from "@/components/home/HeroSection";
 import SponsorLists from "@/components/home/SponsorLists";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import Testimonial from "@/components/home/Testimonial";
-import Counter from "@/components/home/Counter";
 import Essence from "@/components/home/Essence";
+import Stats from "@/components/home/Stats";
 
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
         <SponsorLists />
         <Testimonial />
       </div>
-      <Counter />
+      <Stats />
       <Essence />
     </MaxWrapper>
   </main>;
