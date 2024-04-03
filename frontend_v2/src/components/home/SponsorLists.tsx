@@ -49,7 +49,7 @@ const SponsorLists = () => {
         ],
     };
     return (
-        <section className="w-full h-20 ">
+        <section className="w-full h-20 dark:bg-gray-300">
             <Slider {...settings}>
                 <Sponsor image={eth} />
                 <Sponsor image={polygon} />

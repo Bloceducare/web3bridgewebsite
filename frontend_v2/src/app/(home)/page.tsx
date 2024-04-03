@@ -4,6 +4,7 @@ import MaxWrapper from "@/components/shared/MaxWrapper";
 import Testimonial from "@/components/home/Testimonial";
 import Essence from "@/components/home/Essence";
 import Stats from "@/components/home/Stats";
+import Web3 from "@/components/home/Web3";
 
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
       </div>
       <Stats />
       <Essence />
+      <Web3 />
     </MaxWrapper>
   </main>;
 }

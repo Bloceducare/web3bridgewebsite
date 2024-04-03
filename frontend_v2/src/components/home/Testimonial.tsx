@@ -32,6 +32,9 @@ const Testimonial = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
         initialSlide: 0,
+        arrow: false,
+        // nextArrow: "",
+        // prevArrow: "",
         responsive: [
             {
                 breakpoint: 1024,
@@ -74,10 +77,10 @@ const Testimonial = () => {
             </main>
             {/* Controllers  */}
             <div className="lg:mt-6 mt-4 w-full flex justify-center gap-5 items-center md:px-6 px-3">
-                <Button onClick={previous} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-transparent" type="button">
+                <Button onClick={previous} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100" type="button">
                     <CaretLeftIcon className="w-6 h-6  " />
                 </Button>
-                <Button onClick={next} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-transparent" type="button">
+                <Button onClick={next} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100" type="button">
                     <CaretRightIcon className="w-6 h-6 " />
                 </Button>
             </div>
