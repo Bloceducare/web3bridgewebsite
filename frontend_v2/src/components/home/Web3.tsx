@@ -14,6 +14,45 @@ const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
 
 
 const Web3 = () => {
+    const data = [
+        {
+            title: "Blockchain Security",
+            text: "Understand the measures taken to protect blockchain networks, data, and transactions from unauthorized access, fraud, and other malicious activities.",
+            img: images[0]
+        }, {
+            title: "Ethereum",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[1]
+        }, {
+            title: "Solidity",
+            text: "Execute codes on decentralized networks, use contract-oriented programming and data structures.",
+            img: images[2]
+        }, {
+            title: "Foundry",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[3]
+        }, {
+            title: "EtherJS & Web3JS",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[4]
+        }, {
+            title: "Hardhat",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[5]
+        }, {
+            title: "Foundry",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[6]
+        }, {
+            title: "Zero Knowledge",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[7]
+        }, {
+            title: "Non-Fungible Tokens",
+            text: "Get everything you need to launch your career as a smart contract developer",
+            img: images[8]
+        }
+    ]
     return (
         <section className="w-full flex flex-col items-center md:gap-8 gap-8 justify-center radial-gradient lg:px-6 md:px-2 my-40">
             <div className="flex flex-col items-center gap-3 ">
@@ -21,8 +60,8 @@ const Web3 = () => {
                 <p className="w-full md:w-[70%] text-muted-foreground text-center">In <span className="text-bridgeRed">16 weeks,</span> get everything you need to launch your career in Blockchain Development through our trainings that gives you the nitty gritty of experience through practical classes.</p>
             </div>
             <main className="w-full flex flex-col items-center">
-                <SVGWrapper images={images} />
-                <Cards />
+                <SVGWrapper images={images} data={data} />
+                <Cards data={data} />
             </main>
         </section>
     )

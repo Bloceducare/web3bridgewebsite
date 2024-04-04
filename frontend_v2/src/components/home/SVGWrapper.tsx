@@ -1,7 +1,7 @@
 import Image, { StaticImageData } from "next/image"
 import SVGLine from "./SVGLine"
 
-const SVGWrapper = ({ images }: { images: StaticImageData[] }) => {
+const SVGWrapper = ({ images, data }: { images: StaticImageData[], data: { title: string, text: string, img: StaticImageData }[] }) => {
     return (
         <div className="w-[90%] h-[550px] lg:block hidden relative">
             <SVGLine />
