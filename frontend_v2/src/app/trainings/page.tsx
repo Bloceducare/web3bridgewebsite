@@ -24,17 +24,29 @@ const details = [
 export default function Trainings() {
   return (
     <div className="flex flex-col">
-      <MaxWrapper className="py-10 md:py-20 lg:py-40 w-full flex justify-between gap-4 relative">
-        <div className="w-full max-w-[754px]">
+      <MaxWrapper className="py-10 md:py-20 lg:py-40 w-full flex flex-col xl:flex-row lg:justify-between gap-4 relative">
+        <div className="w-full max-w-full xl:max-w-[754px] text-center flex flex-col items-center justify-center xl:justify-start xl:items-start xl:text-start">
           <Pill text="Web 3.0 Made Easy" />
           <div className="flex flex-col my-2 gap-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl leading-10 font-semibold">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl lg:leading-[1.2] font-semibold">
               Join 2,000+ students Becoming Web3 Developers.
             </h1>
-            <p className="w-full max-w-[581px] text-sm md:text-base lg:text-xl font-normal">
+            <p className="w-full max-w-full xl:max-w-[581px] text-sm md:text-base lg:text-xl font-normal">
               We are supporting web3 developers and startups, and lowering
               barriers of entry into the Web3 ecosystem.
             </p>
+          </div>
+
+          <div className="w-full aspect-video flex xl:hidden z-10 rounded-[30px] mt-6 mb-3 bg-[#FB8888]/50 p-3">
+            <Image
+              priority
+              src="/trainings/b-3.jpeg"
+              alt="banner-img"
+              width={536}
+              height={536}
+              quality={100}
+              className="w-full h-full object-cover rounded-[26px]"
+            />
           </div>
 
           <ul className="list-item space-y-2 my-5 md:my-10">
@@ -51,10 +63,40 @@ export default function Trainings() {
           </Button>
         </div>
 
-        <div className="h-[536px] w-full max-w-[506px] relative flex justify-center mt-20">
-          <div className="h-full w-full bg-red-500 z-10 rounded-[48px]"></div>
-          <div className="absolute h-[341px] top-24 -left-36 w-[464px] rounded-[48px] bg-blue-500"></div>
-          <div className="absolute max-w-[376px] w-full h-[250.7px] -top-24 rounded-[48px] right-0 bg-green-500"></div>
+        <div className="h-[536px] w-full max-w-[506px] relative hidden xl:flex justify-center mt-20">
+          <div className="h-full w-full z-10 rounded-r-none rounded-[48px] bg-[#FB8888]/50 p-3 pr-0">
+            <Image
+              priority
+              src="/trainings/b-3.jpeg"
+              alt="banner-img"
+              width={536}
+              height={536}
+              quality={100}
+              className="w-full h-full object-cover rounded-[40px] rounded-r-none"
+            />
+          </div>
+          <div className="absolute h-[341px] top-24 -left-36 w-[464px] rounded-r-none rounded-[48px] bg-[#FB8888]/50 p-3 pr-0">
+            <Image
+              priority
+              src="/trainings/b-2.jpeg"
+              alt="banner-img"
+              width={536}
+              height={536}
+              quality={100}
+              className="w-full h-full object-cover rounded-[40px] rounded-r-none"
+            />
+          </div>
+          <div className="absolute max-w-[376px] w-full h-[250.7px] -top-24 right-0 rounded-r-none rounded-[48px] bg-[#FB8888]/50 p-3 pr-0">
+            <Image
+              priority
+              src="/trainings/b-1.jpeg"
+              alt="banner-img"
+              width={536}
+              height={536}
+              quality={100}
+              className="w-full h-full object-cover rounded-[40px] rounded-r-none"
+            />
+          </div>
         </div>
       </MaxWrapper>
       <MaxWrapper>
