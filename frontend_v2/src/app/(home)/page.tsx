@@ -5,6 +5,7 @@ import Testimonial from "@/components/home/Testimonial";
 import Essence from "@/components/home/Essence";
 import Stats from "@/components/home/Stats";
 import Web3 from "@/components/home/Web3";
+import Web2 from "@/components/home/Web2";
 
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
       <Stats />
       <Essence />
       <Web3 />
+      <Web2 />
     </MaxWrapper>
   </main>;
 }
