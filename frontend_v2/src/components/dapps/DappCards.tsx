@@ -21,7 +21,7 @@ export default function DappCard({
           className="rounded-2xl w-full h-full"
           // width={500}
           // height={500}
-          // placeholder="blur"
+          placeholder="blur"
         />
       </div>
       <div className="mt-3 light:text-[#313131]">
