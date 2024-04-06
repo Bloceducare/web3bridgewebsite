@@ -18,9 +18,10 @@ export default function DappCard({
           priority
           src={image}
           alt="Story image"
-          className="rounded-2xl"
-          width={405}
-          height={405}
+          className="rounded-2xl w-full h-full"
+          // width={500}
+          // height={500}
+          // placeholder="blur"
         />
       </div>
       <div className="mt-3 light:text-[#313131]">
