@@ -3,6 +3,7 @@ import Image, { StaticImageData } from "next/image"
 import SVGLine from "./SVGLine"
 import { cn } from "@/lib/utils"
 import { useState } from "react";
+import { Fade } from "react-awesome-reveal";
 
 const SVGWrapper = ({ data }: { data: { title: string, text: string, img: StaticImageData }[] }) => {
 
@@ -40,7 +41,7 @@ const SVGWrapper = ({ data }: { data: { title: string, text: string, img: Static
             }
 
             {hoveredElement !== null && (
-                <div className={cn("absolute w-[400px] h-[200px] flex justify-center items-center transition-all duration-200 backdrop-blur-2xl", {
+                <Fade direction="up" className={cn("absolute w-[400px] h-[200px] flex justify-center items-center transition-all duration-200 backdrop-blur-2xl", {
                     "top-[120px] left-[100px]": hoveredElement === 0,
                     "top-[120px] left-[470px]": hoveredElement === 1,
                     "top-[120px] right-[100px]": hoveredElement === 2,
@@ -66,7 +67,7 @@ const SVGWrapper = ({ data }: { data: { title: string, text: string, img: Static
                             <Image src={data[hoveredElement].img} alt="Techs" className="w-full h-full object-contain" />
                         </div>
                     </div>
-                </div>
+                </Fade>
             )}
         </div >
     )

@@ -9,8 +9,8 @@ import img7 from "../../../public/home/foundry1.png"
 import img8 from "../../../public/home/zk.png"
 import img9 from "../../../public/home/hardhat1.png"
 import Cards from "./Cards"
-import { Button } from "../ui/button"
-import { MoveRight } from "lucide-react"
+import CTA from "./CTA"
+
 
 const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
 
@@ -66,14 +66,8 @@ const Web3 = () => {
                 <Cards data={data} />
             </main>
 
-            <main className="w-full flex flex-col gap-8 items-center mt-56 z-10">
-                <div className="w-full md:w-[40%] p-6 rounded-lg bg-red-50/80 ring-2 ring-red-200/80">
-                    <p className="text-center">You can chose between an onsite and an online training. Feeding, accommodation and internet are provided for our onsite students.</p>
-                </div>
-                <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
-                    Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
-                </Button>
-            </main>
+            <CTA />
+
         </section>
     )
 }
