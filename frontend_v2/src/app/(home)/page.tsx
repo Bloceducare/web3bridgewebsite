@@ -6,6 +6,9 @@ import Essence from "@/components/home/Essence";
 import Stats from "@/components/home/Stats";
 import Web3 from "@/components/home/Web3";
 import Web2 from "@/components/home/Web2";
+import Banner from "@/components/home/Banner";
+import Community from "@/components/home/Community";
+import FAQs from "@/components/home/FAQs";
 
 
 export default function Home() {
@@ -20,6 +23,11 @@ export default function Home() {
       <Essence />
       <Web3 />
       <Web2 />
+    </MaxWrapper>
+    <Banner />
+    <Community />
+    <MaxWrapper className="flex flex-col w-full">
+      <FAQs />
     </MaxWrapper>
   </main>;
 }

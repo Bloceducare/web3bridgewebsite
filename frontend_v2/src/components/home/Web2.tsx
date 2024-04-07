@@ -46,17 +46,17 @@ const Web2 = () => {
                             "self-center": index === 1,
                             "self-end": index === 2
                         })}>
-                            <div key={index} className={cn("w-full flex p-6 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-red-300 ring-2 ring-red-200/90 dark:ring-bridgeRed/50")}>
+                            <div key={index} className={cn("w-full flex md:p-6 p-3 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-red-300 ring-2 ring-red-200/90 dark:ring-bridgeRed/50")}>
                                 <div className="flex flex-1 flex-col gap-2">
-                                    <h3 className="font-semibold text-xl">{item.firstTitle}</h3>
-                                    <p className=" text-base">{item.text1}</p>
+                                    <h3 className="font-semibold md:text-xl text-base">{item.firstTitle}</h3>
+                                    <p className="md:text-base text-[0.7rem]">{item.text1}</p>
                                 </div>
                                 <div className="flex w-[25%] justify-center items-center">
                                     <Image src={item.img} alt="Techs" className="w-full h-full object-contain" />
                                 </div>
                                 <div className="flex flex-1 flex-col gap-2">
-                                    <h3 className="font-semibold text-xl">{item.secondTitle}</h3>
-                                    <p className=" text-base">{item.text2}</p>
+                                    <h3 className="font-semibold md:text-xl text-base">{item.secondTitle}</h3>
+                                    <p className="md:text-base text-[0.7rem]">{item.text2}</p>
                                 </div>
                             </div>
                         </Slide>
