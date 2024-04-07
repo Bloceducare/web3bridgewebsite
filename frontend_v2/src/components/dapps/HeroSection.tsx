@@ -1,18 +1,18 @@
 import Image from "next/image";
-import defi from "../../../public/dapps/defi.png";
-import gaming from "../../../public/dapps/gaming.png";
-import art from "../../../public/dapps/art.png";
 import Header from "../../../public/dapps/Header.svg";
-import headerBg from "../../../public/dapps/header-bg.png";
+import { RiAppsFill } from "react-icons/ri";
+import { GiGamepad } from "react-icons/gi";
+import { MdPalette } from "react-icons/md";
 
 import Pill from "../shared/pill";
 import { Button } from "../ui/button";
 import { MoveRight } from "lucide-react";
+import { LampContainer } from "../ui/lamp";
 
 export default function HeroSection() {
   return (
     <main className="pt-10 lg:pt-20  pb-6 ">
-      <div className="w-full flex lg:flex-row flex-col gap-4 md:gap-10justify-between items-center">
+      <div className="w-full flex lg:flex-row flex-col gap-4 md:gap-10 justify-between items-center lg:items-start">
         <div className={`basis-1/2 light:text-[#1B1B1B] order-first`}>
           <div className="flex justify-center md:justify-start">
             {" "}
@@ -28,31 +28,49 @@ export default function HeroSection() {
           </p>
           <div className="flex justify-center lg:justify-start mt-4">
             <span className="flex items-center mr-5 md:mr-10">
-              <Image priority src={defi} alt="defi" className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px] dark:text-white" />{" "}
-              <p className="text-[10px] sm:text-sm md:text-md"> Decentralized Finance</p>
+              <RiAppsFill className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px]" />
+              <p className="text-[10px] sm:text-sm md:text-md">
+                {" "}
+                Decentralized Finance
+              </p>
             </span>
             <span className="flex items-center mr-5 md:mr-10">
-              <Image priority src={gaming} alt="gaming" className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px]" />{" "}
+              <GiGamepad className="mr-2 w-[20px] h-[20px] md:w-[24px] md:h-[24px]" />
               <p className="text-[10px] sm:text-sm md:text-md">Gaming</p>
             </span>
             <span className="flex items-center">
-              <Image priority src={art} alt="defi" className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px] " />
-              <p className="text-[10px] sm:text-sm md:text-md"> Art and Collectibles</p>
+              <MdPalette className="mr-2 w-[16px] h-16px] md:w-[20px] md:h-[20px]" />
+
+              <p className="text-[10px] sm:text-sm md:text-md">
+                {" "}
+                Art and Collectibles
+              </p>
             </span>
           </div>
+          <div className="my-4 mt-10 hidden lg:flex lg:flex-row  items-center gap-6">
+        <Button className="rounded-full px-12 py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
+          Explore dApps <MoveRight className="w-5 h-5 ml-2 " />
+        </Button>
+
+        <Button className="rounded-full px-12  py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
+          Build dApps
+        </Button>
+      </div>
         </div>
 
-        <div className={`relative bg-[center_top_-10rem] radial-gradient`} >
+        <div className={`relative`}>
+          <LampContainer>
+            <Image
+              priority
+              src={Header}
+              alt="Story image"
+              className="md:w-[580px] relative sm:top-[30px] md:top-[50px]"
+            />
+          </LampContainer>
           {/* <Image src={headerBg} alt="Story imag" className="absolute top-[-120px] right-20 md:w-[680px] "/> */}
-          <Image
-            priority
-            src={Header}
-            alt="Story image"
-            className="md:w-[580px] relative top-0"
-          />
         </div>
       </div>
-      <div className="my-4 flex flex-col md:flex-row  items-center gap-6">
+      <div className="mb-4 mt-10 lg:mt-4 flex flex-col lg:hidden items-center gap-6">
         <Button className="rounded-full px-12 py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
           Explore dApps <MoveRight className="w-5 h-5 ml-2 " />
         </Button>

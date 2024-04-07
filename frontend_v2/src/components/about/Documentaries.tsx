@@ -8,7 +8,7 @@ export default function Documentaries() {
       Documentaries
       </h1>
       <p className="text-md lg:text-xl font-light text-center lg:leading-8">We have amazing stories to tell. Check out our YouTube channel.</p>
-      <iframe className="w-full aspect-video mt-4 lg:mt-0 rounded-2xl" src="https://www.youtube.com/embed/vvae4m-GqNg?si=tIOBoKv5t1zONOI0" title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin"
+      <iframe className="w-full aspect-video mt-4 lg:mt-0 rounded-2xl" src="https://www.youtube.com/embed/vvae4m-GqNg?si=tIOBoKv5t1zONOI0&rel=0 " title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin"
       ></iframe>
     </section>
   );
