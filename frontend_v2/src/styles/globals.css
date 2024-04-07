@@ -97,3 +97,12 @@
     transparent
   );
 }
+
+.linear-gradient {
+  background-image: linear-gradient(
+    hsla(var(--gradient1)),
+    hsla(var(--gradient2)),
+    transparent,
+    transparent
+  );
+}
