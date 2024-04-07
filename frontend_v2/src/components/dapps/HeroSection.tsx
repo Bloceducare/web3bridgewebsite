@@ -1,9 +1,5 @@
 import Image from "next/image";
-import defi from "../../../public/dapps/defi.png";
-import gaming from "../../../public/dapps/gaming.png";
-import art from "../../../public/dapps/art.png";
 import Header from "../../../public/dapps/Header.svg";
-import headerBg from "../../../public/dapps/header-bg.png";
 import { RiAppsFill } from "react-icons/ri";
 import { GiGamepad } from "react-icons/gi";
 import { MdPalette } from "react-icons/md";
@@ -12,7 +8,6 @@ import Pill from "../shared/pill";
 import { Button } from "../ui/button";
 import { MoveRight } from "lucide-react";
 import { LampContainer } from "../ui/lamp";
-import { useTheme } from "next-themes";
 
 export default function HeroSection() {
   return (
@@ -52,7 +47,7 @@ export default function HeroSection() {
               </p>
             </span>
           </div>
-          {/* <div className="my-4 fl flex-col md:flex-row  items-center gap-6">
+          <div className="my-4 mt-10 hidden lg:flex lg:flex-row  items-center gap-6">
         <Button className="rounded-full px-12 py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
           Explore dApps <MoveRight className="w-5 h-5 ml-2 " />
         </Button>
@@ -60,7 +55,7 @@ export default function HeroSection() {
         <Button className="rounded-full px-12  py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
           Build dApps
         </Button>
-      </div> */}
+      </div>
         </div>
 
         <div className={`relative`}>
@@ -69,13 +64,13 @@ export default function HeroSection() {
               priority
               src={Header}
               alt="Story image"
-              className="md:w-[580px] relative top-[50px]"
+              className="md:w-[580px] relative sm:top-[30px] md:top-[50px]"
             />
           </LampContainer>
           {/* <Image src={headerBg} alt="Story imag" className="absolute top-[-120px] right-20 md:w-[680px] "/> */}
         </div>
       </div>
-      <div className="my-4 flex flex-col md:flex-row items-center gap-6">
+      <div className="mb-4 mt-10 lg:mt-4 flex flex-col lg:hidden items-center gap-6">
         <Button className="rounded-full px-12 py-6 md:py-8 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
           Explore dApps <MoveRight className="w-5 h-5 ml-2 " />
         </Button>
