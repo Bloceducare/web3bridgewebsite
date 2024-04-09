@@ -12,19 +12,19 @@ export const navLinks = [
   },
   {
     name: "Trainings",
-    href: "/trainings",
+    href: "",
   },
   {
     name: "Cohorts",
-    href: "/cohorts",
+    href: "",
   },
   {
     name: "About Us",
-    href: "/about",
+    href: "",
   },
   {
     name: "Blog",
-    href: "/blog",
+    href: "",
   },
   {
     name: "dApps",
@@ -36,11 +36,11 @@ export const navLinks = [
   },
   {
     name: "Events",
-    href: "/events",
+    href: "",
   },
   {
     name: "Hire Us",
-    href: "/hire",
+    href: "",
   },
 ];
 
@@ -50,19 +50,19 @@ export const footerLinks = [
     links: [
       {
         name: "About Us",
-        path: "/about",
+        path: "",
       },
       {
         name: "Courses",
-        path: "/courses",
+        path: "",
       },
       {
         name: "Partners",
-        path: "/partners",
+        path: "",
       },
       {
         name: "Alumni",
-        path: "/alumni",
+        path: "",
       },
     ],
   },
@@ -75,15 +75,15 @@ export const footerLinks = [
       },
       {
         name: "Terms of Use",
-        path: "/terms-of-use",
+        path: "",
       },
       {
         name: "Privacy Policy",
-        path: "/privacy-policy",
+        path: "",
       },
       {
         name: "FAQ",
-        path: "/faq",
+        path: "",
       },
     ],
   },
@@ -92,19 +92,19 @@ export const footerLinks = [
     links: [
       {
         name: "Join Community",
-        path: "/community",
+        path: "",
       },
       {
         name: "Events",
-        path: "/events",
+        path: "",
       },
       {
         name: "Resources",
-        path: "/resources",
+        path: "",
       },
       {
         name: "Blog",
-        path: "/blog",
+        path: "",
       },
     ],
   },
