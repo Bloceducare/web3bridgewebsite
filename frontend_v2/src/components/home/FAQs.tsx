@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 const FAQs = () => {
     return (
         <section className="w-full lg:my-28 my-16 flex flex-col items-center md:gap-8 gap-8 justify-center radial-gradient lg:px-6 md:px-2">
-            <div className="flex flex-col items-center gap-3 ">
+            <div className="flex flex-col items-center gap-3">
                 <h1 className="font-semibold leading-tight lg:text-5xl md:text-3xl text-[1.72rem] text-center">FAQs</h1>
                 <p className="w-full text-muted-foreground text-center">Don’t worry, we are here to explain everything you might want to know</p>
             </div>
