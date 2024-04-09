@@ -21,7 +21,7 @@ API_VERSION= config('API_VERSION', default=API_VERSION)
 ENVIROMENT= config('ENVIROMENT', default=ENVIROMENT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = "secretkey"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
