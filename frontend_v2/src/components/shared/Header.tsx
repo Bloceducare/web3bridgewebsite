@@ -21,8 +21,8 @@ export default function Header() {
   return (
     <>
       <motion.div className=" fixed top-0 left-0 right-0 bg-bridgeRed origin-[0%] h-[5px] z-[42]" style={{ scaleX }} />
-      <div className="sticky top-0 inset-x-0 z-40 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">
-        <MaxWrapper className="h-full w-full flex items-center justify-between gap-10">
+      <div className=" sticky top-0 inset-x-0 z-40 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">
+        <MaxWrapper className="h-full w-full flex overflow-x-hidden items-center justify-between gap-10">
           <Logo />
 
           <div className="h-14 border rounded-full hidden bg-[#FB8888]/5 lg:flex items-center justify-center gap-6 px-6">

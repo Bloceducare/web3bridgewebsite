@@ -10,10 +10,10 @@ const FAQs = () => {
                 <p className="w-full text-muted-foreground text-center">Don’t worry, we are here to explain everything you might want to know</p>
             </div>
             <main className="w-full lg:w-[60%] md:w-[80%]">
-                <Accordion type="single" collapsible className="w-full ring-2 ring-red-200  rounded-lg">
+                <Accordion type="single" collapsible className="w-full ring-2 ring-red-200 dark:ring-bridgeRed/50  rounded-lg">
                     {
                         faqs.map((faq, index) => (
-                            <AccordionItem value={`item-${index}`} key={index} className="py-3 px-6 border-red-300">
+                            <AccordionItem value={`item-${index}`} key={index} className="py-3 px-6 border-red-300 dark:border-bridgeRed/50">
                                 <AccordionTrigger className="text-base text-start font-medium">{faq.question}</AccordionTrigger>
                                 <AccordionContent>
                                     {faq.answer}
