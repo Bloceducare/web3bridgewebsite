@@ -22,7 +22,7 @@ const Community = () => {
                     Gain access to our ever growing community to connect with brilliant minds and get the needed support for your growth.</p>
             </div>
 
-            <main className="w-full py-6 px-2 bg-gradient-to-b from-red-500/40 to-red-200/20 ">
+            <main className="w-full py-6 px-2 bg-gradient-to-b from-bridgeRed/50 to-bridgeRed/10 ">
                 <ResponsiveMasonry columnsCountBreakPoints={{ 350: 2, 750: 3, 900: 4 }}>
                     <Masonry gutter="10px">
                         {
@@ -41,7 +41,7 @@ const Community = () => {
             {/* <Button className="rounded-full md:mt-8 mt-4 px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
                 Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
             </Button> */}
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-4 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-4 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100 text-sm md:text-base dark:bg-bridgeRed dark:text-red-100">
                 Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
             </a>
         </section>

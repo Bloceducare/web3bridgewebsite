@@ -7,20 +7,16 @@ export function cn(...inputs: ClassValue[]) {
 
 export const navLinks = [
   {
-    name: "Home",
-    href: "/",
-  },
-  {
     name: "Trainings",
-    href: "",
+    href: "/trainings",
   },
   {
     name: "Cohorts",
-    href: "",
+    href: "/cohorts",
   },
   {
     name: "About Us",
-    href: "",
+    href: "/about",
   },
   {
     name: "Blog",
@@ -36,7 +32,7 @@ export const navLinks = [
   },
   {
     name: "Events",
-    href: "",
+    href: "/events",
   },
   {
     name: "Hire Us",

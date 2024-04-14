@@ -46,13 +46,13 @@ const Web2 = () => {
                             "self-center": index === 1,
                             "self-end": index === 2
                         })}>
-                            <div key={index} className={cn("w-full flex md:p-6 p-3 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-red-300 ring-2 ring-red-200/90 dark:ring-bridgeRed/50")}>
+                            <div key={index} className={cn("w-full flex md:p-6 p-3 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-bridgeRed/40 ring-2 ring-red-200/90 dark:ring-bridgeRed/40")}>
                                 <div className="flex flex-1 flex-col gap-2">
                                     <h3 className="font-semibold md:text-xl text-base">{item.firstTitle}</h3>
                                     <p className="md:text-base text-[0.7rem]">{item.text1}</p>
                                 </div>
                                 <div className="flex w-[25%] justify-center items-center">
-                                    <Image src={item.img} alt="Techs" className="w-full h-full object-contain" />
+                                    <Image src={item.img} alt="Techs" className="w-full h-full object-contain dark:invert" />
                                 </div>
                                 <div className="flex flex-1 flex-col gap-2">
                                     <h3 className="font-semibold md:text-xl text-base">{item.secondTitle}</h3>
@@ -65,7 +65,7 @@ const Web2 = () => {
                 {/* <Button className="rounded-full mt-8 px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
                     Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
                 </Button> */}
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-4 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-4 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed text-sm md:text-base dark:bg-bridgeRed dark:text-red-100 hover:text-red-100">
                     Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
                 </a>
             </main>
