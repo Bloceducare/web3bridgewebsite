@@ -10,19 +10,22 @@ import { useScroll, motion, useSpring } from "framer-motion";
 
 export default function Header() {
   const pathname = usePathname();
-  const { scrollYProgress } = useScroll()
+  const { scrollYProgress } = useScroll();
 
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
-    restDelta: 0.001
+    restDelta: 0.001,
   });
 
   return (
     <>
-      <motion.div className=" fixed top-0 left-0 right-0 bg-bridgeRed origin-[0%] h-[5px] z-[42]" style={{ scaleX }} />
+      <motion.div
+        className=" fixed top-0 left-0 right-0 bg-bridgeRed origin-[0%] h-[5px] z-[42]"
+        style={{ scaleX }}
+      />
       <div className=" sticky top-0 inset-x-0 z-40 w-full py-3 lg:pt-5 bg-background backdrop-blur-xl">
-        <MaxWrapper className="h-full w-full flex overflow-x-hidden items-center justify-between gap-10">
+        <MaxWrapper className="h-full w-full flex items-center justify-between gap-10">
           <Logo />
 
           <div className="h-14 border rounded-full hidden bg-[#FB8888]/5 lg:flex items-center justify-center gap-6 px-6">
@@ -42,11 +45,10 @@ export default function Header() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-end gap-3 w-full max-w-[160px]">
-              <ModeToggle />
-            </div>
-            <div className=" lg:hidden ">
+          <div className="flex items-center justify-end gap-3 flex-1 max-w-[160px]">
+            <ModeToggle />
+
+            <div className="lg:hidden">
               <MobileNavToggler />
             </div>
           </div>
