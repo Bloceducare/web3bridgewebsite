@@ -35,9 +35,9 @@ CORS_ALLOWED_ORIGINS= [
 ]
 
 
-AUTHENTICATION_BACKENDS = [
-    "utils.authentication.backends.JWTAuthenticationByAuthServer",
-]
+# AUTHENTICATION_BACKENDS = [
+#     "utils.authentication.backends.JWTAuthenticationByAuthServer",
+# ]
 
 # Application definition
 
