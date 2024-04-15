@@ -22,7 +22,7 @@ export default function TeamCard({
           height={230}
         />
       </div>
-      <div className="mt-3 text-[#1B1B1B]">
+      <div className="mt-3 light:text-[#1B1B1B]">
         <h3 className="font-semibold text-lg leading-6 mb-1">{name}</h3>
         <p className="text-sm leading-7 text-light">{role}</p>
       </div>

@@ -1,6 +1,6 @@
 import HeroSection from "@/components/events/HeroSection";
-import Join from "@/components/events/Join";
 import UpComing from "@/components/events/UpComing";
+import Join from "@/components/shared/Join";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 

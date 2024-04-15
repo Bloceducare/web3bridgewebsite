@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/shared/Header";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import Footer from "@/components/shared/Footer";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
