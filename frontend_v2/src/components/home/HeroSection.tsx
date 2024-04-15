@@ -15,7 +15,7 @@ const HeroSection = () => {
             <main className="w-full h-full flex justify-center items-center">
 
                 {/* first circle  */}
-                <motion.div className="lg:w-[900px] relative md:w-[600px] w-[350px] lg:h-[900px] md:h-[600px] h-[350px] bg-transparent md:border-4 border-2 dark:border-2 border-red-100 border-dashed dark:border-red-500/20 rounded-full flex justify-center items-center" animate={{ rotate: 360 }}
+                <motion.div className="lg:w-[900px] relative md:w-[600px] w-[350px] lg:h-[900px] md:h-[600px] h-[350px] bg-transparent md:border-4 border-2 dark:border-2 border-red-100/60 border-dashed dark:border-red-500/20 rounded-full flex justify-center items-center outline-dashed outline-2 md:outline-4 dark:outline-2 outline-red-100/50 dark:outline-red-500/15 lg:outline-offset-[120px] md:outline-offset-[80px] outline-offset-[45px]" animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, repeatType: "loop", ease: "linear", duration: 60 }}>
 
                     <Image src={heroImg2} alt="image" className="w-20 h-20 rounded-full absolute top-[50%] -right-10 border-2 border-bridgeRed hidden md:block" priority />
@@ -23,13 +23,13 @@ const HeroSection = () => {
                     <Image src={heroImg3} alt="image" className="w-20 h-20 rounded-full absolute top-[50%] -left-10 border-2 border-bridgeRed hidden md:block" priority />
 
                     {/* second circle  */}
-                    <motion.div className="lg:w-[650px] relative md:w-[450px] w-[270px] lg:h-[650px] md:h-[450px] h-[270px] bg-red-100/20 dark:bg-transparent md:border-4 border-2 border-dashed dark:border-2 border-red-100 dark:border-red-500/20 rounded-full flex justify-center items-center" animate={{ rotate: -360 }}
+                    <motion.div className="lg:w-[650px] relative md:w-[450px] w-[270px] lg:h-[650px] md:h-[450px] h-[270px] bg-red-100/20 dark:bg-transparent md:border-4 border-2 border-dashed dark:border-2 border-red-100/80 dark:border-red-500/20 rounded-full flex justify-center items-center md:outline-none outline-dashed outline-2 outline-red-100 dark:outline-red-500/10 md:outline-offset-0  md:outline-0 outline-offset-[130px]" animate={{ rotate: -360 }}
                         transition={{ repeat: Infinity, repeatType: "reverse", repeatDelay: 1, ease: "linear", duration: 30 }}>
 
                         <Image src={heroImg1} alt="image" className="w-16 h-16 rounded-full absolute top-[50%] -right-8 border-2 border-bridgeRed hidden md:block" priority />
 
                         {/* third circle  */}
-                        <div className="lg:w-[450px] md:w-[300px] w-[190px] lg:h-[450px] md:h-[300px] h-[190px] bg-red-100/30 dark:bg-bridgeRed/10 border-4  dark:border-2 border-red-100 dark:border-red-500/20 rounded-full flex justify-center items-center"></div>
+                        <div className="lg:w-[450px] md:w-[300px] w-[190px] lg:h-[450px] md:h-[300px] h-[190px] bg-red-100/30 dark:bg-bridgeRed/10 border-4  dark:border-2 border-red-100 dark:border-red-500/20 rounded-full flex  justify-center items-center"></div>
 
                     </motion.div>
 
@@ -43,7 +43,7 @@ const HeroSection = () => {
                     {/* <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
                         Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
                     </Button> */}
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-4 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed text-sm md:text-base capitalize hover:bg-bridgeRed dark:bg-bridgeRed dark:text-red-100 hover:text-red-100">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform" target="_blank" rel="noreferrer" className="rounded-full flex items-center px-12 py-3.5 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed text-sm md:text-base capitalize hover:bg-bridgeRed dark:bg-bridgeRed dark:text-red-100 hover:text-red-100">
                         Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
                     </a>
                 </div>

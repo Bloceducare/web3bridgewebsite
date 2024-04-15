@@ -42,11 +42,9 @@ const Web2 = () => {
                 {
                     data.map((item, index) => (
                         <Slide key={index} direction="left" className={cn("lg:w-[55%] md:w-[70%] w-full", {
-                            "self-start": index === 0,
-                            "self-center": index === 1,
-                            "self-end": index === 2
+                            "self-end": index === 1,
                         })}>
-                            <div key={index} className={cn("w-full flex md:p-6 p-3 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-bridgeRed/40 ring-2 ring-red-200/90 dark:ring-bridgeRed/40")}>
+                            <div key={index} className={cn("w-full flex md:p-6 p-3 justify-between items-center gap-4 rounded-lg bg-gradient-to-b from-red-100/80 to-transparent dark:from-background ring-2 ring-red-200/90 dark:ring-red-100/40 shadow-lg shadow-red-100/40")}>
                                 <div className="flex flex-1 flex-col gap-2">
                                     <h3 className="font-semibold md:text-xl text-base">{item.firstTitle}</h3>
                                     <p className="md:text-base text-[0.7rem]">{item.text1}</p>

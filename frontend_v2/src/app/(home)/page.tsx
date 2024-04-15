@@ -16,7 +16,7 @@ export default function Home() {
     <MaxWrapper className="flex flex-col w-full">
       <HeroSection />
       <div className="w-full radial-gradient">
-        <SponsorLists />
+        {/* <SponsorLists /> */}
         <Testimonial />
       </div>
       <Stats />
