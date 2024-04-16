@@ -117,6 +117,9 @@ DATABASES = {
     }
 }
 
+# Determine the database configuration based on environment
+if ENVIROMENT == 'production':
+    DATABASES['default'] = DATABASES['production']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
