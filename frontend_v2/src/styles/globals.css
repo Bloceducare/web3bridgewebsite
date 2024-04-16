@@ -114,8 +114,10 @@
   );
 }
 
+
 .slick-prev,
 .slick-next {
   display: none !important;
   visibility: hidden !important;
 }
+

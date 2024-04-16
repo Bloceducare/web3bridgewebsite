@@ -25,6 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+
       <body
         className={cn(
           "min-h-screen overflow-x-hidden antialiased flex flex-col bg-background dark:bg-[url('../../public/dark.svg')] bg-fixed",
@@ -40,8 +41,8 @@ export default function RootLayout({
           <main className={`'flex-1'`}>{children}</main>
 
           <Footer />
-        </ThemeProvider>
-      </body>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }
