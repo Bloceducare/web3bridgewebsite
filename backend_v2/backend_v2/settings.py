@@ -31,7 +31,8 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOWED_ORIGINS= [
     "http://localhost:3001",
     "http://localhost:3000",
-    "https://web3bridgewebsitebackend.onrender.com",
+    "https://websitev2-cyan.vercel.app",
+    "https://www.web3bridge.com",
 ]
 
 
@@ -116,6 +117,9 @@ DATABASES = {
     }
 }
 
+# Determine the database configuration based on environment
+if ENVIROMENT == 'production':
+    DATABASES['default'] = DATABASES['production']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
