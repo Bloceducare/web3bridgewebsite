@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/shared/Header";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import Footer from "@/components/shared/Footer";
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
@@ -25,16 +25,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="light"
-        enableSystem
-        disableTransitionOnChange>
-        <body
-          className={cn(
-            "min-h-screen overflow-x-hidden antialiased flex flex-col",
-            fontSans.className
-          )}>
+
+      <body
+        className={cn(
+          "min-h-screen overflow-x-hidden antialiased flex flex-col bg-background dark:bg-[url('../../public/dark.svg')] bg-fixed",
+          fontSans.className
+        )}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange>
           <Header />
 
           <main className={`'flex-1'`}>{children}</main>
