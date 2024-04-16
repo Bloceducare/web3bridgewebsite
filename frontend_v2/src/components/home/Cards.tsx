@@ -10,7 +10,7 @@ const Cards = ({ data }: { data: { title: string, text: string, img: StaticImage
             {
                 data.map((item, index) => (
                     <Slide key={index} direction={index % 2 === 0 ? "left" : "right"} className="w-full">
-                        <div className="w-full p-4 flex items-center rounded-md ring-2 ring-red-200/90 dark:ring-bridgeRed/80 bg-red-100/40 dark:bg-transparent gap-2">
+                        <div className="w-full p-4 flex items-center rounded-md ring-2 ring-red-200/90 dark:ring-bridgeRed/40 bg-red-100/40 dark:bg-transparent gap-2">
                             <div className="flex flex-col gap-2 flex-1">
                                 <h3 className="font-semibold text-lg">{item.title}</h3>
                                 <p className=" text-sm">{item.text}</p>

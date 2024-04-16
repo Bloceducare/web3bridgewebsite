@@ -23,7 +23,7 @@ const Essence = () => {
                 <h1 className="font-semibold leading-tight lg:text-5xl md:text-3xl text-[1.72rem] text-center">Our Essence</h1>
                 <p className="text-muted-foreground text-center">We are training blockchain developers in Africa</p>
             </div>
-            <div className="w-full grid lg:grid-cols-2 lg:grid-rows-1 md:grid-rows-3 lg:h-[340px] md:h-[500px] h-auto rounded-lg border-2 border-bridgeRed/20 dark:border-bridgeRed/50 gap-6 lg:overflow-hidden">
+            <div className="w-full grid lg:grid-cols-2 lg:grid-rows-1 md:grid-rows-3 lg:h-[340px] md:h-[500px] h-auto rounded-lg border-2 border-bridgeRed/20 dark:border-bridgeRed/40 gap-6 lg:overflow-hidden">
                 <div className="flex w-full h-full justify-center items-center md:px-8 py-6 px-6 md:py-0">
                     <p className="text-lg">We are working on building sustainable Web3 economy in Africa through remote and onsite Web3 development training, supporting web3 developers and startups, and lowering barriers of entry into the Web3 ecosystem.</p>
                 </div>

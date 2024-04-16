@@ -12,6 +12,7 @@ config.prod.env
 # Byte-compiled / optimized / DLL files
 
 __pycache__/
+__migrations__/
 *.py[cod]
 *$py.class
 blog/migrations/
