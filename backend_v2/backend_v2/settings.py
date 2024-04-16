@@ -31,8 +31,8 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOWED_ORIGINS= [
     "http://localhost:3001",
     "http://localhost:3000",
-    "https://websitev2-cyan.vercel.app/",
-    "https://www.web3bridge.com/",
+    "https://websitev2-cyan.vercel.app",
+    "https://www.web3bridge.com",
 ]
 
 
