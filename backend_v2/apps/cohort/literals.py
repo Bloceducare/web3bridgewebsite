@@ -1,0 +1,12 @@
+
+APP_NAME='cohort'
+
+COURSE_BASE_NAME="course"
+REGISTRATION_BASE_NAME="registration"
+PARTICIPANT_BASE_NAME="participant"
+TESTIMONIAL_BASE_NAME="testimonial"
+
+COURSE_REF_NAME="course"
+REGISTRATION_REF_NAME="registration"
+PARTICIPANT_REF_NAME="participant"
+TESTIMONIAL_REF_NAME="testimonial"

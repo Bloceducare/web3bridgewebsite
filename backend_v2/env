@@ -1,0 +1,11 @@
+DB_HOST
+DB_NAME
+DB_PASSWORD
+DB_PORT
+DB_USER
+secret_key
+cloudinary_cloud_name
+cloudinary_api_key
+cloudinary_api_secret
+DEBUG
+ENVIROMENT
