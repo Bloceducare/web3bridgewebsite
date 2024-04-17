@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import Footer from "@/components/shared/Footer";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
           "min-h-screen overflow-x-hidden antialiased flex flex-col bg-background dark:bg-[url('../../public/dark.svg')] bg-fixed",
           fontSans.className
         )}>
+        <Toaster />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -37,7 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange>
           <Header />
 
-          <main className={`'flex-1'`}>{children}</main>
+          <main className="flex-1">{children}</main>
 
           <Footer />
         </ThemeProvider>

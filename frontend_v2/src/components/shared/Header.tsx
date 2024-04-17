@@ -29,10 +29,10 @@ export default function Header() {
           <Logo />
 
           <div className="h-14 border rounded-full hidden bg-[#FB8888]/5 lg:flex items-center justify-center gap-6 px-6">
-            {navLinks.map((link) => (
+            {navLinks.map((link, _key) => (
               <Link
                 href={link.href}
-                key={link.href}
+                key={_key}
                 className={cn(
                   "text-base font-normal text-muted-foreground  transition",
                   {

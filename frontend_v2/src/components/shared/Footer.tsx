@@ -55,9 +55,9 @@ export default function Footer() {
                 </h1>
 
                 <div className="mt-6 flex flex-col gap-4">
-                  {route.links.map((link) => (
+                  {route.links.map((link, _key) => (
                     <Link
-                      key={link.path}
+                      key={_key}
                       href={link.path}
                       className={cn("text-sm font-medium capitalize", {
                         "text-red-500": link.path == pathname,
