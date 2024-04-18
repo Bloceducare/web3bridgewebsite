@@ -17,7 +17,7 @@ const CustomButton: FC<CustomButtonTypes> = ({
     <Button
       className={cn(
         variant == "default"
-          ? "h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-primary w-max"
+          ? "h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-max"
           : "h-14 px-6 rounded-full border-2 ring-2 ring-red-200 border-red-100 text-primary w-max",
         className
       )}>

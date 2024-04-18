@@ -7,6 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 export const navLinks = [
   {
+    name: "Home",
+    href: "/",
+  },
+  {
     name: "Trainings",
     href: "/trainings",
   },

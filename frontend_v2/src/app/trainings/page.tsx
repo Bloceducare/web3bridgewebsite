@@ -126,23 +126,23 @@ export default function Trainings() {
                     <Pill text="Online" />
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center flex-col md:flex-row gap-4">
                     <CustomButton
                       variant="default"
-                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10">
+                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
                       Register For Training{" "}
                       <MoveRight className="w-5 h-5 ml-2" />
                     </CustomButton>
                     <CustomButton
                       variant="outline"
-                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10">
+                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
                       Learn More
                     </CustomButton>
                   </div>
                 </div>
 
-                <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 relative">
-                  <div className="rounded-full w-64 h-64 absolute bg-background top-0 right-5 z-10 overflow-hidden">
+                <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 mt-4 md:mt-0 relative">
+                  <div className="rounded-full h-48 w-48 md:w-64 md:h-64 absolute bg-background top-0 right-5 z-10 overflow-hidden">
                     <Image
                       src="/trainings/1.png"
                       alt="trainings"
@@ -152,7 +152,7 @@ export default function Trainings() {
                       priority
                     />
                   </div>
-                  <div className="rounded-full w-64 h-64 absolute bg-background bottom-0 left-5 overflow-hidden">
+                  <div className="rounded-full h-48 w-48 md:w-64 md:h-64 absolute bg-background bottom-0 left-5 overflow-hidden">
                     <Image
                       src="/trainings/2.png"
                       alt="trainings"

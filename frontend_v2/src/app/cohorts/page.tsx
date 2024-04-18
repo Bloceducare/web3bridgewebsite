@@ -151,10 +151,10 @@ export default function CohortsPage() {
         <div className="flex flex-col-reverse xl:flex-row items-center gap-20 justify-between mt-4 radial-gradient">
           <div className="flex flex-col pl-6 pr-2">
             <div className="flex flex-col w-full md:w-[576px] relative">
-              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 font-semibold">
+              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 dark:bg-transparent backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 dark:text-red-100 font-semibold">
                 1
               </div>
-              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 rounded-xl border-2 ring-2 ring-red-200 border-red-100">
+              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 dark:from-red-100/5 dark:to-red-50/5 rounded-xl border-2 ring-2 ring-red-200 border-red-100 dark:border-red-100/30">
                 <h3 className="text-lg md:text-2xl mb-2 font-semibold">
                   Our Telegram Community
                 </h3>
@@ -176,10 +176,10 @@ export default function CohortsPage() {
             />
             {/* path */}
             <div className="flex flex-col w-full md:w-[576px] relative">
-              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 font-semibold">
+              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 dark:bg-transparent backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 dark:text-red-100 font-semibold">
                 2
               </div>
-              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 rounded-xl border-2 ring-2 ring-red-200 border-red-100">
+              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 dark:from-red-100/5 dark:to-red-50/5 rounded-xl border-2 ring-2 ring-red-200 border-red-100 dark:border-red-100/30">
                 <h3 className="text-lg md:text-2xl mb-2 font-semibold">
                   Application Phase
                 </h3>
@@ -201,10 +201,10 @@ export default function CohortsPage() {
             />
             {/* path */}
             <div className="flex flex-col w-full md:w-[576px] relative">
-              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 font-semibold">
+              <div className="w-[51.6px] h-[51.6px] rounded-full border-x-2 ring-2 ring-red-500 border-red-300 absolute -top-5 -left-5 bg-red-200/50 dark:bg-transparent backdrop-blur-sm flex items-center justify-center text-[28px] text-red-500 dark:text-red-100 font-semibold">
                 3
               </div>
-              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 rounded-xl border-2 ring-2 ring-red-200 border-red-100">
+              <div className="w-full h-max p-6 bg-gradient-to-b from-red-100 to-red-50 dark:from-red-100/5 dark:to-red-50/5 rounded-xl border-2 ring-2 ring-red-200 border-red-100 dark:border-red-100/30">
                 <h3 className="text-lg md:text-2xl mb-2 font-semibold">
                   Interview Phase
                 </h3>
