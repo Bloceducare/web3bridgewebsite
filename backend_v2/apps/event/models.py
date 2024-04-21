@@ -1,18 +1,20 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
 
 # Create your models here.
 # Events model
-class Event(models.Model):
-    title = models.CharField(_('title'), max_length=255)
-    description = models.TextField(_('description'), blank=True, null=True)
-    start_datetime = models.DateTimeField(_('start datetime'))
-    end_datetime = models.DateTimeField(_('end datetime'))
-    location = models.CharField(_('location'), max_length=255, blank=True, null=True)
-  
+class Event(models.Model): 
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    date = models.DateField()
+    time = models.TimeField()
+    time_zone = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='event/images')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        app_label= "event" 
+
     def __str__(self):
         return self.title
-
-    def get_absolute_url(self):
-        return reverse('event-detail', kwargs={'pk': self.pk})
