@@ -89,6 +89,13 @@
   }
 }
 
+.dark-bg {
+  background: url("../../public/dark.svg");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
 .radial-gradient {
   background-image: radial-gradient(
     hsla(var(--gradient1)),
@@ -107,8 +114,10 @@
   );
 }
 
+
 .slick-prev,
 .slick-next {
   display: none !important;
   visibility: hidden !important;
 }
+
