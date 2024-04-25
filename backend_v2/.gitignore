@@ -9,9 +9,11 @@ secret_settings.py
 config.dev.env
 config.prod.db.env
 config.prod.env
+backendEnv
 # Byte-compiled / optimized / DLL files
 
 __pycache__/
+__migrations__/
 *.py[cod]
 *$py.class
 blog/migrations/
@@ -151,3 +153,20 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+.env
+db.sqlite3
+
+# Ignore Python compiled bytecode files
+*.pyc
+
+# Ignore cache and temporary files
+__pycache__/
+*.py[cod]
+*.log
+*.bak
+*.swp
+*.tmp
+*.cache
+*.vscode/
+*.idea/
+**/__pycache__/

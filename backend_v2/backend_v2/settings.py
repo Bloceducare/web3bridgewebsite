@@ -10,28 +10,35 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
+from .literals import (API_VERSION, ENVIROMENT)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+API_VERSION= config('API_VERSION', default=API_VERSION)
+ENVIROMENT= config('ENVIROMENT', default=ENVIROMENT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("secret_key")
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS= [
     "http://localhost:3001",
-    "http://localhost:3000", 
+    "http://localhost:3000",
+    "https://websitev2-cyan.vercel.app",
+    "https://www.web3bridge.com",
 ]
+
+
+# AUTHENTICATION_BACKENDS = [
+#     "utils.authentication.backends.JWTAuthenticationByAuthServer",
+# ]
 
 # Application definition
 
@@ -44,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    "rest_framework_simplejwt",
     'cloudinary_storage',
     "drf_yasg",
 ]
@@ -51,7 +59,9 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     "apps.cohort",
     "apps.event",
-    "apps.utils"
+    "apps.utils",
+    "apps.dapp",
+    "apps.operation"
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -65,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.middlewares.ErrorMiddleware',
 ]
 
 ROOT_URLCONF = 'backend_v2.urls'
@@ -96,7 +107,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    
     "production": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("DB_NAME"),
@@ -107,6 +117,9 @@ DATABASES = {
     }
 }
 
+# Determine the database configuration based on environment
+if ENVIROMENT == 'production':
+    DATABASES['default'] = DATABASES['production']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -126,6 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_SERVER_URL = 'https://web3bridgeauth-y4kb.onrender.com'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -144,7 +158,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -152,7 +168,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#-----------------------DRF------------------------------
+#_______________________DRF_________________________
 DEFAULT_RENDERER_CLASSES = (
     'rest_framework.renderers.JSONRenderer',
 )
@@ -163,11 +179,9 @@ if DEBUG:
     )
     
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+        'rest_framework.permissions.AllowAny',),
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 13,
@@ -178,7 +192,7 @@ REST_FRAMEWORK = {
     
 }
 
-#--------------------cloudinary--------------------------
+#______________________cloudinary______________________
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME' : config('cloudinary_cloud_name'),
     'API_KEY' : config('cloudinary_api_key'),
