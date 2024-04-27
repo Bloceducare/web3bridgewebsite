@@ -9,6 +9,7 @@ secret_settings.py
 config.dev.env
 config.prod.db.env
 config.prod.env
+backendEnv
 # Byte-compiled / optimized / DLL files
 
 __pycache__/
