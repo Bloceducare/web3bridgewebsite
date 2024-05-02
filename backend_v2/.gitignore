@@ -152,7 +152,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-.env
+.env    
 db.sqlite3
 
 # Ignore Python compiled bytecode files
