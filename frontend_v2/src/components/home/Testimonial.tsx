@@ -66,7 +66,7 @@ const Testimonial = () => {
     };
 
     return (
-        <section className="w-full h-auto flex flex-col gap-3 items-center mt-24">
+        <section className="w-full h-auto flex flex-col gap-3 items-center md:mt-24">
             <h1 className="font-semibold leading-tight lg:text-5xl md:text-3xl text-[1.72rem] text-center">Stories From Our Students</h1>
             <p className="lg:w-[30%] md:w-[70%] w-full text-muted-foreground text-center">All around the world, our students are excemptional. See what they have to say</p>
             <main className="w-full lg:px-12 px-2 mt-6">
@@ -77,11 +77,11 @@ const Testimonial = () => {
             </main>
             {/* Controllers  */}
             <div className="lg:mt-6 mt-4 w-full flex justify-center gap-5 items-center md:px-6 px-3">
-                <Button onClick={previous} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100" type="button">
-                    <CaretLeftIcon className="w-6 h-6  " />
+                <Button onClick={previous} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100 dark:bg-bridgeRed dark:text-red-100" type="button">
+                    <CaretLeftIcon className="w-6 h-6" />
                 </Button>
-                <Button onClick={next} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100" type="button">
-                    <CaretRightIcon className="w-6 h-6 " />
+                <Button onClick={next} className="rounded-lg px-4 py-4 border-2 ring-2 ring-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100 dark:bg-bridgeRed dark:text-red-100" type="button">
+                    <CaretRightIcon className="w-6 h-6" />
                 </Button>
             </div>
         </section>

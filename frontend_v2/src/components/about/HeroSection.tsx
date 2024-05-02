@@ -6,6 +6,7 @@ import Star2 from "../../../public/about/Star2.png";
 import Periwinkle from "../../../public/about/Periwinkle.png";
 import Star from "../../../public/about/Star.png";
 import ProfileSection from "./ProfileSection";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -21,11 +22,13 @@ export default function HeroSection() {
           much more.
         </p>
         <div className="mt-4 items-center md:gap-8 gap-4">
-          <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
-          Join The next Cohort <MoveRight className="w-5 h-5 ml-2 " />
-          </Button>
+          <Link href="/trainings">
+            <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
+              Join The next Cohort <MoveRight className="w-5 h-5 ml-2 " />
+            </Button>
+          </Link>
         </div>
-        <ProfileSection/>
+        <ProfileSection />
       </div>
 
       <Image

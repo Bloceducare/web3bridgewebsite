@@ -1,11 +1,12 @@
 from django.db import models
-from utils.helpers.models import BaseModelBaseMixin
+from utils.helpers.models import BaseModelBaseMixin, CloudinaryDeleteMixin
 from .helpers.model import dapp_image_location
 from django.utils.translation import gettext_lazy as _
 
+
 # Model
 # dapp model
-class Dapp(BaseModelBaseMixin, models.Model):  
+class Dapp(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  
     name= models.CharField(_('dapp name'), max_length=250, blank=False, null=False)
     url= models.URLField(_('dapp url'), max_length=1000, blank=False, null=False)
     description= models.TextField(_("description"), blank=False, null=False)

@@ -17,17 +17,19 @@ class IsAuthenticatedByAuthServer(permissions.BasePermission):
 
         try:
             # Verify token against authentication server
-            response = requests.post(settings.AUTH_SERVER_URL + "/api/token/verify/", headers={'Authorization': token})
+            response = requests.post(settings.AUTH_SERVER_URL + "/api/token/verify/", json={"token": token})
+            
             if response.status_code != 200:
                 raise RequestException("Error authenticating from auth server")
 
-            user_data = response.json()
-            # Check if the user has permission (e.g., is_admin)
-            is_admin = user_data.get('is_admin', False)
+            response = response.json()
+            user_data = response.get("user", {})
 
-            # Customize permission logic based on your requirements
-            # For example, you might want to allow access only to admin users:
-            return is_admin
+            # Check if the user has admin role
+            if user_data.get("role") == "admin":
+                return True
+            else:
+                return False
 
         except Exception as e:
             raise RequestException(str(e))
