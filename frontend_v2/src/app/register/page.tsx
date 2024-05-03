@@ -116,6 +116,26 @@ export default function RegistrationPage() {
             />
             <FormField
               control={form.control}
+              name="number"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-[15px] font-medium">
+                    Github Profile Link
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="Link to your Github Profile "
+                      className="h-14 shadow-none px-4"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="country"
               render={({ field }) => (
                 <FormItem className="space-y-1 w-full">
