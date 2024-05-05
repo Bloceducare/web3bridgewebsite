@@ -1,15 +1,21 @@
 "use client";
 import Slider from "react-slick";
-import eth from "../../../public/home/eth.png";
-import polygon from "../../../public/home/polygon2.png";
-import hydro from "../../../public/home/hydro.png";
-import Nahmi from "../../../public/home/nahmii.png";
-import push from "../../../public/home/Epns.png";
-import crevatal from "../../../public/home/crevatal.png";
-import kernel from "../../../public/home/kernel.png";
 import Sponsor from "./Sponsor";
+import { useEffect, useState } from "react";
+
 
 const SponsorLists = () => {
+  const [data, setData] = useState<null | []>(null)
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/operation/partner/all/`)
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data.data);
+      });
+
+  }, [])
+
   const settings = {
     dots: false,
     infinite: true,
@@ -49,15 +55,13 @@ const SponsorLists = () => {
     ],
   };
   return (
-    <section className="w-full h-20 dark:bg-gray-300 mb-24">
+    <section className="w-full dark:bg-gray-300 mb-24">
       <Slider {...settings}>
-        <Sponsor image={eth} />
-        <Sponsor image={polygon} />
-        <Sponsor image={hydro} />
-        <Sponsor image={Nahmi} />
-        <Sponsor image={push} />
-        <Sponsor image={crevatal} />
-        <Sponsor image={kernel} />
+        {
+          data?.map((item: any, index: number) => (
+            <Sponsor image={item.picture} url={item.url} name={item.name} key={index} />
+          ))
+        }
       </Slider>
     </section>
   );
