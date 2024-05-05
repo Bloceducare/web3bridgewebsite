@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import CustomButton from "@/components/shared/CustomButton";
-import { Info, Loader2, MoveRight } from "lucide-react";
+import { CheckCircle, Info, Loader2, MoveRight } from "lucide-react";
 import { coursesSchema, formSchema, otherSchema } from "@/lib/validators";
 import { countries } from "country-data-list";
 import {
@@ -41,27 +41,68 @@ const courses = [
 export default function RegistrationPage() {
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState<FormDataType | null>();
 
   const nextStep = () => {
-    setStep((prevStep) => prevStep + 1);
+    setIsUpdatingSteps(true);
+
+    const timeout = setTimeout(() => {
+      setStep((prevStep) => prevStep + 1);
+      setIsUpdatingSteps(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
   };
 
-  useEffect(() => {
-    if (step === 2) {
-      setIsUpdatingSteps(true);
+  const submitData = async () => {
+    if (!formData) return;
 
-      const timeout = setTimeout(() => {
-        setIsUpdatingSteps(false);
-      }, 2000);
+    try {
+      setIsRegistering(true);
+      toast.loading("Registering...");
 
-      return () => clearTimeout(timeout);
+      const requestOptions: any = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      };
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/registration/`,
+        requestOptions
+      );
+
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Failed to register. Please try again.");
+      }
+
+      const result = await response.json(); // Assuming the response is JSON
+      toast.success("Registration successful!", {
+        description: `Welcome aboard, ${formData.name.split(" ")[0]}!`,
+      });
+      nextStep();
+      setFormData(null);
+      console.log(result);
+    } catch (error) {
+      console.error("Error during registration:", error);
+      toast.error("Oops! Something went wrong", {
+        description: "Please try registering again",
+      });
+    } finally {
+      setIsRegistering(false);
+      toast.dismiss();
     }
-  }, [step]);
+  };
 
-  if (formData?.walletAddress !== "") {
-    console.log(formData);
-  }
+  /**
+   * Motivation: My journey into coding began with a curiosity-driven desire to enhance a game I loved playing. This initial spark evolved into a passion for problem-solving and creativity, as I discovered the power of coding to bring ideas to life. Motivated by the endless opportunities in the tech industry and the chance to contribute to innovative solutions, I continue to be inspired by the impact coding can have on shaping the future.
+   * Archievement: I aim to gain a deeper understanding of decentralized technologies like blockchain and smart contracts. My goal is to develop skills that will empower me to contribute to the innovation and growth of the decentralized web, unlocking new opportunities for collaboration, transparency, and decentralization in various industries.
+   * Wallet Address: 0xC0E11e7674B3267175569e1c42b85bB5554aFEB4
+   */
 
   const props = {
     step,
@@ -69,6 +110,8 @@ export default function RegistrationPage() {
     setFormData,
     formData,
     isUpdatingSteps,
+    submitData,
+    isRegistering,
   };
 
   return (
@@ -78,7 +121,7 @@ export default function RegistrationPage() {
       ) : step === 2 ? (
         <PersonalInformation {...props} />
       ) : (
-        <OtherInformation {...props} />
+        step === 3 && <OtherInformation {...props} />
       )}
     </MaxWrapper>
   );
@@ -104,7 +147,7 @@ const SelectCourse = ({
     },
   });
 
-  function onNextForm(values: z.infer<typeof coursesSchema>) {
+  function onSubmit(values: z.infer<typeof coursesSchema>) {
     nextStep();
     setFormData({ ...formData, course: values.course });
   }
@@ -118,7 +161,7 @@ const SelectCourse = ({
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onNextForm)}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="mt-6 flex flex-col items-center gap-4">
           <FormField
             control={form.control}
@@ -410,16 +453,18 @@ const PersonalInformation = ({
 
 const OtherInformation = ({
   step,
-  nextStep,
   setFormData,
   formData,
   isUpdatingSteps,
+  submitData,
+  isRegistering,
 }: {
-  nextStep: () => void;
   step: number;
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
+  isRegistering: boolean;
+  submitData: () => void;
 }) => {
   const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
@@ -434,6 +479,7 @@ const OtherInformation = ({
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof otherSchema>) {
     setFormData({ ...formData, ...values });
+    submitData();
   }
 
   return (
@@ -540,9 +586,9 @@ const OtherInformation = ({
 
           <CustomButton
             variant="default"
-            disabled={isUpdatingSteps}
+            disabled={isRegistering || isUpdatingSteps}
             className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
-            {isUpdatingSteps ? (
+            {isRegistering || isUpdatingSteps ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
               </>
