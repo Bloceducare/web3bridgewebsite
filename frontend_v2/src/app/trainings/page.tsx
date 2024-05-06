@@ -1,10 +1,12 @@
+"use client";
+
 import Join from "@/components/shared/Join";
-import CustomButton from "@/components/shared/CustomButton";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import { Building2, Calendar, GraduationCap, MoveRight } from "lucide-react";
 import Image from "next/image";
 import Pill from "@/components/shared/pill";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const details = [
   {
@@ -22,6 +24,8 @@ const details = [
 ];
 
 export default function Trainings() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col">
       <MaxWrapper className="py-10 md:py-20 lg:py-40 w-full flex flex-col xl:flex-row lg:justify-between gap-4 relative">
@@ -100,7 +104,7 @@ export default function Trainings() {
         </div>
       </MaxWrapper>
       <MaxWrapper>
-        {Array.from({ length: 5 }).map((_, _key) => (
+        {Array.from({ length: 1 }).map((_, _key) => (
           <section
             key={_key}
             className="py-10 md:py-20 flex flex-col gap-5 lg:gap-10 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
@@ -127,17 +131,15 @@ export default function Trainings() {
                   </div>
 
                   <div className="flex items-center flex-col md:flex-row gap-4">
-                    <CustomButton
-                      variant="default"
-                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
+                    <Button
+                      onClick={() => router.push("/trainings/something")}
+                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max">
                       Register For Training{" "}
                       <MoveRight className="w-5 h-5 ml-2" />
-                    </CustomButton>
-                    <CustomButton
-                      variant="outline"
-                      className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
+                    </Button>
+                    <Button className="h-14 px-6 rounded-full border-2 ring-2 ring-red-200 border-red-100 text-primary bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
                       Learn More
-                    </CustomButton>
+                    </Button>
                   </div>
                 </div>
 
