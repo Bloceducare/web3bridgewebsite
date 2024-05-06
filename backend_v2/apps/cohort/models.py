@@ -21,14 +21,13 @@ class Course(BaseModelBaseMixin, models.Model):
 # Registration openings model
 class Registration(BaseModelBaseMixin, models.Model):
     name= models.CharField(_('registration name'), max_length=1000, blank=False, null=False)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     is_open = models.BooleanField(default=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     registrationFee = models.CharField(_('registration fee'), max_length=50, blank=True, null=True)
     
     def __str__(self):
-        return f"< {type(self).__name__}({self.course.name} {self.start_date}-{self.end_date}) >"
+        return f"< {type(self).__name__}({self.name} {self.start_date}-{self.end_date}) >"
     
 # Participant model
 class Participant(BaseModelBaseMixin, models.Model): 
@@ -45,6 +44,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     gender = models.CharField(_('gender'), max_length=20, blank=False, null=True)  
     github = models.URLField(_('github url'), max_length=250, blank=True, null=True)  
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
     
     class Meta:
         unique_together = ('email', 'registration',)

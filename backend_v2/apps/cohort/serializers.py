@@ -76,7 +76,7 @@ class RegistrationSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
         
         def create(self, validated_data):
@@ -85,29 +85,25 @@ class RegistrationSerializer:
             return registration_obj
         
     class List(serializers.ModelSerializer):
-        course= CourseSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
-        course= CourseSerializer.Retrieve(read_only=True)
-        
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
             extra_kwargs= { field: {'required': False} for field in fields}
             
         def update(self, instance, validated_data):
-            instance.course= validated_data.get('course', instance.course)
             instance.name= validated_data.get('name', instance.name)
             instance.is_open= validated_data.get('is_open', instance.is_open)
             instance.start_date= validated_data.get('start_date', instance.start_date)
@@ -131,12 +127,14 @@ class ParticipantSerializer:
             return participation_obj
                 
     class List(serializers.ModelSerializer):
+        course= CourseSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Participant
             fields = "__all__"
             ref_name= PARTICIPANT_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
+        course= CourseSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Participant
             fields = "__all__"
@@ -145,7 +143,7 @@ class ParticipantSerializer:
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", "city", "country", "duration", "gender", "github", "number"]
+            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", "city", "country", "duration", "gender", "github", "number", "course"]
             extra_kwargs= { field: {'required': False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
         
@@ -163,6 +161,7 @@ class ParticipantSerializer:
             instance.gender= validated_data.get('gender', instance.gender) 
             instance.github= validated_data.get('github', instance.github) 
             instance.number= validated_data.get('number', instance.number) 
+            instance.course= validated_data.get('course', instance.course)
                         
             instance.save()
             return instance
