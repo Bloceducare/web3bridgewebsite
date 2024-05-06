@@ -76,7 +76,7 @@ class RegistrationSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "start_date", "end_date"]
+            fields = ["id", "name", "course", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
         
         def create(self, validated_data):
@@ -88,7 +88,7 @@ class RegistrationSerializer:
         course= CourseSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date"]
+            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
@@ -96,13 +96,13 @@ class RegistrationSerializer:
         
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date"]
+            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "course", "is_open", "start_date", "end_date"]
+            fields = ["id", "name", "course", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
             extra_kwargs= { field: {'required': False} for field in fields}
             
@@ -112,6 +112,7 @@ class RegistrationSerializer:
             instance.is_open= validated_data.get('is_open', instance.is_open)
             instance.start_date= validated_data.get('start_date', instance.start_date)
             instance.end_date= validated_data.get('end_date', instance.end_date)
+            instance.registrationFee= validated_data.get('registrationFee', instance.registrationFee)
             instance.save()
             return instance
 
@@ -122,6 +123,12 @@ class ParticipantSerializer:
             model = models.Participant
             exclude = ["status"]
             ref_name= PARTICIPANT_REF_NAME
+        
+        def create(self, validated_data):
+            print(validated_data)
+            participation_obj = models.Participant.objects.create(**validated_data)
+            participation_obj.save()
+            return participation_obj
                 
     class List(serializers.ModelSerializer):
         class Meta:
@@ -138,9 +145,27 @@ class ParticipantSerializer:
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            fields = ["last_name", "first_name", "wallet_address", "email", "registration", "status", "about"]
+            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", "city", "country", "duration", "gender", "github", "number"]
             extra_kwargs= { field: {'required': False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
+        
+        def update(self, instance, validated_data):
+            instance.name= validated_data.get('name', instance.name)
+            instance.wallet_address= validated_data.get('wallet_address', instance.wallet_address)  
+            instance.email= validated_data.get('email', instance.email) 
+            instance.registration= validated_data.get('registration', instance.registration)
+            instance.status= validated_data.get('status', instance.status)
+            instance.motivation= validated_data.get('motivation', instance.motivation) 
+            instance.achievement= validated_data.get('achievement', instance.achievement) 
+            instance.city= validated_data.get('city', instance.city) 
+            instance.country= validated_data.get('country', instance.country) 
+            instance.duration= validated_data.get('duration', instance.duration) 
+            instance.gender= validated_data.get('gender', instance.gender) 
+            instance.github= validated_data.get('github', instance.github) 
+            instance.number= validated_data.get('number', instance.number) 
+                        
+            instance.save()
+            return instance
 
 # Testimonial Serializer
 class TestimonialSerializer:

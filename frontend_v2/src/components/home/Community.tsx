@@ -7,12 +7,13 @@ import img4 from "../../../public/home/community4.png";
 import img5 from "../../../public/home/community5.png";
 import img6 from "../../../public/home/community6.png";
 import img7 from "../../../public/home/community7.png";
+import img8 from "../../../public/home/community8.png";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
 
-const images = [img1, img2, img3, img4, img5, img6, img7];
+const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const Community = () => {
   return (

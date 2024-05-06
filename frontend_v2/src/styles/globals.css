@@ -114,10 +114,12 @@
   );
 }
 
-
 .slick-prev,
 .slick-next {
   display: none !important;
   visibility: hidden !important;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}

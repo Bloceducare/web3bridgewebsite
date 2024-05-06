@@ -13,7 +13,11 @@ const Banner = () => {
           <Image
             src={banner}
             alt="Banner"
+            width={1440}
+            height={885}
             className="w-full h-full object-cover"
+            priority
+            quality={100}
           />
         </div>
         <div className="flex flex-col items-center gap-5 px-3 lg:px-0">
