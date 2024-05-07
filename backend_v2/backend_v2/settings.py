@@ -34,6 +34,8 @@ CORS_ALLOWED_ORIGINS= [
     "https://websitev2-cyan.vercel.app",
     "https://www.web3bridge.com",
     "http://*",
+    "https://*",
+    "https://www.web3bridgeafrica.com",
 ]
 
 
