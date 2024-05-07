@@ -1,3 +1,5 @@
+"use client";
+
 import { MoveRight } from "lucide-react";
 import MaxWrapper from "../shared/MaxWrapper";
 import { Button } from "../ui/button";
