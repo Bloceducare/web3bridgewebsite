@@ -10,5 +10,5 @@ interface FormDataType {
   duration: string;
   motivation: string;
   achievement: string;
-  walletAddress: string;
+  wallet_address: string;
 }

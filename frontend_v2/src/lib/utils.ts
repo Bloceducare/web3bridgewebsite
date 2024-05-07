@@ -193,3 +193,9 @@ export const TeamMembers = [
     image: "/about/Team12.png",
   },
 ];
+
+export const isValidEthereumAddress = (address: string) => {
+  // Ethereum address regex pattern
+  const pattern = /^(0x)?[0-9a-fA-F]{40}$/;
+  return pattern.test(address);
+};
