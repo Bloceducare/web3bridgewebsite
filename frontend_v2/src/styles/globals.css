@@ -114,6 +114,15 @@
   );
 }
 
+.sponsor-gradient {
+  background-image: radial-gradient(
+    hsla(var(--gradient1)),
+    hsla(var(--gradient2)),
+    transparent,
+    transparent
+  );
+}
+
 .slick-prev,
 .slick-next {
   display: none !important;
