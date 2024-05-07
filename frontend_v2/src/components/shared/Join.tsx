@@ -1,11 +1,8 @@
 import { MoveRight } from "lucide-react";
 import MaxWrapper from "../shared/MaxWrapper";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 
 const Join = () => {
-  const router = useRouter();
-
   return (
     <section className="w-full lg:py-24 py-20 bg-gradient-to-r mb-28 from-transparent to-bridgeRed/10">
       <MaxWrapper className="w-full lg:px-16 md:px-8 px-4">
@@ -21,9 +18,7 @@ const Join = () => {
               learning experience with our program.
             </p>
           </div>
-          <Button
-            onClick={() => router.push("/register")}
-            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-transparent">
+          <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-transparent">
             Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
           </Button>
         </div>
