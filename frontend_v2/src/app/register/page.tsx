@@ -41,7 +41,7 @@ export default function RegistrationPage() {
   const { data, isLoading } = useFetchAllCourses();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
-  const regId = allReg.map((item: any) => item?.id);
+  const regId = allReg?.map((item: any) => item?.id);
 
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
