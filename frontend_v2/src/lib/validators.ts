@@ -1,19 +1,5 @@
 import { z } from "zod";
 
-export const coursesSchema = z.object({
-  course: z.enum(
-    [
-      "HTML, CSS, and JavaScript",
-      "Node.js and React.js with TypeScript",
-      "Solidity",
-      "Go-Ethereum",
-    ],
-    {
-      required_error: "Please select a course.",
-    }
-  ),
-});
-
 export const formSchema = z.object({
   name: z
     .string()
@@ -42,7 +28,7 @@ export const otherSchema = z.object({
   duration: z.string().max(30),
   motivation: z.string().min(2).max(1000),
   achievement: z.string().min(2).max(1000),
-  walletAddress: z
+  wallet_address: z
     .string({ required_error: "Please enter your wallet address" })
     .min(2),
 });

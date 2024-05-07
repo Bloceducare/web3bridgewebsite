@@ -1,5 +1,5 @@
 interface FormDataType {
-  course: string;
+  course: number;
   name: string;
   email: string;
   number: string;
@@ -10,5 +10,5 @@ interface FormDataType {
   duration: string;
   motivation: string;
   achievement: string;
-  walletAddress: string;
+  wallet_address: string;
 }

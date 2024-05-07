@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import CustomButton from "@/components/shared/CustomButton";
 import { CheckCircle, Info, Loader2, MoveRight } from "lucide-react";
-import { coursesSchema, formSchema, otherSchema } from "@/lib/validators";
+import { formSchema, otherSchema } from "@/lib/validators";
 import { countries } from "country-data-list";
 import {
   Select,
@@ -30,19 +30,34 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { useFetchAllRegistration, useFetchSingleCourse } from "@/hooks";
+import { Label } from "@/components/ui/label";
 
-const courses = [
-  "HTML, CSS, and JavaScript",
-  "Node.js and React.js with TypeScript",
-  "Solidity",
-  "Go-Ethereum",
-];
+export default function RegistrationPage({
+  params,
+}: {
+  params: { slug: number };
+}) {
+  const slug = Number(params.slug);
+  const { isLoading, isError, course } = useFetchSingleCourse(slug);
 
-export default function RegistrationPage() {
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [formData, setFormData] = useState<FormDataType | null>();
+  const [formData, setFormData] = useState<FormDataType | null>({
+    course: Number(slug),
+    name: "",
+    email: "",
+    number: "",
+    github: "",
+    country: "",
+    city: "",
+    gender: "",
+    duration: "4 Months",
+    motivation: "",
+    achievement: "",
+    wallet_address: "",
+  });
 
   const nextStep = () => {
     setIsUpdatingSteps(true);
@@ -55,54 +70,58 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
+  function isValidEthereumAddress(address: string) {
+    var pattern = /^(0x)?[0-9a-fA-F]{40}$/;
+    return pattern.test(address);
+  }
+
   const submitData = async () => {
     if (!formData) return;
+    const isValid = isValidEthereumAddress(formData.wallet_address);
+    // 0xB6B0746f8137Db1E788597CFcD818e2B3bfF6324
 
-    try {
-      setIsRegistering(true);
-      toast.loading("Registering...");
+    if (isValid === false) {
+      return toast.error("Please provide a valid wallet address");
+    } else {
+      try {
+        setIsRegistering(true);
+        toast.loading("Registering...");
+        console.log(formData);
 
-      const requestOptions: any = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      };
+        const requestOptions: any = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        };
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/registration/`,
-        requestOptions
-      );
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
+          requestOptions
+        );
 
-      if (!response.ok) {
-        console.log(response);
-        throw new Error("Failed to register. Please try again.");
+        const result = await response.json();
+
+        if (result.success === false) {
+          console.log(result);
+          toast.error(result.message);
+          return false;
+        }
+
+        nextStep();
+        setFormData(null);
+      } catch (error) {
+        console.error("Error during registration:", error);
+        toast.error("Oops! Something went wrong", {
+          description: "Please try registering again",
+        });
+      } finally {
+        setIsRegistering(false);
+        toast.dismiss();
       }
-
-      const result = await response.json(); // Assuming the response is JSON
-      toast.success("Registration successful!", {
-        description: `Welcome aboard, ${formData.name.split(" ")[0]}!`,
-      });
-      nextStep();
-      setFormData(null);
-      console.log(result);
-    } catch (error) {
-      console.error("Error during registration:", error);
-      toast.error("Oops! Something went wrong", {
-        description: "Please try registering again",
-      });
-    } finally {
-      setIsRegistering(false);
-      toast.dismiss();
     }
   };
-
-  /**
-   * Motivation: My journey into coding began with a curiosity-driven desire to enhance a game I loved playing. This initial spark evolved into a passion for problem-solving and creativity, as I discovered the power of coding to bring ideas to life. Motivated by the endless opportunities in the tech industry and the chance to contribute to innovative solutions, I continue to be inspired by the impact coding can have on shaping the future.
-   * Archievement: I aim to gain a deeper understanding of decentralized technologies like blockchain and smart contracts. My goal is to develop skills that will empower me to contribute to the innovation and growth of the decentralized web, unlocking new opportunities for collaboration, transparency, and decentralization in various industries.
-   * Wallet Address: 0xC0E11e7674B3267175569e1c42b85bB5554aFEB4
-   */
 
   const props = {
     step,
@@ -112,17 +131,23 @@ export default function RegistrationPage() {
     isUpdatingSteps,
     submitData,
     isRegistering,
+    course,
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      {step === 1 ? (
-        <SelectCourse {...props} />
-      ) : step === 2 ? (
+      <SelectCourse {...props} />
+      {/* {step === 1 ? (
         <PersonalInformation {...props} />
+      ) : step === 2 ? (
+        <OtherInformation {...props} />
       ) : (
-        step === 3 && <OtherInformation {...props} />
-      )}
+        step === 3 && <SuccessForm />
+      )} */}
     </MaxWrapper>
   );
 }
@@ -140,16 +165,14 @@ const SelectCourse = ({
   formData: any;
   isUpdatingSteps: boolean;
 }) => {
-  const form = useForm<z.infer<typeof coursesSchema>>({
-    resolver: zodResolver(coursesSchema),
-    defaultValues: {
-      course: "HTML, CSS, and JavaScript",
-    },
-  });
+  const [selectedValue, setSelectedValue] = useState("");
+  const { isLoading, isError, registrations } = useFetchAllRegistration();
 
-  function onSubmit(values: z.infer<typeof coursesSchema>) {
+  console.log(selectedValue);
+
+  function onSubmit() {
     nextStep();
-    setFormData({ ...formData, course: values.course });
+    // setFormData({ ...formData, course: values.course });
   }
 
   return (
@@ -159,7 +182,28 @@ const SelectCourse = ({
         <p className="text-[#FA0101] font-bold text-base">{step} of 3</p>
       </div>
 
-      <Form {...form}>
+      <form className="mt-6 flex flex-col items-center gap-4">
+        <RadioGroup
+          onValueChange={(e) => setSelectedValue(e)}
+          // defaultValu
+          className="flex flex-col">
+          {registrations?.map((course: any) => (
+            <div className="flex items-center gap-3" key={course.id}>
+              <RadioGroupItem
+                id={course.id}
+                value={course.id}
+                className="ring-1 border border-red-500 ring-red-500"
+              />
+
+              <Label htmlFor={course.id} className="font-normal capitalize">
+                {course.name}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </form>
+
+      {/* <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="mt-6 flex flex-col items-center gap-4">
@@ -173,17 +217,19 @@ const SelectCourse = ({
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     className="flex flex-col">
-                    {courses.map((course) => (
+                    {registrations?.map((course: any) => (
                       <FormItem
                         className="flex items-center gap-3"
-                        key={course}>
+                        key={course.id}>
                         <FormControl>
                           <RadioGroupItem
-                            value={course}
+                            value={course.id}
                             className="ring-1 border border-red-500 ring-red-500"
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">{course}</FormLabel>
+                        <FormLabel className="font-normal capitalize">
+                          {course.name}
+                        </FormLabel>
                       </FormItem>
                     ))}
                   </RadioGroup>
@@ -208,7 +254,7 @@ const SelectCourse = ({
             )}
           </CustomButton>
         </form>
-      </Form>
+      </Form> */}
     </div>
   );
 };
@@ -219,12 +265,14 @@ const PersonalInformation = ({
   setFormData,
   formData,
   isUpdatingSteps,
+  course,
 }: {
   nextStep: () => void;
   step: number;
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
+  course?: any;
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -232,7 +280,9 @@ const PersonalInformation = ({
       name: "",
       email: "",
       number: "",
-      github: "",
+      github: course?.name.includes("Web2")
+        ? "https://github.com/web3bridge"
+        : "",
       country: "",
       city: "",
       gender: "male",
@@ -321,27 +371,29 @@ const PersonalInformation = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="github"
-            render={({ field }) => (
-              <FormItem className="space-y-1 w-full">
-                <FormLabel className="text-xs md:text-sm font-medium">
-                  Github Profile Link
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="text"
-                    name="github"
-                    placeholder="Link to your Github Profile "
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {course?.name.includes("Web3") && (
+            <FormField
+              control={form.control}
+              name="github"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-xs md:text-sm font-medium">
+                    Github Profile Link
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      name="github"
+                      placeholder="Link to your Github Profile "
+                      className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="country"
@@ -458,6 +510,7 @@ const OtherInformation = ({
   isUpdatingSteps,
   submitData,
   isRegistering,
+  course,
 }: {
   step: number;
   setFormData: any;
@@ -465,14 +518,15 @@ const OtherInformation = ({
   isUpdatingSteps: boolean;
   isRegistering: boolean;
   submitData: () => void;
+  course: any;
 }) => {
   const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
     defaultValues: {
-      duration: "4 month",
+      duration: course?.name.includes("Web2") ? "3 month" : "4 Month",
       motivation: "",
       achievement: "",
-      walletAddress: "",
+      wallet_address: "",
     },
   });
 
@@ -558,7 +612,7 @@ const OtherInformation = ({
           />
           <FormField
             control={form.control}
-            name="walletAddress"
+            name="wallet_address"
             render={({ field }) => (
               <FormItem className="space-y-1 w-full">
                 <FormLabel className="text-xs md:text-sm font-medium">
@@ -569,7 +623,7 @@ const OtherInformation = ({
                   <Input
                     {...field}
                     type="text"
-                    name="walletAddress"
+                    name="wallet_address"
                     autoComplete="off"
                     placeholder="Paste your wallet address"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
@@ -600,6 +654,20 @@ const OtherInformation = ({
           </CustomButton>
         </form>
       </Form>
+    </div>
+  );
+};
+
+const SuccessForm = () => {
+  return (
+    <div className="max-w-[400px] md:max-w-[529px] w-full p-6 md:p-10 pt-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
+      <div className="flex gap-1 items-center justify-center text-center flex-col">
+        <CheckCircle className="w-16 h-16 md:w-20 md:h-20 text-green-500 mb-3 animate-bounce" />
+        <h1 className="text-lg md:text-xl font-semibold">Thank You!</h1>
+        <p className="text-sm md:text-base">
+          You submission has been sent successfully
+        </p>
+      </div>
     </div>
   );
 };
