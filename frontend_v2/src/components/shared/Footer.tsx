@@ -34,12 +34,12 @@ export default function Footer() {
             action="https://c75e802e.sibforms.com/serve/MUIFALe4lAOyLtL5vTm4hUf2XWF8FBC_TcuQ0kg1mauaBFLU8O8M5dnWtIJRiLGFZb3FDU-mU-H6Je0wsVrAV_5fBy6Xxt9j3xLoBuy_DWo7I2HJ7rNIDyBGPsBx_ZO_UDXheNqbd0vZKQiZCZBAwWNw0H0FwGt10qUK-VRlj807pjEZfs_uJqM8CK2gVfF9BL0pv9DohGVZYrwK"
             method="post"
             className="mt-auto ">
-            <div className="mt-10 flex items-center gap-4">
+            <div className="mt-10 flex items-center flex-col md:flex-row gap-4">
               <Input
                 placeholder="Email address"
                 className="rounded-full h-12 px-4 text-white"
               />
-              <Button className="h-12 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-white hover:bg-transparent">
+              <Button className="h-12 w-full md:w-max rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-white hover:bg-transparent">
                 Subscribe <MoveRight className="w-5 h-5 ml-2" />
               </Button>
             </div>

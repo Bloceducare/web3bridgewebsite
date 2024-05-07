@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 # Testimonial image storage location
 def testimonial_image_location(instance, filename):
@@ -9,10 +12,29 @@ def testimonial_image_location(instance, filename):
 
 
 
-def send_registration_success_mail(email):
-    subject = 'Registration Success'
-    message = 'Thank you for registering!'
-    from_email = settings.EMAIL_HOST_USER  # Use your email settings here
-    recipient_list = [email]
 
-    send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+def send_registration_success_mail(email, course_id, participant):
+    from cohort.models import Course
+    try:
+        course = Course.objects.get(pk=course_id)
+        if course.id in [2, 3]:
+            subject = 'Web2 Registration Success'
+            template_name = 'cohort/web2_registration_email.html'
+        elif course.id == 4:
+            subject = 'Web3 Registration Success'
+            template_name = 'cohort/web3_registration_email.html'
+        else:
+            subject = 'Other Registration Success'
+            template_name = 'other_registration_email.html' 
+
+        context = {'name': participant}
+        message = render_to_string(template_name, context)
+
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [email]
+
+        send_mail(subject, '', from_email, recipient_list, html_message=message, fail_silently=False)
+    except Course.DoesNotExist:
+        # Handle case where course with provided ID does not exist
+        pass 
+

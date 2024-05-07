@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import Footer from "@/components/shared/Footer";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange>
+          <Toaster richColors />
           <Header />
 
           <main className="flex-1">{children}</main>

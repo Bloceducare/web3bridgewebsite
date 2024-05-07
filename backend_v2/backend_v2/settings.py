@@ -33,6 +33,7 @@ CORS_ALLOWED_ORIGINS= [
     "http://localhost:3000",
     "https://websitev2-cyan.vercel.app",
     "https://www.web3bridge.com",
+    "http://*",
 ]
 
 
@@ -80,10 +81,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend_v2.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+          "DIRS": [
+            BASE_DIR / 'templates' # Here
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
