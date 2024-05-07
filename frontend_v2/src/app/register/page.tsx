@@ -63,8 +63,6 @@ export default function RegistrationPage() {
     if (!formData) return;
     const valid = isValidEthereumAddress(formData.wallet_address);
 
-    console.log(data);
-
     const courseId = data.find(
       (item: any) => item?.name === formData.course
     )?.id;

@@ -11,22 +11,24 @@ import Community from "@/components/home/Community";
 import FAQs from "@/components/home/FAQs";
 
 export default function Home() {
-  return <main className="min-h-screen overflow-x-hidden flex flex-col">
-    <MaxWrapper className="flex flex-col w-full">
-      <HeroSection />
-      <div className="w-full radial-gradient">
-        <SponsorLists />
-        <Testimonial />
-      </div>
-      <Stats />
-      <Essence />
-      <Web3 />
-      <Web2 />
-    </MaxWrapper>
-    <Banner />
-    <Community />
-    <MaxWrapper className="flex flex-col w-full">
-      <FAQs />
-    </MaxWrapper>
-  </main>;
+  return (
+    <main className="min-h-screen overflow-x-hidden flex flex-col">
+      <MaxWrapper className="flex flex-col w-full">
+        <HeroSection />
+        <div className="w-full radial-gradient">
+          <SponsorLists />
+          <Testimonial />
+        </div>
+        <Stats />
+        <Essence />
+        <Web3 />
+        <Web2 />
+      </MaxWrapper>
+      <Banner />
+      <Community />
+      <MaxWrapper className="flex flex-col w-full">
+        <FAQs />
+      </MaxWrapper>
+    </main>
+  );
 }
