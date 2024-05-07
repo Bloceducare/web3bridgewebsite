@@ -1,105 +1,55 @@
 "use client";
 
-import React from "react";
-
-interface ResultType {
-  success?: boolean;
-  data?: any[];
-  message?: string;
-  errors?: string;
-}
+import { useEffect, useState } from "react";
 
 export const useFetchAllCourses = () => {
-  const [courses, setCourses] = React.useState<any[]>();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState("");
+  const [data, setData] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAllCourses = async () => {
+  const fetchData = async () => {
     try {
-      setIsLoading(true);
-
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/all`
       );
-      const result: ResultType = await response.json();
+      const result = await res.json();
 
-      if (result.success === true) {
-        setCourses(result.data);
-      }
-    } catch (error: any) {
-      setIsError(error.message);
+      setData(result.data);
+    } catch (error) {
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  React.useEffect(() => {
-    fetchAllCourses();
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  return { isError, isLoading, courses };
-};
-
-export const useFetchSingleCourse = (id: number) => {
-  const [course, setCourse] = React.useState<any>();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState("");
-
-  const fetchCourse = async () => {
-    try {
-      setIsLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/${id}`
-      );
-      const result: ResultType = await response.json();
-
-      if (result.success === true) {
-        setCourse(result.data);
-      }
-    } catch (error: any) {
-      setIsError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchCourse();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  return { isError, isLoading, course };
+  return { isLoading, data };
 };
 
 export const useFetchAllRegistration = () => {
-  const [registrations, setRegistrations] = React.useState<any>();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState("");
+  const [data, setData] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchCourse = async () => {
+  const fetchData = async () => {
     try {
-      setIsLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/registration/all`
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/registration/all/`
       );
-      const result: ResultType = await response.json();
+      const result = await res.json();
 
-      if (result.success === true) {
-        setRegistrations(result.data);
-      }
-    } catch (error: any) {
-      setIsError(error.message);
+      setData(result.data);
+    } catch (error) {
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  React.useEffect(() => {
-    fetchCourse();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  return { isError, isLoading, registrations };
+  return { isLoading, data };
 };

@@ -7,7 +7,6 @@ import Image from "next/image";
 import Pill from "@/components/shared/pill";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import slugify from "slugify";
 import { useFetchAllCourses } from "@/hooks";
 
 const details = [
@@ -26,8 +25,7 @@ const details = [
 ];
 
 export default function Trainings() {
-  const { isLoading, isError, courses } = useFetchAllCourses();
-
+  const { isLoading, data } = useFetchAllCourses();
   const router = useRouter();
 
   return (
@@ -107,38 +105,39 @@ export default function Trainings() {
           </div>
         </div>
       </MaxWrapper>
+
       <MaxWrapper>
         {isLoading ? (
-          <>Loading...</>
+          <p>Please wait...</p>
         ) : (
-          courses &&
-          courses?.map((course) => (
+          data &&
+          data.map((item: any) => (
             <section
-              key={course.id}
-              className="py-10 md:py-20 flex flex-col gap-4 lg:gap-8 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
+              key={item.id}
+              className="py-10 md:py-20 flex flex-col gap-3 lg:gap-6 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
               <h1 className="font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center">
-                {course.name}
+                {item.name}
               </h1>
 
               <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842]">
                 <div className="w-full h-full bg-background p-6 rounded-sm grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="w-full h-full lg:max-w-[416px] flex flex-col justify-between gap-5">
                     <p className="font-normal text-base sm:text-lg">
-                      {course.description}
+                      {item.description}
                     </p>
                     <p className="flex items-center gap-3 text-base font-semibold">
-                      <Calendar className="w-4 h-4" /> course
+                      <Calendar className="w-4 h-4" /> 26th August 2024
                     </p>
 
                     <div className="flex items-center gap-2">
-                      {course?.venue.map((venue: string) => (
+                      {item?.venue.map((venue: string) => (
                         <Pill key={venue} text={venue} />
                       ))}
                     </div>
 
                     <div className="flex items-center flex-col md:flex-row gap-4">
                       <Button
-                        onClick={() => router.push(`/register/${course.id}`)}
+                        onClick={() => router.push("/register")}
                         className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max">
                         Register For Training{" "}
                         <MoveRight className="w-5 h-5 ml-2" />
@@ -150,7 +149,7 @@ export default function Trainings() {
                   </div>
 
                   <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 mt-4 md:mt-0 relative">
-                    <TrainingImages images={course?.images} />
+                    <TrainingImages images={item?.images} />
                   </div>
                 </div>
               </div>

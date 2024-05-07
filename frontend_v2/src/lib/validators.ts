@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+export const coursesSchema = z.object({
+  course: z.enum(
+    [
+      "HTML, CSS, and JavaScript",
+      "Node.js and React.js with TypeScript",
+      "Solidity",
+      "Go-Ethereum",
+    ],
+    {
+      required_error: "Please select a course.",
+    }
+  ),
+});
+
 export const formSchema = z.object({
   name: z
     .string()

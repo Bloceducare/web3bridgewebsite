@@ -1,5 +1,5 @@
 interface FormDataType {
-  course: number;
+  course: string;
   name: string;
   email: string;
   number: string;
