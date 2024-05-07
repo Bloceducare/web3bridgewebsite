@@ -42,7 +42,7 @@ export const otherSchema = z.object({
   duration: z.string().max(30),
   motivation: z.string().min(2).max(1000),
   achievement: z.string().min(2).max(1000),
-  walletAddress: z
+  wallet_address: z
     .string({ required_error: "Please enter your wallet address" })
     .min(2),
 });
