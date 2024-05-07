@@ -28,13 +28,6 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",
-    "http://localhost:3000",
-    "https://websitev2-cyan.vercel.app",
-    "https://www.web3bridge.com",
-    "http://*",
-    "https://*",
-    "https://www.web3bridgeafrica.com",
     "*",
 ]
 
