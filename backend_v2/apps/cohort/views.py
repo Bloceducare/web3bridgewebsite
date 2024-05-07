@@ -2,6 +2,7 @@ from rest_framework import decorators, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
+from .helpers.model import send_registration_success_mail 
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
 
 class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
@@ -166,7 +167,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["create", "update", "destroy"]
+    admin_actions= ["update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs): 
@@ -175,8 +176,11 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if serializer.is_valid():
             participant_obj= serializer.save()
             serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
+            email = serialized_participant_obj.get('email')
+            course = serialized_participant_obj.get('course').get('id') 
+            participant = serialized_participant_obj.get('name')
+            send_registration_success_mail(email, course, participant)
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
-        
         return requestUtils.error_response("Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
     
     
