@@ -33,6 +33,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://websitev2-cyan.vercel.app",
     "https://www.web3bridge.com",
     "http://*",
+    "https://www.web3bridgeafrica.com/trainings",
+    "https://web3bridgeafrica.com/trainings",
     "https://*",
     "https://web3bridgeafrica.com",
     "https://www.web3bridgeafrica.com/",
