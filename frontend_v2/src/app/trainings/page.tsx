@@ -8,6 +8,7 @@ import Pill from "@/components/shared/pill";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useFetchAllCourses } from "@/hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const details = [
   {
@@ -64,7 +65,9 @@ export default function Trainings() {
             ))}
           </ul>
 
-          <Button className="h-14 px-6 mt-12 md:mt-16 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+          <Button
+            onClick={() => router.push("/register")}
+            className="h-14 px-6 mt-12 md:mt-16 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
             Join The next Cohort <MoveRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -107,55 +110,60 @@ export default function Trainings() {
       </MaxWrapper>
 
       <MaxWrapper>
-        {isLoading ? (
-          <p>Please wait...</p>
-        ) : (
-          data &&
-          data.map((item: any) => (
-            <section
-              key={item.id}
-              className="py-10 md:py-20 flex flex-col gap-3 lg:gap-6 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
-              <h1 className="font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center">
-                {item.name}
-              </h1>
+        {isLoading
+          ? Array.from({ length: 3 }).map((_, _key) => (
+              <div
+                key={_key}
+                className="py-10 md:py-20 flex flex-col gap-3 lg:gap-6 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
+                <Skeleton className="h-12 w-full max-w-[649px] rounded-3xl"></Skeleton>
+                <Skeleton className="w-full max-w-[920px] rounded-2xl aspect-[2]"></Skeleton>
+              </div>
+            ))
+          : data &&
+            data.map((item: any) => (
+              <section
+                key={item.id}
+                className="py-10 md:py-20 flex flex-col gap-3 lg:gap-6 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
+                <h1 className="font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center">
+                  {item.name}
+                </h1>
 
-              <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842]">
-                <div className="w-full h-full bg-background p-6 rounded-sm grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="w-full h-full lg:max-w-[416px] flex flex-col justify-between gap-5">
-                    <p className="font-normal text-base sm:text-lg">
-                      {item.description}
-                    </p>
-                    <p className="flex items-center gap-3 text-base font-semibold">
-                      <Calendar className="w-4 h-4" /> 26th August 2024
-                    </p>
+                <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842]">
+                  <div className="w-full h-full bg-background p-6 rounded-sm grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="w-full h-full lg:max-w-[416px] flex flex-col justify-between gap-5">
+                      <p className="font-normal text-base sm:text-lg">
+                        {item.description}
+                      </p>
+                      <p className="flex items-center gap-3 text-base font-semibold">
+                        <Calendar className="w-4 h-4" /> 26th August 2024
+                      </p>
 
-                    <div className="flex items-center gap-2">
-                      {item?.venue.map((venue: string) => (
-                        <Pill key={venue} text={venue} />
-                      ))}
+                      <div className="flex items-center gap-2">
+                        {item?.venue.map((venue: string) => (
+                          <Pill key={venue} text={venue} />
+                        ))}
+                      </div>
+
+                      <div className="flex items-center flex-col md:flex-row gap-4">
+                        <Button
+                          onClick={() => router.push("/register")}
+                          className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max">
+                          Register For Training{" "}
+                          <MoveRight className="w-5 h-5 ml-2" />
+                        </Button>
+                        <Button className="h-14 px-6 rounded-full border-2 ring-2 ring-red-200 border-red-100 text-primary bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
+                          Learn More
+                        </Button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center flex-col md:flex-row gap-4">
-                      <Button
-                        onClick={() => router.push("/register")}
-                        className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max">
-                        Register For Training{" "}
-                        <MoveRight className="w-5 h-5 ml-2" />
-                      </Button>
-                      <Button className="h-14 px-6 rounded-full border-2 ring-2 ring-red-200 border-red-100 text-primary bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
-                        Learn More
-                      </Button>
+                    <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 mt-4 md:mt-0 relative">
+                      <TrainingImages images={item?.images} />
                     </div>
-                  </div>
-
-                  <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 mt-4 md:mt-0 relative">
-                    <TrainingImages images={item?.images} />
                   </div>
                 </div>
-              </div>
-            </section>
-          ))
-        )}
+              </section>
+            ))}
       </MaxWrapper>
       <Join />
     </div>

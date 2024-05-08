@@ -3,9 +3,8 @@ import Slider from "react-slick";
 import Sponsor from "./Sponsor";
 import { useEffect, useState } from "react";
 
-
 const SponsorLists = () => {
-  const [data, setData] = useState<null | []>(null)
+  const [data, setData] = useState<null | []>(null);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/operation/partner/all/`)
@@ -13,8 +12,7 @@ const SponsorLists = () => {
       .then((data) => {
         setData(data.data);
       });
-
-  }, [])
+  }, []);
 
   const settings = {
     dots: false,
@@ -54,14 +52,18 @@ const SponsorLists = () => {
       },
     ],
   };
+
   return (
-    <section className="w-full dark:bg-gray-300 mb-24">
+    <section className="w-full sponsor-gradient mb-24">
       <Slider {...settings}>
-        {
-          data?.map((item: any, index: number) => (
-            <Sponsor image={item.picture} url={item.url} name={item.name} key={index} />
-          ))
-        }
+        {data?.map((item: any, index: number) => (
+          <Sponsor
+            image={item.picture}
+            url={item.url}
+            name={item.name}
+            key={index}
+          />
+        ))}
       </Slider>
     </section>
   );

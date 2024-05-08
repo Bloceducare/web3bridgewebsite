@@ -7,8 +7,11 @@ import heroImg2 from "../../../public/home/heroimg2.png";
 import heroImg3 from "../../../public/home/heroimg3.png";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
+  const router = useRouter();
+
   return (
     <section className="flex items-center justify-center lg:h-[85vh] md:h-[50vh] h-[80vh]  w-full relative overflow-hidden">
       {/* circles */}
@@ -71,16 +74,18 @@ const HeroSection = () => {
             receiving training from industry experts through our 16 weeks hands
             on bootcamp.
           </p>
-          {/* <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
-                        Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
-                    </Button> */}
-          <Link
+          <Button
+            onClick={() => router.push("/register")}
+            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+            Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
+          </Button>
+          {/* <Link
             href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform"
             target="_blank"
             rel="noreferrer"
             className="rounded-full flex items-center px-12 py-3.5 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed text-sm md:text-base capitalize hover:bg-bridgeRed dark:bg-bridgeRed dark:text-red-100 hover:text-red-100">
             Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
-          </Link>
+          </Link> */}
         </div>
       </main>
     </section>
