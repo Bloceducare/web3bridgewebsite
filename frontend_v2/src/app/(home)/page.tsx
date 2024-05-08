@@ -15,10 +15,14 @@ export default function Home() {
     <main className="min-h-screen overflow-x-hidden flex flex-col">
       <MaxWrapper className="flex flex-col w-full">
         <HeroSection />
-        <div className="w-full radial-gradient">
-          <SponsorLists />
+      </MaxWrapper>
+      <div className="w-full radial-gradient">
+        <SponsorLists />
+        <MaxWrapper>
           <Testimonial />
-        </div>
+        </MaxWrapper>
+      </div>
+      <MaxWrapper>
         <Stats />
         <Essence />
         <Web3 />
