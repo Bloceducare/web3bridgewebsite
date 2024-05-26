@@ -26,12 +26,17 @@ const HeroSection = () => {
                     <Calendar className="w-5 h-5" />
                     5th - 17th, September 2024</p>
                 <div className="mt-4 hidden md:flex lg:flex-row md:flex-col items-center lg:gap-8 gap-4">
+                    <a href="https://event.web3bridge.com" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
                         Register for Event <MoveRight className="w-5 h-5 ml-2 " />
                     </Button>
+                    </a>
+                 
+                 <a href="https://forms.gle/YGqRUT93fE6qA2jK7" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
-                        Learn More
+                        Volunteer
                     </Button>
+                    </a>
                 </div>
             </div>
             {/* image */}
