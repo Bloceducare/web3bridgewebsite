@@ -53,7 +53,7 @@ const HeroSection = () => {
                     </a>
                     <a href="https://forms.gle/YGqRUT93fE6qA2jK7" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
-                        Learn More
+            Volunteer
                     </Button>
                     </a>
                 </div>
