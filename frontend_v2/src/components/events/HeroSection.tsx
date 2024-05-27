@@ -46,12 +46,16 @@ const HeroSection = () => {
                 </div>
 
                 <div className="my-4 md:hidden flex flex-col items-center gap-6">
+                <a href="https://event.web3bridge.com" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
                         Register for Event <MoveRight className="w-5 h-5 ml-2 " />
                     </Button>
+                    </a>
+                    <a href="https://forms.gle/YGqRUT93fE6qA2jK7" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-400 border-none bg-red-500/10 text-bridgeRed hover:bg-transparent">
                         Learn More
                     </Button>
+                    </a>
                 </div>
             </div>
 
