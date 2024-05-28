@@ -17,14 +17,14 @@ const HeroSection = () => {
             {/* text */}
             <div className="w-full flex flex-col justify-center items-center md:items-start md:gap-3 gap-4 lg:px-10 md:px-6 px-2">
                 <h1 className="font-semibold leading-tight lg:text-5xl md:text-4xl text-center md:text-start text-3xl">The Web3 Lagos Conference</h1>
-                <CountDown targetDate={`2024-06-16T09:59:59`} />
+                <CountDown targetDate={`2024-09-05T00:00:00`} />
                 <h3 className="text-foreground font-medium text-2xl">Happening live at</h3>
                 <p className="flex gap-2 items-center text-muted-foreground">
                     <MapPin className="w-5 h-5" />
                     The Zone, Gbagada, Lagos State.</p>
                 <p className="flex gap-2 items-center text-muted-foreground">
                     <Calendar className="w-5 h-5" />
-                    5th - 17th, September 2024</p>
+                    5th - 7th, September 2024</p>
                 <div className="mt-4 hidden md:flex lg:flex-row md:flex-col items-center lg:gap-8 gap-4">
                     <a href="https://event.web3bridge.com" className="">
                     <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed hover:bg-transparent">
