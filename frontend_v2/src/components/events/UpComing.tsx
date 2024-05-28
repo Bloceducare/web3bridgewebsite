@@ -13,9 +13,9 @@ const UpComing = () => {
                 <p className='text-center text-muted-foreground text-xl font-light'>A number of web3 events you may love to attend</p>
             </div>
             <main className='w-full grid lg:grid-cols-3 md:grid-cols-2 lg:gap-8 md:gap-10 gap-12'>
-                <EventCard image={EventImage1} text={'Practical hands-on exercises on using IPFS for file Storage and retrieval'} />
+                {/* <EventCard image={EventImage1} text={'Practical hands-on exercises on using IPFS for file Storage and retrieval'} />
                 <EventCard image={EventImage2} text={'Practical hands-on exercises on using IPFS for file Storage and retrieval'} />
-                <EventCard image={EventImage3} text={'Practical hands-on exercises on using IPFS for file Storage and retrieval'} />
+                <EventCard image={EventImage3} text={'Practical hands-on exercises on using IPFS for file Storage and retrieval'} /> */}
             </main>
         </section>
     )
