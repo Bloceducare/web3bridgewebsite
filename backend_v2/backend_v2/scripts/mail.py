@@ -26,8 +26,8 @@ def send_bulk_email():
     participants = Participant.objects.all()
 
     # for participant in participants:
-    participant_context = context.copy()
-    participant_contexts = [{'name': participant.name} for participant in participants]
+    # participant_context = context.copy()
+    # participant_contexts = [{'name': participant.name} for participant in participants]
     # Provide the template name and context to render_to_string
     messages = [render_to_string('cohort/custommail.html', context).format(**context) for _ in participants]
 
