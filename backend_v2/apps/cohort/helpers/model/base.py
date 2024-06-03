@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.core.mail import send_mail
 
 # Testimonial image storage location
 def testimonial_image_location(instance, filename):

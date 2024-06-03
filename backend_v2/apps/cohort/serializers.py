@@ -206,3 +206,10 @@ class TestimonialSerializer:
             instance.brief= validated_data.get('brief', instance.brief)
             instance.save()
             return instance
+
+
+class BulkEmailSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+    class Meta:
+        fields = ['message']

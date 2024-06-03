@@ -1,8 +1,10 @@
+from requests import Response
 from rest_framework import decorators, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
 from .helpers.model import send_registration_success_mail 
+from backend_v2.scripts.mail import send_bulk_email
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
 
 class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
@@ -263,3 +265,17 @@ class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     def all(self, request):
         serializer = self.serializer_class.List(self.queryset, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+
+
+
+class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
+
+    @swagger_auto_schema(request_body=serializers.BulkEmailSerializer)
+    @decorators.action(detail=False, methods=["post"])
+    def send_bulk_email(self, request):
+        serializer = serializers.BulkEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            send_bulk_email()
+            return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
