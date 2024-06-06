@@ -27,10 +27,10 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
-CORS_ALLOWED_ORIGINS = [
-    "http://*",
-    "https://*",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://*",
+#     "https://*",
+# ]
 
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
