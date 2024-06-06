@@ -44,9 +44,10 @@ export default function RegistrationPage() {
   const regId = allReg?.map((item: any) => item?.id);
 
   const [step, setStep] = useState(1);
+  const [allStatusFalse, setAllStatusFalse] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [formData, setFormData] = useState<FormDataType | null>();
+  const [formData, setFormData] = useState<FormDataType | null>(null);
 
   const nextStep = () => {
     setIsUpdatingSteps(true);
@@ -59,17 +60,38 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
+  interface Course {
+    id: number;
+    name: string;
+    description: string;
+    venue: string[];
+    extra_info: string;
+    images: {
+      id: number;
+      picture: string;
+    }[];
+    status: boolean;
+  }
+
+  interface Registration {
+    id: number;
+    status: boolean;
+  }
+
+  useEffect(() => {
+    if (loadReg) return;
+
+    const allClosed = allReg.every((reg: Registration) => reg.status === false); // Adjust according to your actual data structure
+    setAllStatusFalse(allClosed);
+  }, [allReg, loadReg]);
+
   const submitData = async () => {
     if (!formData) return;
     const valid = isValidEthereumAddress(formData.wallet_address);
 
-    const courseId = data.find(
-      (item: any) => item?.name === formData.course
-    )?.id;
+    const courseId = data.find((item: any) => item?.name === formData.course)?.id;
 
-    const courseName = data.find(
-      (item: any) => item?.name === formData.course
-    )?.name;
+    const courseName = data.find((item: any) => item?.name === formData.course)?.name;
 
     const userForm = {
       ...formData,
@@ -135,14 +157,20 @@ export default function RegistrationPage() {
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      {step === 1 ? (
-        <SelectCourse {...props} />
-      ) : step === 2 ? (
-        <PersonalInformation {...props} />
-      ) : step === 3 ? (
-        <OtherInformation {...props} />
+      {allStatusFalse ? (
+        <div className="text-center text-[2em] text-[#ff0000]">Registration Closed</div>
       ) : (
-        <SuccessForm />
+        <>
+          {step === 1 ? (
+            <SelectCourse {...props} />
+          ) : step === 2 ? (
+            <PersonalInformation {...props} />
+          ) : step === 3 ? (
+            <OtherInformation {...props} />
+          ) : (
+            <SuccessForm />
+          )}
+        </>
       )}
     </MaxWrapper>
   );

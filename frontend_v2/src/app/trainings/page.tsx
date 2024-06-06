@@ -145,9 +145,10 @@ export default function Trainings() {
                       </div>
 
                       <div className="flex items-center flex-col md:flex-row gap-4">
-                        <Button
+                      <Button
                           onClick={() => router.push("/register")}
-                          className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max">
+                          className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max"
+                          disabled={item.status === false}>
                           Register For Training{" "}
                           <MoveRight className="w-5 h-5 ml-2" />
                         </Button>
