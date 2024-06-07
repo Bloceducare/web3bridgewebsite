@@ -157,9 +157,9 @@ export default function RegistrationPage() {
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      // {allStatusFalse ? (
+      {/* // {allStatusFalse ? ( */}
         <div className="text-center text-[2em] text-[#ff0000]">Registration Closed</div>
-      // ) : (
+      {/* // ) : (
       //   <>
       //     {step === 1 ? (
       //       <SelectCourse {...props} />
@@ -171,7 +171,7 @@ export default function RegistrationPage() {
       //       <SuccessForm />
       //     )}
       //   </>
-      // )}
+      // )} */}
     </MaxWrapper>
   );
 }
