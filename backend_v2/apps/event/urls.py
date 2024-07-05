@@ -1,8 +1,15 @@
-from django.urls import path
-from . import views
+from django.urls import path, re_path, include
+from django.conf import settings
+from rest_framework.routers import DefaultRouter, SimpleRouter
+from .literals import (APP_NAME, DAPP_BASE_NAME)
+from . import views 
 
-urlpatterns = [
-    path('events/', views.EventListView.as_view(), name='event-list'),
-    path('events/<int:pk>/', views.EventDetailView.as_view(), name='event-detail'),
-    # Add more paths for create, update, edit, and delete views
-]
+if settings.DEBUG:
+    router = DefaultRouter()
+else:
+    router = SimpleRouter()
+    
+app_name= APP_NAME
+router.register("", views.EventViewSet, basename=DAPP_BASE_NAME)
+
+urlpatterns= router.urls
