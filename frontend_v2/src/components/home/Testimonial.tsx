@@ -69,7 +69,7 @@ const Testimonial = () => {
         Stories From Our Students
       </h1>
       <p className="lg:w-[30%] md:w-[70%] w-full text-muted-foreground text-center">
-        All around the world, our students are excemptional. See what they have
+        All around the world, our students are exceptional. See what they have
         to say
       </p>
       <main className="w-full lg:px-12 px-2 mt-6">
