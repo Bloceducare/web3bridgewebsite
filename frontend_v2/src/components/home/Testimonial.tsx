@@ -4,6 +4,8 @@ import TestimonialCard from "./TestimonialCard";
 import Slider from "react-slick";
 import { Button } from "../ui/button";
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
+import testimonialsData from "@/data/testimonials";
+
 
 const Testimonial = () => {
   const sliderRef = useRef<Slider | null>();
@@ -74,8 +76,9 @@ const Testimonial = () => {
       </p>
       <main className="w-full lg:px-12 px-2 mt-6">
         <Slider ref={(slider) => (sliderRef.current = slider)} {...settings}>
-          <TestimonialCard />
-          <TestimonialCard />
+          {testimonialsData.map((data, i) => (
+            <TestimonialCard title={data.title} description={data.description} user={data.user} role={data.role} image={data.image} />
+          ))}
         </Slider>
       </main>
       {/* Controllers  */}
