@@ -1,5 +1,3 @@
-"use client";
-
 import CustomButton from "@/components/shared/CustomButton";
 import Join from "@/components/shared/Join";
 import MaxWrapper from "@/components/shared/MaxWrapper";
@@ -16,7 +14,6 @@ import { cn } from "@/lib/utils";
 import Pill from "@/components/shared/pill";
 
 import part from "../../../public/cohorts/part.svg";
-import { useRouter } from "next/navigation";
 
 const bannerImgs = [
   {
@@ -42,8 +39,6 @@ const bannerImgs = [
 ];
 
 export default function CohortsPage() {
-  const router = useRouter();
-
   return (
     <div className="flex-1">
       <MaxWrapper className="py-10 md:py-20 w-full flex flex-col items-center justify-center xl:justify-between text-center xl:text-start xl:flex-row lg:gap-4 relative">
@@ -57,9 +52,7 @@ export default function CohortsPage() {
             not just going to develop your technical skills but also help build
             your soft skills to be able to compete in the global market.
           </p>
-          <Button
-            onClick={() => router.push("/register")}
-            className="h-14 w-max mx-auto xl:mx-0 mt-7 xl:mt-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+          <Button className="h-14 w-max mx-auto xl:mx-0 mt-7 xl:mt-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
             Join The next Cohort <MoveRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -138,9 +131,7 @@ export default function CohortsPage() {
             9th cohort
           </p>
 
-          <Button
-            onClick={() => router.push("/register")}
-            className="h-14 w-max mx-auto px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+          <Button className="h-14 w-max mx-auto px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
             Join The next Cohort <MoveRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -172,9 +163,7 @@ export default function CohortsPage() {
                   and news as regarding the next cohort, as well as connecting
                   with past alumni.
                 </p>
-                <Button
-                  onClick={() => router.push("/register")}
-                  className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+                <Button className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
                   Join Telegram <MoveRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
@@ -199,9 +188,7 @@ export default function CohortsPage() {
                   and news as regarding the next cohort, as well as connecting
                   with past alumni.
                 </p>
-                <Button
-                  onClick={() => router.push("/register")}
-                  className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+                <Button className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
                   Join Waitlist <MoveRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
@@ -226,9 +213,7 @@ export default function CohortsPage() {
                   and news as regarding the next cohort, as well as connecting
                   with past alumni.
                 </p>
-                <Button
-                  onClick={() => router.push("/register")}
-                  className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
+                <Button className="h-12 w-max mx-auto px-6 mt-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 bg-transparent text-primary hover:bg-transparent">
                   Join Waitlist <MoveRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
