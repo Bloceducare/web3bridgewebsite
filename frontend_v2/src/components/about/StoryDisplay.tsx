@@ -20,8 +20,7 @@ export default function StoryDisplay() {
 
 Our commitment and consistency has also made us the choice partner for protocols and projects looking to train and hire developers from Africa.
 
-Since we moved to the hybrid training program, we have expanded our facilities to be able to house up to two hundred (200) developers and halls to accommodate the same.
-"
+Since we moved to the hybrid training program, we have expanded our facilities to be able to house up to two hundred (200) developers and halls to accommodate the same."
         image={StoryImage2}
         orientation="reversed"
       />
