@@ -8,7 +8,7 @@ cloudinary_cloud_name
 cloudinary_api_key
 cloudinary_api_secret
 DEBUG
-ENVIROMENT
+ENVIRONMENT
 EMAIL_HOST
 EMAIL_PORT
 EMAIL_HOST_USER
