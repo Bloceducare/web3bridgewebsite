@@ -13,12 +13,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
-from .literals import (API_VERSION, ENVIROMENT)
+from .literals import (API_VERSION, ENVIRONMENT)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 API_VERSION= config('API_VERSION', default=API_VERSION)
-ENVIROMENT= config('ENVIROMENT', default=ENVIROMENT)
+ENVIRONMENT= config('ENVIRONMENT', default=ENVIRONMENT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -120,7 +120,7 @@ DATABASES = {
 }
 
 # Determine the database configuration based on environment
-if ENVIROMENT == 'production':
+if ENVIRONMENT == 'production':
     DATABASES['default'] = DATABASES['production']
 
 # Password validation
@@ -214,7 +214,6 @@ SWAGGER_SETTINGS = {
 """""email settings"""
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
