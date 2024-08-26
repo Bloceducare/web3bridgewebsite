@@ -17,14 +17,14 @@ export default function TeamCard({
           priority
           src={image}
           alt="Story image"
-          className=""
+          className="rounded-sm"
           width={230}
           height={230}
         />
       </div>
       <div className="mt-3 light:text-[#1B1B1B]">
         <h3 className="font-semibold text-lg leading-6 mb-1">{name}</h3>
-        <p className="text-sm leading-7 text-light">{role}</p>
+        <p className="text-sm text-gray-700 leading-7 text-light">{role}</p>
       </div>
     </div>
   );
