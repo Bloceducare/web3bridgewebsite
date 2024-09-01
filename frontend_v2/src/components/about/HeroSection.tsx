@@ -17,11 +17,11 @@ export default function HeroSection() {
   return (
     <section className="flex flex-col items-center justify-end xl:h-[650px] lg:h-[700px] md:h-[70vh] sm:h-[60vh]  h-[550px]  w-full relative radial-gradient">
       <div className="xl:w-1/2 md:w-[80%] w-full flex flex-col items-center gap-4 justify-center mt-[30px]">
-        <h1 className="font-semibold leading-tight md:text-5xl sm:text-4xl text-3xl text-center">
+        <h1 className="font-semibold leading-tight md:text-5xl sm:text-4xl text-3xl text-center ">
           {" "}
           We Have Introduced Over 3000 Newbies To Web 3.0
         </h1>
-        <p className="text-center dark:text-muted-foreground">
+        <p className="text-center dark:text-muted-foreground text-gray-700">
           Our alumni are doing well for themselves as blockchain developers,
           smart contract developers, blockchain auditors, backend developers and
           much more.
