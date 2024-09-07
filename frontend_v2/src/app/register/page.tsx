@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -36,6 +37,7 @@ import OtherInformation from "@/components/shared/OtherInformation";
 import SuccessForm from "@/components/shared/SuccessForm";
 import { isValidEthereumAddress } from "@/lib/utils";
 import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
+import { Button } from "@/components/ui/button";
 
 export default function RegistrationPage() {
   const { data, isLoading } = useFetchAllCourses();
@@ -145,6 +147,7 @@ export default function RegistrationPage() {
     }
   };
 
+    const router = useRouter();
   const props = {
     step,
     nextStep,
@@ -172,6 +175,12 @@ export default function RegistrationPage() {
       //     )}
       //   </>
       // )} */}
+
+<Button
+            onClick={() => window.open("https://forms.gle/WtEw4cDfWEHQcX3h9", "_blank")}
+            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+            Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
+          </Button>
     </MaxWrapper>
   );
 }
