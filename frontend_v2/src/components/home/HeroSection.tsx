@@ -25,7 +25,8 @@ const HeroSection = () => {
             repeatType: "loop",
             ease: "linear",
             duration: 60,
-          }}>
+          }}
+        >
           <Image
             src={heroImg2}
             alt="image"
@@ -50,7 +51,8 @@ const HeroSection = () => {
               repeatDelay: 1,
               ease: "linear",
               duration: 30,
-            }}>
+            }}
+          >
             <Image
               src={heroImg1}
               alt="image"
@@ -76,7 +78,8 @@ const HeroSection = () => {
           </p>
           <Button
             onClick={() => router.push("/register")}
-            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100"
+          >
             Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
           </Button>
           {/* <Link
