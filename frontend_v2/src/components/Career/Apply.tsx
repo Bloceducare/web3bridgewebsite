@@ -4,6 +4,7 @@ import { MoveRight } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ApplicationPortal from "./ApplicationModal";
+/* eslint-disable react/no-unescaped-entities */
 
 export default function ApplicationCTA() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +17,8 @@ export default function ApplicationCTA() {
           </h2>
           <p className="text-base max-w-2xl text-gray-700 dark:text-gray-300">
             There must be a reason you are here. Find a role that matches your
-            skills and passion, and apply today. We're excited to see what
-            you'll bring to the table.
+            skills and passion, and apply today. We&apos;re excited to see what
+            you&apos;ll bring to the table.
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>

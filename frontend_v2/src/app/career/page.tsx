@@ -1,8 +1,8 @@
-import ApplicationCTA from "@/components/Career/Apply";
-import Benefits from "@/components/Career/Benefits";
-import HeroSection from "@/components/Career/HeroSection";
-import Openings from "@/components/Career/Openings";
-import Testimonial from "@/components/Career/Testimonal";
+import ApplicationCTA from "@/components/career/Apply";
+import Benefits from "@/components/career/Benefits";
+import HeroSection from "@/components/career/HeroSection";
+import Openings from "@/components/career/Openings";
+import Testimonial from "@/components/career/Testimonal";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 
 const page = () => {
