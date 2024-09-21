@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 // import Openings from "./Openings";
+/* eslint-disable react/no-unescaped-entities */
 
 export default function HeroSection() {
   // const OpeningSectionRef = useRef<HTMLElement | null>(null);

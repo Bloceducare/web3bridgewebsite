@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+/* eslint-disable react/no-unescaped-entities */
 
 export default function Testimonial() {
   return (

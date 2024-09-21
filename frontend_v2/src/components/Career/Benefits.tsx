@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { benefitsData } from "@/data/Career";
 import Image from "next/image";
+/* eslint-disable react/no-unescaped-entities */
 
 export default function Benefits() {
   return (

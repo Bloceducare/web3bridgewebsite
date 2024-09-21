@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { allJobOpenings, categories } from "@/data/Career";
+/* eslint-disable react/no-unescaped-entities */
 
 export default function Openings() {
   const [activeCategory, setActiveCategory] = useState("Professionals");
