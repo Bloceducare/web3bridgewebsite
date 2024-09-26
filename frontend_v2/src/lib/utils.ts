@@ -39,7 +39,7 @@ export const navLinks = [
     href: "/events",
   },
   {
-    name: "Hire Us",
+    name: "Career",
     href: "/career",
   },
 ];
