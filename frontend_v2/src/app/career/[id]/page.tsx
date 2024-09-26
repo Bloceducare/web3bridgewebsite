@@ -1,9 +1,8 @@
 "use client";
 
-import { JobHighlight } from "@/components/career/jobHighlight";
-import { Button } from "@/components/ui/button";
+import { ApplicationModal } from "@/components/career/ApplicationModal";
+import { JobHighlight } from "@/components/career/JobHighlight";
 import { dummyJobData } from "@/data/dummyJobDescription";
-import { MoveRight } from "lucide-react";
 import Image from "next/image";
 
 export default function JobPage({ params }: { params: { id: string } }) {
@@ -49,9 +48,10 @@ export default function JobPage({ params }: { params: { id: string } }) {
 
         <ItemWrapper title="Job Requirements" value={jobRequirements} />
 
-        <Button variant={"bridgePrimary"}>
+        <ApplicationModal />
+        {/* <Button variant={"bridgePrimary"}>
           Apply For Postion <MoveRight className="w-5 h-5 ml-2 " />{" "}
-        </Button>
+        </Button> */}
       </div>
     </section>
   );

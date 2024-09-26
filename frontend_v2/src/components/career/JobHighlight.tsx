@@ -1,6 +1,7 @@
 import { MoveRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { JobDescription } from "@/data/dummyJobDescription";
+import { ApplicationModal } from "./ApplicationModal";
 
 export function JobHighlight({ data }: { data: JobDescription }) {
   const { title, workplaceType, duration, employmentTYpe } = data;
@@ -11,9 +12,10 @@ export function JobHighlight({ data }: { data: JobDescription }) {
       <ItemWrapper title="Duration" value={duration ? duration : "n/a"} />
       <ItemWrapper title="Employment" value={employmentTYpe} />
 
-      <Button variant={"bridgePrimary"} className="text-xs md:text-sm">
+      <ApplicationModal />
+      {/* <Button variant={"bridgePrimary"} className="text-xs md:text-sm">
         Apply For Postion <MoveRight className="w-5 h-5 ml-2 " />{" "}
-      </Button>
+      </Button> */}
     </div>
   );
 }
