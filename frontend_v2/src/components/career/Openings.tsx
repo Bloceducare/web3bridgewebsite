@@ -10,11 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { allJobOpenings, categories } from "@/data/Career";
+import { useRouter } from "next/navigation";
 /* eslint-disable react/no-unescaped-entities */
 
 export default function Openings() {
   const [activeCategory, setActiveCategory] = useState("Professionals");
   const [selectedFilter, setSelectedFilter] = useState("All Openings");
+
+  const router = useRouter();
 
   const toggleFilter = (category: string) => {
     setSelectedFilter(category);
@@ -37,7 +40,8 @@ export default function Openings() {
       <div className="flex justify-center mb-8 space-x-4">
         <Button
           onClick={() => setActiveCategory("Professionals")}
-          className="rounded-full px-6 py-2 bg-gradient-to-r from-[#FFE9E2] to-[#FFE9E2] text-[#FA0101] hover:bg-[#FF8A76] dark:bg-[#4A4A4A] dark:text-[#FA0101] dark:hover:bg-[#333333]">
+          className="rounded-full px-6 py-2 bg-gradient-to-r from-[#FFE9E2] to-[#FFE9E2] text-[#FA0101] hover:bg-[#FF8A76] dark:bg-[#4A4A4A] dark:text-[#FA0101] dark:hover:bg-[#333333]"
+        >
           Professionals
         </Button>
         <Button
@@ -45,7 +49,8 @@ export default function Openings() {
             activeCategory === "Students & Interns" ? "default" : "outline"
           }
           onClick={() => setActiveCategory("Students & Interns")}
-          className="rounded-full px-6 py-2 bg-[#F9F9F9] text-black hover:bg-[#F9F9F9] dark:bg-[#4A4A4A] dark:text-white dark:hover:bg-[#333333]">
+          className="rounded-full px-6 py-2 bg-[#F9F9F9] text-black hover:bg-[#F9F9F9] dark:bg-[#4A4A4A] dark:text-white dark:hover:bg-[#333333]"
+        >
           Students & Interns
         </Button>
       </div>
@@ -55,7 +60,8 @@ export default function Openings() {
           {filteredJobs.map((job, index) => (
             <Card
               key={index}
-              className="bg-[#FFE9E25C] dark:bg-[#3A3A3A] border-0 rounded-[2rem] text-black dark:text-white">
+              className="bg-[#FFE9E25C] dark:bg-[#3A3A3A] border-0 rounded-[2rem] text-black dark:text-white"
+            >
               <CardHeader>
                 <CardTitle className="text-2xl font-bold">
                   {job.title}
@@ -65,7 +71,8 @@ export default function Openings() {
                     <Badge
                       key={tagIndex}
                       variant="outline"
-                      className="bg-[#FFF1EC] dark:bg-[#5A5A5A] rounded-[2rem] p-1 px-3 text-black dark:text-white border-[#FF725E] dark:border-[#FF725E]">
+                      className="bg-[#FFF1EC] dark:bg-[#5A5A5A] rounded-[2rem] p-1 px-3 text-black dark:text-white border-[#FF725E] dark:border-[#FF725E]"
+                    >
                       {tag}
                     </Badge>
                   ))}
@@ -75,7 +82,10 @@ export default function Openings() {
                 <p>{job.description}</p>
               </CardContent>
               <CardFooter className="flex justify-end">
-                <Button className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-[#E6272729] dark:border-red-500 bg-red-500/10 dark:bg-red-500/20 text-bridgeRed dark:text-white hover:bg-transparent dark:hover:bg-transparent">
+                <Button
+                  className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-[#E6272729] dark:border-red-500 bg-red-500/10 dark:bg-red-500/20 text-bridgeRed dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                  onClick={() => router.push(`/career/${1}`)}
+                >
                   See More
                 </Button>
               </CardFooter>
@@ -98,7 +108,8 @@ export default function Openings() {
                       selectedFilter === category.name
                         ? "bg-[#FDE8E1] dark:bg-[#5A5A5A] rounded-[2rem] text-[#090808] dark:text-white hover:bg-transparent dark:hover:bg-transparent"
                         : "bg-[#FFE9E25C] dark:bg-[#3A3A3A] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
-                    }`}>
+                    }`}
+                  >
                     <span>{category.name}</span>
                     <span>({category.count})</span>
                   </Button>

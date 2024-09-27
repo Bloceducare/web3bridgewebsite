@@ -152,7 +152,7 @@ export const TeamMembers = [
     role: "Marketing Lead",
     image: "/about/Victor.jpg",
   },
-  //Victor.jpg 
+  //Victor.jpg
 
   {
     name: "Samuel Babalola",
@@ -165,7 +165,7 @@ export const TeamMembers = [
     image: "/about/aj.jpeg",
   },
   {
-    name:"Dominion Majemu-Itura",
+    name: "Dominion Majemu-Itura",
     role: "Media",
     image: "/about/nic.JPG",
   },

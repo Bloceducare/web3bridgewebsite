@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function ApplicationPortal() {
+export function ApplicationForm() {
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +87,8 @@ export default function ApplicationPortal() {
             <div className="flex-1">
               <Label
                 htmlFor="employmentType"
-                className="text-black dark:text-white">
+                className="text-black dark:text-white"
+              >
                 Employment type *
               </Label>
               <Select required>
@@ -131,7 +132,8 @@ export default function ApplicationPortal() {
                   type="button"
                   variant="outline"
                   onClick={() => document.getElementById("cv")?.click()}
-                  className="w-full rounded-[2rem] shadow-[#FF9393] dark:bg-gray-700 dark:text-white">
+                  className="w-full rounded-[2rem] shadow-[#FF9393] dark:bg-gray-700 dark:text-white"
+                >
                   {file ? file.name : "Select a file"}
                 </Button>
                 {file && (
@@ -139,7 +141,8 @@ export default function ApplicationPortal() {
                     type="button"
                     variant="ghost"
                     onClick={() => setFile(null)}
-                    className="px-2 dark:text-white">
+                    className="px-2 dark:text-white"
+                  >
                     ✕
                   </Button>
                 )}
@@ -151,7 +154,8 @@ export default function ApplicationPortal() {
           </div>
           <Button
             type="submit"
-            className="rounded-full w-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 dark:bg-red-500/20 text-bridgeRed dark:text-white hover:bg-transparent dark:hover:bg-transparent">
+            className="rounded-full w-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 dark:bg-red-500/20 text-bridgeRed dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+          >
             Submit Application
           </Button>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400">
