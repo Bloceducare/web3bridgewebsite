@@ -20,11 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-
-import { countries } from "country-data-list";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomButton from "./CustomButton";
 import { Loader2, MoveRight } from "lucide-react";
+import { Country, State } from "country-state-city";
+import { useState } from "react";
 
 export default function PersonalInformation({
   step,
@@ -39,6 +39,8 @@ export default function PersonalInformation({
   formData: any;
   isUpdatingSteps: boolean;
 }) {
+  const [countryCode, setCountryCode] = useState<string>("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,6 +63,9 @@ export default function PersonalInformation({
     setFormData({ ...formData, ...values });
   }
 
+  const countries = Country.getAllCountries();
+  const states = State.getStatesOfCountry(countryCode);
+
   return (
     <div className="max-w-[580px] w-full px-4 md:px-6 py-6 md:py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
       <div className="flex gap-4 items-center">
@@ -74,7 +79,8 @@ export default function PersonalInformation({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
+          className="mt-6 flex flex-col items-center gap-4"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -173,17 +179,58 @@ export default function PersonalInformation({
                 <FormControl>
                   <Select
                     name="country"
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}>
+                    onValueChange={(value: string) => {
+                      field.onChange(value);
+                      const selectedCountry = countries.find(
+                        (country) => country.name === value
+                      );
+                      setCountryCode(selectedCountry?.isoCode!);
+                    }}
+                    defaultValue={field.value}
+                  >
                     <SelectTrigger className="w-full h-14">
-                      <SelectValue placeholder="Enter your Country" />
+                      <SelectValue placeholder="Choose your Country" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.all.map((country: any, index: number) => (
+                      {countries.map((country: any, index: number) => (
                         <SelectItem
                           key={`${country.name}-${index + Math.random() * 100}`}
-                          value={country.name}>
+                          value={country.name}
+                        >
                           {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem className="space-y-1 w-full">
+                <FormLabel className="text-xs md:text-sm font-medium">
+                  State
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    name="state"
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="w-full h-14">
+                      <SelectValue placeholder="Choose your State" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {states.map((state: any, index: number) => (
+                        <SelectItem
+                          key={`${state.name}-${index + Math.random() * 100}`}
+                          value={state.name}
+                        >
+                          {state.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -225,7 +272,8 @@ export default function PersonalInformation({
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="flex items-center">
+                    className="flex items-center"
+                  >
                     <FormItem className="flex items-center space-x-2 space-y-0">
                       <FormControl>
                         <RadioGroupItem
@@ -254,7 +302,8 @@ export default function PersonalInformation({
           <CustomButton
             variant="default"
             disabled={isUpdatingSteps}
-            className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
+            className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+          >
             {isUpdatingSteps ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
