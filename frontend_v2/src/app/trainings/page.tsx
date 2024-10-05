@@ -134,9 +134,8 @@ export default function Trainings() {
                       <p className="font-normal text-base sm:text-lg">
                         {item.description}
                       </p>
-                      <p className="flex items-center gap-3 text-base font-semibold">
-                        <Calendar className="w-4 h-4" /> 26th August 2024
-                      </p>
+                      {/*  <p className="flex items-center gap-3 text-base font-semibold">
+                       <Calendar className="w-4 h-4" /> 26th August 2024 </p> */}
 
                       <div className="flex items-center gap-2">
                         {item?.venue.map((venue: string) => (
@@ -145,7 +144,7 @@ export default function Trainings() {
                       </div>
 
                       <div className="flex items-center flex-col md:flex-row gap-4">
-                      <Button
+                        <Button
                           onClick={() => router.push("/register")}
                           className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max"
                           disabled={item.status === false}>
