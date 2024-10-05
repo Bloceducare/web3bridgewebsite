@@ -32,6 +32,7 @@ export const formSchema = z.object({
     .string({ required_error: "Github profile link is required" })
     .min(2),
   country: z.string({ required_error: "Please enter your country" }).min(2),
+  state: z.string({ required_error: "Please enter your state" }).min(2),
   city: z.string({ required_error: "Where are you coming from?" }).min(2),
   gender: z.enum(["male", "female"], {
     required_error: "You need to select a gender type.",
