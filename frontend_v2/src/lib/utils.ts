@@ -24,7 +24,8 @@ export const navLinks = [
   },
   {
     name: "Blog",
-    href: "",
+    href: "https://medium.com/@web3bridge",
+    target: "_blank",
   },
   {
     name: "dApps",

@@ -12,27 +12,25 @@ const Web2 = () => {
     {
       firstTitle: "HTML & CSS",
       secondTitle: "Git & Netlify",
-      text1:
-        "Get everything you need to launch your career as a smart contract developer",
-      text2:
-        "Get everything you need to launch your career as a smart contract developer",
-      img: img2,
-    },
-    {
-      firstTitle: "Javascript",
-      secondTitle: "Nodejs",
-      text1: "Gain the basics and in-depth knowledge about javascript",
-      text2:
-        "Get everything you need to launch your career as a smart contract developer",
+      text1: "Build responsive websites with fundamental web technologies",
+      text2: "Master version control and streamline website deployment",
       img: img1,
     },
     {
-      firstTitle: "Typescript",
+      firstTitle: "JavaScript",
+      secondTitle: "Node.js",
+      text1:
+        "Learn JavaScript to create interactive and dynamic web experiences.",
+      text2: "Explore Node.js for building scalable server-side applications.",
+      img: img2,
+    },
+    {
+      firstTitle: "TypeScript",
       secondTitle: "React",
       text1:
-        "Get everything you need to launch your career as a smart contract developer",
+        "Master TypeScript to enhance your JavaScript skills with strong typing.",
       text2:
-        "Get everything you need to launch your career as a smart contract developer",
+        "Build interactive UIs with React and create responsive, dynamic web applications.",
       img: img1,
     },
   ];

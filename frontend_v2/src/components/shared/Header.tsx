@@ -32,6 +32,7 @@ export default function Header() {
             {navLinks.map((link, _key) => (
               <Link
                 href={link.href}
+                target={link.target}
                 key={_key}
                 className={cn(
                   "text-base font-normal text-muted-foreground  transition",
