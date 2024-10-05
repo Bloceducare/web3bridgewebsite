@@ -1,32 +1,32 @@
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-toast.configure()
+toast.configure();
 const Newsletter = () => {
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState("");
 
   const notify = () =>
-    toast.success('you have successfully registered for our news letter!', {
+    toast.success("you have successfully registered for our news letter!", {
       position: toast.POSITION.TOP_CENTER,
-    })
+    });
 
   const inputHandler = (e) => {
-    setInput(e.target.value)
-  }
+    setInput(e.target.value);
+  };
   const submitHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (input) {
-      console.log(input)
-      notify()
-      setInput('')
+      console.log(input);
+      notify();
+      setInput("");
     }
-  }
+  };
   const iframeStyle = {
     display: "block",
     marginLeft: "auto",
     marginRight: "auto",
-    maxWidth: "100%"
+    maxWidth: "100%",
   };
   return (
     <div className="flex flex-col items-center justify-center bg-base py-12 mt-20">
@@ -39,12 +39,18 @@ const Newsletter = () => {
           technology in the web 3 world, we promise not to spam you.
         </p>
         <div>
-          <iframe width="840" height="500" src="https://c75e802e.sibforms.com/serve/MUIFALe4lAOyLtL5vTm4hUf2XWF8FBC_TcuQ0kg1mauaBFLU8O8M5dnWtIJRiLGFZb3FDU-mU-H6Je0wsVrAV_5fBy6Xxt9j3xLoBuy_DWo7I2HJ7rNIDyBGPsBx_ZO_UDXheNqbd0vZKQiZCZBAwWNw0H0FwGt10qUK-VRlj807pjEZfs_uJqM8CK2gVfF9BL0pv9DohGVZYrwK" frameBorder="0" scrolling="auto" allowFullScreen style={iframeStyle}></iframe>
+          <iframe
+            width="840"
+            height="500"
+            src="https://c75e802e.sibforms.com/serve/MUIFALe4lAOyLtL5vTm4hUf2XWF8FBC_TcuQ0kg1mauaBFLU8O8M5dnWtIJRiLGFZb3FDU-mU-H6Je0wsVrAV_5fBy6Xxt9j3xLoBuy_DWo7I2HJ7rNIDyBGPsBx_ZO_UDXheNqbd0vZKQiZCZBAwWNw0H0FwGt10qUK-VRlj807pjEZfs_uJqM8CK2gVfF9BL0pv9DohGVZYrwK"
+            frameBorder="0"
+            scrolling="auto"
+            allowFullScreen
+            style={iframeStyle}></iframe>
         </div>
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default Newsletter
+export default Newsletter;
