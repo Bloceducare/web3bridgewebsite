@@ -46,6 +46,7 @@ class CourseSerializer:
         images = serializers.ListField(child=serializers.ImageField(), required=False)
         
         class Meta:
+            ref_name = "courses"
             model = models.Course
             fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
             extra_kwargs= { field: {'required': False} for field in fields}
