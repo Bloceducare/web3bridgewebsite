@@ -84,7 +84,7 @@ export default function Openings() {
               <CardFooter className="flex justify-end">
                 <Button
                   className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-[#E6272729] dark:border-red-500 bg-red-500/10 dark:bg-red-500/20 text-bridgeRed dark:text-white hover:bg-transparent dark:hover:bg-transparent"
-                  onClick={() => router.push(`/career/${1}`)}
+                  onClick={() => router.push(`/career/${job.id}`)}
                 >
                   See More
                 </Button>
