@@ -25,6 +25,7 @@ class EventSerializer(serializers.ModelSerializer):
     
     class Update(serializers.ModelSerializer):
         class Meta:
+            ref_name = "event"
             model = Event
             fields = ["id", "title", "description", "date", "time", "time_zone", "location", "image"]
             extra_kwargs= { field: {'required': False} for field in fields}
