@@ -8,11 +8,7 @@ def testimonial_image_location(instance, filename):
     full_name_proceesed= instance.full_name.replace(" ", "_")
     return f"{settings.ENVIROMENT}/Testimonial/{full_name_proceesed}/{filename}"
 
-
-
-
-
-def send_registration_success_mail(email, course_id, participant):
+def send_registration_success_mail(email, course_id, participant, wallet_address):
     from cohort.models import Course
     try:
         course = Course.objects.get(pk=course_id)
@@ -26,7 +22,7 @@ def send_registration_success_mail(email, course_id, participant):
             subject = 'Other Registration Success'
             template_name = 'other_registration_email.html' 
 
-        context = {'name': participant}
+        context = {'name': participant, 'wallet': wallet_address}
         message = render_to_string(template_name, context)
 
         from_email = settings.EMAIL_HOST_USER
@@ -35,5 +31,5 @@ def send_registration_success_mail(email, course_id, participant):
         send_mail(subject, '', from_email, recipient_list, html_message=message, fail_silently=False)
     except Course.DoesNotExist:
         # Handle case where course with provided ID does not exist
-        pass 
+        pass
 

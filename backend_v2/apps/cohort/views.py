@@ -181,7 +181,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             email = serialized_participant_obj.get('email')
             course = serialized_participant_obj.get('course').get('id') 
             participant = serialized_participant_obj.get('name')
-            send_registration_success_mail(email, course, participant)
+            wallet_address = serialized_participant_obj.get('wallet_address')
+            send_registration_success_mail(email, course, participant, wallet_address)
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
         return requestUtils.error_response("Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
     
