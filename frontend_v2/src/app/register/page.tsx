@@ -105,11 +105,14 @@ export default function RegistrationPage() {
       );
 
       const result = await response.json();
+     
 
       if (result.success === false) {
         console.log(result);
         return toast.error(result.message);
       }
+
+      //await sendResponse(result);
 
       toast.success("Registration successful!", {
         description: `Welcome aboard, ${userForm.name.split(" ")[0]}!`,
@@ -128,6 +131,9 @@ export default function RegistrationPage() {
     }
   };
 
+  
+
+
   const props = {
     step,
     nextStep,
@@ -138,7 +144,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-14");
+  const openDate = new Date("2024-10-6");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
