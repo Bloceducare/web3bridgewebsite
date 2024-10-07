@@ -1,7 +1,10 @@
 import clock from "../../public/career/Clock.svg";
 import Barbell from "../../public/career/Barbell.svg";
 import Confetti from "../../public/career/Confetti.svg";
+
 import RocketLaunch from "../../public/career/RocketLaunch.svg";
+
+
 export const benefitsData = [
   {
     icon: clock,
@@ -31,54 +34,29 @@ export const benefitsData = [
 
 export const allJobOpenings = [
   {
-    title: "Full-Stack Developers",
+    id:"1",
+    title: "Video Editor",
     tags: ["Full-time"],
     category: "Product",
     description:
-      "Due to growing workload, we are looking for experienced and talented Full-Stack Developers to join our fast-paced Engineering team. You will work closely with Product, Design and Marketing to analyze, develop, debug, test, roll-out and support new and existing product features.",
+      "We are seeking a talented and passionate Video Editor to join our dynamic media team. The ideal candidate will have a solid foundation in video editing techniques and a keen eye for storytelling. You will contribute to creating captivating content for our various platforms, ensuring our message reaches and resonates with our audience",
   },
+  // {
+  //   title: "Senior Product designer",
+  //   tags: ["Hybrid", "Full-time"],
+  //   category: "Design",
+  //   description:
+  //     "Since 2019 we've worked on 30+ major projects from 8 different industries that are being used by 500,000+ users and 1000+ businesses from 70+ different countries. Need full-cycle product development or an improvement cycle? Let's talk!",
+  // },
   {
-    title: "Senior Product designer",
-    tags: ["Hybrid", "Full-time"],
-    category: "Design",
-    description:
-      "Since 2019 we've worked on 30+ major projects from 8 different industries that are being used by 500,000+ users and 1000+ businesses from 70+ different countries. Need full-cycle product development or an improvement cycle? Let's talk!",
-  },
-  {
-    title: "Media/Creative Director",
+    id: "2",
+    title: "secretary",
     tags: ["Full-time"],
     category: "Marketing",
     description:
-      "We've worked on 30+ major projects from 8 different industries that are being . Need full-cycle product development or an improvement cycle? Let's talk!",
+      "We are seeking a highly organized and detail-oriented Secretary to join our dynamic team. The Secretary will play a critical role in managing key administrative tasks for our cohort programs and maintaining smooth communication within the team and with external stakeholders. The ideal candidate will be responsible for managing important documents, coordinating schedules, and ensuring the timely execution of tasks.",
   },
-  {
-    title: "Software Development Intern",
-    tags: ["Internship"],
-    category: "Product",
-    description:
-      "Join our Engineering team as a Software Development Intern. You'll gain hands-on experience working on real projects, collaborating with experienced developers, and learning industry-standard practices in software development.",
-  },
-  {
-    title: "UX/UI Design Intern",
-    tags: ["Internship"],
-    category: "Design",
-    description:
-      "We're seeking creative and enthusiastic UX/UI Design Interns to assist our design team. You'll be involved in user research, wireframing, prototyping, and contributing to the design of our digital products.",
-  },
-  {
-    title: "Marketing Assistant",
-    tags: ["Part-time"],
-    category: "Marketing",
-    description:
-      "We're looking for students passionate about marketing to join our team part-time. You'll assist in creating content, managing social media, and learning about digital marketing strategies in a fast-paced environment.",
-  },
-  {
-    title: "Operations Manager",
-    tags: ["Full-time"],
-    category: "Operation",
-    description:
-      "We're seeking an experienced Operations Manager to oversee and optimize our business processes. You'll work across departments to ensure efficient operations and drive continuous improvement.",
-  },
+
 ];
 
 export const categories = [
