@@ -85,6 +85,6 @@ export const categories = [
   { name: "All Openings", count: allJobOpenings.length },
   { name: "Product", count: 3 },
   { name: "Design", count: 1 },
-  { name: "Operation", count: 4 },
+  { name: "Operation", count: 1 },
   { name: "Marketing", count: 2 },
 ];

@@ -134,7 +134,7 @@ export default function PersonalInformation({
                 <FormControl>
                   <Input
                     {...field}
-                    type="number"
+                    type="text"
                     name="number"
                     placeholder="Enter your phone number"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
