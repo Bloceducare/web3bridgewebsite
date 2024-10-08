@@ -11,4 +11,4 @@ class OperationConfig(AppConfig):
         from operation import models
         pre_delete.connect(cloudinary_image_delete_signal_handlers, sender=models.Team)
         pre_delete.connect(cloudinary_image_delete_signal_handlers, sender=models.Mentor)
-    
+        pre_delete.connect(cloudinary_image_delete_signal_handlers, sender=models.Partner)
