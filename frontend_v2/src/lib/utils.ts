@@ -51,29 +51,46 @@ export const footerLinks = [
     links: [
       {
         name: "About Us",
-        path: "",
+        path: "/about",
       },
       {
         name: "Courses",
-        path: "",
+        path: "/trainings",
       },
       {
         name: "Partners",
-        path: "",
+        path: "/",
       },
       {
         name: "Alumni",
-        path: "",
+        path: "/cohorts",
       },
     ],
   },
   {
-    title: "Supports",
+    title: "General",
     links: [
+      {
+        name: "Join Community",
+        path: "https://t.me/web3bridge",
+      },
+      {
+        name: "Events",
+        path: "/events",
+      },
       {
         name: "DApps",
         path: "/dapps",
       },
+      {
+        name: "Blog",
+        path: "https://medium.com/@web3bridge",
+      },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
       {
         name: "Terms of Use",
         path: "",
@@ -83,28 +100,11 @@ export const footerLinks = [
         path: "",
       },
       {
-        name: "FAQ",
-        path: "",
-      },
-    ],
-  },
-  {
-    title: "general",
-    links: [
-      {
-        name: "Join Community",
-        path: "",
-      },
-      {
-        name: "Events",
-        path: "",
-      },
-      {
         name: "Resources",
         path: "",
       },
       {
-        name: "Blog",
+        name: "FAQ",
         path: "",
       },
     ],
