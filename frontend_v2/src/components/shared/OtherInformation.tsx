@@ -48,7 +48,7 @@ export default function OtherInformation({
       achievement: "",
       discount: "",
       wallet_address: "",
-      cta: false,
+      cta: ""
     },
   });
 
@@ -197,7 +197,7 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="cta"
             render={({ field }) => (
@@ -209,9 +209,39 @@ export default function OtherInformation({
                     name="cta"
                     className="h-5 w-5 mr-2"
                     id="cta"
-                    checked={isCheckboxChecked}
+                    checked={field.value}
                     onChange={(e) => {
                       field.onChange(e);
+                      setIsCheckboxChecked(!e.target.checked);
+                    }}
+                    required
+                  />
+                </FormControl>
+                <FormLabel className="text-xs md:text-sm font-medium">
+                  (required)
+                </FormLabel>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+
+          <FormField
+            control={form.control}
+            name="cta"
+            render={({ field }) => (
+              <FormItem className="flex items-center space-y-1 w-full">
+                <FormControl>
+                  <Input
+                    {...field} 
+                    type="checkbox" 
+                    name="cta" 
+                    className="h-5 w-5 mr-2"
+                    id="cta"
+                    value="accepted" 
+                    checked={field.value === "accepted"} 
+                    onChange={(e) => {
+                      field.onChange(e.target.checked ? "accepted" : ""); 
                       setIsCheckboxChecked(e.target.checked);
                     }}
                     required
@@ -225,7 +255,7 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-          
+
           <CustomButton
             variant="default"
             disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
