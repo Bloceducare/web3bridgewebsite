@@ -36,10 +36,10 @@ export default function OtherInformation({
   isRegistering: boolean;
   submitData: () => void;
 }) {
-    // const router = useRouter(); 
-    const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  // const router = useRouter();
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
-   const form = useForm<z.infer<typeof otherSchema>>({
+  const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
     defaultValues: {
       duration:
@@ -48,14 +48,12 @@ export default function OtherInformation({
       achievement: "",
       discount: "",
       wallet_address: "",
-      cta: false
+      cta: false,
     },
   });
 
-
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof otherSchema>) {
-    
     setFormData({ ...formData, ...values });
 
     // Check if a discount code is entered
@@ -69,8 +67,8 @@ export default function OtherInformation({
     }
 
     function validateDiscountCode(code: string) {
-        const validCodes = ["DISCOUNT10", "WEB3BRIDGECOD3"]; 
-        return validCodes.includes(code);
+      const validCodes = ["DISCOUNT10", "WEB3BRIDGECOD3"];
+      return validCodes.includes(code);
     }
     submitData();
     // router.push("/payment-success");
@@ -109,7 +107,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="motivation"
@@ -132,7 +129,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="achievement"
@@ -153,7 +149,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="wallet_address"
@@ -181,7 +176,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="discount"
@@ -203,7 +197,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="cta"
@@ -232,7 +225,7 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
+          
           <CustomButton
             variant="default"
             disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked

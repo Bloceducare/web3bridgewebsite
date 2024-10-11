@@ -131,6 +131,39 @@ export default function RegistrationPage() {
     }
   };
 
+  const sendResponse = async (data: any) => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          registrationId: data.registration,
+          participantId: data.id,
+          name: data.name,
+        }),
+      };
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/another-endpoint/`,
+        requestOptions
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("Failed to send data to the second endpoint:", result);
+        toast.error("Failed to send data to the second endpoint.");
+      } else {
+        console.log("Data successfully sent to the second endpoint:", result);
+      }
+    } catch (error) {
+      console.error("Error sending data to the second endpoint:", error);
+      toast.error("An error occurred while sending data to the second endpoint.");
+    }
+  };
+
   
 
 
