@@ -47,9 +47,10 @@ export const otherSchema = z.object({
     .string({ required_error: "Please enter your wallet address" })
     .min(2),
   discount: z.string().optional(), // Make discount an optional field
-  cta: z.boolean().refine((val) => val === true, {
-    message: "You must agree to the terms before proceeding.",
-  }),
+  cta: z.string().min(2).max(1000),
+  // cta: z.boolean().refine((val) => val === true, {
+  //   message: "You must agree to the terms before proceeding.",
+  // }),
 });
 
 // export const otherSchema = z.object({
