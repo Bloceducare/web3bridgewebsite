@@ -20,6 +20,7 @@ export default function JobPage({ params }: { params: { id: string } }) {
     jobDescription,
     responsibilities,
     jobRequirements,
+    Qualifications,
   } = data;
 
   return (
@@ -46,7 +47,11 @@ export default function JobPage({ params }: { params: { id: string } }) {
 
         <ItemWrapper title="Responsibilities" value={responsibilities} />
 
-        <ItemWrapper title="Job Requirements" value={jobRequirements} />
+        <ItemWrapper title="Qualifications" value={Qualifications} />
+
+        {jobRequirements && (
+          <ItemWrapper title="Job Requirements" value={jobRequirements} />
+        )}
 
         <ApplicationModal />
         {/* <Button variant={"bridgePrimary"}>
