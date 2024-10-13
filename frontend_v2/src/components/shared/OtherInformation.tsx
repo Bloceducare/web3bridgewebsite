@@ -4,6 +4,7 @@ import { otherSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -18,6 +19,7 @@ import { Input } from "../ui/input";
 import CustomButton from "./CustomButton";
 import { Loader2, MoveRight } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import { useState } from "react";
 
 export default function OtherInformation({
   step,
@@ -34,6 +36,9 @@ export default function OtherInformation({
   isRegistering: boolean;
   submitData: () => void;
 }) {
+  // const router = useRouter();
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+
   const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
     defaultValues: {
@@ -41,14 +46,32 @@ export default function OtherInformation({
         formData?.course === "Web3 - Solidity" ? "4 Months" : "3 Months",
       motivation: "",
       achievement: "",
+      discount: "",
       wallet_address: "",
+      cta: ""
     },
   });
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof otherSchema>) {
     setFormData({ ...formData, ...values });
+
+    // Check if a discount code is entered
+    if (values.discount) {
+      // Simulate discount code verification
+      const isDiscountValid = validateDiscountCode(values.discount);
+      if (!isDiscountValid) {
+        alert("Invalid discount code. Please try again.");
+        return;
+      }
+    }
+
+    function validateDiscountCode(code: string) {
+      const validCodes = ["DISCOUNT10", "WEB3BRIDGECOD3"];
+      return validCodes.includes(code);
+    }
     submitData();
+    // router.push("/payment-success");
   }
 
   return (
@@ -61,7 +84,8 @@ export default function OtherInformation({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
+          className="mt-6 flex flex-col items-center gap-4"
+        >
           <FormField
             control={form.control}
             name="duration"
@@ -152,11 +176,91 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem className="space-y-1 w-full">
+                <FormLabel className="text-xs md:text-sm font-medium">
+                  Discount Code (Optional)
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="text"
+                    name="discount"
+                    placeholder="Enter discount code..."
+                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <FormField
+            control={form.control}
+            name="cta"
+            render={({ field }) => (
+              <FormItem className="flex items-center space-y-1 w-full">
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="checkbox"
+                    name="cta"
+                    className="h-5 w-5 mr-2"
+                    id="cta"
+                    checked={field.value}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setIsCheckboxChecked(!e.target.checked);
+                    }}
+                    required
+                  />
+                </FormControl>
+                <FormLabel className="text-xs md:text-sm font-medium">
+                  (required)
+                </FormLabel>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+
+          <FormField
+            control={form.control}
+            name="cta"
+            render={({ field }) => (
+              <FormItem className="flex items-center space-y-1 w-full">
+                <FormControl>
+                  <Input
+                    {...field} 
+                    type="checkbox" 
+                    name="cta" 
+                    className="h-5 w-5 mr-2"
+                    id="cta"
+                    value="accepted" 
+                    checked={field.value === "accepted"} 
+                    onChange={(e) => {
+                      field.onChange(e.target.checked ? "accepted" : ""); 
+                      setIsCheckboxChecked(e.target.checked);
+                    }}
+                    required
+                  />
+                </FormControl>
+                <FormLabel className="text-xs md:text-sm font-medium">
+                  (required)
+                </FormLabel>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <CustomButton
             variant="default"
-            disabled={isRegistering || isUpdatingSteps}
-            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
+            disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
+            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+          >
             {isRegistering || isUpdatingSteps ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
