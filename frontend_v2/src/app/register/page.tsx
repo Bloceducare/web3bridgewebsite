@@ -110,12 +110,11 @@ export default function RegistrationPage() {
       }
     } catch (error) {
       console.error("Error sending data to the second endpoint:", error);
-      toast.error("An error occurred while sending data to the second endpoint.");
+      toast.error(
+        "An error occurred while sending data to the second endpoint."
+      );
     }
   };
-
-  
-
 
   const props = {
     step,
@@ -127,7 +126,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-6");
+  const openDate = new Date("2024-10-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import MaxWrapper from "@/components/shared/MaxWrapper";
@@ -9,6 +9,7 @@ import SuccessForm from "@/components/shared/SuccessForm";
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const saveInProgress = useRef(false); 
 
   // Retrieve data from localStorage
   const retrieveDataFromLocalStorage = () => {
@@ -49,7 +50,9 @@ export default function Page() {
 
   // Function to save data to the database
   const saveToDatabase = async (data: any) => {
+    if (saveInProgress.current) return;
     setIsSaving(true);
+    saveInProgress.current = true;
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
@@ -68,6 +71,7 @@ export default function Page() {
       toast.error(`Error saving data: ${errorMessage}`);
     } finally {
       setIsSaving(false);
+      saveInProgress.current = false; 
     }
   };
 
@@ -77,10 +81,10 @@ export default function Page() {
 
     const data = retrieveDataFromLocalStorage();
     if (data) {
-      const { email } = data; // Assuming the user's email is stored in the form data
+      const { email } = data;
       checkPaymentStatus(email).then((isPaymentSuccessful) => {
-        if (isPaymentSuccessful) {
-          saveToDatabase(data); // Only save if payment is successful
+        if (isPaymentSuccessful && !saveInProgress.current) {
+          saveToDatabase(data);
         }
       });
     }
