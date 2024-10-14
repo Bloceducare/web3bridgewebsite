@@ -9,7 +9,7 @@ import Footer from "@/components/shared/Footer";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Toaster } from "@/components/ui/sonner";
-
+import { Analytics } from "@vercel/analytics/react";
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -47,6 +47,7 @@ export default function RootLayout({
           <Analytics />
 
           <Footer />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
