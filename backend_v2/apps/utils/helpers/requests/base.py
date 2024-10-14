@@ -9,7 +9,7 @@ class Utils:
 
         if not hasattr(queryset, "get"):
             class_name= (class_.__name__ if isinstance(class_, type) else class_.__class__.__name__)
-            raise ValueError(f"First arguement to get_object_or_raise_error() must be a Model or Manager or Queryset not {class_name}")
+            raise ValueError(f"First argument to get_object_or_raise_error() must be a Model or Manager or Queryset not {class_name}")
 
         try:
             queryset.get(*args, **kwargs)    

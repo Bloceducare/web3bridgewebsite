@@ -113,7 +113,7 @@ export default function OtherInformation({
             render={({ field }) => (
               <FormItem className="space-y-1 w-full">
                 <FormLabel className="text-xs md:text-sm font-medium">
-                  What inspired or motivated you to start writing codes?
+                  What inspired or motivated you to start writing code?
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -171,7 +171,7 @@ export default function OtherInformation({
                 <FormMessage />
                 <FormDescription className="text-xs md:text-sm">
                   Please be aware that the address you are to provide is your
-                  MetaMask wallet address, not where you are.
+                  MetaMask wallet address, not where you live.
                 </FormDescription>
               </FormItem>
             )}

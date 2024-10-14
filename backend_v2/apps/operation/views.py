@@ -102,8 +102,8 @@ class PartnerViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         serializer = self.serializer_class.Create(data=request.data)
         
         if serializer.is_valid():
-            mentor_obj= serializer.save()
-            serialized_partner_obj= self.serializer_class.Retrieve(mentor_obj).data
+            partner_obj= serializer.save()
+            serialized_partner_obj= self.serializer_class.Retrieve(partner_obj).data
             return requestUtils.success_response(data=serialized_partner_obj, http_status=status.HTTP_201_CREATED)
         
         return requestUtils.error_response("Error Creating Patner", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
