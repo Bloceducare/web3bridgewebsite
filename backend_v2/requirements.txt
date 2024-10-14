@@ -8,11 +8,12 @@ django-cors-headers
 djangorestframework
 djangorestframework-simplejwt
 drf-yasg
+gunicorn
 idna
 inflection
 packaging
 pillow
-psycopg2
+psycopg2-binary
 PyJWT
 python-decouple
 pytz
@@ -25,6 +26,3 @@ typing_extensions
 tzdata
 uritemplate
 urllib3
-python-decouple
-requests
-gunicorn
