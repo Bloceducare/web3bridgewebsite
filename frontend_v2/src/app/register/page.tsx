@@ -1,81 +1,51 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import { MoveRight } from "lucide-react";
 import { toast } from "sonner";
 import SelectCourse from "@/components/shared/SelectCourse";
 import PersonalInformation from "@/components/shared/PersonalInformation";
 import OtherInformation from "@/components/shared/OtherInformation";
-import SuccessForm from "@/components/shared/SuccessForm";
 import { isValidEthereumAddress } from "@/lib/utils";
 import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+
 const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
 
 export default function RegistrationPage() {
+  const router = useRouter();
   const { data, isLoading } = useFetchAllCourses();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
   const regId = allReg?.map((item: any) => item?.id);
-
   const [step, setStep] = useState(1);
-  // const [allStatusFalse, setAllStatusFalse] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState<FormDataType | null>(null);
 
   const nextStep = () => {
     setIsUpdatingSteps(true);
-
     const timeout = setTimeout(() => {
       setStep((prevStep) => prevStep + 1);
       setIsUpdatingSteps(false);
     }, 2000);
-
     return () => clearTimeout(timeout);
   };
-
-  interface Course {
-    id: number;
-    name: string;
-    description: string;
-    venue: string[];
-    extra_info: string;
-    images: {
-      id: number;
-      picture: string;
-    }[];
-    status: boolean;
-  }
-
-  interface Registration {
-    id: number;
-    status: boolean;
-  }
-
-  // useEffect(() => {
-  //   if (loadReg) return;
-
-  //   const allClosed = allReg.every((reg: Registration) => reg.status === false); // Adjust according to your actual data structure
-  //   setAllStatusFalse(allClosed);
-  // }, [allReg, loadReg]);
 
   const submitData = async () => {
     if (!formData) return;
     const valid = isValidEthereumAddress(formData.wallet_address);
-
     const courseId = data.find(
       (item: any) => item?.name === formData.course
     )?.id;
-
     const courseName = data.find(
       (item: any) => item?.name === formData.course
     )?.name;
-
     const userForm = {
       ...formData,
       course: courseId,
@@ -89,37 +59,17 @@ export default function RegistrationPage() {
 
     try {
       setIsRegistering(true);
-      toast.loading("Registering...");
-
-      const requestOptions: any = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userForm),
-      };
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
-        requestOptions
-      );
-
-      const result = await response.json();
-     
-
-      if (result.success === false) {
-        console.log(result);
-        return toast.error(result.message);
-      }
-
-      //await sendResponse(result);
-
-      toast.success("Registration successful!", {
-        description: `Welcome aboard, ${userForm.name.split(" ")[0]}!`,
+      toast.loading("Processing registration...");
+      localStorage.setItem("registrationData", JSON.stringify(userForm));
+      toast.success("Registration data saved!", {
+        description: "Redirecting to payment...",
       });
-      nextStep();
-      setFormData(null);
-      console.log(result);
+
+      const encodedData = btoa(JSON.stringify(userForm));
+      const paymentUrl = `${
+        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+      }?data=${encodeURIComponent(encodedData)}`;
+      window.location.href = paymentUrl;
     } catch (error) {
       console.error("Error during registration:", error);
       toast.error("Oops! Something went wrong", {
@@ -160,12 +110,11 @@ export default function RegistrationPage() {
       }
     } catch (error) {
       console.error("Error sending data to the second endpoint:", error);
-      toast.error("An error occurred while sending data to the second endpoint.");
+      toast.error(
+        "An error occurred while sending data to the second endpoint."
+      );
     }
   };
-
-  
-
 
   const props = {
     step,
@@ -177,7 +126,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-6");
+  const openDate = new Date("2024-10-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
@@ -186,24 +135,19 @@ export default function RegistrationPage() {
       {isClose ? (
         <div className="text-center flex flex-col items-center gap-6">
           <p className="text-center text-[2em]">Registration Opens in</p>
-
           <CountDown targetDate={openDate.toDateString()} />
-
           <a
-            href={"https://forms.gle/WtEw4cDfWEHQcX3h9"}
+            href="https://forms.gle/WtEw4cDfWEHQcX3h9"
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: "bridgePrimary" })}
-          >
+            className={buttonVariants({ variant: "bridgePrimary" })}>
             Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
           </a>
-
           <a
             href="https://t.me/web3bridge"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm underline hover:text-bridgeRed"
-          >
+            className="text-sm underline hover:text-bridgeRed">
             Do join our telegram group to get information on next cohort
           </a>
         </div>
@@ -213,10 +157,8 @@ export default function RegistrationPage() {
             <SelectCourse {...props} />
           ) : step === 2 ? (
             <PersonalInformation {...props} />
-          ) : step === 3 ? (
-            <OtherInformation {...props} />
           ) : (
-            <SuccessForm />
+            <OtherInformation {...props} />
           )}
         </>
       )}

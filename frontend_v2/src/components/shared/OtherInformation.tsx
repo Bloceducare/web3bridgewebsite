@@ -48,7 +48,7 @@ export default function OtherInformation({
       achievement: "",
       discount: "",
       wallet_address: "",
-      cta: ""
+      cta: "",
     },
   });
 
@@ -84,8 +84,7 @@ export default function OtherInformation({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4"
-        >
+          className="mt-6 flex flex-col items-center gap-4">
           <FormField
             control={form.control}
             name="duration"
@@ -233,22 +232,23 @@ export default function OtherInformation({
               <FormItem className="flex items-center space-y-1 w-full">
                 <FormControl>
                   <Input
-                    {...field} 
-                    type="checkbox" 
-                    name="cta" 
+                    {...field}
+                    type="checkbox"
+                    name="cta"
                     className="h-5 w-5 mr-2"
                     id="cta"
-                    value="accepted" 
-                    checked={field.value === "accepted"} 
+                    value="accepted"
+                    checked={field.value === "accepted"}
                     onChange={(e) => {
-                      field.onChange(e.target.checked ? "accepted" : ""); 
+                      field.onChange(e.target.checked ? "accepted" : "");
                       setIsCheckboxChecked(e.target.checked);
                     }}
                     required
                   />
                 </FormControl>
-                <FormLabel className="text-xs md:text-sm font-medium">
-                  (required)
+                <FormLabel className="text-xs md:text-xs font-medium">
+                  Please confirm that you have access to the secret key
+                  associated with your wallet to proceed with the transaction.
                 </FormLabel>
 
                 <FormMessage />
@@ -259,8 +259,7 @@ export default function OtherInformation({
           <CustomButton
             variant="default"
             disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
-            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
-          >
+            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
             {isRegistering || isUpdatingSteps ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
