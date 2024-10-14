@@ -8,7 +8,7 @@ def testimonial_image_location(instance, filename):
     full_name_proceesed= instance.full_name.replace(" ", "_")
     return f"{settings.ENVIROMENT}/Testimonial/{full_name_proceesed}/{filename}"
 
-def send_registration_success_mail(email, course_id, participant, wallet_address):
+def send_registration_success_mail(email, course_id, participant):
     from cohort.models import Course
     try:
         course = Course.objects.get(pk=course_id)
@@ -22,7 +22,7 @@ def send_registration_success_mail(email, course_id, participant, wallet_address
             subject = 'Other Registration Success'
             template_name = 'other_registration_email.html' 
 
-        context = {'name': participant, 'wallet': wallet_address}
+        context = {'name': participant}
         message = render_to_string(template_name, context)
 
         from_email = settings.EMAIL_HOST_USER
@@ -33,3 +33,35 @@ def send_registration_success_mail(email, course_id, participant, wallet_address
         # Handle case where course with provided ID does not exist
         pass
 
+
+def send_participant_details(email, course_id, participant):
+    from cohort.models import Course
+
+    try:
+        course = Course.objects.get(pk=course_id)
+        name= participant.get('name')
+        email= participant.get('email')
+        gender= participant.get('gender')
+        github= participant.get('github')
+        number= participant.get('number')
+        wallet_address= participant.get('wallet_address')
+        city= participant.get('city')
+        country= participant.get('country')
+        duration= participant.get('duration')
+        motivation= participant.get('motivation')
+        achievement= participant.get('achievement')
+
+        context = {'name': name, 'email': email, 'number': number, 'gender': gender, 'github': github,
+                    'city': city, 'country': country, 'wallet': wallet_address, 'course_name': course.name,
+                    'duration': duration, 'motivation': motivation, 'achievement': achievement,
+                }
+        message = render_to_string('participant_email.html', context)
+
+        subject = 'Web3Bridge Registration Details'
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [email]
+
+        send_mail(subject, '', from_email, recipient_list, html_message=message, fail_silently=False)
+    except Course.DoesNotExist:
+        # Handle case where course with provided ID does not exist
+        pass
