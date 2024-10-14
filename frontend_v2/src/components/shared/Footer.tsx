@@ -27,7 +27,7 @@ export default function Footer() {
           </h1>
           <p className="text-base text-[#FFFBF3] font-normal">
             Get occasional news and update from us about the latest trends,
-            technology in the web 3 world, we promise not to spam you.
+            technology in the Web3 world. We promise not to spam you.
           </p>
 
           <form
@@ -83,20 +83,20 @@ export default function Footer() {
           <div className="flex items-center justify-between gap-3 flex-wrap mt-10">
             <div className="flex items-center gap-4">
               <p className="text-sm text-muted-foreground">
-                Support@web3bridge.com
+                support@web3bridge.com
               </p>
 
               <div className="flex items-center gap-2">
-                <Link href="/">
+                <Link href="https://x.com/Web3Bridge">
                   <FaSquareTwitter className="w-5 h-5" />
                 </Link>
-                <Link href="/">
+                <Link href="https://ng.linkedin.com/company/web3bridge">
                   <FaLinkedin className="w-5 h-5" />
                 </Link>
-                <Link href="/">
+                <Link href="https://www.instagram.com/web3bridge">
                   <RiInstagramFill className="w-5 h-5" />
                 </Link>
-                <Link href="/">
+                <Link href="https://www.youtube.com/@web3bridge">
                   <TbBrandYoutubeFilled className="w-5 h-5" />
                 </Link>
               </div>

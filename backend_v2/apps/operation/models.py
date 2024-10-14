@@ -29,7 +29,7 @@ class Mentor(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
 # Partner model
 class Partner(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  
     name= models.CharField(_('full name'), max_length=1000, blank=False, null=False)
-    url= models.URLField(_('repo url'), max_length=1000, blank=True, null=True)
+    url= models.URLField(_('site url'), max_length=1000, blank=True, null=True)
     extra_info= models.TextField(_("extra_info"), blank=True, null=True)
     picture= models.ImageField(upload_to=partner_image_location, blank=True, null=True)
     
