@@ -226,7 +226,7 @@ export default function OtherInformation({
           />
 
           <FormDescription className="text-[#FA0101] font-bold text-sm">
-            Please do not close this webpage or your browser app during/after payment until
+            Please do not close this webpage or your browser application during/after payment until
             you are redirected back to this website and your registration is fully confirmed.
           </FormDescription>
 
