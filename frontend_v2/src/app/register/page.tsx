@@ -66,9 +66,8 @@ export default function RegistrationPage() {
       });
 
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${
-        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-      }?data=${encodeURIComponent(encodedData)}`;
+      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+        }?data=${encodeURIComponent(encodedData)}`;
       window.location.href = paymentUrl;
     } catch (error) {
       console.error("Error during registration:", error);
@@ -78,41 +77,6 @@ export default function RegistrationPage() {
     } finally {
       setIsRegistering(false);
       toast.dismiss();
-    }
-  };
-
-  const sendResponse = async (data: any) => {
-    try {
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          registrationId: data.registration,
-          participantId: data.id,
-          name: data.name,
-        }),
-      };
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/another-endpoint/`,
-        requestOptions
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        console.error("Failed to send data to the second endpoint:", result);
-        toast.error("Failed to send data to the second endpoint.");
-      } else {
-        console.log("Data successfully sent to the second endpoint:", result);
-      }
-    } catch (error) {
-      console.error("Error sending data to the second endpoint:", error);
-      toast.error(
-        "An error occurred while sending data to the second endpoint."
-      );
     }
   };
 
