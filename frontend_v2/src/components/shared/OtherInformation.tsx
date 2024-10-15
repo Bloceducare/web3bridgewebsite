@@ -196,35 +196,6 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name="cta"
-            render={({ field }) => (
-              <FormItem className="flex items-center space-y-1 w-full">
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="checkbox"
-                    name="cta"
-                    className="h-5 w-5 mr-2"
-                    id="cta"
-                    checked={field.value}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setIsCheckboxChecked(!e.target.checked);
-                    }}
-                    required
-                  />
-                </FormControl>
-                <FormLabel className="text-xs md:text-sm font-medium">
-                  (required)
-                </FormLabel>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-
           <FormField
             control={form.control}
             name="cta"
@@ -237,10 +208,9 @@ export default function OtherInformation({
                     name="cta"
                     className="h-5 w-5 mr-2"
                     id="cta"
-                    value="accepted"
-                    checked={field.value === "accepted"}
+                    checked={Boolean(field.value)}
                     onChange={(e) => {
-                      field.onChange(e.target.checked ? "accepted" : "");
+                      field.onChange(e.target.checked);
                       setIsCheckboxChecked(e.target.checked);
                     }}
                     required
