@@ -9,7 +9,7 @@ import SuccessForm from "@/components/shared/SuccessForm";
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const saveInProgress = useRef(false); 
+  const saveInProgress = useRef(false);
 
   // Retrieve data from localStorage
   const retrieveDataFromLocalStorage = () => {
@@ -71,7 +71,7 @@ export default function Page() {
       toast.error(`Error saving data: ${errorMessage}`);
     } finally {
       setIsSaving(false);
-      saveInProgress.current = false; 
+      saveInProgress.current = false;
     }
   };
 

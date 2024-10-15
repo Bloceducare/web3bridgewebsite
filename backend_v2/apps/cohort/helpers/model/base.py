@@ -46,6 +46,7 @@ def send_participant_details(email, course_id, participant):
         number= participant.get('number')
         wallet_address= participant.get('wallet_address')
         city= participant.get('city')
+        state= participant.get('state')
         country= participant.get('country')
         duration= participant.get('duration')
         motivation= participant.get('motivation')
@@ -55,9 +56,9 @@ def send_participant_details(email, course_id, participant):
                     'city': city, 'country': country, 'wallet': wallet_address, 'course_name': course.name,
                     'duration': duration, 'motivation': motivation, 'achievement': achievement,
                 }
-        message = render_to_string('participant_email.html', context)
+        message = render_to_string('cohort/participant_email.html', context)
 
-        subject = 'Web3Bridge Registration Details'
+        subject = 'Web3Bridge Cohort Registration Details'
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [email]
 

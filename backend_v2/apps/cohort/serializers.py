@@ -144,7 +144,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation",
-                      "achievement", "city", "country", "duration", "gender", "github", "number", "course"]
+                      "achievement", "city", "state", "country", "duration", "gender", "github", "number", "course"]
             extra_kwargs= { field: {'required': False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -157,6 +157,7 @@ class ParticipantSerializer:
             instance.motivation= validated_data.get('motivation', instance.motivation) 
             instance.achievement= validated_data.get('achievement', instance.achievement) 
             instance.city= validated_data.get('city', instance.city) 
+            instance.state= validated_data.get('state', instance.state) 
             instance.country= validated_data.get('country', instance.country) 
             instance.duration= validated_data.get('duration', instance.duration) 
             instance.gender= validated_data.get('gender', instance.gender) 

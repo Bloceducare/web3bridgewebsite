@@ -48,17 +48,14 @@ export default function OtherInformation({
       achievement: "",
       discount: "",
       wallet_address: "",
-      cta: "",
+      cta: false,
     },
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof otherSchema>) {
     setFormData({ ...formData, ...values });
 
-    // Check if a discount code is entered
     if (values.discount) {
-      // Simulate discount code verification
       const isDiscountValid = validateDiscountCode(values.discount);
       if (!isDiscountValid) {
         alert("Invalid discount code. Please try again.");
@@ -67,8 +64,9 @@ export default function OtherInformation({
     }
 
     function validateDiscountCode(code: string) {
-      const validCodes = ["DISCOUNT10", "WEB3BRIDGECOD3"];
-      return validCodes.includes(code);
+      const validCodes = process.env.COHORT_DISCOUNT_CODE!;
+      return validCodes.includes(code);    // if array
+      // return validCodes ===  code;    // if string
     }
     submitData();
     // router.push("/payment-success");
@@ -196,6 +194,7 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="cta"
@@ -208,6 +207,7 @@ export default function OtherInformation({
                     name="cta"
                     className="h-5 w-5 mr-2"
                     id="cta"
+                    value="true"
                     checked={Boolean(field.value)}
                     onChange={(e) => {
                       field.onChange(e.target.checked);
@@ -216,15 +216,19 @@ export default function OtherInformation({
                     required
                   />
                 </FormControl>
-                <FormLabel className="text-xs md:text-xs font-medium">
+                <FormLabel className="text-xs md:text-sm font-medium">
                   Please confirm that you have access to the secret key
                   associated with your wallet to proceed with the transaction.
                 </FormLabel>
-
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <FormDescription className="text-[#FA0101] font-bold text-sm">
+            Please do not close this webpage or your browser application during/after payment until
+            you are redirected back to this website and your registration is fully confirmed.
+          </FormDescription>
 
           <CustomButton
             variant="default"

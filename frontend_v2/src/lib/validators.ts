@@ -46,19 +46,8 @@ export const otherSchema = z.object({
   wallet_address: z
     .string({ required_error: "Please enter your wallet address" })
     .min(2),
-  discount: z.string().optional(), // Make discount an optional field
-  cta: z.string().min(2).max(1000),
-  // cta: z.boolean().refine((val) => val === true, {
-  //   message: "You must agree to the terms before proceeding.",
-  // }),
+  discount: z.string().optional(),
+  cta: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms before proceeding.",
+  }),
 });
-
-// export const otherSchema = z.object({
-//   duration: z.string().max(30),
-//   motivation: z.string().min(2).max(1000),
-//   achievement: z.string().min(2).max(1000),
-//   wallet_address: z
-//     .string({ required_error: "Please enter your wallet address" })
-//     .min(2),
-//   discount: z.string().min(2).max(1000),
-// });
