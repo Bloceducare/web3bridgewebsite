@@ -58,7 +58,7 @@ def send_participant_details(email, course_id, participant):
                 }
         message = render_to_string('cohort/participant_email.html', context)
 
-        subject = 'Web3Bridge Registration Details'
+        subject = 'Web3Bridge Cohort Registration Details'
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [email]
 
