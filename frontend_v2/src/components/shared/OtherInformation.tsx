@@ -207,7 +207,7 @@ export default function OtherInformation({
                     name="cta"
                     className="h-5 w-5 mr-2"
                     id="cta"
-                    value="accepted"
+                    value="true"
                     checked={Boolean(field.value)}
                     onChange={(e) => {
                       field.onChange(e.target.checked);
