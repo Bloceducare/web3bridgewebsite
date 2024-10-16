@@ -164,6 +164,7 @@ class ParticipantSerializer:
             instance.github= validated_data.get('github', instance.github) 
             instance.number= validated_data.get('number', instance.number) 
             instance.course= validated_data.get('course', instance.course)
+            instance.cohort= validated_data.get('cohort', instance.cohort)
 
             instance.save()
             return instance
