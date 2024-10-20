@@ -47,6 +47,7 @@ export default function PersonalInformation({
       name: "",
       email: "",
       number: "",
+      cohort: formData.cohort || "XII",
       github:
         formData.course === "Web3 - Solidity"
           ? ""

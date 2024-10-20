@@ -31,16 +31,16 @@ export default function Page() {
   // Function to check payment status
   const checkPaymentStatus = async (email: string) => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN_VERIFY}api/validate/${email}`
-      );
-      console.log("Payment status response:", response);
+      // const response = await axios.get(
+      //   `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN_VERIFY}api/validate/${email}`
+      // );
+      // console.log("Payment status response:", response);
 
-      if (response.status === 200 && response.data.status === true) {
-        return true;
-      } else {
-        throw new Error("Payment not successful");
-      }
+      // if (response.status === 200 && response.data.status === true) {
+      //   return true;
+      // } else {
+      //   throw new Error("Payment not successful");
+      // }
     } catch (error) {
       console.error("Error checking payment status:", error);
       toast.error("Payment not successful. Please complete payment first.");
@@ -54,17 +54,17 @@ export default function Page() {
     setIsSaving(true);
     saveInProgress.current = true;
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
-        data
-      );
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
+      //   data
+      // );
 
-      if (response.status === 200 || response.status === 201) {
-        toast.success("Registration data saved successfully!");
-        localStorage.removeItem("registrationData");
-      } else {
-        throw new Error("Unexpected response from server.");
-      }
+      // if (response.status === 200 || response.status === 201) {
+      //   toast.success("Registration data saved successfully!");
+      //   localStorage.removeItem("registrationData");
+      // } else {
+      //   throw new Error("Unexpected response from server.");
+      // }
     } catch (error) {
       const errorMessage =
         (error as any).response?.data?.message || (error as any).message;

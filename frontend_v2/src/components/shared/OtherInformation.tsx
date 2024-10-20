@@ -65,7 +65,7 @@ export default function OtherInformation({
 
     function validateDiscountCode(code: string) {
       const validCodes = process.env.COHORT_DISCOUNT_CODE!;
-      return validCodes.includes(code);    // if array
+      return validCodes.includes(code); // if array
       // return validCodes ===  code;    // if string
     }
     submitData();
@@ -120,6 +120,7 @@ export default function OtherInformation({
                     name="motivation"
                     placeholder="Write here"
                     className="h-24 py-4 shadow-none px-4 text-xs md:text-sm resize-none"
+                    maxLength={100}
                   />
                 </FormControl>
                 <FormMessage />
@@ -140,6 +141,7 @@ export default function OtherInformation({
                     name="achievement"
                     placeholder="Write here"
                     className="h-24 py-4 shadow-none px-4 text-xs md:text-sm resize-none"
+                    maxLength={100}
                   />
                 </FormControl>
                 <FormMessage />
@@ -226,8 +228,9 @@ export default function OtherInformation({
           />
 
           <FormDescription className="text-[#FA0101] font-bold text-sm">
-            Please do not close this webpage or your browser application during/after payment until
-            you are redirected back to this website and your registration is fully confirmed.
+            Please do not close this webpage or your browser application
+            during/after payment until you are redirected back to this website
+            and your registration is fully confirmed.
           </FormDescription>
 
           <CustomButton
