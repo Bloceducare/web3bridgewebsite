@@ -39,21 +39,23 @@ def send_participant_details(email, course_id, participant):
 
     try:
         course = Course.objects.get(pk=course_id)
-        name= participant.get('name')
-        email= participant.get('email')
-        gender= participant.get('gender')
-        github= participant.get('github')
-        number= participant.get('number')
-        wallet_address= participant.get('wallet_address')
-        city= participant.get('city')
-        state= participant.get('state')
-        country= participant.get('country')
-        duration= participant.get('duration')
-        motivation= participant.get('motivation')
-        achievement= participant.get('achievement')
+        name = participant.get('name')
+        email = participant.get('email')
+        number = participant.get('number')
+        gender = participant.get('gender')
+        github = participant.get('github')
+        city = participant.get('city')
+        state = participant.get('state')
+        country = participant.get('country')
+        duration = participant.get('duration')
+        motivation = participant.get('motivation')
+        achievement = participant.get('achievement')
+        wallet_address = participant.get('wallet_address')
 
-        context = {'name': name, 'email': email, 'number': number, 'gender': gender, 'github': github,
-                    'city': city, 'country': country, 'wallet': wallet_address, 'course_name': course.name,
+        context = {
+                    'name': name, 'email': email, 'number': number, 'gender': gender,
+                    'city': city, 'state': state, 'country': country,
+                    'github': github, 'wallet': wallet_address, 'course_name': course.name,
                     'duration': duration, 'motivation': motivation, 'achievement': achievement,
                 }
         message = render_to_string('cohort/participant_email.html', context)

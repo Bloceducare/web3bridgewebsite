@@ -12,4 +12,5 @@ def mentor_image_location(instance, filename):
 
 # Partner image storage location
 def partner_image_location(instance, filename):
-    return f"{settings.ENVIROMENT}/partner/{instance.name}/{filename}"
+    full_name_proceesed= instance.full_name.replace(" ", "_")
+    return f"{settings.ENVIROMENT}/partner/{full_name_proceesed}/{filename}"
