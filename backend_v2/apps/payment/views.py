@@ -1,6 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
-from requests import Response
-from rest_framework import decorators, status, viewsets
+from rest_framework import decorators, permissions, status, viewsets
 from rest_framework.permissions import IsAdminUser
 
 from . import models, serializers
@@ -12,6 +11,7 @@ class PaymentViewset(viewsets.ReadOnlyModelViewSet):
     queryset = models.Payment.objects.all()
     serializer_class = serializers.PaymentSerializer
     admin_actions= ["create", "read", "update", "destroy"]
+    permission_classes = [IsAdminUser]
 
 
 # Discount Code viewset
@@ -19,20 +19,22 @@ class DiscountCodeViewset(viewsets.ViewSet):
     discount = models.DiscountCode
     queryset = models.DiscountCode.objects.all()
     serializer_class = serializers.DiscountCodeSerializer
-    admin_actions= ["create", "read", "destroy"]
-    # permission_classes = [IsAdminUser]
 
-    # @decorators.action(detail=False, methods=["posts"])
+    def get_permissions(self):
+        if self.action == "validate":
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
     @swagger_auto_schema(
         request_body=serializers.GenerateCodeInputSerializer,
         responses={200: serializer_class(many=True)}
     )
-    @decorators.action(detail=False, methods=['post'])
+    @decorators.action(detail=False, methods=["post"])
     def generate(self, request):
         try:
             input_serializer = serializers.GenerateCodeInputSerializer(data=request.data)
             if input_serializer.is_valid():
-                quantity = input_serializer.validated_data.get('quantity')
+                quantity = input_serializer.validated_data.get("quantity")
                 generated_codes = []
 
             for _ in range(quantity):
