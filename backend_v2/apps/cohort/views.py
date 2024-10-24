@@ -211,8 +211,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     
     
     def destroy(self, request, pk, *args, **kwargs): 
-        registration_object= self.queryset.get(pk=pk)
-        registration_object.delete()
+        participant_object= self.queryset.get(pk=pk)
+        participant_object.delete()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
     
     
@@ -255,7 +255,6 @@ class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.success_response(data=serialized_testimonial_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Error Updating Testimonial", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
-        
     def destroy(self, request, pk, *args, **kwargs): 
         testimonial_object= self.queryset.get(pk=pk)
         testimonial_object.delete()
