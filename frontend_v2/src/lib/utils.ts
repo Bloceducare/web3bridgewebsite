@@ -144,7 +144,7 @@ export const TeamMembers = [
   },
   {
     name: "Olusanya Oluwagbeminiyi",
-    role: "Community manager",
+    role: "Community Manager",
     image: "/about/Oluwa.jpeg",
   },
 
@@ -153,7 +153,6 @@ export const TeamMembers = [
     role: "Marketing Lead",
     image: "/about/Victor.jpg",
   },
-  //Victor.jpg
 
   {
     name: "Samuel Babalola",
@@ -190,11 +189,6 @@ export const TeamMembers = [
     role: "Developer/PM",
     image: "/about/Team11.png",
   },
-  // {
-  //   name: "Goodness Kolapo ",
-  //   role: "Developer/PM",
-  //   image: "/about/Team8.png",
-  // },
 ];
 
 export const isValidEthereumAddress = (address: string) => {
