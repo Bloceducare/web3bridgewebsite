@@ -1,29 +1,33 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import decorators, permissions, status, viewsets
-from rest_framework.permissions import IsAdminUser
 
 from . import models, serializers
 from utils.helpers.requests import Utils as requestUtils
-
+from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
 
 # Payment viewset
-class PaymentViewset(viewsets.ReadOnlyModelViewSet):
+class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Payment.objects.all()
     serializer_class = serializers.PaymentSerializer
-    admin_actions= ["create", "read", "update", "destroy"]
-    permission_classes = [IsAdminUser]
+    admin_actions= ["retrieve", "all"]
+
+    def retrieve(self, request, pk=None):
+        payment_object = self.queryset.get(pk=pk)
+        serialized_payment_obj = self.serializer_class(payment_object)
+        return requestUtils.success_response(data=serialized_payment_obj.data, http_status=status.HTTP_200_OK)
+
+    @decorators.action(detail=False, methods=["get"])
+    def all(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
 
 
 # Discount Code viewset
-class DiscountCodeViewset(viewsets.ViewSet):
+class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     discount = models.DiscountCode
     queryset = models.DiscountCode.objects.all()
     serializer_class = serializers.DiscountCodeSerializer
-
-    def get_permissions(self):
-        if self.action == "validate":
-            return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+    admin_actions= ["all", "generate", "retrieve", "destroy"]
 
     @swagger_auto_schema(
         request_body=serializers.GenerateCodeInputSerializer,
@@ -81,7 +85,7 @@ class DiscountCodeViewset(viewsets.ViewSet):
             input_serializer = serializers.ValidateCodeInputSerializer(data=request.data)
             if not input_serializer.is_valid():
                 return requestUtils.error_response(
-                    "Error validating discount code", str(e), http_status=status.HTTP_400_BAD_REQUEST
+                    "Wrong input format", str(e), http_status=status.HTTP_400_BAD_REQUEST
                 )
 
             code = request.data.get("code")

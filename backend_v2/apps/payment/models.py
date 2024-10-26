@@ -1,5 +1,6 @@
 import string
-import random
+import secrets
+
 
 from django.db import models
 
@@ -36,9 +37,11 @@ class DiscountCode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     @classmethod
-    def generate_code(cls, length=6):
+    def generate_code(cls, length=5):
         while True:
-            code = 'W3B3BRIDGE' + '-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+            alphanum = string.ascii_uppercase + string.digits
+            code  = 'WEB3BRIDGE' + '-' + ''.join(secrets.choice(alphanum) for _ in range(length))
+
             if not cls.objects.filter(code=code).exists():
                 return code
 
