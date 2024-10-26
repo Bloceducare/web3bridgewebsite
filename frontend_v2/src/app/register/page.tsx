@@ -13,13 +13,24 @@ import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
+// Types
+interface FormDataType {
+  wallet_address: string;
+  course: string;
+  discount?: string;
+  duration?: string;
+  motivation?: string;
+  achievement?: string;
+  cta?: boolean;
+}
+
 const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
 
 export default function RegistrationPage() {
   const router = useRouter();
-  const { data, isLoading } = useFetchAllCourses();
+  const { data: courses, isLoading } = useFetchAllCourses();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
   const regId = allReg?.map((item: any) => item?.id);
@@ -37,21 +48,49 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
-  const submitData = async () => {
-    if (!formData) return;
-    const valid = isValidEthereumAddress(formData.wallet_address);
-    const courseId = data.find(
-      (item: any) => item?.name === formData.course
-    )?.id;
-    const courseName = data.find(
-      (item: any) => item?.name === formData.course
-    )?.name;
-    const userForm = {
-      ...formData,
-      course: courseId,
-      registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
-    };
+  async function validateDiscountCode(code: string): Promise<boolean> {
+    try {
+      const response = await fetch(
+        "https://web3bridgewebsitebackend.onrender.com/api/v2/payment/discount/validate/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code }),
+        }
+      );
 
+      const data = await response.json();
+      console.log("Discount validation response:", data); // For debugging
+
+      // If the API returns success: true, consider it valid
+      if (data.success === true) {
+        return true;
+      }
+
+      // Show appropriate error messages
+      if (data.data?.is_used) {
+        toast.error("This discount code has already been used");
+      } else {
+        toast.error("Invalid discount code");
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error validating discount code:", error);
+      toast.error("Error validating discount code. Please try again.");
+      return false;
+    }
+  }
+
+  const submitData = async () => {
+    if (!formData) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const valid = isValidEthereumAddress(formData.wallet_address);
     if (!valid) {
       toast.error("Invalid wallet address");
       return;
@@ -60,26 +99,93 @@ export default function RegistrationPage() {
     try {
       setIsRegistering(true);
       toast.loading("Processing registration...");
+
+      // Find the selected course
+      const selectedCourse = courses.find(
+        (item: any) => item?.name === formData.course
+      );
+
+      if (!selectedCourse) {
+        throw new Error("Selected course not found");
+      }
+
+      const courseId = selectedCourse.id;
+      const courseName = selectedCourse.name;
+
+      // Prepare user form data
+      const userForm = {
+        ...formData,
+        course: courseId,
+        registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
+      };
+
+      // Validate discount code if provided
+      if (formData.discount) {
+        console.log("Validating discount code:", formData.discount);
+        const isDiscountValid = await validateDiscountCode(formData.discount);
+        console.log("Discount validation result:", isDiscountValid);
+
+        if (!isDiscountValid) {
+          setIsRegistering(false);
+          toast.dismiss();
+          return;
+        }
+
+        try {
+          // Save form data to the endpoint
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(userForm),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to save participant data");
+          }
+
+          const savedData = await response.json();
+          console.log("Participant data saved:", savedData);
+
+          // Save to localStorage and show success message
+          localStorage.setItem("registrationData", JSON.stringify(userForm));
+          toast.success("Registration successful!");
+
+          // Optional: Redirect to a thank you or confirmation page
+          router.push("/success");
+          return;
+        } catch (error) {
+          console.error("Error saving participant data:", error);
+          toast.error("Failed to save registration data. Please try again.");
+          return;
+        }
+      }
+
+      // If no discount code, proceed with normal payment flow
       localStorage.setItem("registrationData", JSON.stringify(userForm));
-      toast.success("Registration data saved!", {
-        description: "Redirecting to payment...",
-      });
 
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-        }?data=${encodeURIComponent(encodedData)}`;
-      window.location.href = paymentUrl;
+      const paymentUrl = `${
+        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+      }?data=${encodeURIComponent(encodedData)}`;
+
+      toast.success("Registration data saved! Redirecting to payment...");
+
+      setTimeout(() => {
+        window.location.href = paymentUrl;
+      }, 1000);
     } catch (error) {
       console.error("Error during registration:", error);
-      toast.error("Oops! Something went wrong", {
-        description: "Please try registering again",
-      });
+      toast.error("Registration failed. Please try again");
     } finally {
       setIsRegistering(false);
       toast.dismiss();
     }
   };
-
   const props = {
     step,
     nextStep,
@@ -93,6 +199,14 @@ export default function RegistrationPage() {
   const openDate = new Date("2024-10-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
+
+  if (isLoading || loadReg) {
+    return (
+      <MaxWrapper className="flex-1 flex items-center justify-center">
+        <div>Loading...</div>
+      </MaxWrapper>
+    );
+  }
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">

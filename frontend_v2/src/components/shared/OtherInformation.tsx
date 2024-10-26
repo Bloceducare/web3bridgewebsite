@@ -44,32 +44,20 @@ export default function OtherInformation({
     defaultValues: {
       duration:
         formData?.course === "Web3 - Solidity" ? "4 Months" : "3 Months",
-      motivation: "",
-      achievement: "",
-      discount: "",
-      wallet_address: "",
-      cta: false,
+      motivation: formData?.motivation || "",
+      achievement: formData?.achievement || "",
+      discount: formData?.discount || "",
+      wallet_address: formData?.wallet_address || "",
+      cta: formData?.cta || false,
     },
   });
 
-  function onSubmit(values: z.infer<typeof otherSchema>) {
+  async function onSubmit(values: z.infer<typeof otherSchema>) {
+    // Update form data in parent component
     setFormData({ ...formData, ...values });
 
-    if (values.discount) {
-      const isDiscountValid = validateDiscountCode(values.discount);
-      if (!isDiscountValid) {
-        alert("Invalid discount code. Please try again.");
-        return;
-      }
-    }
-
-    function validateDiscountCode(code: string) {
-      const validCodes = process.env.COHORT_DISCOUNT_CODE!;
-      return validCodes.includes(code); // if array
-      // return validCodes ===  code;    // if string
-    }
+    // Call parent's submitData function which handles the API validation and submission
     submitData();
-    // router.push("/payment-success");
   }
 
   return (
