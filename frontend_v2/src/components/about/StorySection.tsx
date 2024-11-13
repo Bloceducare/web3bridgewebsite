@@ -12,7 +12,7 @@ export default function StorySection({pillText, title, description, orientation,
             {/* Where We Started from */}
             {title}
           </h1>
-          <p className="mb-2 font-light leading-12  lg:mb-8 md:text-xl text-md lg:text-2xl">
+          <p className="mb-2 font-light leading-12  lg:mb-8 md:text-xl text-md lg:text-xl">
             {description}
           </p>
         </div>

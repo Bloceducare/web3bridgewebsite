@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { MoveRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import heroImg1 from "../../../public/home/heroimg1.png";
 import heroImg2 from "../../../public/home/heroimg2.png";
 import heroImg3 from "../../../public/home/heroimg3.png";
@@ -25,7 +25,8 @@ const HeroSection = () => {
             repeatType: "loop",
             ease: "linear",
             duration: 60,
-          }}>
+          }}
+        >
           <Image
             src={heroImg2}
             alt="image"
@@ -50,7 +51,8 @@ const HeroSection = () => {
               repeatDelay: 1,
               ease: "linear",
               duration: 30,
-            }}>
+            }}
+          >
             <Image
               src={heroImg1}
               alt="image"
@@ -74,11 +76,14 @@ const HeroSection = () => {
             receiving training from industry experts through our 16 weeks hands
             on bootcamp.
           </p>
-          <Button
-            onClick={() => router.push("/register")}
-            className="rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100">
+          <Link
+            href={"/register"}
+            className={buttonVariants({
+              variant: "bridgePrimary",
+            })}
+          >
             Join the next cohort <MoveRight className="w-5 h-5 ml-2 " />
-          </Button>
+          </Link>
           {/* <Link
             href="https://docs.google.com/forms/d/e/1FAIpQLScoch9kMWh4ZxkfJyl8IHTrXMGnJWwOjdk3HNpMApkXFEFP3g/viewform"
             target="_blank"

@@ -31,8 +31,8 @@ export const menuItems = [
     externalLink: true,
   },
   {
-    menu: "Hire us",
-    link: "/hire",
+    menu: "Career",
+    link: "/career",
   },
 ];
 

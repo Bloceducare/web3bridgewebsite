@@ -8,57 +8,63 @@ import img6 from "../../../public/home/hardhat.png";
 import img7 from "../../../public/home/foundry1.png";
 import img8 from "../../../public/home/zk.png";
 import img9 from "../../../public/home/hardhat1.png";
+import img10 from "../../../public/home/blockchain.png";
 import Cards from "./Cards";
 import CTA from "./CTA";
 
-const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
+const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10];
 
 const Web3 = () => {
   const data = [
     {
-      title: "Blockchain Security",
-      text: "Understand the measures taken to protect blockchain networks, data, and transactions from unauthorized access, fraud, and other malicious activities.",
-      img: images[0],
+      title: "Intro to Blockchain",
+      text: "Learn blockchain basics: decentralized networks, consensus, and cryptography for secure systems.",
+      img: images[9],
     },
     {
       title: "Ethereum",
-      text: "Get everything you need to launch your career as a smart contract developer",
+      text: "Explore Ethereum, a leading platform for smart contracts and dApps.",
       img: images[1],
     },
     {
       title: "Solidity",
-      text: "Execute codes on decentralized networks, use contract-oriented programming and data structures.",
+      text: "Learn Solidity for writing smart contracts on Ethereum.",
       img: images[2],
     },
-    {
-      title: "Foundry",
-      text: "Get everything you need to launch your career as a smart contract developer",
-      img: images[3],
-    },
+    // {
+    //   title: "Foundry",
+    //   text: "Get everything you need to launch your career as a smart contract developer",
+    //   img: images[3],
+    // },
     {
       title: "EtherJS & Web3JS",
-      text: "Get everything you need to launch your career as a smart contract developer",
+      text: "Use EtherJS and Web3JS to interact with Ethereum smart contracts.",
       img: images[4],
     },
     {
       title: "Hardhat",
-      text: "Get everything you need to launch your career as a smart contract developer",
+      text: "Streamline smart contract development with Hardhat.",
       img: images[5],
     },
     {
       title: "Foundry",
-      text: "Get everything you need to launch your career as a smart contract developer",
+      text: "Explore Foundry, an advanced tool for smart contract development.",
       img: images[6],
     },
     {
+      title: "Non-Fungible Tokens",
+      text: "Understand NFTs, a key application of blockchain technology.",
+      img: images[8],
+    },
+    {
       title: "Zero Knowledge",
-      text: "Get everything you need to launch your career as a smart contract developer",
+      text: "Learn about zero-knowledge proofs for privacy in blockchain.",
       img: images[7],
     },
     {
-      title: "Non-Fungible Tokens",
-      text: "Get everything you need to launch your career as a smart contract developer",
-      img: images[8],
+      title: "Blockchain Security",
+      text: "Understand the measures taken to protect blockchain networks, data, and transactions from unauthorized access, fraud, and other malicious activities.",
+      img: images[0],
     },
   ];
   return (

@@ -24,7 +24,8 @@ export const navLinks = [
   },
   {
     name: "Blog",
-    href: "",
+    href: "https://medium.com/@web3bridge",
+    target: "_blank",
   },
   {
     name: "dApps",
@@ -39,8 +40,8 @@ export const navLinks = [
     href: "/events",
   },
   {
-    name: "Hire Us",
-    href: "",
+    name: "Career",
+    href: "/career",
   },
 ];
 
@@ -133,65 +134,67 @@ export const TeamMembers = [
   {
     name: "Awosika Israel Ayodeji",
     role: "Founder, Program Manager",
-    image: "/about/Team1.png",
+    image: "/about/Oga.JPG",
   },
 
   {
     name: "Akinnusotu Temitayo",
     role: "Co-founder, Lead Dev/Mentor",
-    image: "/about/Team2.png",
+    image: "/about/Timidan.jpg",
   },
   {
-    name: "Katangole Allan",
-    role: "Head, Technical Training",
-    image: "/about/Team3.png",
-  },
-  {
-    name: "Jeremiah Noah",
-    role: "Lead dev/ Mentor",
-    image: "/about/Team4.png",
+    name: "Olusanya Oluwagbeminiyi",
+    role: "Community manager",
+    image: "/about/Oluwa.jpeg",
   },
 
   {
-    name: "Oke Kehinde",
-    role: "Blockchain Developer/ Mentor",
-    image: "/about/Team5.png",
+    name: "Ekoh Victor",
+    role: "Marketing Lead",
+    image: "/about/Victor.jpg",
+  },
+  //Victor.jpg
+
+  {
+    name: "Samuel Babalola",
+    role: "Operations Lead",
+    image: "/about/Sam.jpeg",
   },
   {
-    name: "Abimbola Adebayo",
-    role: "Blockchain Developer/ Mentor",
-    image: "/about/Team6.png",
+    name: "Ajayi O. Samuel",
+    role: "Media Lead",
+    image: "/about/aj.jpeg",
   },
   {
-    name: "Falilat Owolabi",
-    role: "Blockchain Developer/ Mentor",
-    image: "/about/Team7.png",
+    name: "Dominion Majemu-Itura",
+    role: "Media",
+    image: "/about/nic.JPG",
   },
   {
-    name: "Ademola Kelvin",
-    role: "Blockchain Developer/ Mentor",
-    image: "/about/Team8.png",
+    name: "John Deborah",
+    role: "HR/Facility Manager",
+    image: "/about/debi.JPEG",
   },
   {
-    name: "Yetunde Ige",
-    role: "Project Manager",
-    image: "/about/Team9.png",
+    name: "Oluwadunsin Marcus",
+    role: "Social Media",
+    image: "/about/Marc.jpeg",
   },
   {
-    name: "Michael Jerry",
-    role: "Community/ Social Media Lead",
-    image: "/about/Team10.png",
+    name: "Monte Christian",
+    role: "Designer",
+    image: "/about/Christian.jpg",
   },
   {
-    name: "Billy Luedtke",
-    role: "Advisor & Angel investor",
+    name: "Goodness Kolapo ",
+    role: "Developer/PM",
     image: "/about/Team11.png",
   },
-  {
-    name: "Marek Laskowski, PhD",
-    role: "Advisor, Founder Blockchain.lab",
-    image: "/about/Team12.png",
-  },
+  // {
+  //   name: "Goodness Kolapo ",
+  //   role: "Developer/PM",
+  //   image: "/about/Team8.png",
+  // },
 ];
 
 export const isValidEthereumAddress = (address: string) => {

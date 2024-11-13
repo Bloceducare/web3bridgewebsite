@@ -1,41 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
 import MaxWrapper from "@/components/shared/MaxWrapper";
-import CustomButton from "@/components/shared/CustomButton";
-import { CheckCircle, Info, Loader2, MoveRight } from "lucide-react";
-import { coursesSchema, formSchema, otherSchema } from "@/lib/validators";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { MoveRight } from "lucide-react";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import SelectCourse from "@/components/shared/SelectCourse";
 import PersonalInformation from "@/components/shared/PersonalInformation";
 import OtherInformation from "@/components/shared/OtherInformation";
 import SuccessForm from "@/components/shared/SuccessForm";
 import { isValidEthereumAddress } from "@/lib/utils";
 import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
+import { buttonVariants } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+const CountDown = dynamic(() => import("@/components/events/CountDown"), {
+  ssr: false,
+});
 
 export default function RegistrationPage() {
   const { data, isLoading } = useFetchAllCourses();
@@ -44,7 +23,7 @@ export default function RegistrationPage() {
   const regId = allReg?.map((item: any) => item?.id);
 
   const [step, setStep] = useState(1);
-  const [allStatusFalse, setAllStatusFalse] = useState(1);
+  // const [allStatusFalse, setAllStatusFalse] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState<FormDataType | null>(null);
@@ -78,20 +57,24 @@ export default function RegistrationPage() {
     status: boolean;
   }
 
-  useEffect(() => {
-    if (loadReg) return;
+  // useEffect(() => {
+  //   if (loadReg) return;
 
-    const allClosed = allReg.every((reg: Registration) => reg.status === false); // Adjust according to your actual data structure
-    setAllStatusFalse(allClosed);
-  }, [allReg, loadReg]);
+  //   const allClosed = allReg.every((reg: Registration) => reg.status === false); // Adjust according to your actual data structure
+  //   setAllStatusFalse(allClosed);
+  // }, [allReg, loadReg]);
 
   const submitData = async () => {
     if (!formData) return;
     const valid = isValidEthereumAddress(formData.wallet_address);
 
-    const courseId = data.find((item: any) => item?.name === formData.course)?.id;
+    const courseId = data.find(
+      (item: any) => item?.name === formData.course
+    )?.id;
 
-    const courseName = data.find((item: any) => item?.name === formData.course)?.name;
+    const courseName = data.find(
+      (item: any) => item?.name === formData.course
+    )?.name;
 
     const userForm = {
       ...formData,
@@ -155,23 +138,49 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
+  const openDate = new Date("2024-10-14");
+  const currentDate = new Date();
+  const isClose = currentDate < openDate;
+
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      {/* // {allStatusFalse ? ( */}
-        <div className="text-center text-[2em] text-[#ff0000]">Registration Closed</div>
-      {/* // ) : (
-      //   <>
-      //     {step === 1 ? (
-      //       <SelectCourse {...props} />
-      //     ) : step === 2 ? (
-      //       <PersonalInformation {...props} />
-      //     ) : step === 3 ? (
-      //       <OtherInformation {...props} />
-      //     ) : (
-      //       <SuccessForm />
-      //     )}
-      //   </>
-      // )} */}
+      {isClose ? (
+        <div className="text-center flex flex-col items-center gap-6">
+          <p className="text-center text-[2em]">Registration Opens in</p>
+
+          <CountDown targetDate={openDate.toDateString()} />
+
+          <a
+            href={"https://forms.gle/WtEw4cDfWEHQcX3h9"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ variant: "bridgePrimary" })}
+          >
+            Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
+          </a>
+
+          <a
+            href="https://t.me/web3bridge"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm underline hover:text-bridgeRed"
+          >
+            Do join our telegram group to get information on next cohort
+          </a>
+        </div>
+      ) : (
+        <>
+          {step === 1 ? (
+            <SelectCourse {...props} />
+          ) : step === 2 ? (
+            <PersonalInformation {...props} />
+          ) : step === 3 ? (
+            <OtherInformation {...props} />
+          ) : (
+            <SuccessForm />
+          )}
+        </>
+      )}
     </MaxWrapper>
   );
 }
