@@ -3,7 +3,7 @@ from rest_framework import decorators, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
-from .helpers.model import send_registration_success_mail 
+from .helpers.model import send_registration_success_mail, send_participant_details
 from backend_v2.scripts.mail import send_bulk_email
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
 
@@ -178,17 +178,22 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if serializer.is_valid():
             participant_obj= serializer.save()
             serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
+
             email = serialized_participant_obj.get('email')
-            course = serialized_participant_obj.get('course').get('id') 
             participant = serialized_participant_obj.get('name')
+            course = serialized_participant_obj.get('course').get('id')
+            # course_name = serialized_participant_obj.get('course').get('name')
+
             send_registration_success_mail(email, course, participant)
+            send_participant_details(email, course, serialized_participant_obj)
+            # send twilio message
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
         return requestUtils.error_response("Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
     
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
     def update(self, request, pk, *args, **kwargs): 
-        participant_object= self.queryset.get(pk=pk)    
+        participant_object= self.queryset.get(pk=pk)
         serializer = self.serializer_class.Update(participant_object, data=request.data)
         
         if serializer.is_valid():
@@ -206,8 +211,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     
     
     def destroy(self, request, pk, *args, **kwargs): 
-        registration_object= self.queryset.get(pk=pk)
-        registration_object.delete()
+        participant_object= self.queryset.get(pk=pk)
+        participant_object.delete()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
     
     
@@ -250,7 +255,6 @@ class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.success_response(data=serialized_testimonial_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Error Updating Testimonial", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
-        
     def destroy(self, request, pk, *args, **kwargs): 
         testimonial_object= self.queryset.get(pk=pk)
         testimonial_object.delete()

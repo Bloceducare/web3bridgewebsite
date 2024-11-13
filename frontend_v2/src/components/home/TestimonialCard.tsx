@@ -4,7 +4,7 @@ import testimonialProps from "@/types/testimonialCard";
 
 
 
-const TestimonialCard: React.FC<testimonialProps> = ({ title, description, user, role,image }) => {
+const TestimonialCard: React.FC<testimonialProps> = ({ title, description, user, role, image }) => {
     return (
         <main className="lg:px-44 md:px-10 px-2">
             <div className="w-full flex flex-col items-center gap-4 p-6 border-2 border-bridgeRed/20 dark:border-bridgeRed/40 bg-brdigeRed/10 rounded-xl">

@@ -28,8 +28,8 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 # CORS_ALLOWED_ORIGINS = [
-#     "http://*",
-#     "https://*",
+    # "http://*",
+    # "https://*",
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True 
@@ -60,7 +60,8 @@ PROJECT_APPS = [
     "apps.event",
     "apps.utils",
     "apps.dapp",
-    "apps.operation"
+    "apps.operation",
+    "apps.payment"
 ]
 
 INSTALLED_APPS += PROJECT_APPS

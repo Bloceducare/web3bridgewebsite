@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Encode_Sans_Expanded } from "next/font/google";
 import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
@@ -8,7 +9,6 @@ import Footer from "@/components/shared/Footer";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Toaster } from "@/components/ui/sonner";
-
 const fontSans = Encode_Sans_Expanded({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -16,7 +16,7 @@ const fontSans = Encode_Sans_Expanded({
 
 export const metadata: Metadata = {
   title: "Web3Bridge",
-  description: "web3bridgeafrica website",
+  description: "Building a strong developer community in Africa",
   icons: {
     icon: "/favicon.ico",
   },
@@ -43,6 +43,7 @@ export default function RootLayout({
           <Header />
 
           <main className="flex-1">{children}</main>
+          <Analytics />
 
           <Footer />
         </ThemeProvider>

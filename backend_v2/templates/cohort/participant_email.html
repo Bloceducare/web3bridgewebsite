@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3bridge Cohort Registration Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .info {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info p {
+            margin: 5px 0;
+        }
+
+        .warning {
+            color: rgba(255, 0, 0, 0.945);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Hello, {{ name }}!</h1>
+        <p>Thank you for registering for the {{ course_name }} course. We're excited to have you on board!</p>
+
+        <h2>Your Registration Details</h2>
+        <div class="info">
+            <h3>BIODATA</h3>
+            <p><strong>Name:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Phone Number:</strong> {{ number }}</p>
+            <p><strong>Gender:</strong> {{ gender }}</p>
+            <p><strong>Country:</strong> {{ country }}</p>
+            <p><strong>State:</strong> {{ state }}</p>
+            <p><strong>City:</strong> {{ city }}</p>
+            <p><strong>GitHub:</strong> {{ github }}</p>
+            <p><strong>Wallet Address:</strong><span class="warning"> {{ wallet }} </span></p>
+
+            <h3>COURSE INFORMATION</h3>
+            <p><strong>Course Name:</strong> {{ course_name }}</p>
+            <p><strong>Duration:</strong> {{ duration }}</p>
+
+            <h3>PERSONAL STATEMENT</h3>
+            <p><strong>Motivation:</strong> {{ motivation }}</p>
+            <br>
+            <p><strong>Achievement:</strong> {{ achievement }}</p>
+            <br>
+        </div>
+
+        <p>We look forward to helping you achieve your goals in this course. If you have any questions, please don't
+            hesitate to reach out to our support team on our official <a href="https://t.me/web3bridge">Telegram</a> and
+            <a href="https://twitter.com/Web3Bridge"> Twitter</a> accounts.
+        </p>
+
+        <p>With Love,</p>
+        <p>Ayodeji Awosika</p>
+        <p>Founder, Web3Bridge</p>
+    </div>
+</body>
+
+</html>

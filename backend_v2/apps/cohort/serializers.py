@@ -46,6 +46,7 @@ class CourseSerializer:
         images = serializers.ListField(child=serializers.ImageField(), required=False)
         
         class Meta:
+            ref_name = "courses"
             model = models.Course
             fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
             extra_kwargs= { field: {'required': False} for field in fields}
@@ -121,7 +122,6 @@ class ParticipantSerializer:
             ref_name= PARTICIPANT_REF_NAME
         
         def create(self, validated_data):
-            print(validated_data)
             participation_obj = models.Participant.objects.create(**validated_data)
             participation_obj.save()
             return participation_obj
@@ -143,10 +143,11 @@ class ParticipantSerializer:
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", "city", "country", "duration", "gender", "github", "number", "course"]
+            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation",
+                      "achievement", "city", "state", "country", "duration", "gender", "github", "number", "course"]
             extra_kwargs= { field: {'required': False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
-        
+
         def update(self, instance, validated_data):
             instance.name= validated_data.get('name', instance.name)
             instance.wallet_address= validated_data.get('wallet_address', instance.wallet_address)  
@@ -156,13 +157,15 @@ class ParticipantSerializer:
             instance.motivation= validated_data.get('motivation', instance.motivation) 
             instance.achievement= validated_data.get('achievement', instance.achievement) 
             instance.city= validated_data.get('city', instance.city) 
+            instance.state= validated_data.get('state', instance.state) 
             instance.country= validated_data.get('country', instance.country) 
             instance.duration= validated_data.get('duration', instance.duration) 
             instance.gender= validated_data.get('gender', instance.gender) 
             instance.github= validated_data.get('github', instance.github) 
             instance.number= validated_data.get('number', instance.number) 
             instance.course= validated_data.get('course', instance.course)
-                        
+            instance.cohort= validated_data.get('cohort', instance.cohort)
+
             instance.save()
             return instance
 

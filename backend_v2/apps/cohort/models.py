@@ -39,12 +39,14 @@ class Participant(BaseModelBaseMixin, models.Model):
     motivation = models.TextField(_("motivation"), blank=False, null=True) 
     achievement = models.TextField(_("achievement"), blank=True, null=True)   
     city = models.CharField(_('city name'), max_length=50, blank=False, null=True)  
+    state = models.CharField(_('state name'), max_length=50, blank=False, null=True)  
     country = models.CharField(_('country name'), max_length=50, blank=False, null=True)  
     duration = models.CharField(_('duration'), max_length=100, blank=False, null=True) 
     gender = models.CharField(_('gender'), max_length=20, blank=False, null=True)  
     github = models.URLField(_('github url'), max_length=250, blank=True, null=True)  
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
+    cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
     
     class Meta:
         unique_together = ('email', 'registration',)

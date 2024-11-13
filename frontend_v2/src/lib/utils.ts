@@ -51,29 +51,46 @@ export const footerLinks = [
     links: [
       {
         name: "About Us",
-        path: "",
+        path: "/about",
       },
       {
         name: "Courses",
-        path: "",
+        path: "/trainings",
       },
       {
         name: "Partners",
-        path: "",
+        path: "/",
       },
       {
         name: "Alumni",
-        path: "",
+        path: "/cohorts",
       },
     ],
   },
   {
-    title: "Supports",
+    title: "General",
     links: [
+      {
+        name: "Join Community",
+        path: "https://t.me/web3bridge",
+      },
+      {
+        name: "Events",
+        path: "/events",
+      },
       {
         name: "DApps",
         path: "/dapps",
       },
+      {
+        name: "Blog",
+        path: "https://medium.com/@web3bridge",
+      },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
       {
         name: "Terms of Use",
         path: "",
@@ -83,28 +100,11 @@ export const footerLinks = [
         path: "",
       },
       {
-        name: "FAQ",
-        path: "",
-      },
-    ],
-  },
-  {
-    title: "general",
-    links: [
-      {
-        name: "Join Community",
-        path: "",
-      },
-      {
-        name: "Events",
-        path: "",
-      },
-      {
         name: "Resources",
         path: "",
       },
       {
-        name: "Blog",
+        name: "FAQ",
         path: "",
       },
     ],
@@ -144,7 +144,7 @@ export const TeamMembers = [
   },
   {
     name: "Olusanya Oluwagbeminiyi",
-    role: "Community manager",
+    role: "Community Manager",
     image: "/about/Oluwa.jpeg",
   },
 
@@ -153,7 +153,6 @@ export const TeamMembers = [
     role: "Marketing Lead",
     image: "/about/Victor.jpg",
   },
-  //Victor.jpg
 
   {
     name: "Samuel Babalola",
@@ -190,11 +189,6 @@ export const TeamMembers = [
     role: "Developer/PM",
     image: "/about/Team11.png",
   },
-  // {
-  //   name: "Goodness Kolapo ",
-  //   role: "Developer/PM",
-  //   image: "/about/Team8.png",
-  // },
 ];
 
 export const isValidEthereumAddress = (address: string) => {
