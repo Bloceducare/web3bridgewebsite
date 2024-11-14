@@ -90,7 +90,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             data=request.data)
         if not input_serializer.is_valid():
             return requestUtils.error_response(
-                "Invalid input format", str(e), http_status=status.HTTP_400_BAD_REQUEST
+                "Invalid input format", input_serializer.errors, status.HTTP_400_BAD_REQUEST
             )
 
         try:
@@ -118,7 +118,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             return requestUtils.success_response(
                 data=serializer.data, http_status=status.HTTP_200_OK
             )
-        except self.discount.DoesNotExist:
+        except self.discount.DoesNotExist as e:
             return requestUtils.error_response(
                 "Discount code not found", str(e), http_status=status.HTTP_404_NOT_FOUND
             )
