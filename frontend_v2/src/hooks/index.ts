@@ -9,7 +9,7 @@ export const useFetchAllCourses = () => {
   const fetchData = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/all`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/all/`
       );
       const result = await res.json();
 
