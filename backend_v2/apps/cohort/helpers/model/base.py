@@ -7,8 +7,8 @@ from django.template.loader import render_to_string
 
 
 def testimonial_image_location(instance, filename):
-    full_name_proceesed = instance.full_name.replace(" ", "_")
-    return f"{settings.ENVIROMENT}/Testimonial/{full_name_proceesed}/{filename}"
+    full_name_processed = instance.full_name.replace(" ", "_")
+    return f"{settings.ENVIROMENT}/Testimonial/{full_name_processed}/{filename}"
 
 
 def send_registration_success_mail(email, course_id, participant):

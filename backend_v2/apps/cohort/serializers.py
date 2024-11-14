@@ -17,7 +17,7 @@ class CourseSerializer:
             ref_name= COURSE_REF_NAME
     
         def create(self, validated_data):
-            images_data = validated_data.pop('images', [])
+            images_data = validated_data.pop("images", [])
             course_obj = models.Course.objects.create(**validated_data)
             
             for image_data in images_data:
@@ -49,10 +49,10 @@ class CourseSerializer:
             ref_name = "courses"
             model = models.Course
             fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
-            extra_kwargs= { field: {'required': False} for field in fields}
+            extra_kwargs= { field: {"required": False} for field in fields}
             
         def update(self, instance, validated_data):
-            images_data = validated_data.pop('images', [])
+            images_data = validated_data.pop("images", [])
             uploaded_images= []
             
             for image_data in images_data:
@@ -64,11 +64,11 @@ class CourseSerializer:
                 instance.images.clear() 
                 instance.images.set(uploaded_images)    
                 
-            instance.name= validated_data.get('name', instance.name)
-            instance.status= validated_data.get('status', instance.status)
-            instance.description= validated_data.get('description', instance.description)
-            instance.venue= validated_data.get('venue', instance.venue)
-            instance.extra_info= validated_data.get('extra_info', instance.extra_info)
+            instance.name= validated_data.get("name", instance.name)
+            instance.status= validated_data.get("status", instance.status)
+            instance.description= validated_data.get("description", instance.description)
+            instance.venue= validated_data.get("venue", instance.venue)
+            instance.extra_info= validated_data.get("extra_info", instance.extra_info)
             instance.save()
             return instance
 
@@ -102,14 +102,14 @@ class RegistrationSerializer:
             model = models.Registration
             fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
             ref_name = REGISTRATION_REF_NAME
-            extra_kwargs= { field: {'required': False} for field in fields}
+            extra_kwargs= { field: {"required": False} for field in fields}
             
         def update(self, instance, validated_data):
-            instance.name= validated_data.get('name', instance.name)
-            instance.is_open= validated_data.get('is_open', instance.is_open)
-            instance.start_date= validated_data.get('start_date', instance.start_date)
-            instance.end_date= validated_data.get('end_date', instance.end_date)
-            instance.registrationFee= validated_data.get('registrationFee', instance.registrationFee)
+            instance.name= validated_data.get("name", instance.name)
+            instance.is_open= validated_data.get("is_open", instance.is_open)
+            instance.start_date= validated_data.get("start_date", instance.start_date)
+            instance.end_date= validated_data.get("end_date", instance.end_date)
+            instance.registrationFee= validated_data.get("registrationFee", instance.registrationFee)
             instance.save()
             return instance
 
@@ -143,28 +143,28 @@ class ParticipantSerializer:
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation",
-                      "achievement", "city", "state", "country", "duration", "gender", "github", "number", "course"]
-            extra_kwargs= { field: {'required': False} for field in fields}
+            fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
+                      "city", "state", "country", "duration", "gender", "github", "number", "course", "cohort"]
+            extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
         def update(self, instance, validated_data):
-            instance.name= validated_data.get('name', instance.name)
-            instance.wallet_address= validated_data.get('wallet_address', instance.wallet_address)  
-            instance.email= validated_data.get('email', instance.email) 
-            instance.registration= validated_data.get('registration', instance.registration)
-            instance.status= validated_data.get('status', instance.status)
-            instance.motivation= validated_data.get('motivation', instance.motivation) 
-            instance.achievement= validated_data.get('achievement', instance.achievement) 
-            instance.city= validated_data.get('city', instance.city) 
-            instance.state= validated_data.get('state', instance.state) 
-            instance.country= validated_data.get('country', instance.country) 
-            instance.duration= validated_data.get('duration', instance.duration) 
-            instance.gender= validated_data.get('gender', instance.gender) 
-            instance.github= validated_data.get('github', instance.github) 
-            instance.number= validated_data.get('number', instance.number) 
-            instance.course= validated_data.get('course', instance.course)
-            instance.cohort= validated_data.get('cohort', instance.cohort)
+            instance.name= validated_data.get("name", instance.name)
+            instance.wallet_address= validated_data.get("wallet_address", instance.wallet_address)
+            instance.email= validated_data.get("email", instance.email)
+            instance.registration= validated_data.get("registration", instance.registration)
+            instance.status= validated_data.get("status", instance.status)
+            instance.motivation= validated_data.get("motivation", instance.motivation)
+            instance.achievement= validated_data.get("achievement", instance.achievement)
+            instance.city= validated_data.get("city", instance.city)
+            instance.state= validated_data.get("state", instance.state)
+            instance.country= validated_data.get("country", instance.country)
+            instance.duration= validated_data.get("duration", instance.duration)
+            instance.gender= validated_data.get("gender", instance.gender)
+            instance.github= validated_data.get("github", instance.github)
+            instance.number= validated_data.get("number", instance.number)
+            instance.course= validated_data.get("course", instance.course)
+            instance.cohort= validated_data.get("cohort", instance.cohort)
 
             instance.save()
             return instance
@@ -199,14 +199,14 @@ class TestimonialSerializer:
             model = models.Testimonial
             fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
             ref_name = TESTIMONIAL_REF_NAME
-            extra_kwargs= { field: {'required': False} for field in fields}
+            extra_kwargs= { field: {"required": False} for field in fields}
             
         def update(self, instance, validated_data):
-            instance.headline= validated_data.get('headline', instance.headline)
-            instance.full_name= validated_data.get('full_name', instance.full_name)
-            instance.testimony= validated_data.get('testimony', instance.testimony)
-            instance.picture= validated_data.get('picture', instance.picture)
-            instance.brief= validated_data.get('brief', instance.brief)
+            instance.headline= validated_data.get("headline", instance.headline)
+            instance.full_name= validated_data.get("full_name", instance.full_name)
+            instance.testimony= validated_data.get("testimony", instance.testimony)
+            instance.picture= validated_data.get("picture", instance.picture)
+            instance.brief= validated_data.get("brief", instance.brief)
             instance.save()
             return instance
 
@@ -215,4 +215,4 @@ class BulkEmailSerializer(serializers.Serializer):
     message = serializers.CharField()
 
     class Meta:
-        fields = ['message']
+        fields = ["message"]

@@ -48,8 +48,8 @@ class Participant(BaseModelBaseMixin, models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
     cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
     
-    class Meta:
-        unique_together = ('email', 'registration',)
+    # class Meta:
+        # unique_together = ('email', 'registration',)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
