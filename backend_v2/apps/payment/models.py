@@ -40,7 +40,7 @@ class Payment(models.Model):
 class DiscountCode(models.Model):
     code = models.CharField(max_length=16, unique=True)
     is_used = models.BooleanField(default=False)
-    claimant = models.EmailField(max_length=127, blank=True)
+    claimant = models.EmailField(max_length=127, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     @classmethod
