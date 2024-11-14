@@ -13,12 +13,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
-from .literals import (API_VERSION, ENVIRONMENT)
+from .literals import (API_VERSION, ENVIROMENT)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-API_VERSION= config('API_VERSION', default=API_VERSION)
-ENVIRONMENT= config('ENVIRONMENT', default=ENVIRONMENT)
+API_VERSION = config('API_VERSION', default=API_VERSION)
+ENVIROMENT = config('ENVIROMENT', default=ENVIROMENT)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -28,11 +28,11 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 # CORS_ALLOWED_ORIGINS = [
-    # "http://*",
-    # "https://*",
+# "http://*",
+# "https://*",
 # ]
 
-CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # AUTHENTICATION_BACKENDS = [
@@ -84,8 +84,8 @@ ROOT_URLCONF = 'backend_v2.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-          "DIRS": [
-            BASE_DIR / 'templates' # Here
+        "DIRS": [
+            BASE_DIR / 'templates'  # Here
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -120,8 +120,8 @@ DATABASES = {
     }
 }
 
-# Determine the database configuration based on environment
-if ENVIRONMENT == 'production':
+# Determine the database configuration based on enviroment
+if ENVIROMENT == 'production':
     DATABASES['default'] = DATABASES['production']
 
 # Password validation
@@ -151,7 +151,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-DATE_INPUT_FORMATS = ('%y-%m-%d', '%y/%m/%d') 
+DATE_INPUT_FORMATS = ('%y-%m-%d', '%y/%m/%d')
 
 USE_I18N = True
 
@@ -171,7 +171,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#_______________________DRF_________________________
+# _______________________DRF_________________________
 DEFAULT_RENDERER_CLASSES = (
     'rest_framework.renderers.JSONRenderer',
 )
@@ -180,7 +180,7 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES = DEFAULT_RENDERER_CLASSES + (
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
-    
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -188,18 +188,18 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 13,
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.SearchFilter', 
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.SearchFilter',
                                 'rest_framework.filters.OrderingFilter'),
     'SEARCH_PARAM': 'q',
     'ORDERING_PARAM': 'ordering',
-    
+
 }
 
-#______________________cloudinary______________________
+# ______________________cloudinary______________________
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME' : config('cloudinary_cloud_name'),
-    'API_KEY' : config('cloudinary_api_key'),
-    'API_SECRET' : config('cloudinary_api_secret')
+    'CLOUD_NAME': config('cloudinary_cloud_name'),
+    'API_KEY': config('cloudinary_api_key'),
+    'API_SECRET': config('cloudinary_api_secret')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

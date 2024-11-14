@@ -25,4 +25,4 @@ class CloudinaryDeleteMixin:
     
 #  image storage location
 def image_location(instance, filename):
-    return f"{settings.ENVIRONMENT}/{instance.__class__.__name__}/{filename}"
+    return f"{settings.ENVIROMENT}/{instance.__class__.__name__}/{filename}"

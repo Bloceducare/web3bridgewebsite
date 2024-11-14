@@ -107,7 +107,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
                 else:
                     return requestUtils.error_response(
                         "Discount code already used by another user.",
-                        http_status=status.HTTP_403_FORBIDDEN
+                        str(e), http_status=status.HTTP_403_FORBIDDEN
                     )
 
             discount_code_object.is_used = True
@@ -120,7 +120,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             )
         except self.discount.DoesNotExist:
             return requestUtils.error_response(
-                "Discount code not found", http_status=status.HTTP_404_NOT_FOUND
+                "Discount code not found", str(e), http_status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             return requestUtils.error_response(

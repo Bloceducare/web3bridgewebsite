@@ -5,7 +5,7 @@ from django.conf import settings
 
 def team_image_location(instance, filename):
     full_name_processed = instance.full_name.replace(" ", "_")
-    return f"{settings.ENVIRONMENT}/Team/{full_name_processed}/{filename}"
+    return f"{settings.ENVIROMENT}/Team/{full_name_processed}/{filename}"
 
 # Mentor image storage location
 
