@@ -44,3 +44,7 @@ class ValidateCodeInputSerializer(serializers.Serializer):
         max_length=16,
         help_text="The discount code to validate"
     )
+    claimant = serializers.EmailField(
+        max_length=127,
+        help_text="The user attempting to validate a code"
+    )
