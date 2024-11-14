@@ -3,10 +3,6 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from cohort.models import Participant
 
-from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from cohort.models import Participant
 
 def send_bulk_email():
     subject = 'Hello from Web3bridge'
@@ -29,12 +25,11 @@ def send_bulk_email():
     # participant_context = context.copy()
     # participant_contexts = [{'name': participant.name} for participant in participants]
     # Provide the template name and context to render_to_string
-    messages = [render_to_string('cohort/custommail.html', context).format(**context) for _ in participants]
-
+    messages = [render_to_string(
+        'cohort/custommail.html', context).format(**context) for _ in participants]
 
     from_email = settings.EMAIL_HOST_USER
     recipient_list = [participant.email for participant in participants]
 
-
-    send_mail(subject, '', from_email, recipient_list, html_message=messages[0], fail_silently=False)
-
+    send_mail(subject, '', from_email, recipient_list,
+              html_message=messages[0], fail_silently=False)

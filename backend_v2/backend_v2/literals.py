@@ -1,2 +1,2 @@
-API_VERSION="v2"
-ENVIROMENT="development"
+API_VERSION = "v2"
+ENVIROMENT = "development"

@@ -2,12 +2,14 @@ from rest_framework import serializers
 from payment import models
 
 # Payment serializer
+
+
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Payment
         fields = [
-            "id", "name", "email", "phone_number", "amount", 
-            "currency", "status", "transaction_id", 
+            "id", "name", "email", "phone_number", "amount",
+            "currency", "status", "transaction_id",
             "transaction_ref", "created_at"
         ]
         read_only_fields = ["id", "created_at"]
@@ -19,9 +21,11 @@ class DiscountCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DiscountCode
-        fields = ["id", "code", "created_at", "is_used", "validity"]
-        read_only_fields = ["id", "code", "created_at", "is_used", "validity"]
-    
+        fields = ["id", "code", "created_at",
+                  "is_used", "validity", "claimant"]
+        read_only_fields = ["id", "code", "created_at",
+                            "is_used", "validity", "claimant"]
+
     def get_validity(self, obj):
         return "Valid" if not obj.is_used else "Invalid"
 

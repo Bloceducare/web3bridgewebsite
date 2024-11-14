@@ -1,5 +1,5 @@
 from requests import Response
-from rest_framework import decorators, status, viewsets
+from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
@@ -218,13 +218,27 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
-        serializer = self.serializer_class.List(self.queryset, many=True)
-        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+        page_size = 50
+        paginator = pagination.PageNumberPagination()
+        paginator.page_size = page_size
+        
+        page = paginator.paginate_queryset(self.queryset, request)
+        serializer = self.serializer_class.List(page, many=True)
+        
+        return requestUtils.success_response(
+            data={
+                'count': self.queryset.count(),
+                'next': paginator.get_next_link(),
+                'previous': paginator.get_previous_link(),
+                'results': serializer.data
+            }, 
+            http_status=status.HTTP_200_OK
+        )
     
     
     @decorators.action(detail=True, methods=["get"])
     def registration(self, request, pk):
-        query_set= self.queryset.filter(registration= pk)
+        query_set= self.queryset.filter(registration=pk)
         serializer = self.serializer_class.List(query_set, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
 

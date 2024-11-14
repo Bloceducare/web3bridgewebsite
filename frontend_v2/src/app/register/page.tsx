@@ -15,6 +15,7 @@ import dynamic from "next/dynamic";
 
 // Types
 interface FormDataType {
+  email: string;
   wallet_address: string;
   course: string;
   discount?: string;
@@ -48,16 +49,16 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
-  async function validateDiscountCode(code: string): Promise<boolean> {
+  async function validateDiscountCode(code: string, email: string): Promise<boolean> {
     try {
       const response = await fetch(
-        "https://web3bridgewebsitebackend.onrender.com/api/v2/payment/discount/validate/",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code, email }),
         }
       );
 
@@ -122,7 +123,7 @@ export default function RegistrationPage() {
       // Validate discount code if provided
       if (formData.discount) {
         console.log("Validating discount code:", formData.discount);
-        const isDiscountValid = await validateDiscountCode(formData.discount);
+        const isDiscountValid = await validateDiscountCode(formData.discount, formData.email);
         console.log("Discount validation result:", isDiscountValid);
 
         if (!isDiscountValid) {
@@ -226,7 +227,7 @@ export default function RegistrationPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm underline hover:text-bridgeRed">
-            Do join our telegram group to get information on next cohort
+            Do join our telegram group to get information on the next cohort
           </a>
         </div>
       ) : (
