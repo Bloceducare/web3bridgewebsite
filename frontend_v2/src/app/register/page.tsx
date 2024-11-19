@@ -170,9 +170,8 @@ export default function RegistrationPage() {
       localStorage.setItem("registrationData", JSON.stringify(userForm));
 
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${
-        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-      }?data=${encodeURIComponent(encodedData)}`;
+      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+        }?data=${encodeURIComponent(encodedData)}`;
 
       toast.success("Registration data saved! Redirecting to payment...");
 
@@ -197,7 +196,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-14");
+  const openDate = new Date("2025-3-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
@@ -213,7 +212,7 @@ export default function RegistrationPage() {
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
       {isClose ? (
         <div className="text-center flex flex-col items-center gap-6">
-          <p className="text-center text-[2em]">Registration Opens in</p>
+          {/* <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />
           <a
             href="https://forms.gle/WtEw4cDfWEHQcX3h9"
@@ -221,13 +220,13 @@ export default function RegistrationPage() {
             rel="noopener noreferrer"
             className={buttonVariants({ variant: "bridgePrimary" })}>
             Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
-          </a>
+          </a> */}
           <a
             href="https://t.me/web3bridge"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm underline hover:text-bridgeRed">
-            Do join our telegram group to get information on the next cohort
+            Do join our Telegram group to get information on the next cohort
           </a>
         </div>
       ) : (
