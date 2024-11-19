@@ -175,19 +175,18 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     def create(self, request, *args, **kwargs): 
         serializer = self.serializer_class.Create(data=request.data)
         
-        # Uncomment for next cohort registration
-        # if serializer.is_valid():
-        #     participant_obj= serializer.save()
-        #     serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
+        if serializer.is_valid():
+            participant_obj= serializer.save()
+            serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
 
-        #     email = serialized_participant_obj.get('email')
-        #     participant = serialized_participant_obj.get('name')
-        #     course = serialized_participant_obj.get('course').get('id')
+            email = serialized_participant_obj.get('email')
+            participant = serialized_participant_obj.get('name')
+            course = serialized_participant_obj.get('course').get('id')
 
-        #     send_registration_success_mail(email, course, participant)
-        #     send_participant_details(email, course, serialized_participant_obj)
-        #     # send twilio message
-        #     return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
+            send_registration_success_mail(email, course, participant)
+            send_participant_details(email, course, serialized_participant_obj)
+            # send twilio message
+            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
         return requestUtils.error_response("Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
     
     
