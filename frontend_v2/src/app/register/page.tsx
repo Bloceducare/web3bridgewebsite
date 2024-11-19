@@ -196,7 +196,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2025-3-14");
+  const openDate = new Date("2024-10-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
@@ -212,7 +212,7 @@ export default function RegistrationPage() {
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
       {isClose ? (
         <div className="text-center flex flex-col items-center gap-6">
-          {/* <p className="text-center text-[2em]">Registration Opens in</p>
+          <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />
           <a
             href="https://forms.gle/WtEw4cDfWEHQcX3h9"
@@ -220,7 +220,7 @@ export default function RegistrationPage() {
             rel="noopener noreferrer"
             className={buttonVariants({ variant: "bridgePrimary" })}>
             Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
-          </a> */}
+          </a>
           <a
             href="https://t.me/web3bridge"
             target="_blank"
