@@ -196,7 +196,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-14");
+  const openDate = new Date("2025-3-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
@@ -226,7 +226,7 @@ export default function RegistrationPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm underline hover:text-bridgeRed">
-            Do join our Telegram group to get information on the next cohort
+            Do join our Telegram group to get information on the next Cohort
           </a>
         </div>
       ) : (
