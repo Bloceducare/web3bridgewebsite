@@ -54,22 +54,20 @@ export default function SelectCourse({
               <p>Loading...</p>
             ) : (
               data &&
-              data
-                .filter((course: any) => (course.id !== 4)) // Remove line during next cohort web3 registration
-                .map((course: any) => (
-                  <div className="flex items-center gap-4 w-full" key={course.id}>
-                    <RadioGroupItem
-                      value={course.name}
-                      id={course.name}
-                      className="ring-1 border border-red-500 ring-red-500"
-                    />
-                    <Label
-                      htmlFor={course.name}
-                      className="font-normal capitalize">
-                      {course.name}
-                    </Label>
-                  </div>
-                ))
+              data.map((course: any) => (
+                <div className="flex items-center gap-4 w-full" key={course.id}>
+                  <RadioGroupItem
+                    value={course.name}
+                    id={course.name}
+                    className="ring-1 border border-red-500 ring-red-500"
+                  />
+                  <Label
+                    htmlFor={course.name}
+                    className="font-normal capitalize">
+                    {course.name}
+                  </Label>
+                </div>
+              ))
             )}
           </RadioGroup>
         </div>
