@@ -14,6 +14,9 @@ class Course(BaseModelBaseMixin, models.Model):
     extra_info= models.TextField(_("extra_info"), blank=False, null=False)
     images= models.ManyToManyField(Image, related_name='related_images')
     status = models.BooleanField(default=True)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
@@ -25,6 +28,9 @@ class Registration(BaseModelBaseMixin, models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     registrationFee = models.CharField(_('registration fee'), max_length=50, blank=True, null=True)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name} {self.start_date}-{self.end_date}) >"
@@ -47,6 +53,9 @@ class Participant(BaseModelBaseMixin, models.Model):
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
     cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     # class Meta:
         # unique_together = ('email', 'registration',)
@@ -61,6 +70,9 @@ class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
     testimony= models.TextField(_("testimony"), blank=False, null=False)
     picture= models.ImageField(upload_to=testimonial_image_location, blank=False, null=False)
     brief= models.CharField(_('author brief'), max_length=255, blank=False, null=False)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         full_name_processed= self.full_name.replace(" ", "_")
