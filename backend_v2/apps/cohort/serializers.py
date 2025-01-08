@@ -12,7 +12,7 @@ class CourseSerializer:
         
         class Meta:
             model = models.Course
-            fields = ["name", "description", "venue", "extra_info", "images"]
+            fields = ["name", "description", "venue", "extra_info", "images", "registration"]
             extra_kwargs= {"venue":{"required": True}}
             ref_name= COURSE_REF_NAME
     
@@ -144,7 +144,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
-                      "city", "state", "country", "duration", "gender", "github", "number", "course", "cohort"]
+                      "city", "state", "country", "gender", "github", "number", "course", "cohort"]
             extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -159,7 +159,7 @@ class ParticipantSerializer:
             instance.city= validated_data.get("city", instance.city)
             instance.state= validated_data.get("state", instance.state)
             instance.country= validated_data.get("country", instance.country)
-            instance.duration= validated_data.get("duration", instance.duration)
+            # instance.duration= validated_data.get("duration", instance.duration)
             instance.gender= validated_data.get("gender", instance.gender)
             instance.github= validated_data.get("github", instance.github)
             instance.number= validated_data.get("number", instance.number)

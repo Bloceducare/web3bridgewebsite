@@ -14,6 +14,8 @@ class Course(BaseModelBaseMixin, models.Model):
     extra_info= models.TextField(_("extra_info"), blank=False, null=False)
     images= models.ManyToManyField(Image, related_name='related_images')
     status = models.BooleanField(default=True)
+    #One to Many relationship with Registration
+    registration = models.ForeignKey('Registration', related_name='courses', on_delete=models.CASCADE)
     # New timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -28,6 +30,7 @@ class Registration(BaseModelBaseMixin, models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     registrationFee = models.CharField(_('registration fee'), max_length=50, blank=True, null=True)
+
     # New timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -47,7 +50,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     city = models.CharField(_('city name'), max_length=50, blank=False, null=True)  
     state = models.CharField(_('state name'), max_length=50, blank=False, null=True)  
     country = models.CharField(_('country name'), max_length=50, blank=False, null=True)  
-    duration = models.CharField(_('duration'), max_length=100, blank=False, null=True) 
+    # duration = models.CharField(_('duration'), max_length=100, blank=False, null=True) 
     gender = models.CharField(_('gender'), max_length=20, blank=False, null=True)  
     github = models.URLField(_('github url'), max_length=250, blank=True, null=True)  
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
