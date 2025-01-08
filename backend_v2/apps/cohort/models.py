@@ -14,6 +14,7 @@ class Course(BaseModelBaseMixin, models.Model):
     extra_info= models.TextField(_("extra_info"), blank=False, null=False)
     images= models.ManyToManyField(Image, related_name='related_images')
     status = models.BooleanField(default=True)
+    duration = models.CharField(_('duration'), max_length=100, blank=False, default="3 months")
     #One to Many relationship with Registration
     registration = models.ForeignKey('Registration', related_name='courses', on_delete=models.CASCADE)
     # New timestamp fields
@@ -42,17 +43,16 @@ class Registration(BaseModelBaseMixin, models.Model):
 class Participant(BaseModelBaseMixin, models.Model): 
     name= models.CharField(_('full name'), max_length=255, blank=False, null=True)
     wallet_address= models.CharField(_('wallet address'), max_length=255, blank=False, null=False)  
-    email= models.CharField(_('participant email'), max_length=255, blank=False, null=False) 
+    email = models.EmailField(_('participant email'), max_length=255, blank=False, null=False) 
     registration = models.ForeignKey(Registration, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=RegistrationStatus.choices(), default=RegistrationStatus.PENDING.value) 
     motivation = models.TextField(_("motivation"), blank=False, null=True) 
     achievement = models.TextField(_("achievement"), blank=True, null=True)   
     city = models.CharField(_('city name'), max_length=50, blank=False, null=True)  
     state = models.CharField(_('state name'), max_length=50, blank=False, null=True)  
-    country = models.CharField(_('country name'), max_length=50, blank=False, null=True)  
-    # duration = models.CharField(_('duration'), max_length=100, blank=False, null=True) 
+    country = models.CharField(_('country name'), max_length=50, blank=False, null=True)   
     gender = models.CharField(_('gender'), max_length=20, blank=False, null=True)  
-    github = models.URLField(_('github url'), max_length=250, blank=True, null=True)  
+    github = models.URLField(_('github url'), max_length=250, blank=True, default="")  
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
     cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)

@@ -12,7 +12,7 @@ class CourseSerializer:
         
         class Meta:
             model = models.Course
-            fields = ["name", "description", "venue", "extra_info", "images", "registration"]
+            fields = ["name", "description", "venue", "extra_info", "images", "registration", "duration"]
             extra_kwargs= {"venue":{"required": True}}
             ref_name= COURSE_REF_NAME
     
@@ -33,14 +33,14 @@ class CourseSerializer:
         
         class Meta:
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status", "registration", "duration"]
     
     class Retrieve(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
         
         class Meta:
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status", "registration", "duration"]
     
     class Update(serializers.ModelSerializer):
         images = serializers.ListField(child=serializers.ImageField(), required=False)
@@ -48,7 +48,7 @@ class CourseSerializer:
         class Meta:
             ref_name = "courses"
             model = models.Course
-            fields = ["id", "name", "description", "venue", "extra_info", "images", "status"]
+            fields = ["id", "name", "description", "venue", "extra_info", "images", "status", "registration", "duration"]
             extra_kwargs= { field: {"required": False} for field in fields}
             
         def update(self, instance, validated_data):
@@ -69,6 +69,8 @@ class CourseSerializer:
             instance.description= validated_data.get("description", instance.description)
             instance.venue= validated_data.get("venue", instance.venue)
             instance.extra_info= validated_data.get("extra_info", instance.extra_info)
+            instance.registration= validated_data.get("registration", instance.registration)
+            instance.duration= validated_data.get("duration", instance.duration)
             instance.save()
             return instance
 
@@ -88,13 +90,13 @@ class RegistrationSerializer:
     class List(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses"]
             ref_name = REGISTRATION_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses"]
             ref_name = REGISTRATION_REF_NAME
     
     class Update(serializers.ModelSerializer):
