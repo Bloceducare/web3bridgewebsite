@@ -175,7 +175,12 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     def create(self, request, *args, **kwargs): 
         serializer = self.serializer_class.Create(data=request.data)
         
-        # uncomment if block for next cohort registration
+        #check if registration is open
+        registration = request.data.get('registration')
+        registration_obj = models.Registration.objects.get(pk=registration)
+        if not registration_obj.is_open:
+            return requestUtils.error_response("Registration is closed", {}, http_status=status.HTTP_400_BAD_REQUEST)
+
         if serializer.is_valid():
             participant_obj= serializer.save()
             serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
