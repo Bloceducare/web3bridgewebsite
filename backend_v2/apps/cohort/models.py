@@ -56,6 +56,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     number = models.CharField(_('phone number'), max_length=20, blank=False, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=False, null=True)
     cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
+    payment_status = models.BooleanField(default=False)
     # New timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -120,7 +120,7 @@ class ParticipantSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            exclude = ["status"]
+            exclude = ["status", "payment_status"]
             ref_name= PARTICIPANT_REF_NAME
         
         def create(self, validated_data):
@@ -146,7 +146,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
-                      "city", "state", "country", "gender", "github", "number", "course", "cohort"]
+                      "city", "state", "country", "gender", "github", "number", "course", "cohort", "payment_status"]
             extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -167,6 +167,7 @@ class ParticipantSerializer:
             instance.number= validated_data.get("number", instance.number)
             instance.course= validated_data.get("course", instance.course)
             instance.cohort= validated_data.get("cohort", instance.cohort)
+            instance.payment_status= validated_data.get("payment_status", instance.payment_status)
 
             instance.save()
             return instance
