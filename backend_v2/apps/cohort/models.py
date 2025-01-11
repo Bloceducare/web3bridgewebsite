@@ -68,11 +68,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
-    
-    def save(self, *args, **kwargs):
-        if Participant.objects.filter(email=self.email, registration=self.registration).exists():
-            raise ValidationError('This participant is already registered.')
-        super().save(*args, **kwargs)
+   
     
 # Testimonial model
 class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  

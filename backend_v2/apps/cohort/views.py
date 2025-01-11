@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from requests import Response
 from payment.models import DiscountCode
 from rest_framework import decorators, pagination, status, viewsets
@@ -207,7 +208,12 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         serializer = self.serializer_class.Create(data=request_data)
 
         if serializer.is_valid():
-            participant_obj = serializer.save()
+            try:
+                participant_obj = serializer.save()
+            except Exception as e:
+                return requestUtils.error_response(
+                    "Error Creating Participant", str(e), http_status=status.HTTP_400_BAD_REQUEST
+                )
             serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
 
             # If a valid discount code was provided, mark it as used
