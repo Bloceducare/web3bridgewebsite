@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 from utils.helpers.models import BaseModelBaseMixin, CloudinaryDeleteMixin
 from utils.models import Image
@@ -30,6 +31,7 @@ class Registration(BaseModelBaseMixin, models.Model):
     is_open = models.BooleanField(default=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+    cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
     registrationFee = models.CharField(_('registration fee'), max_length=50, blank=True, null=True)
 
     # New timestamp fields
@@ -61,11 +63,16 @@ class Participant(BaseModelBaseMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    # class Meta:
-        # unique_together = ('email', 'registration',)
+    class Meta:
+        unique_together = ('email', 'registration',)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
+    
+    def save(self, *args, **kwargs):
+        if Participant.objects.filter(email=self.email, registration=self.registration).exists():
+            raise ValidationError('This participant is already registered.')
+        super().save(*args, **kwargs)
     
 # Testimonial model
 class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  

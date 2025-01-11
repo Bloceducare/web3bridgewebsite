@@ -120,7 +120,7 @@ class ParticipantSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            exclude = ["status", "payment_status"]
+            exclude = ["status", "payment_status", "cohort"]
             ref_name= PARTICIPANT_REF_NAME
         
         def create(self, validated_data):
