@@ -85,17 +85,17 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
         responses={200: serializer_class}
     )
     @decorators.action(detail=False, methods=["post"])
-    def validate(self, request):
+    def validate(self, data):
         input_serializer = serializers.ValidateCodeInputSerializer(
-            data=request.data)
+            data=data)
         if not input_serializer.is_valid():
             return requestUtils.error_response(
                 "Invalid input format", input_serializer.errors, status.HTTP_400_BAD_REQUEST
             )
 
         try:
-            code = request.data.get("code")
-            claimant_email = request.data.get("email")
+            code = data.get("code")
+            claimant_email = data.get("email")
             discount_code_object = self.queryset.get(code=code)
 
             if discount_code_object.is_used:

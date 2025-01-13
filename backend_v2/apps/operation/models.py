@@ -10,6 +10,9 @@ class Team(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
     brief= models.TextField(_("brief"), blank=False, null=False)
     extra_info= models.TextField(_("extra_info"), blank=True, null=True)
     picture= models.ImageField(upload_to=team_image_location, blank=False, null=False)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         full_name_processed= self.full_name.replace(" ", "_")
@@ -21,6 +24,9 @@ class Mentor(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
     repo= models.URLField(_('repo url'), max_length=1000, blank=False, null=False)
     extra_info= models.TextField(_("extra_info"), blank=True, null=True)
     picture= models.ImageField(upload_to=mentor_image_location, blank=False, null=False)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         full_name_processed= self.full_name.replace(" ", "_")
@@ -32,6 +38,9 @@ class Partner(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
     url= models.URLField(_('site url'), max_length=1000, blank=True, null=True)
     extra_info= models.TextField(_("extra_info"), blank=True, null=True)
     picture= models.ImageField(upload_to=partner_image_location, blank=True, null=True)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"

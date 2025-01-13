@@ -42,6 +42,8 @@ class DiscountCode(models.Model):
     is_used = models.BooleanField(default=False)
     claimant = models.EmailField(max_length=127, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # New timestamp fields
+    updated_at = models.DateTimeField(auto_now=True)
 
     @classmethod
     def generate_code(cls, length=5):
