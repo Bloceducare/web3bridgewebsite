@@ -79,7 +79,7 @@ class RegistrationSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "start_date", "end_date", "registrationFee", 'cohort']
             ref_name = REGISTRATION_REF_NAME
         
         def create(self, validated_data):
@@ -90,19 +90,19 @@ class RegistrationSerializer:
     class List(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses", 'cohort']
             ref_name = REGISTRATION_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", "courses", 'cohort']
             ref_name = REGISTRATION_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Registration
-            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee"]
+            fields = ["id", "name", "is_open", "start_date", "end_date", "registrationFee", 'cohort']
             ref_name = REGISTRATION_REF_NAME
             extra_kwargs= { field: {"required": False} for field in fields}
             
@@ -112,6 +112,7 @@ class RegistrationSerializer:
             instance.start_date= validated_data.get("start_date", instance.start_date)
             instance.end_date= validated_data.get("end_date", instance.end_date)
             instance.registrationFee= validated_data.get("registrationFee", instance.registrationFee)
+            instance.cohort= validated_data.get("cohort", instance.cohort)
             instance.save()
             return instance
 
