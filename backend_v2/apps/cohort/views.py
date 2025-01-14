@@ -243,6 +243,24 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             "Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST
         )
 
+    @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
+    @decorators.action(detail=False, methods=["patch"], url_path="update-by-email")
+    def update_by_email(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        if not email:
+            return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
+        
+        participant_object = self.queryset.filter(email=email).order_by('-created_at').first()
+        if not participant_object:
+            return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.serializer_class.Update(participant_object, data=request.data)
+        if serializer.is_valid():
+            participant_obj = serializer.save()
+            serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
+            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
+        else:
+            return requestUtils.error_response("Error Updating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
 
     
     
