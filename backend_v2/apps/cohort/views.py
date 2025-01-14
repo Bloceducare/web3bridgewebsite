@@ -190,7 +190,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
         # Handle request data and discount code
         request_data = request.data
-        discount_code = request_data.pop("discount_code", None)
+        discount_code = request_data.pop("discount", None)
 
         # Validate discount code if provided
         if discount_code:
