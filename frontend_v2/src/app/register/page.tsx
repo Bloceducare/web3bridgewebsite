@@ -170,9 +170,8 @@ export default function RegistrationPage() {
       localStorage.setItem("registrationData", JSON.stringify(userForm));
 
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${
-        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-      }?data=${encodeURIComponent(encodedData)}`;
+      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+        }?data=${encodeURIComponent(encodedData)}`;
 
       toast.success("Registration data saved! Redirecting to payment...");
 
@@ -197,7 +196,7 @@ export default function RegistrationPage() {
     isRegistering,
   };
 
-  const openDate = new Date("2024-10-14");
+  const openDate = new Date("2025-3-14");
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
@@ -227,7 +226,7 @@ export default function RegistrationPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm underline hover:text-bridgeRed">
-            Do join our telegram group to get information on the next cohort
+            Do join our Telegram group to get information on the next Cohort
           </a>
         </div>
       ) : (

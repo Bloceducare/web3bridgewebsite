@@ -11,6 +11,9 @@ class Dapp(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
     url= models.URLField(_('dapp url'), max_length=1000, blank=False, null=False)
     description= models.TextField(_("description"), blank=False, null=False)
     picture= models.ImageField(upload_to=dapp_image_location, blank=False, null=False)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"
