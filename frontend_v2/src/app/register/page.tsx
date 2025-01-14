@@ -232,13 +232,13 @@ export default function RegistrationPage() {
         </div>
       ) : (
         <>
-          {step === 1 ? (
+          {/* {step === 1 ? (
             <SelectCourse {...props} />
           ) : step === 2 ? (
             <PersonalInformation {...props} />
           ) : (
             <OtherInformation {...props} />
-          )}
+          )} */}
         </>
       )}
     </MaxWrapper>
