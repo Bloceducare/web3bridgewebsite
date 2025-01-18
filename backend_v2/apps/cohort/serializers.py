@@ -178,7 +178,7 @@ class TestimonialSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
+            fields = ["id", "full_name", "testimony", "picture_link", "created_at", "updated_at"]
             ref_name = TESTIMONIAL_REF_NAME
         
         def create(self, validated_data):
@@ -189,19 +189,19 @@ class TestimonialSerializer:
     class List(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
+            fields = ["id", "full_name", "testimony", "picture_link", "created_at", "updated_at"]
             ref_name = TESTIMONIAL_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
+            fields = ["id", "full_name", "testimony", "picture_link", "created_at", "updated_at"]
             ref_name = TESTIMONIAL_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.Testimonial
-            fields = ["id", "headline", "full_name", "testimony", "picture", "brief"]
+            fields = ["id", "full_name", "testimony", "picture_link"]
             ref_name = TESTIMONIAL_REF_NAME
             extra_kwargs= { field: {"required": False} for field in fields}
             
@@ -209,8 +209,7 @@ class TestimonialSerializer:
             instance.headline= validated_data.get("headline", instance.headline)
             instance.full_name= validated_data.get("full_name", instance.full_name)
             instance.testimony= validated_data.get("testimony", instance.testimony)
-            instance.picture= validated_data.get("picture", instance.picture)
-            instance.brief= validated_data.get("brief", instance.brief)
+            instance.picture_link= validated_data.get("picture_link", instance.picture)
             instance.save()
             return instance
 
