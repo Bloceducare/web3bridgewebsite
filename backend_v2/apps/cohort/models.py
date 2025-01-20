@@ -72,11 +72,13 @@ class Participant(BaseModelBaseMixin, models.Model):
     
 # Testimonial model
 class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):  
-    headline= models.CharField(_('headline'), max_length=1000, blank=False, null=False)
+    headline= models.CharField(_('headline'), max_length=1000, blank=True, null=True)
     full_name= models.CharField(_('last name'), max_length=255, blank=False, null=False)
     testimony= models.TextField(_("testimony"), blank=False, null=False)
-    picture= models.ImageField(upload_to=testimonial_image_location, blank=False, null=False)
-    brief= models.CharField(_('author brief'), max_length=255, blank=False, null=False)
+    picture_link = models.URLField(_('picture link'), max_length=250, blank=True, default="")
+    # picture= models.ImageField(upload_to=testimonial_image_location, blank=False, null=False)
+    # brief= models.CharField(_('author brief'), max_length=255, blank=False, null=False)
+
     # New timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
