@@ -12,7 +12,6 @@ export const useFetchAllCourses = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/all/`
       );
       const result = await res.json();
-
       setData(result.data);
     } catch (error) {
       console.log(error);

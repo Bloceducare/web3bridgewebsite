@@ -19,7 +19,7 @@ interface FormDataType {
   wallet_address: string;
   course: string;
   discount?: string;
-  duration?: string;
+  // duration?: string;
   motivation?: string;
   achievement?: string;
   cta?: boolean;
@@ -40,6 +40,8 @@ export default function RegistrationPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState<FormDataType | null>(null);
 
+  const [isDiscountChecked, setIsDiscountChecked] = useState(false);
+
   const nextStep = () => {
     setIsUpdatingSteps(true);
     const timeout = setTimeout(() => {
@@ -49,41 +51,44 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
-  async function validateDiscountCode(code: string, email: string): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code, email }),
-        }
-      );
+  // async function validateDiscountCode(
+  //   code: string,
+  //   email: string
+  // ): Promise<boolean> {
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ code, email }),
+  //       }
+  //     );
 
-      const data = await response.json();
-      console.log("Discount validation response:", data); // For debugging
+  //     const data = await response.json();
+  //     console.log("Discount validation response:", data); // For debugging
 
-      // If the API returns success: true, consider it valid
-      if (data.success === true) {
-        return true;
-      }
+  //     // If the API returns success: true, consider it valid
+  //     if (data.success === true) {
+  //       return true;
+  //     }
 
-      // Show appropriate error messages
-      if (data.data?.is_used) {
-        toast.error("This discount code has already been used");
-      } else {
-        toast.error("Invalid discount code");
-      }
+  //     // Show appropriate error messages
+  //     if (data.data?.is_used) {
+  //       toast.error("This discount code has already been used");
+  //     } else {
+  //       toast.error("Invalid discount code");
+  //     }
 
-      return false;
-    } catch (error) {
-      console.error("Error validating discount code:", error);
-      toast.error("Error validating discount code. Please try again.");
-      return false;
-    }
-  }
+  //     return false;
+  //   } catch (error) {
+  //     console.error("Error validating discount code:", error);
+  //     toast.error("Error validating discount code. Please try again.");
+  //     return false;
+  //   }
+  // }
 
   const submitData = async () => {
     if (!formData) {
@@ -121,16 +126,20 @@ export default function RegistrationPage() {
       };
 
       // Validate discount code if provided
-      if (formData.discount) {
-        console.log("Validating discount code:", formData.discount);
-        const isDiscountValid = await validateDiscountCode(formData.discount, formData.email);
-        console.log("Discount validation result:", isDiscountValid);
+      if (isDiscountChecked) {
+        // if (formData.discount) {
+        //   console.log("Validating discount code:", formData.discount);
+        //   const isDiscountValid = await validateDiscountCode(
+        //     formData.discount,
+        //     formData.email
+        //   );
+        //   console.log("Discount validation result:", isDiscountValid);
 
-        if (!isDiscountValid) {
-          setIsRegistering(false);
-          toast.dismiss();
-          return;
-        }
+        //   if (!isDiscountValid) {
+        //     setIsRegistering(false);
+        //     toast.dismiss();
+        //     return;
+        //   }
 
         try {
           // Save form data to the endpoint
@@ -146,7 +155,9 @@ export default function RegistrationPage() {
           );
 
           if (!response.ok) {
-            throw new Error("Failed to save participant data");
+            const data = await response.json();
+            console.log("Response Data:", data);
+            throw new Error(data.message);
           }
 
           const savedData = await response.json();
@@ -170,8 +181,9 @@ export default function RegistrationPage() {
       localStorage.setItem("registrationData", JSON.stringify(userForm));
 
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-        }?data=${encodeURIComponent(encodedData)}`;
+      const paymentUrl = `${
+        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+      }?data=${encodeURIComponent(encodedData)}`;
 
       toast.success("Registration data saved! Redirecting to payment...");
 
@@ -194,11 +206,13 @@ export default function RegistrationPage() {
     isUpdatingSteps,
     submitData,
     isRegistering,
+    isDiscountChecked,
+    setIsDiscountChecked,
   };
 
   const openDate = new Date("2025-3-14");
   const currentDate = new Date();
-  const isClose = currentDate < openDate;
+  const isClose = currentDate > openDate;
 
   if (isLoading || loadReg) {
     return (
@@ -218,14 +232,16 @@ export default function RegistrationPage() {
             href="https://forms.gle/WtEw4cDfWEHQcX3h9"
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: "bridgePrimary" })}>
+            className={buttonVariants({ variant: "bridgePrimary" })}
+          >
             Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
           </a>
           <a
             href="https://t.me/web3bridge"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm underline hover:text-bridgeRed">
+            className="text-sm underline hover:text-bridgeRed"
+          >
             Do join our Telegram group to get information on the next Cohort
           </a>
         </div>
