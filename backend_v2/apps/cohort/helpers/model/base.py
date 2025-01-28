@@ -15,10 +15,10 @@ def send_registration_success_mail(email, course_id, participant):
     from cohort.models import Course
     try:
         course = Course.objects.get(pk=course_id)
-        if course.id in [2, 3]:
+        if "web2" in course.name.lower():
             subject = 'Web2 Registration Success'
             template_name = 'cohort/web2_registration_email.html'
-        elif course.id == 4:
+        elif "web3" in course.name.lower():
             subject = 'Web3 Registration Success'
             template_name = 'cohort/web3_registration_email.html'
         else:
