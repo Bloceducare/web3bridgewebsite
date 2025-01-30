@@ -32,7 +32,7 @@ def send_registration_success_mail(email, course_id, participant):
         recipient_list = [email]
 
         send_mail(subject, '', from_email, recipient_list,
-                  html_message=message, fail_silently=False)
+                  html_message=message, fail_silently=True)
     except Course.DoesNotExist:
         # Handle case where course with provided ID does not exist
         pass

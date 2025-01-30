@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from requests import Response
-from payment.models import DiscountCode
+from payment.models import DiscountCode, Payment
 from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
@@ -171,7 +171,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["update", "destroy"]
+    admin_actions= ["update", "destroy", "verify_payment_by_email"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs):
@@ -244,8 +244,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         )
 
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
-    @decorators.action(detail=False, methods=["patch"], url_path="update-by-email")
-    def update_by_email(self, request, *args, **kwargs):
+    @decorators.action(detail=False, methods=["post"], url_path="verify-payment-by-email")
+    def verify_payment_by_email(self, request, *args, **kwargs):
         email = request.data.get("email")
         if not email:
             return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
@@ -254,13 +254,14 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if not participant_object:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
-        serializer = self.serializer_class.Update(participant_object, data=request.data)
-        if serializer.is_valid():
-            participant_obj = serializer.save()
-            serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
-            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
+        payment_object = Payment.objects.filter(email=email).order_by('-created_at').first()
+
+        if payment_object and payment_object.status:
+            participant_object.payment_status = True
+            participant_object.save()
+            return requestUtils.success_response(data=participant_object, http_status=status.HTTP_200_OK)
         else:
-            return requestUtils.error_response("Error Updating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
+            return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
 
     
     
