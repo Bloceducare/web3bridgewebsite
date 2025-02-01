@@ -171,7 +171,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["update", "destroy", "verify_payment_by_email"]
+    admin_actions= ["update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs):
@@ -243,7 +243,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             "Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST
         )
 
-    @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
+    @swagger_auto_schema(request_body=serializers.EmailSerializer)
     @decorators.action(detail=False, methods=["post"], url_path="verify-payment-by-email")
     def verify_payment_by_email(self, request, *args, **kwargs):
         email = request.data.get("email")

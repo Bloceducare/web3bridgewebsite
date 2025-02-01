@@ -147,7 +147,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
-                      "city", "state", "country", "gender", "github", "number", "course", "cohort", "payment_status"]
+                      "city", "state", "country", "gender", "github", "number", "course", "cohort"]
             extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -172,6 +172,10 @@ class ParticipantSerializer:
 
             instance.save()
             return instance
+        
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
 
 # Testimonial Serializer
 class TestimonialSerializer:
