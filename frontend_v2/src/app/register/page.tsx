@@ -25,6 +25,17 @@ interface FormDataType {
   cta?: boolean;
 }
 
+interface UserDataType {
+  course: any;
+  registration: any;
+  email: string;
+  wallet_address: string;
+  discount?: string;
+  motivation?: string;
+  achievement?: string;
+  cta?: boolean;
+}
+
 const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
@@ -52,7 +63,7 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
-  async function getUserData(userForm) {
+  async function getUserData(userForm: UserDataType) {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
       {
@@ -111,10 +122,7 @@ export default function RegistrationPage() {
       };
 
       if (isDiscountChecked) {
-        
-
         try {
-
           const savedData = await getUserData(userForm);
           console.log("Participant data saved:", savedData);
 
@@ -207,13 +215,13 @@ export default function RegistrationPage() {
         </div>
       ) : (
         <>
-          {/* {step === 1 ? (
+          {step === 1 ? (
             <SelectCourse {...props} />
           ) : step === 2 ? (
             <PersonalInformation {...props} />
           ) : (
             <OtherInformation {...props} />
-          )} */}
+          )}
         </>
       )}
     </MaxWrapper>
