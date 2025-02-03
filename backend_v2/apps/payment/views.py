@@ -92,32 +92,22 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             return requestUtils.error_response(
                 "Invalid input format", input_serializer.errors, status.HTTP_400_BAD_REQUEST
             )
+        data = request.data
 
         try:
-            code = request.data.get("code")
-            claimant_email = request.data.get("email")
+            code = data.get("code")
             discount_code_object = self.queryset.get(code=code)
 
-            if discount_code_object.is_used:
-                if discount_code_object.claimant == claimant_email:
-                    return requestUtils.success_response(
-                        "Code already used by this user.",
-                        http_status=status.HTTP_200_OK
-                    )
-                else:
-                    return requestUtils.error_response(
-                        "Discount code already used by another user.",
-                        str(e), http_status=status.HTTP_403_FORBIDDEN
-                    )
-
-            discount_code_object.is_used = True
-            discount_code_object.claimant = claimant_email
-            discount_code_object.save()
-
-            serializer = self.serializer_class(discount_code_object)
-            return requestUtils.success_response(
-                data=serializer.data, http_status=status.HTTP_200_OK
-            )
+            if discount_code_object.is_used == False:
+                return requestUtils.success_response(
+                    "Code is valid.",
+                    http_status=status.HTTP_200_OK
+                )
+            else:
+                return requestUtils.error_response(
+                    "Discount code already used",
+                    str(e), http_status=status.HTTP_403_FORBIDDEN
+                )
         except self.discount.DoesNotExist as e:
             return requestUtils.error_response(
                 "Discount code not found", str(e), http_status=status.HTTP_404_NOT_FOUND

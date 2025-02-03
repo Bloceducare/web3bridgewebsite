@@ -189,7 +189,7 @@ export default function RegistrationPage() {
           <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />
           <a
-            href="https://forms.gle/WtEw4cDfWEHQcX3h9"
+            href="https://forms.gle/5UJ6wSx1QnkZxGPXA"
             target="_blank"
             rel="noopener noreferrer"
             className={buttonVariants({ variant: "bridgePrimary" })}
@@ -207,13 +207,13 @@ export default function RegistrationPage() {
         </div>
       ) : (
         <>
-          {step === 1 ? (
+          {/* {step === 1 ? (
             <SelectCourse {...props} />
           ) : step === 2 ? (
             <PersonalInformation {...props} />
           ) : (
             <OtherInformation {...props} />
-          )}
+          )} */}
         </>
       )}
     </MaxWrapper>

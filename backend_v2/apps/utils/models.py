@@ -3,3 +3,6 @@ from .helpers.models import image_location
 
 class Image(models.Model):
     picture = models.ImageField(upload_to=image_location)
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

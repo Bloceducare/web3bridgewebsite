@@ -1,4 +1,6 @@
+from django.forms import ValidationError
 from requests import Response
+from payment.models import DiscountCode, Payment
 from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
@@ -172,23 +174,95 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     admin_actions= ["update", "destroy"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
-    def create(self, request, *args, **kwargs): 
-        serializer = self.serializer_class.Create(data=request.data)
+    def create(self, request, *args, **kwargs):
+        # Check if registration is open
+        registration_id = request.data.get('registration')
+        try:
+            registration_obj = models.Registration.objects.get(pk=registration_id)
+            if not registration_obj.is_open:
+                return requestUtils.error_response(
+                    "Registration is closed", {}, http_status=status.HTTP_400_BAD_REQUEST
+                )
+        except models.Registration.DoesNotExist:
+            return requestUtils.error_response(
+                "Invalid registration ID", {}, http_status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Handle request data and discount code
+        request_data = request.data
+        discount_code = request_data.pop("discount", None)
+
+        # Validate discount code if provided
+        if discount_code:
+            discount_obj = DiscountCode.objects.filter(code=discount_code).first()
+            if not discount_obj:
+                return requestUtils.error_response(
+                    "Invalid discount code", {}, http_status=status.HTTP_400_BAD_REQUEST
+                )
+            if discount_obj.is_used:
+                return requestUtils.error_response(
+                    "Discount code has already been used", {}, http_status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # Serialize and save participant only after successful discount validation
+        serializer = self.serializer_class.Create(data=request_data)
+
+        if serializer.is_valid():
+            try:
+                participant_obj = serializer.save()
+            except Exception as e:
+                return requestUtils.error_response(
+                    "Error Creating Participant", str(e), http_status=status.HTTP_400_BAD_REQUEST
+                )
+            serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
+
+            # If a valid discount code was provided, mark it as used
+            if discount_code:
+                discount_obj.is_used = True
+                discount_obj.claimant = serialized_participant_obj.get('email')
+                discount_obj.save()
+                participant_obj.payment_status = True
+                participant_obj.save()
+                serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
+
+            # Send registration success email
+            email = serialized_participant_obj.get('email')
+            participant_name = serialized_participant_obj.get('name')
+            course_id = serialized_participant_obj.get('course').get('id')
+
+            send_registration_success_mail(email, course_id, participant_name)
+            send_participant_details(email, course_id, serialized_participant_obj)
+
+            # Return success response
+            return requestUtils.success_response(
+                data=serialized_participant_obj, http_status=status.HTTP_201_CREATED
+            )
+
+        # Return error response if serializer is invalid
+        return requestUtils.error_response(
+            "Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST
+        )
+
+    @swagger_auto_schema(request_body=serializers.EmailSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="verify-payment-by-email")
+    def verify_payment_by_email(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        if not email:
+            return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
         
-        # uncomment if block for next cohort registration
-        # if serializer.is_valid():
-        #     participant_obj= serializer.save()
-        #     serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
+        participant_object = self.queryset.filter(email=email).order_by('-created_at').first()
+        if not participant_object:
+            return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
+        
+        payment_object = Payment.objects.filter(email=email).order_by('-created_at').first()
 
-        #     email = serialized_participant_obj.get('email')
-        #     participant = serialized_participant_obj.get('name')
-        #     course = serialized_participant_obj.get('course').get('id')
+        if payment_object and payment_object.status:
+            participant_object.payment_status = True
+            participant_object.save()
+            return requestUtils.success_response(data=participant_object, http_status=status.HTTP_200_OK)
+        else:
+            return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
 
-        #     send_registration_success_mail(email, course, participant)
-        #     send_participant_details(email, course, serialized_participant_obj)
-        #     # send twilio message
-        #     return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_201_CREATED)
-        return requestUtils.error_response("Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
     
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
