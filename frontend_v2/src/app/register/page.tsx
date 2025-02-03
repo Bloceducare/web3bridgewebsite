@@ -38,6 +38,7 @@ export default function RegistrationPage() {
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+
   const [formData, setFormData] = useState<FormDataType | null>(null);
 
   const [isDiscountChecked, setIsDiscountChecked] = useState(false);
@@ -51,44 +52,28 @@ export default function RegistrationPage() {
     return () => clearTimeout(timeout);
   };
 
-  // async function validateDiscountCode(
-  //   code: string,
-  //   email: string
-  // ): Promise<boolean> {
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ code, email }),
-  //       }
-  //     );
+  async function getUserData(userForm) {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userForm),
+      }
+    );
 
-  //     const data = await response.json();
-  //     console.log("Discount validation response:", data); // For debugging
+    if (!response.ok) {
+      const data = await response.json();
+      console.log("Response Data:", data);
+      throw new Error(data.message);
+    }
 
-  //     // If the API returns success: true, consider it valid
-  //     if (data.success === true) {
-  //       return true;
-  //     }
-
-  //     // Show appropriate error messages
-  //     if (data.data?.is_used) {
-  //       toast.error("This discount code has already been used");
-  //     } else {
-  //       toast.error("Invalid discount code");
-  //     }
-
-  //     return false;
-  //   } catch (error) {
-  //     console.error("Error validating discount code:", error);
-  //     toast.error("Error validating discount code. Please try again.");
-  //     return false;
-  //   }
-  // }
+    const savedData = await response.json();
+    console.log("Participant data saved:", savedData);
+    return savedData;
+  }
 
   const submitData = async () => {
     if (!formData) {
@@ -125,42 +110,12 @@ export default function RegistrationPage() {
         registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
       };
 
-      // Validate discount code if provided
       if (isDiscountChecked) {
-        // if (formData.discount) {
-        //   console.log("Validating discount code:", formData.discount);
-        //   const isDiscountValid = await validateDiscountCode(
-        //     formData.discount,
-        //     formData.email
-        //   );
-        //   console.log("Discount validation result:", isDiscountValid);
-
-        //   if (!isDiscountValid) {
-        //     setIsRegistering(false);
-        //     toast.dismiss();
-        //     return;
-        //   }
+        
 
         try {
-          // Save form data to the endpoint
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(userForm),
-            }
-          );
 
-          if (!response.ok) {
-            const data = await response.json();
-            console.log("Response Data:", data);
-            throw new Error(data.message);
-          }
-
-          const savedData = await response.json();
+          const savedData = await getUserData(userForm);
           console.log("Participant data saved:", savedData);
 
           // Save to localStorage and show success message
@@ -178,8 +133,13 @@ export default function RegistrationPage() {
       }
 
       // If no discount code, proceed with normal payment flow
-      localStorage.setItem("registrationData", JSON.stringify(userForm));
-
+      localStorage.setItem("regData", JSON.stringify(userForm));
+      try {
+        const savedData = await getUserData(userForm);
+        console.log("Participant data saved:", savedData);
+      } catch (error) {
+        console.error("Error saving participant data:", error);
+      }
       const encodedData = btoa(JSON.stringify(userForm));
       const paymentUrl = `${
         process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN

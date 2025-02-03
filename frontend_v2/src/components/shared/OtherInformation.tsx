@@ -76,7 +76,7 @@ export default function OtherInformation({
           onSubmit={form.handleSubmit(onSubmit)}
           className="mt-6 flex flex-col items-center gap-4"
         >
-          {/* <FormField
+          <FormField
             control={form.control}
             name="duration"
             render={({ field }) => (
@@ -90,14 +90,14 @@ export default function OtherInformation({
                     type="text"
                     disabled={true}
                     name="duration"
-                    placeholder="Select training duration"
+                    // placeholder="Select training duration"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
           <FormField
             control={form.control}
             name="motivation"
