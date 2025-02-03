@@ -247,7 +247,7 @@ export default function OtherInformation({
                 isUpdatingSteps ||
                 !isCheckboxChecked ||
                 !isDiscountChecked
-              } // Disable if checkbox is not check
+              } // Disable if checkbox is not checked
               className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
             >
               Complete registration
