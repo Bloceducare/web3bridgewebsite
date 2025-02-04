@@ -255,11 +255,12 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
         payment_object = Payment.objects.filter(email=email).order_by('-created_at').first()
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
 
         if payment_object and payment_object.status:
             participant_object.payment_status = True
             participant_object.save()
-            return requestUtils.success_response(data=participant_object, http_status=status.HTTP_200_OK)
+            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
 
