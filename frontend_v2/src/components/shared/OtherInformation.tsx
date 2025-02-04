@@ -28,12 +28,16 @@ export default function OtherInformation({
   isUpdatingSteps,
   submitData,
   isRegistering,
+  isDiscountChecked,
+  setIsDiscountChecked,
 }: {
   step: number;
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
   isRegistering: boolean;
+  isDiscountChecked: boolean;
+  setIsDiscountChecked: any;
   submitData: () => void;
 }) {
   // const router = useRouter();
@@ -70,7 +74,8 @@ export default function OtherInformation({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
+          className="mt-6 flex flex-col items-center gap-4"
+        >
           <FormField
             control={form.control}
             name="duration"
@@ -83,8 +88,9 @@ export default function OtherInformation({
                   <Input
                     {...field}
                     type="text"
+                    disabled={true}
                     name="duration"
-                    placeholder="Select training duration"
+                    // placeholder="Select training duration"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
                   />
                 </FormControl>
@@ -163,28 +169,42 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="discount"
-            render={({ field }) => (
-              <FormItem className="space-y-1 w-full">
-                <FormLabel className="text-xs md:text-sm font-medium">
-                  Discount Code (Optional)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="text"
-                    name="discount"
-                    placeholder="Enter discount code..."
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+          <div className="flex items-center space-y-1 w-full">
+            <label>
+              <input
+                className="me-1"
+                type="checkbox"
+                checked={isDiscountChecked}
+                onChange={(e) => setIsDiscountChecked(e.target.checked)}
+              />
+              Do you have a discount Code?
+            </label>
+          </div>
+          {isDiscountChecked ? (
+            <FormField
+              control={form.control}
+              name="discount"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-xs md:text-sm font-medium">
+                    {/* Discount Code */}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      name="discount"
+                      placeholder="Enter discount code..."
+                      className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            ""
+          )}
           <FormField
             control={form.control}
             name="cta"
@@ -214,27 +234,43 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormDescription className="text-[#FA0101] font-bold text-sm">
             Please do not close this webpage or your browser application
             during/after payment until you are redirected back to this website
             and your registration is fully confirmed.
           </FormDescription>
-
-          <CustomButton
-            variant="default"
-            disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
-            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
-            {isRegistering || isUpdatingSteps ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
-              </>
-            ) : (
-              <>
-                Proceed To Check Out <MoveRight className="w-5 h-5 ml-2" />
-              </>
-            )}
-          </CustomButton>
+          {isDiscountChecked ? (
+            <CustomButton
+              variant="default"
+              disabled={
+                isRegistering ||
+                isUpdatingSteps ||
+                !isCheckboxChecked ||
+                !isDiscountChecked
+              } // Disable if checkbox is not checked
+              className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+            >
+              Complete registration
+            </CustomButton>
+          ) : (
+            <CustomButton
+              variant="default"
+              disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
+              className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+            >
+              {isRegistering || isUpdatingSteps ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please
+                  wait...
+                </>
+              ) : (
+                <>
+                  Proceed To Check Out
+                  <MoveRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </CustomButton>
+          )}
         </form>
       </Form>
     </div>
