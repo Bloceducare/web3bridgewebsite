@@ -180,7 +180,7 @@ export default function RegistrationPage() {
 
   const openDate = new Date("2025-3-14");
   const currentDate = new Date();
-  const isClose = currentDate > openDate;
+  const isClose = currentDate < openDate;
 
   if (isLoading || loadReg) {
     return (
