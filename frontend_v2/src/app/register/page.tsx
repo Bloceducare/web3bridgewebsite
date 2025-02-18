@@ -189,7 +189,7 @@ export default function RegistrationPage() {
 
   const openDate = new Date("2025-03-14T00:00:00"); // ISO format with time
   const currentDate = new Date();
-  const isClose = currentDate > openDate;
+  const isClose = currentDate < openDate;
 
   if (isLoading || loadReg) {
     return (
