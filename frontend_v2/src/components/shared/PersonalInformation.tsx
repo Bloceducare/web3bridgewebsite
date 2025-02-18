@@ -24,7 +24,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function PersonalInformation({
   step,
@@ -59,6 +59,22 @@ export default function PersonalInformation({
       gender: "male",
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      name: formData.name || "",
+      email: formData.email || "",
+      number: formData.number || "",
+      cohort: formData.cohort || "XII",
+      github:
+        formData.course === "Web3 - Solidity"
+          ? formData.github || ""
+          : "https://github.com/web3bridge",
+      country: formData.country || "",
+      city: formData.city || "",
+      gender: formData.gender || "male",
+    });
+  }, [formData, form]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -330,8 +346,6 @@ export default function PersonalInformation({
               )}
             </CustomButton>
           </div>
-
-         
         </form>
       </Form>
     </div>
