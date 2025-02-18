@@ -62,6 +62,14 @@ export default function RegistrationPage() {
     }, 2000);
     return () => clearTimeout(timeout);
   };
+  const prevStep = () => {
+    setIsUpdatingSteps(true);
+    const timeout = setTimeout(() => {
+      setStep((prevStep) => prevStep - 1);
+      setIsUpdatingSteps(false);
+    }, 20);
+    return () => clearTimeout(timeout);
+  };
 
   async function getUserData(userForm: UserDataType) {
     const response = await fetch(
@@ -169,6 +177,7 @@ export default function RegistrationPage() {
   const props = {
     step,
     nextStep,
+    prevStep,
     setFormData,
     formData,
     isUpdatingSteps,
@@ -180,7 +189,7 @@ export default function RegistrationPage() {
 
   const openDate = new Date("2025-03-14T00:00:00"); // ISO format with time
   const currentDate = new Date();
-  const isClose = currentDate < openDate;
+  const isClose = currentDate > openDate;
 
   if (isLoading || loadReg) {
     return (
