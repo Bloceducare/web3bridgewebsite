@@ -17,13 +17,14 @@ import {
 import { Input } from "../ui/input";
 
 import CustomButton from "./CustomButton";
-import { Loader2, MoveRight } from "lucide-react";
+import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 
 export default function OtherInformation({
   step,
   setFormData,
+  prevStep,
   formData,
   isUpdatingSteps,
   submitData,
@@ -34,6 +35,7 @@ export default function OtherInformation({
   step: number;
   setFormData: any;
   formData: any;
+  prevStep: () => void;
   isUpdatingSteps: boolean;
   isRegistering: boolean;
   isDiscountChecked: boolean;
@@ -253,23 +255,36 @@ export default function OtherInformation({
               Complete registration
             </CustomButton>
           ) : (
-            <CustomButton
-              variant="default"
-              disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
-              className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
-            >
-              {isRegistering || isUpdatingSteps ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please
-                  wait...
-                </>
-              ) : (
-                <>
-                  Proceed To Check Out
-                  <MoveRight className="w-5 h-5 ml-2" />
-                </>
+            <div className="flex flex-row gap-3 w-full">
+              {step > 1 && (
+                <CustomButton
+                  onClick={prevStep}
+                  variant="outline"
+                  className="bg-[#FB8888]/10 mt-10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:max-w-[261px] mx-auto text-sm"
+                >
+                  <MoveLeft className="w-4 h-4 mr-2" /> Previous
+                </CustomButton>
               )}
-            </CustomButton>
+              <CustomButton
+                variant="default"
+                disabled={
+                  isRegistering || isUpdatingSteps || !isCheckboxChecked
+                }
+                className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:max-w-[261px] mx-auto text-sm"
+              >
+                {isRegistering || isUpdatingSteps ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Please
+                    wait...
+                  </>
+                ) : (
+                  <>
+                    Check Out
+                    <MoveRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </CustomButton>
+            </div>
           )}
         </form>
       </Form>

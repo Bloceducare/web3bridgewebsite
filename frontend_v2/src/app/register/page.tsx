@@ -62,6 +62,14 @@ export default function RegistrationPage() {
     }, 2000);
     return () => clearTimeout(timeout);
   };
+  const prevStep = () => {
+    setIsUpdatingSteps(true);
+    const timeout = setTimeout(() => {
+      setStep((prevStep) => prevStep - 1);
+      setIsUpdatingSteps(false);
+    }, 20);
+    return () => clearTimeout(timeout);
+  };
 
   async function getUserData(userForm: UserDataType) {
     const response = await fetch(
@@ -169,6 +177,7 @@ export default function RegistrationPage() {
   const props = {
     step,
     nextStep,
+    prevStep,
     setFormData,
     formData,
     isUpdatingSteps,
