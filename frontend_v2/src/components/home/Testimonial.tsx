@@ -4,10 +4,13 @@ import TestimonialCard from "./TestimonialCard";
 import Slider from "react-slick";
 import { Button } from "../ui/button";
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
-import testimonialsData from "@/data/testimonials";
+// import testimonialsData from "@/data/testimonials";
+import { useFetchTestimonials } from "@/hooks";
 
 const Testimonial = () => {
   const sliderRef = useRef<Slider | null>(null);
+
+  const { data } = useFetchTestimonials();
 
   // Function for next button
   const next = () => {
@@ -78,14 +81,14 @@ const Testimonial = () => {
           }}
           {...settings}
         >
-          {testimonialsData.map((data, i) => (
+          {data?.map((data: any, i: any) => (
             <TestimonialCard
               key={i}
               title={data.title}
-              description={data.description}
-              user={data.user}
+              description={data.testimony}
+              user={data.full_name}
               role={data.role}
-              image={data.image}
+              image={data.picture_link}
             />
           ))}
         </Slider>
