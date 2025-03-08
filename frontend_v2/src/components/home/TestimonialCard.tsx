@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import testimonialProps from "@/types/testimonialCard";
 
 const TestimonialCard: React.FC<testimonialProps> = ({
@@ -9,11 +9,23 @@ const TestimonialCard: React.FC<testimonialProps> = ({
   role,
   image,
 }) => {
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const toggleDescription = () => setShowFullDescription(!showFullDescription);
+
+  const truncatedDescription =
+    description.length > 750 ? description.slice(0, 100) + "..." : description;
+
   return (
     <main className="lg:px-44 md:px-10 px-2">
       <div className="w-full flex flex-col items-center gap-4 p-6 border-2 border-bridgeRed/20 dark:border-bridgeRed/40 bg-brdigeRed/10 rounded-xl">
-        {/* <h1 className="text-center font-semibold text-2xl">&quot;{title}&quot;</h1> */}
-        <p className="text-center font-light">{description}</p>
+        <p className="text-center font-light">
+          {showFullDescription ? description : truncatedDescription}
+        </p>
+        {description.length > 100 && (
+          <button onClick={toggleDescription} className="text-bridgeRed">
+            {showFullDescription ? "Show less" : "Show more"}
+          </button>
+        )}
         <div className="flex items-center justify-center gap-2">
           <Image
             src={image || ""}
@@ -24,7 +36,6 @@ const TestimonialCard: React.FC<testimonialProps> = ({
           />
           <h4 className="font-medium">{user}</h4>
         </div>
-        {/* <h3 className=" font-light">{role}</h3> */}
       </div>
     </main>
   );
