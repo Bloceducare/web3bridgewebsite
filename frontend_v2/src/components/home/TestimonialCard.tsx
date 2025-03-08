@@ -13,7 +13,7 @@ const TestimonialCard: React.FC<testimonialProps> = ({
   const toggleDescription = () => setShowFullDescription(!showFullDescription);
 
   const truncatedDescription =
-    description.length > 750 ? description.slice(0, 100) + "..." : description;
+    description.length > 750 ? description.slice(0, 750) + "..." : description;
 
   return (
     <main className="lg:px-44 md:px-10 px-2">
@@ -21,7 +21,7 @@ const TestimonialCard: React.FC<testimonialProps> = ({
         <p className="text-center font-light">
           {showFullDescription ? description : truncatedDescription}
         </p>
-        {description.length > 100 && (
+        {description.length > 750 && (
           <button onClick={toggleDescription} className="text-bridgeRed">
             {showFullDescription ? "Show less" : "Show more"}
           </button>
