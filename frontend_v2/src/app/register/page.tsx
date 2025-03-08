@@ -187,7 +187,7 @@ export default function RegistrationPage() {
     setIsDiscountChecked,
   };
 
-  const openDate = new Date("2025-04-14T00:00:00"); // ISO format with time
+  const openDate = new Date("2025-03-17T00:00:00"); // ISO format with time
   const currentDate = new Date();
   const isClose = currentDate < openDate;
 
