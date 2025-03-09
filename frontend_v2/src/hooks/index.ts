@@ -52,3 +52,29 @@ export const useFetchAllRegistration = () => {
 
   return { isLoading, data };
 };
+
+export const useFetchTestimonials = () => {
+  const [data, setData] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/testimonial/all/`
+      );
+      const result = await res.json();
+
+      console.log(result.data);
+      setData(result.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return { isLoading, data };
+};
