@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import { MoveRight } from "lucide-react";
@@ -9,7 +9,11 @@ import SelectCourse from "@/components/shared/SelectCourse";
 import PersonalInformation from "@/components/shared/PersonalInformation";
 import OtherInformation from "@/components/shared/OtherInformation";
 import { isValidEthereumAddress } from "@/lib/utils";
-import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
+import {
+  getCohortStatus,
+  useFetchAllCourses,
+  useFetchAllRegistration,
+} from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
@@ -51,6 +55,7 @@ export default function RegistrationPage() {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const [formData, setFormData] = useState<FormDataType | null>(null);
+  const [isClose, setIsClose] = useState(false);
 
   const [isDiscountChecked, setIsDiscountChecked] = useState(false);
 
@@ -187,9 +192,25 @@ export default function RegistrationPage() {
     setIsDiscountChecked,
   };
 
+  useEffect(() => {
+    async function checkStatus() {
+      const cohortStatus = await getCohortStatus();
+      // if (cohortStatus) {
+      //   setIsClose(false);
+      // }
+
+      if (currentDate > openDate) {
+        setIsClose(false);
+      }
+      if (currentDate < openDate) {
+        setIsClose(true);
+      }
+    }
+    checkStatus();
+  }, []);
+
   const openDate = new Date("2025-03-14T00:00:00"); // ISO format with time
   const currentDate = new Date();
-  const isClose = currentDate > openDate;
 
   if (isLoading || loadReg) {
     return (

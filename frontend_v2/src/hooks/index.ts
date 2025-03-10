@@ -102,5 +102,6 @@ export async function getCohortStatus() {
   }
 
   const { data } = await response.json();
-  return data.success;
+  // console.log(data);
+  return data;
 }
