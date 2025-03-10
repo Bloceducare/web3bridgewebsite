@@ -63,7 +63,6 @@ export const useFetchTestimonials = () => {
       );
       const result = await res.json();
 
-      console.log(result.data);
       setData(result.data);
     } catch (error) {
       console.log(error);
@@ -78,3 +77,17 @@ export const useFetchTestimonials = () => {
 
   return { isLoading, data };
 };
+
+export async function useFetchExistingParticipants() {
+  const response = await fetch(
+    "https://web3bridgewebsitebackend.onrender.com/api/v2/cohort/participant/all/"
+  );
+
+  if (!response.ok) {
+    console.log("Failed to fetch existing participants");
+    throw new Error("Failed to fetch existing participants");
+  }
+
+  const { data } = await response.json();
+  return data.results;
+}

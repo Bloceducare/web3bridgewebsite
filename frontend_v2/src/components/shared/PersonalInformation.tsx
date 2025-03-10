@@ -25,6 +25,8 @@ import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
 import { useEffect, useState } from "react";
+import { useFetchExistingParticipants } from "@/hooks";
+import { toast } from "sonner";
 
 export default function PersonalInformation({
   step,
@@ -77,9 +79,36 @@ export default function PersonalInformation({
   }, [formData, form]);
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    nextStep();
-    setFormData({ ...formData, ...values });
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   nextStep();
+  //   setFormData({ ...formData, ...values });
+  // }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const existingParticipants = await useFetchExistingParticipants();
+      const existingNames = existingParticipants.map(
+        (participant: any) => participant.email
+      );
+
+      if (existingNames.includes(values.email)) {
+        toast.error("This email already exists.");
+        form.setError("email", {
+          type: "manual",
+          message: "This email already exists.",
+        });
+        return;
+      } else {
+        nextStep();
+        setFormData({ ...formData, ...values });
+      }
+    } catch (error) {
+      console.error("Error fetching existing participants:", error);
+      form.setError("name", {
+        type: "manual",
+        message: "user already exists",
+      });
+    }
   }
 
   const countries = Country.getAllCountries();
@@ -114,7 +143,9 @@ export default function PersonalInformation({
                     type="text"
                     name="name"
                     placeholder="Enter your full name"
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    className={`h-12 md:h-14 shadow-none px-4 text-xs md:text-sm ${
+                      form.formState.errors.name ? "border-red-500" : ""
+                    }`}
                   />
                 </FormControl>
                 <FormMessage />

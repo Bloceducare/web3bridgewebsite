@@ -60,6 +60,7 @@ export default function OtherInformation({
 
   async function onSubmit(values: z.infer<typeof otherSchema>) {
     // Update form data in parent component
+
     setFormData({ ...formData, ...values });
 
     // Call parent's submitData function which handles the API validation and submission
