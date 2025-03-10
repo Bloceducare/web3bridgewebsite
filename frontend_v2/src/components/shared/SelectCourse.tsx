@@ -91,42 +91,6 @@ export default function SelectCourse({
           )}
         </CustomButton>
       </form>
-
-      {/* <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
-          <FormField
-            control={form.control}
-            name="course"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-4 w-full mb-10">
-                <FormControl className="flex flex-col gap-4">
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-col">
-                    {courses.map((course) => (
-                      <FormItem
-                        className="flex items-center gap-3"
-                        key={course}>
-                        <FormControl>
-                          <RadioGroupItem
-                            value={course}
-                            className="ring-1 border border-red-500 ring-red-500"
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">{course}</FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form> */}
     </div>
   );
 }
