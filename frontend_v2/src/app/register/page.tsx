@@ -53,6 +53,7 @@ export default function RegistrationPage() {
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const [formData, setFormData] = useState<FormDataType | null>(null);
   const [isClose, setIsClose] = useState(false);
@@ -90,6 +91,7 @@ export default function RegistrationPage() {
 
     if (!response.ok) {
       const data = await response.json();
+      setIsRegistered(true);
       console.log("Response Data:", data);
       throw new Error(data.message);
     }
@@ -157,16 +159,21 @@ export default function RegistrationPage() {
       localStorage.setItem("regData", JSON.stringify(userForm));
       try {
         const savedData = await getUserData(userForm);
+        toast.success("Registration data saved! Redirecting to payment...");
         console.log("Participant data saved:", savedData);
       } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+          return prevStep();
+        } else {
+          toast.error("An unknown error occurred");
+        }
         console.error("Error saving participant data:", error);
       }
       const encodedData = btoa(JSON.stringify(userForm));
       const paymentUrl = `${
         process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
       }?data=${encodeURIComponent(encodedData)}`;
-
-      toast.success("Registration data saved! Redirecting to payment...");
 
       setTimeout(() => {
         window.location.href = paymentUrl;
@@ -190,14 +197,16 @@ export default function RegistrationPage() {
     isRegistering,
     isDiscountChecked,
     setIsDiscountChecked,
+    setIsRegistered,
+    isRegistered,
   };
 
   useEffect(() => {
     async function checkStatus() {
       const cohortStatus = await getCohortStatus();
-      // if (cohortStatus) {
-      //   setIsClose(false);
-      // }
+      if (cohortStatus) {
+        setIsClose(false);
+      }
 
       if (currentDate > openDate) {
         setIsClose(false);
@@ -222,7 +231,7 @@ export default function RegistrationPage() {
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      {isClose ? (
+      {!isClose ? (
         <div className="text-center flex flex-col items-center gap-6">
           <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />

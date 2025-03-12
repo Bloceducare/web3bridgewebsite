@@ -35,6 +35,7 @@ export default function PersonalInformation({
   setFormData,
   formData,
   isUpdatingSteps,
+  isRegistered,
 }: {
   nextStep: () => void;
   prevStep: () => void;
@@ -42,6 +43,7 @@ export default function PersonalInformation({
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
+  isRegistered: boolean;
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
 
@@ -84,31 +86,18 @@ export default function PersonalInformation({
   //   setFormData({ ...formData, ...values });
   // }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const existingParticipants = await useFetchExistingParticipants();
-      const existingNames = existingParticipants.map(
-        (participant: any) => participant.email
-      );
-
-      if (existingNames.includes(values.email)) {
-        toast.error("This email already exists.");
-        form.setError("email", {
-          type: "manual",
-          message: "This email already exists.",
-        });
-        return;
-      } else {
-        nextStep();
-        setFormData({ ...formData, ...values });
-      }
-    } catch (error) {
-      console.error("Error fetching existing participants:", error);
-      form.setError("name", {
+  useEffect(() => {
+    if (isRegistered) {
+      form.setError("email", {
         type: "manual",
-        message: "user already exists",
+        message: "This email already exists.",
       });
     }
+  }, [isRegistered]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    nextStep();
+    setFormData({ ...formData, ...values });
   }
 
   const countries = Country.getAllCountries();
