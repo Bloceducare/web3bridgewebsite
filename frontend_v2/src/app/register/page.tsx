@@ -201,25 +201,31 @@ export default function RegistrationPage() {
     isRegistered,
   };
 
-  useEffect(() => {
-    async function checkStatus() {
-      const cohortStatus = await getCohortStatus();
-      if (cohortStatus) {
-        setIsClose(false);
-      }
+  // useEffect(() => {
+  //   async function checkStatus() {
+  //     const cohortStatus = await getCohortStatus();
+  //     if (cohortStatus) {
+  //       setIsClose(false);
+  //     }
 
-      if (currentDate > openDate) {
-        setIsClose(false);
-      }
-      if (currentDate < openDate) {
-        setIsClose(true);
-      }
-    }
-    checkStatus();
-  }, []);
+  //     if (currentDate > openDate) {
+  //       setIsClose(false);
+  //     }
+  //     if (currentDate < openDate) {
+  //       setIsClose(true);
+  //     }
+  //   }
+  //   checkStatus();
+  // }, []);
 
   const openDate = new Date("2025-03-14T00:00:00"); // ISO format with time
   const currentDate = new Date();
+  if (currentDate > openDate) {
+    setIsClose(false);
+  }
+  if (currentDate < openDate) {
+    setIsClose(true);
+  }
 
   if (isLoading || loadReg) {
     return (
