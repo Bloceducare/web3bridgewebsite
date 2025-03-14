@@ -25,6 +25,8 @@ import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
 import { useEffect, useState } from "react";
+import { useFetchExistingParticipants } from "@/hooks";
+import { toast } from "sonner";
 
 export default function PersonalInformation({
   step,
@@ -33,6 +35,7 @@ export default function PersonalInformation({
   setFormData,
   formData,
   isUpdatingSteps,
+  isRegistered,
 }: {
   nextStep: () => void;
   prevStep: () => void;
@@ -40,6 +43,7 @@ export default function PersonalInformation({
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
+  isRegistered: boolean;
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
 
@@ -77,6 +81,20 @@ export default function PersonalInformation({
   }, [formData, form]);
 
   // 2. Define a submit handler.
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   nextStep();
+  //   setFormData({ ...formData, ...values });
+  // }
+
+  useEffect(() => {
+    if (isRegistered) {
+      form.setError("email", {
+        type: "manual",
+        message: "This email already exists.",
+      });
+    }
+  }, [isRegistered]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     nextStep();
     setFormData({ ...formData, ...values });
@@ -114,7 +132,9 @@ export default function PersonalInformation({
                     type="text"
                     name="name"
                     placeholder="Enter your full name"
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    className={`h-12 md:h-14 shadow-none px-4 text-xs md:text-sm ${
+                      form.formState.errors.name ? "border-red-500" : ""
+                    }`}
                   />
                 </FormControl>
                 <FormMessage />
