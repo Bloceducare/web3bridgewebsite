@@ -216,8 +216,8 @@ export default function RegistrationPage() {
     if (currentDate < openDate) {
       setIsClose(true);
     }
-    //   }
-    //   checkStatus();
+      }
+      checkStatus();
   }, [setIsClose, currentDate, openDate]);
 
   if (isLoading || loadReg) {
