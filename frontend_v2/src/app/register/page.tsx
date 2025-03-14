@@ -231,7 +231,7 @@ export default function RegistrationPage() {
 
   return (
     <MaxWrapper className="flex-1 flex items-center justify-center flex-col gap-10 mt-16 md:mt-20">
-      {!isClose ? (
+      {isClose ? (
         <div className="text-center flex flex-col items-center gap-6">
           <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />
