@@ -201,14 +201,14 @@ export default function RegistrationPage() {
     isRegistered,
   };
 
-  const openDate = new Date("2025-01-17T00:00:00"); // ISO format with time
+  const openDate = new Date("2025-03-17T00:00:00"); // ISO format with time
   const currentDate = new Date();
   useEffect(() => {
-    //   async function checkStatus() {
-    //     const cohortStatus = await getCohortStatus();
-    // if (cohortStatus) {
-    //   setIsClose(false);
-    // }
+      async function checkStatus() {
+        const cohortStatus = await getCohortStatus();
+    if (cohortStatus) {
+      setIsClose(false);
+    }
 
     if (currentDate > openDate) {
       setIsClose(false);
