@@ -205,7 +205,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 )
 
         # Serialize and save participant only after successful discount validation
-        serializer = self.serializer_class.Create(data=request_data)
+        serializer = self.serializer_class.Create(data=request_data, context={'request': request})
 
         if serializer.is_valid():
             try:

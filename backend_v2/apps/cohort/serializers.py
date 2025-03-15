@@ -123,6 +123,23 @@ class ParticipantSerializer:
             model = models.Participant
             exclude = ["status", "payment_status", "cohort"]
             ref_name= PARTICIPANT_REF_NAME
+
+        def validate_email(self, email):
+            request = self.context.get("request")
+            if not request:
+                raise serializers.ValidationError("Request context is required.")
+            email = email
+            registration_id = request.data.get('registration')
+            try:
+                registration = models.Registration.objects.get(id=registration_id)
+            except models.Registration.DoesNotExist:
+                raise serializers.ValidationError("Registration does not exist")
+
+            participants = models.Participant.objects.filter(email=email).all()
+            if any(participant.registration == registration for participant in participants):
+                raise serializers.ValidationError("Participant already registered for this cohort")
+            return email
+
         
         def create(self, validated_data):
             participation_obj = models.Participant.objects.create(**validated_data)
