@@ -55,6 +55,8 @@ export default function RegistrationPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [formData, setFormData] = useState<FormDataType | null>(null);
   const [isClose, setIsClose] = useState(false);
 
@@ -93,6 +95,8 @@ export default function RegistrationPage() {
       const data = await response.json();
       setIsRegistered(true);
       console.log("Response Data:", data);
+      setErrorMessage(data.errors.email[0]);
+      console.log(data.errors.email[0]);
       throw new Error(data.message);
     }
 
@@ -163,7 +167,7 @@ export default function RegistrationPage() {
         console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
-          toast.error(error.message);
+          toast.error(errorMessage);
           return prevStep();
         } else {
           toast.error("An unknown error occurred");
