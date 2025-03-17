@@ -61,6 +61,12 @@ export default function OtherInformation({
   async function onSubmit(values: z.infer<typeof otherSchema>) {
     // Update form data in parent component
 
+    // Check if discount is required and not provided
+    if (isDiscountChecked && !values.discount) {
+      alert("Please enter a discount code before completing registration.");
+      return; // Prevent submission
+    }
+
     setFormData({ ...formData, ...values });
 
     // Call parent's submitData function which handles the API validation and submission
