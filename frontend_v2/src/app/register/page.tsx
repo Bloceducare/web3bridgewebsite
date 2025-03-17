@@ -205,7 +205,7 @@ export default function RegistrationPage() {
     isRegistered,
   };
 
-const openDate = new Date("2025-03-17T18:00:00");
+const openDate = new Date("2025-03-17T13:00:00");
   const currentDate = new Date();
   useEffect(() => {
       async function checkStatus() {
