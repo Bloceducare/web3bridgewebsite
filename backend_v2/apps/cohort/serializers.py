@@ -163,6 +163,7 @@ class ParticipantSerializer:
                 
     class List(serializers.ModelSerializer):
         course= CourseSerializer.Retrieve(read_only=True)
+        registration = RegistrationSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Participant
             fields = "__all__"
