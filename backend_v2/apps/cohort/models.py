@@ -31,7 +31,7 @@ class Registration(BaseModelBaseMixin, models.Model):
     is_open = models.BooleanField(default=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    cohort = models.CharField(_('cohort name'), max_length=10, blank=True, null=True)
+    cohort = models.CharField(_('cohort name'), max_length=10, blank=False, null=False)
     registrationFee = models.CharField(_('registration fee'), max_length=50, blank=True, null=True)
 
     # New timestamp fields

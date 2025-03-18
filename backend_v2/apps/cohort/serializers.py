@@ -121,7 +121,7 @@ class ParticipantSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.Participant
-            exclude = ["status", "payment_status", "cohort"]
+            exclude = ["status", "payment_status"]
             ref_name= PARTICIPANT_REF_NAME
 
         def validate_email(self, email):
