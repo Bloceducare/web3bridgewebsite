@@ -11,7 +11,7 @@ from django.db import models
 
 class Payment(models.Model):
     name = models.CharField(max_length=127, blank=True, null=True)
-    email = models.EmailField(max_length=127, unique=True)
+    email = models.EmailField(max_length=127, unique=False)
     phone_number = models.CharField(max_length=32, blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=10, blank=True, null=True)

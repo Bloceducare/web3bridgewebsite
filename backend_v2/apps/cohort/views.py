@@ -205,7 +205,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 )
 
         # Serialize and save participant only after successful discount validation
-        serializer = self.serializer_class.Create(data=request_data)
+        serializer = self.serializer_class.Create(data=request_data, context={'request': request})
 
         if serializer.is_valid():
             try:
@@ -225,13 +225,13 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 participant_obj.save()
                 serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
 
-            # Send registration success email
-            email = serialized_participant_obj.get('email')
-            participant_name = serialized_participant_obj.get('name')
-            course_id = serialized_participant_obj.get('course').get('id')
+                # Send registration success email
+                email = serialized_participant_obj.get('email')
+                participant_name = serialized_participant_obj.get('name')
+                course_id = serialized_participant_obj.get('course').get('id')
 
-            send_registration_success_mail(email, course_id, participant_name)
-            send_participant_details(email, course_id, serialized_participant_obj)
+                send_registration_success_mail(email, course_id, participant_name)
+                send_participant_details(email, course_id, serialized_participant_obj)
 
             # Return success response
             return requestUtils.success_response(
@@ -255,11 +255,20 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
         payment_object = Payment.objects.filter(email=email).order_by('-created_at').first()
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
 
         if payment_object and payment_object.status:
             participant_object.payment_status = True
             participant_object.save()
-            return requestUtils.success_response(data=participant_object, http_status=status.HTTP_200_OK)
+
+            # Send registration success email
+            email = serialized_participant_obj.get('email')
+            participant_name = serialized_participant_obj.get('name')
+            course_id = serialized_participant_obj.get('course').get('id')
+
+            send_registration_success_mail(email, course_id, participant_name)
+            send_participant_details(email, course_id, serialized_participant_obj)
+            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
 

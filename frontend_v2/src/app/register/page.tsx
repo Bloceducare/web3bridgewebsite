@@ -95,8 +95,38 @@ export default function RegistrationPage() {
       const data = await response.json();
       setIsRegistered(true);
       console.log("Response Data:", data);
-      setErrorMessage(data.errors.email[0]);
-      console.log(data.errors.email[0]);
+      
+      // Check for specific error messages and set the error message state
+      let errorMessages = [];
+
+      // Check for email errors
+      if (data.errors && data.errors.email) {
+        errorMessages.push(...data.errors.email);
+      }
+      
+      // Check for wallet_address errors
+      if (data.errors && data.errors.wallet_address) {
+        errorMessages.push(...data.errors.wallet_address);
+      }
+
+      // Check for course errors
+      if (data.errors && data.errors.course) {
+        errorMessages.push(...data.errors.course);
+      }
+
+      // Check for other potential errors
+      if (data.errors && data.errors.motivation) {
+        errorMessages.push(...data.errors.motivation);
+      }
+
+      // Set the error message state to display all collected error messages
+      if (errorMessages.length > 0) {
+        setErrorMessage(errorMessages.join(", "));
+      } else {
+        setErrorMessage(data.message); 
+      }
+
+      console.log("Collected Errors:", errorMessages);
       throw new Error(data.message);
     } else {
       setIsRegistered(false);
@@ -150,7 +180,7 @@ export default function RegistrationPage() {
           // Save to localStorage and show success message
           localStorage.setItem("registrationData", JSON.stringify(userForm));
           toast.success("Registration successful!");
-
+          
           // Optional: Redirect to a thank you or confirmation page
           router.push("/success");
           return;
@@ -207,14 +237,14 @@ export default function RegistrationPage() {
     isRegistered,
   };
 
-  const openDate = new Date("2025-03-14T00:00:00"); // ISO format with time
+const openDate = new Date("2025-03-17T13:00:00");
   const currentDate = new Date();
   useEffect(() => {
-    //   async function checkStatus() {
-    //     const cohortStatus = await getCohortStatus();
-    // if (cohortStatus) {
-    //   setIsClose(false);
-    // }
+      async function checkStatus() {
+        const cohortStatus = await getCohortStatus();
+    if (cohortStatus) {
+      setIsClose(false);
+    }
 
     if (currentDate > openDate) {
       setIsClose(false);
@@ -222,8 +252,8 @@ export default function RegistrationPage() {
     if (currentDate < openDate) {
       setIsClose(true);
     }
-    //   }
-    //   checkStatus();
+      }
+      checkStatus();
   }, [setIsClose, currentDate, openDate]);
 
   if (isLoading || loadReg) {
