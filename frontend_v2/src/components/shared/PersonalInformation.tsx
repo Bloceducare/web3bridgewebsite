@@ -93,7 +93,7 @@ export default function PersonalInformation({
         message: errorMessage,
       });
     }
-  }, [isRegistered, form]);
+  }, [isRegistered, form, errorMessage]);
   function onSubmit(values: z.infer<typeof formSchema>) {
     nextStep();
     setFormData({ ...formData, ...values });
