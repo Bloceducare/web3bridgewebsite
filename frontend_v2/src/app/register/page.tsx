@@ -95,7 +95,7 @@ export default function RegistrationPage() {
       const data = await response.json();
       setIsRegistered(true);
       console.log("Response Data:", data);
-      
+
       // Check for specific error messages and set the error message state
       let errorMessages = [];
 
@@ -103,7 +103,7 @@ export default function RegistrationPage() {
       if (data.errors && data.errors.email) {
         errorMessages.push(...data.errors.email);
       }
-      
+
       // Check for wallet_address errors
       if (data.errors && data.errors.wallet_address) {
         errorMessages.push(...data.errors.wallet_address);
@@ -123,11 +123,13 @@ export default function RegistrationPage() {
       if (errorMessages.length > 0) {
         setErrorMessage(errorMessages.join(", "));
       } else {
-        setErrorMessage(data.message); 
+        setErrorMessage(data.message);
       }
 
       console.log("Collected Errors:", errorMessages);
       throw new Error(data.message);
+    } else {
+      setIsRegistered(false);
     }
 
     const savedData = await response.json();
@@ -178,7 +180,7 @@ export default function RegistrationPage() {
           // Save to localStorage and show success message
           localStorage.setItem("registrationData", JSON.stringify(userForm));
           toast.success("Registration successful!");
-          
+
           // Optional: Redirect to a thank you or confirmation page
           router.push("/success");
           return;
@@ -233,25 +235,26 @@ export default function RegistrationPage() {
     setIsDiscountChecked,
     setIsRegistered,
     isRegistered,
+    errorMessage,
   };
 
-const openDate = new Date("2025-03-17T13:00:00");
+  const openDate = new Date("2025-03-17T13:00:00");
   const currentDate = new Date();
   useEffect(() => {
-      async function checkStatus() {
-        const cohortStatus = await getCohortStatus();
-    if (cohortStatus) {
-      setIsClose(false);
-    }
-
-    if (currentDate > openDate) {
-      setIsClose(false);
-    }
-    if (currentDate < openDate) {
-      setIsClose(true);
-    }
+    async function checkStatus() {
+      const cohortStatus = await getCohortStatus();
+      if (cohortStatus) {
+        setIsClose(false);
       }
-      checkStatus();
+
+      if (currentDate > openDate) {
+        setIsClose(false);
+      }
+      if (currentDate < openDate) {
+        setIsClose(true);
+      }
+    }
+    checkStatus();
   }, [setIsClose, currentDate, openDate]);
 
   if (isLoading || loadReg) {
