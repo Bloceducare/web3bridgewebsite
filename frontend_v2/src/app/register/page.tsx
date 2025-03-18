@@ -98,6 +98,8 @@ export default function RegistrationPage() {
       setErrorMessage(data.errors.email[0]);
       console.log(data.errors.email[0]);
       throw new Error(data.message);
+    } else {
+      setIsRegistered(false);
     }
 
     const savedData = await response.json();

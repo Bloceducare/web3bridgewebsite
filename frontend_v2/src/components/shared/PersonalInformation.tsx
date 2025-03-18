@@ -25,7 +25,6 @@ import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
 import { useEffect, useState } from "react";
-import { useFetchExistingParticipants } from "@/hooks";
 import { toast } from "sonner";
 
 export default function PersonalInformation({
@@ -156,6 +155,10 @@ export default function PersonalInformation({
                     name="email"
                     placeholder="Enter your email address"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.clearErrors("email");
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
