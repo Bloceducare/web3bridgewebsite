@@ -71,7 +71,7 @@ export default function PersonalInformation({
       number: formData.number || "",
       cohort: formData.cohort || "XII",
       github:
-        formData.course === "Web3 - Solidity"
+        formData.course && formData.course.toLowerCase().includes("web3")
           ? formData.github || ""
           : "https://github.com/web3bridge",
       country: formData.country || "",
@@ -79,12 +79,6 @@ export default function PersonalInformation({
       gender: formData.gender || "male",
     });
   }, [formData, form]);
-
-  // 2. Define a submit handler.
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   nextStep();
-  //   setFormData({ ...formData, ...values });
-  // }
 
   useEffect(() => {
     if (isRegistered) {
@@ -100,7 +94,6 @@ export default function PersonalInformation({
       });
     }
   }, [isRegistered, form]);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     nextStep();
     setFormData({ ...formData, ...values });
@@ -194,7 +187,7 @@ export default function PersonalInformation({
             )}
           />
 
-          {formData.course === "Web3 - Solidity" && (
+          {formData?.course?.toLowerCase().includes("web3") && (
             <FormField
               control={form.control}
               name="github"

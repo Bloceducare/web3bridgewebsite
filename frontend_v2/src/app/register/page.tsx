@@ -126,14 +126,14 @@ export default function RegistrationPage() {
         setErrorMessage(data.message);
       }
 
-      console.log("Collected Errors:", errorMessages);
+      // console.log("Collected Errors:", errorMessages);
       throw new Error(data.message);
     } else {
       setIsRegistered(false);
     }
 
     const savedData = await response.json();
-    console.log("Participant data saved:", savedData);
+    // console.log("Participant data saved:", savedData);
     return savedData;
   }
 
@@ -164,6 +164,7 @@ export default function RegistrationPage() {
 
       const courseId = selectedCourse.id;
       const courseName = selectedCourse.name;
+      console.log(courseName);
 
       // Prepare user form data
       const userForm = {
@@ -199,7 +200,7 @@ export default function RegistrationPage() {
         console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
-          toast.error(errorMessage);
+          toast.error(errorMessage || errorMessage[0]);
           return prevStep();
         } else {
           toast.error("An unknown error occurred");
