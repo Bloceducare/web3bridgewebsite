@@ -156,6 +156,8 @@ class ParticipantSerializer:
         
         def create(self, validated_data):
             participant_obj = models.Participant.objects.create(**validated_data)
+            registration = participant_obj.course.registration
+            participant_obj.registration = registration
             cohort = participant_obj.registration.name
             participant_obj.cohort = cohort
             participant_obj.save()
@@ -163,6 +165,7 @@ class ParticipantSerializer:
                 
     class List(serializers.ModelSerializer):
         course= CourseSerializer.Retrieve(read_only=True)
+        registration = RegistrationSerializer.Retrieve(read_only=True)
         class Meta:
             model = models.Participant
             fields = "__all__"
