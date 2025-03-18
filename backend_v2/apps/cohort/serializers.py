@@ -156,6 +156,8 @@ class ParticipantSerializer:
         
         def create(self, validated_data):
             participant_obj = models.Participant.objects.create(**validated_data)
+            registration = participant_obj.course.registration
+            participant_obj.registration = registration
             cohort = participant_obj.registration.name
             participant_obj.cohort = cohort
             participant_obj.save()
