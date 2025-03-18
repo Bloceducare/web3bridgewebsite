@@ -175,9 +175,18 @@ export default function OtherInformation({
                   />
                 </FormControl>
                 <FormMessage />
-                <FormDescription className="text-xs md:text-sm">
-                  Please be aware that the address you are to provide is your
-                  MetaMask wallet address, not where you live.
+                <FormDescription className="text-sm md:text-sm bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 p-3 rounded-md border border-blue-200 dark:border-blue-700">
+                  Please provide your MetaMask wallet address, not your
+                  residential address. If you don't have a wallet,
+                  <a
+                    className="px-1.5 text-blue-900 dark:text-blue-400 underline font-medium"
+                    href="https://metamask.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Click here
+                  </a>
+                  to create one.
                 </FormDescription>
               </FormItem>
             )}
