@@ -25,7 +25,6 @@ import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export default function PersonalInformation({
   step,
@@ -35,6 +34,7 @@ export default function PersonalInformation({
   formData,
   isUpdatingSteps,
   isRegistered,
+  errorMessage,
 }: {
   nextStep: () => void;
   prevStep: () => void;
@@ -43,6 +43,7 @@ export default function PersonalInformation({
   formData: any;
   isUpdatingSteps: boolean;
   isRegistered: boolean;
+  errorMessage: string;
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
 
@@ -92,7 +93,13 @@ export default function PersonalInformation({
         message: "This email already exists.",
       });
     }
-  }, [isRegistered]);
+    if (errorMessage) {
+      form.setError("name", {
+        type: "manual",
+        message: errorMessage,
+      });
+    }
+  }, [isRegistered, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     nextStep();

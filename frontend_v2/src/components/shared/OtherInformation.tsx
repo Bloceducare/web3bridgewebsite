@@ -20,6 +20,7 @@ import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function OtherInformation({
   step,
@@ -63,7 +64,9 @@ export default function OtherInformation({
 
     // Check if discount is required and not provided
     if (isDiscountChecked && !values.discount) {
-      alert("Please enter a discount code before completing registration.");
+      toast.error(
+        "Please enter a discount code before completing registration."
+      );
       return; // Prevent submission
     }
 
@@ -71,6 +74,7 @@ export default function OtherInformation({
 
     // Call parent's submitData function which handles the API validation and submission
     submitData();
+    form.setValue("discount", "");
   }
 
   return (
