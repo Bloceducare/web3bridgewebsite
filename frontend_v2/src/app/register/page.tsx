@@ -93,7 +93,7 @@ export default function RegistrationPage() {
 
     if (!response.ok) {
       const data = await response.json();
-      setIsRegistered(true);
+      // setIsRegistered(true);
       console.log("Response Data:", data);
 
       // Check for specific error messages and set the error message state
