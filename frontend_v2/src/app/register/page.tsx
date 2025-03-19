@@ -93,7 +93,7 @@ export default function RegistrationPage() {
 
     if (!response.ok) {
       const data = await response.json();
-      setIsRegistered(true);
+      // setIsRegistered(true);
       console.log("Response Data:", data);
 
       // Check for specific error messages and set the error message state
@@ -112,6 +112,9 @@ export default function RegistrationPage() {
       // Check for course errors
       if (data.errors && data.errors.course) {
         errorMessages.push(...data.errors.course);
+      }
+      if (data.errors && data.errors.github) {
+        errorMessages.push(...data.errors.github);
       }
 
       // Check for other potential errors
