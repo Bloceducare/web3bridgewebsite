@@ -43,7 +43,7 @@ export default function PersonalInformation({
   formData: any;
   isUpdatingSteps: boolean;
   isRegistered: boolean;
-  errorMessage: string;
+  errorMessage: { name?: string; email?: string; github?: string };
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
 
@@ -81,16 +81,29 @@ export default function PersonalInformation({
   }, [formData, form]);
 
   useEffect(() => {
-    if (isRegistered) {
-      form.setError("email", {
-        type: "manual",
-        message: "This email already exists.",
-      });
-    }
-    if (errorMessage) {
+    // if (isRegistered) {
+    //   form.setError("email", {
+    //     type: "manual",
+    //     message: "This email already exists.",
+    //   });
+    // }
+    if (errorMessage?.name) {
       form.setError("name", {
         type: "manual",
-        message: errorMessage,
+        message: errorMessage?.name,
+      });
+    }
+    if (errorMessage?.email) {
+      form.setError("email", {
+        type: "manual",
+        message: errorMessage?.email,
+      });
+    }
+
+    if (errorMessage?.github) {
+      form.setError("github", {
+        type: "manual",
+        message: errorMessage?.github,
       });
     }
   }, [isRegistered, form, errorMessage]);

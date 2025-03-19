@@ -55,7 +55,11 @@ export default function RegistrationPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<{
+    name?: string;
+    email?: string;
+    github?: string;
+  }>({});
 
   const [formData, setFormData] = useState<FormDataType | null>(null);
   const [isClose, setIsClose] = useState(false);
@@ -94,43 +98,86 @@ export default function RegistrationPage() {
     if (!response.ok) {
       const data = await response.json();
       // setIsRegistered(true);
-      console.log("Response Data:", data);
+      // console.log("Response Data:", data);
 
       // Check for specific error messages and set the error message state
-      let errorMessages = [];
+      // let errorMessages = [];
+
+      // // Check for email errors
+      // if (data.errors && data.errors.email) {
+      //   errorMessages.push(...data.errors.email);
+      // }
+
+      // // Check for wallet_address errors
+      // if (data.errors && data.errors.wallet_address) {
+      //   errorMessages.push(...data.errors.wallet_address);
+      // }
+
+      // Check for course errors
+      // if (data.errors && data.errors.course) {
+      //   errorMessages.push(...data.errors.course);
+      // }
+      // if (data.errors && data.errors.github) {
+      //   errorMessages.push(...data.errors.github);
+      // }
+
+      // // Check for other potential errors
+      // if (data.errors && data.errors.motivation) {
+      //   errorMessages.push(...data.errors.motivation);
+      // }
+
+      // // Set the error message state to display all collected error messages
+      // if (errorMessages.length > 0) {
+      //   setErrorMessage(errorMessages.join(", "));
+      // } else {
+      //   setErrorMessage(data.message);
+      // }
+
+      // console.log("Collected Errors:", errorMessages);
+
+      let errorMessages: Record<string, string[]> = {};
 
       // Check for email errors
       if (data.errors && data.errors.email) {
-        errorMessages.push(...data.errors.email);
+        errorMessages.email = data.errors.email;
       }
 
       // Check for wallet_address errors
       if (data.errors && data.errors.wallet_address) {
-        errorMessages.push(...data.errors.wallet_address);
+        errorMessages.wallet_address = data.errors.wallet_address;
       }
 
       // Check for course errors
       if (data.errors && data.errors.course) {
-        errorMessages.push(...data.errors.course);
-      }
-      if (data.errors && data.errors.github) {
-        errorMessages.push(...data.errors.github);
+        errorMessages.course = data.errors.course;
       }
 
-      // Check for other potential errors
+      // Check for GitHub errors
+      if (data.errors && data.errors.github) {
+        errorMessages.github = data.errors.github;
+      }
+
+      // Check for motivation errors
       if (data.errors && data.errors.motivation) {
-        errorMessages.push(...data.errors.motivation);
+        errorMessages.motivation = data.errors.motivation;
       }
 
       // Set the error message state to display all collected error messages
-      if (errorMessages.length > 0) {
-        setErrorMessage(errorMessages.join(", "));
+      if (Object.keys(errorMessages).length > 0) {
+        setErrorMessage({
+          name: errorMessages.name?.join(", "),
+          email: errorMessages.email?.join(", "),
+          github: errorMessages.github?.join(", "),
+        });
       } else {
-        setErrorMessage(data.message);
+        setErrorMessage(errorMessage);
       }
 
-      // console.log("Collected Errors:", errorMessages);
-      throw new Error(data.message);
+      console.log("Collected Errors:", errorMessages);
+
+      throw new Error(
+        errorMessages.email?.join(", ") || errorMessages.github?.join(", ")
+      );
     } else {
       setIsRegistered(false);
     }
@@ -203,7 +250,14 @@ export default function RegistrationPage() {
         console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
-          toast.error(errorMessage || errorMessage[0]);
+          console.log("Error saving participant data:", error);
+          toast.error(
+            error.message
+            // errorMessage?.name ||
+            //   errorMessage?.email ||
+            //   errorMessage?.github ||
+            //   "Error creating participant"
+          );
           return prevStep();
         } else {
           toast.error("An unknown error occurred");
