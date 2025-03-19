@@ -126,7 +126,7 @@ export default function RegistrationPage() {
         setErrorMessage(data.message);
       }
 
-      // console.log("Collected Errors:", errorMessages);
+      console.log("Collected Errors:", errorMessages);
       throw new Error(data.message);
     } else {
       setIsRegistered(false);
