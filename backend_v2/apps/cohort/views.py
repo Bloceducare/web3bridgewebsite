@@ -268,6 +268,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
             send_registration_success_mail(email, course_id, participant_name)
             send_participant_details(email, course_id, serialized_participant_obj)
+            serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
