@@ -113,6 +113,9 @@ export default function RegistrationPage() {
       if (data.errors && data.errors.course) {
         errorMessages.push(...data.errors.course);
       }
+      if (data.errors && data.errors.github) {
+        errorMessages.push(...data.errors.github);
+      }
 
       // Check for other potential errors
       if (data.errors && data.errors.motivation) {
