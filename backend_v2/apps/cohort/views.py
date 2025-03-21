@@ -254,7 +254,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if not participant_object:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
-        payment_object = Payment.objects.filter(email=email).order_by('-created_at').first()
+        payment_object = Payment.objects.filter(email=email.strip().lower()).order_by('-created_at').first()
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
 
         if payment_object and payment_object.status:
