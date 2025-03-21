@@ -54,10 +54,9 @@ export default function PersonalInformation({
       email: "",
       number: "",
       cohort: formData.cohort || "XII",
-      github:
-        formData.course === "Web3 - Solidity"
-          ? ""
-          : "https://github.com/web3bridge",
+      github: formData?.course?.toLowerCase().includes("web3")
+        ? ""
+        : "https://github.com/web3bridge",
       country: "",
       city: "",
       gender: "male",
