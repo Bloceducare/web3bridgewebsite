@@ -142,14 +142,16 @@ class ParticipantSerializer:
             if not request:
                 raise serializers.ValidationError("Request context is required.")
             email = email
-            registration_id = request.data.get('registration')
+            course_id = request.data.get('course')
             try:
-                registration = models.Registration.objects.get(id=registration_id)
-            except models.Registration.DoesNotExist:
-                raise serializers.ValidationError("Registration does not exist")
+                course = models.Course.objects.get(id=course_id)
+            except models.Course.DoesNotExist:
+                raise serializers.ValidationError("Course does not exist")
+            
+            registration = course.registration
 
             participants = models.Participant.objects.filter(email=email).all()
-            if any(participant.registration == registration for participant in participants):
+            if any((participant.registration == registration or participant.course == course) for participant in participants):
                 raise serializers.ValidationError("Participant already registered for this cohort")
             return email
 
