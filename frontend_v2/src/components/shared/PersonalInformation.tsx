@@ -54,9 +54,11 @@ export default function PersonalInformation({
       email: "",
       number: "",
       cohort: formData.cohort || "XII",
-      github: formData?.course?.toLowerCase().includes("web3")
-        ? ""
-        : "https://github.com/web3bridge",
+      github:
+        formData?.course?.toLowerCase().includes("web3") ||
+        formData?.course?.toLowerCase().includes("advance")
+          ? ""
+          : "https://github.com/web3bridge",
       country: "",
       city: "",
       gender: "male",
@@ -70,7 +72,8 @@ export default function PersonalInformation({
       number: formData.number || "",
       cohort: formData.cohort || "XII",
       github:
-        formData.course && formData.course.toLowerCase().includes("web3")
+        (formData.course && formData.course.toLowerCase().includes("web3")) ||
+        formData?.course?.toLowerCase().includes("advance")
           ? formData.github || ""
           : "https://github.com/web3bridge",
       country: formData.country || "",
@@ -199,7 +202,8 @@ export default function PersonalInformation({
             )}
           />
 
-          {formData?.course?.toLowerCase().includes("web3") && (
+          {(formData?.course?.toLowerCase().includes("web3") ||
+            formData?.course?.toLowerCase().includes("advance")) && (
             <FormField
               control={form.control}
               name="github"
