@@ -98,45 +98,9 @@ export default function RegistrationPage() {
     if (!response.ok) {
       const data = await response.json();
       // console.log("Response Data:", data);
-      // setIsRegistered(true);
-
-      // Check for specific error messages and set the error message state
-      // let errorMessages = [];
-
-      // // Check for email errors
-      // if (data.errors && data.errors.email) {
-      //   errorMessages.push(...data.errors.email);
-      // }
-
-      // // Check for wallet_address errors
-      // if (data.errors && data.errors.wallet_address) {
-      //   errorMessages.push(...data.errors.wallet_address);
-      // }
-
-      // Check for course errors
-      // if (data.errors && data.errors.course) {
-      //   errorMessages.push(...data.errors.course);
-      // }
-      // if (data.errors && data.errors.github) {
-      //   errorMessages.push(...data.errors.github);
-      // }
-
-      // // Check for other potential errors
-      // if (data.errors && data.errors.motivation) {
-      //   errorMessages.push(...data.errors.motivation);
-      // }
-
-      // // Set the error message state to display all collected error messages
-      // if (errorMessages.length > 0) {
-      //   setErrorMessage(errorMessages.join(", "));
-      // } else {
-      //   setErrorMessage(data.message);
-      // }
-
-      // console.log("Collected Errors:", errorMessages);
 
       let errorMessages: Record<string, string[]> = {};
-
+      // console.log(data.errors);
       // Check for email errors
       if (data.errors && data.errors.email) {
         errorMessages.email = data.errors.email;
@@ -173,10 +137,12 @@ export default function RegistrationPage() {
         setErrorMessage(errorMessage);
       }
 
-      console.log("Collected Errors:", errorMessages);
+      // console.log("Collected Errors:", errorMessages);
 
       throw new Error(
-        errorMessages.email?.join(", ") || errorMessages.github?.join(", ")
+        errorMessages.email?.join(", ") ||
+          errorMessages.github?.join(", ") ||
+          data.message
       );
     } else {
       setIsRegistered(false);
@@ -214,7 +180,7 @@ export default function RegistrationPage() {
 
       const courseId = selectedCourse.id;
       const courseName = selectedCourse.name;
-      console.log(courseName);
+      // console.log(courseName);
 
       // Prepare user form data
       const userForm = {
@@ -226,7 +192,7 @@ export default function RegistrationPage() {
       if (isDiscountChecked) {
         try {
           const savedData = await getUserData(userForm);
-          console.log("Participant data saved:", savedData);
+          // console.log("Participant data saved:", savedData);
 
           // Save to localStorage and show success message
           localStorage.setItem("registrationData", JSON.stringify(userForm));
@@ -236,8 +202,10 @@ export default function RegistrationPage() {
           router.push("/success");
           return;
         } catch (error) {
-          console.error("Error saving participant data:", error);
-          toast.error("Failed to save registration data. Please try again.");
+          // console.log(error);
+          if (error instanceof Error) {
+            toast.error(error.message);
+          }
           return;
         }
       }
@@ -247,10 +215,10 @@ export default function RegistrationPage() {
       try {
         const savedData = await getUserData(userForm);
         toast.success("Registration data saved! Redirecting to payment...");
-        console.log("Participant data saved:", savedData);
+        // console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
-          console.log("Error saving participant data:", error);
+          // console.log("Error saving participant data:", error);
           toast.error(
             error.message
             // errorMessage?.name ||
@@ -273,7 +241,7 @@ export default function RegistrationPage() {
         window.location.href = paymentUrl;
       }, 1000);
     } catch (error) {
-      console.error("Error during registration:", error);
+      // console.error("Error during registration:", error);
       toast.error("Registration failed. Please try again");
     } finally {
       setIsRegistering(false);
