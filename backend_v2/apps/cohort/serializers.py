@@ -257,7 +257,23 @@ class TestimonialSerializer:
 
 
 class BulkEmailSerializer(serializers.Serializer):
-    message = serializers.CharField()
+    recipients = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=models.Participant.objects.all()),
+        help_text="List of participant IDs to send the email to"
+    )
+    subject = serializers.CharField(
+        max_length=200,
+        help_text="Email subject line"
+    )
+    body = serializers.CharField(
+        help_text="Email body content"
+    )
 
     class Meta:
-        fields = ["message"]
+        fields = ["recipients", "subject", "body"]
+
+    def validate_recipients(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one recipient is required")
+        return value
+

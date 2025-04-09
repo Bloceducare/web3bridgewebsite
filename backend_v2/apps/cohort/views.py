@@ -171,7 +171,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["update", "destroy"]
+    admin_actions= ["update", "destroy", "send_confirmation_email", "verify_payment_by_email"]
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs):
@@ -272,6 +272,31 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         else:
             return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
+        
+    @swagger_auto_schema(request_body=serializers.EmailSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="send-confirmation-email")
+    def send_confirmation_email(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        if not email:
+            return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
+        
+        participant_object = self.queryset.filter(email=email).order_by('-created_at').first()
+        if not participant_object:
+            return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
+        
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
+        participant_object.payment_status = True
+        participant_object.save()
+
+        # Send registration success email
+        email = serialized_participant_obj.get('email')
+        participant_name = serialized_participant_obj.get('name')
+        course_id = serialized_participant_obj.get('course').get('id')
+
+        send_registration_success_mail(email, course_id, participant_name)
+        send_participant_details(email, course_id, serialized_participant_obj)
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
+        return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
 
     
     
@@ -378,6 +403,10 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
     def send_bulk_email(self, request):
         serializer = serializers.BulkEmailSerializer(data=request.data)
         if serializer.is_valid():
-            send_bulk_email()
+            subject = serializer.validated_data['subject']
+            html_body = serializer.validated_data['body']
+            recipients = serializer.validated_data['recipients']
+            send_bulk_email(subject, html_body, recipients)
             return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
