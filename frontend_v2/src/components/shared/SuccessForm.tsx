@@ -7,7 +7,7 @@ export default function SuccessForm() {
         <CheckCircle className="w-16 h-16 md:w-20 md:h-20 text-green-500 mb-3 animate-bounce" />
         <h1 className="text-lg md:text-xl font-semibold">Thank You!</h1>
         <p className="text-sm md:text-base">
-          You submission has been sent successfully
+          Your submission has been sent successfully
         </p>
       </div>
     </div>
