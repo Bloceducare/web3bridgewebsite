@@ -1,5 +1,5 @@
 from django.forms import ValidationError
-from requests import Response
+from rest_framework.response import Response
 from payment.models import DiscountCode, Payment
 from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
