@@ -15,5 +15,5 @@ router.register("discount", views.DiscountCodeViewset, basename=DISCOUNT_BASE_NA
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('/generate-with-api/', views.APIGenerateDiscountCode.as_view(), name='api-generate-discount'),
+    path('generate-with-api/', views.APIGenerateDiscountCode.as_view(), name='api-generate-discount'),
 ]
