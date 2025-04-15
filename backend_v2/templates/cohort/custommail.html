@@ -26,6 +26,10 @@
             color: #007bff;
         }
 
+        h3 {
+            color:rgb(124, 30, 30);
+        }
+
         p {
             line-height: 1.6;
             margin-bottom: 15px;
@@ -56,10 +60,10 @@
 
 <body>
     <div class="container">
-        <h1>Hello, {{ name }}</h1>
+        <h3>Hello, {{ name }}</h3>
         
         <div>
-            {{ message_content }}
+            {{ message_content|safe }}
         </div>
 
         <p>Best</p>
