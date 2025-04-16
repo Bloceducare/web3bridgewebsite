@@ -406,7 +406,7 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
             subject = serializer.validated_data['subject']
             html_body = serializer.validated_data['body']
             recipients = serializer.validated_data['recipients']
-            send_bulk_email(subject, html_body, [2071])
+            send_bulk_email(subject, html_body, recipients )
             return Response({"message": f"Email {html_body} sent successfully to {recipients}"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
