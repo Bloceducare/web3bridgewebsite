@@ -39,7 +39,7 @@ def send_bulk_email(subject, body, recipients):
             subject=subject,
             message='',  # Empty message since we're using HTML
             html_message=personalized_html,
-            from_email=from_email,
+            from_email='support@web3bridge.com',
             recipient_list=[participant.email],
             fail_silently=False,
         )
