@@ -47,6 +47,7 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
 export default function RegistrationPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
+  // const { data: courses, isLoading } = useFetchAllCoursesById();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
   const regId = allReg?.map((item: any) => item?.id);
