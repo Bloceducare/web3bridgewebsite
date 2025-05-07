@@ -47,33 +47,41 @@ export default function SelectCourse({
         onSubmit={onSubmit}
         className="mt-6 flex flex-col items-center gap-4"
       >
-        <div className="flex flex-col gap-4 w-full mb-10">
-          <RadioGroup
-            onValueChange={(e) => setSelectedOption(e)}
-            className="flex flex-col gap-3"
-          >
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              data &&
-              data.map((course: any) => (
-                <div className="flex items-center gap-4 w-full" key={course.id}>
-                  <RadioGroupItem
-                    value={course.name}
-                    id={course.name}
-                    className="ring-1 border border-red-500 ring-red-500"
-                  />
-                  <Label
-                    htmlFor={course.name}
-                    className="font-normal capitalize"
-                  >
-                    {course.name}
-                  </Label>
-                </div>
-              ))
-            )}
-          </RadioGroup>
-        </div>
+       <div className="flex flex-col gap-4 w-full mb-10">
+      <RadioGroup
+        onValueChange={(e) => setSelectedOption(e)}
+        className="flex flex-col gap-3"
+      >
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          data &&
+          data.map((course: any) => (
+            <div className="flex items-center gap-4 w-full" key={course.id}>
+              <RadioGroupItem
+                value={course.name}
+                id={course.name}
+                disabled={course.status === false} 
+                className={`ring-1 border ring-red-500 ${
+                  course.status === false ? "opacity-50 cursor-not-allowed" : "border-red-500"
+                }`}
+              />
+              <Label
+                htmlFor={course.name}
+                className={`font-normal capitalize ${
+                  course.status === false
+                    ? "line-through text-red-500 select-none cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                {course.name}
+              </Label>
+            </div>
+          ))
+        )}
+      </RadioGroup>
+    </div>
+
 
         <CustomButton
           variant="default"

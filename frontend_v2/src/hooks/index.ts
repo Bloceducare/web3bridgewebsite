@@ -2,6 +2,49 @@
 
 import { useEffect, useState } from "react";
 
+
+export const useFetchAllCoursesById = (token: string, ids: number[]) => {
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const results: any[] = [];
+
+      for (const id of ids) {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/course/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+
+        const response = await res.json();
+        if (response.success && response.data) {
+          results.push(response.data);
+        }
+      }
+
+      setData(results);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return { data, isLoading };
+};
+
+
+
 export const useFetchAllCourses = () => {
   const [data, setData] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
