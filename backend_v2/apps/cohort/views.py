@@ -4,10 +4,13 @@ from payment.models import DiscountCode, Payment
 from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
+from decouple import config
 from drf_yasg.utils import swagger_auto_schema
 from .helpers.model import send_registration_success_mail, send_participant_details
 from backend_v2.scripts.mail import send_bulk_email
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
+
+API_KEY = config("PAYMENT_API_KEY")
 
 class CouresViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset= models.Course.objects
@@ -171,7 +174,13 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["update", "destroy", "send_confirmation_email", "verify_payment_by_email"]
+    admin_actions= ["update", "destroy", "send_confirmation_email"]
+
+    def check_api_key(self, request):
+        api_key = request.headers.get('API-Key')
+        if not api_key or api_key != API_KEY:
+            return False
+        return True
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs):
@@ -246,6 +255,11 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     @swagger_auto_schema(request_body=serializers.EmailSerializer)
     @decorators.action(detail=False, methods=["post"], url_path="verify-payment-by-email")
     def verify_payment_by_email(self, request, *args, **kwargs):
+        if not self.check_api_key(request):
+            return Response(
+                {"error": "Invalid or missing API key"}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
         email = request.data.get("email")
         if not email:
             return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
@@ -254,24 +268,19 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if not participant_object:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
-        payment_object = Payment.objects.filter(email=email.strip().lower()).order_by('-created_at').first()
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
+        participant_object.payment_status = True
+        participant_object.save()
 
-        if payment_object and payment_object.status:
-            participant_object.payment_status = True
-            participant_object.save()
+        # Send registration success email
+        email = serialized_participant_obj.get('email')
+        participant_name = serialized_participant_obj.get('name')
+        course_id = serialized_participant_obj.get('course').get('id')
 
-            # Send registration success email
-            email = serialized_participant_obj.get('email')
-            participant_name = serialized_participant_obj.get('name')
-            course_id = serialized_participant_obj.get('course').get('id')
-
-            send_registration_success_mail(email, course_id, participant_name)
-            send_participant_details(email, course_id, serialized_participant_obj)
-            serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
-            return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
-        else:
-            return requestUtils.error_response("Payment status not verified", {}, http_status=status.HTTP_400_BAD_REQUEST)
+        send_registration_success_mail(email, course_id, participant_name)
+        send_participant_details(email, course_id, serialized_participant_obj)
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
+        return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         
     @swagger_auto_schema(request_body=serializers.EmailSerializer)
     @decorators.action(detail=False, methods=["post"], url_path="send-confirmation-email")
@@ -405,7 +414,9 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
         if serializer.is_valid():
             subject = serializer.validated_data['subject']
             html_body = serializer.validated_data['body']
-            recipients = serializer.validated_data['recipients']
+            recipients = request.data.get('recipients', [])
+            if not recipients:
+                return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
             send_bulk_email(subject, html_body, recipients)
             return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,48 +1,45 @@
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from cohort.models import Participant
 
 
-def send_bulk_email(subject, body, recipients):
+def send_bulk_email(subject, body, recipient_ids):
     """
-    Send bulk emails to multiple recipients with personalized content.
+    Sends a single email to multiple recipients.
     
     Args:
-        subject (str): Email subject
-        html_body (str): HTML template string with placeholders for personalization
-        recipients (list): List of participant IDs
+        subject (str): Subject of the email
+        body (str): General HTML content/message (no personalization)
+        recipient_ids (list): List of participant IDs
     """
     from_email = settings.EMAIL_HOST_USER
-    
-    # Get all participants in a single query
-    participants = Participant.objects.filter(id__in=recipients).select_related('registration')
-    
-    # Prepare email contexts for each participant
-    for participant in participants:
-        # Create personalized context for each participant
-        context = {
-            'name': participant.name,
-            'email': participant.email,
-            'cohort': participant.cohort,
-            'registration': participant.registration.name if participant.registration else None,
-            'message_content': body,
-            'subject': subject
-            # Add any other participant-specific data you want to include
-        }
-        
-        # Render the HTML template with the participant's context
-        personalized_html = render_to_string('cohort/custommail.html', context)
-        
-        # Send the email
-        send_mail(
-            subject=subject,
-            message='',  # Empty message since we're using HTML
-            html_message=personalized_html,
-            from_email=from_email,
-            recipient_list=[participant.email],
-            fail_silently=False,
-        )
+
+    # Fetch emails from participant IDs
+    participants = Participant.objects.filter(id__in=recipient_ids).select_related('registration')
+    recipient_emails = [p.email for p in participants]
+
+    # General context (non-personalized)
+    context = {
+        'message_content': body,
+        'subject': subject
+    }
+
+    # Render HTML once for all recipients
+    html_content = render_to_string('cohort/custommail.html', context)
+
+    # Construct email
+    email = EmailMessage(
+        subject=subject,
+        body=html_content,
+        from_email=from_email,
+        to=[],  # No need to specify 'to' since we're using BCC
+        bcc=recipient_emails,
+    )
+    email.content_subtype = 'html'  # Important! Tells Django to treat it as HTML
+
+    # Send the email
+    email.send(fail_silently=False)
 
     # subject = 'Hello from Web3bridge'
     # context = {
