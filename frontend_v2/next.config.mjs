@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.web3bridgeafrica.com",
       },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
     ],
   },
 };

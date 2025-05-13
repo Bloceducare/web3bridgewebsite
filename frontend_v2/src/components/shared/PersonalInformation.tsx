@@ -22,22 +22,28 @@ import {
 } from "../ui/select";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomButton from "./CustomButton";
-import { Loader2, MoveRight } from "lucide-react";
+import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Country, State } from "country-state-city";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function PersonalInformation({
   step,
   nextStep,
+  prevStep,
   setFormData,
   formData,
   isUpdatingSteps,
+  isRegistered,
+  errorMessage,
 }: {
   nextStep: () => void;
+  prevStep: () => void;
   step: number;
   setFormData: any;
   formData: any;
   isUpdatingSteps: boolean;
+  isRegistered: boolean;
+  errorMessage: { name?: string; email?: string; github?: string };
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
 
@@ -49,7 +55,8 @@ export default function PersonalInformation({
       number: "",
       cohort: formData.cohort || "XII",
       github:
-        formData.course === "Web3 - Solidity"
+        formData?.course?.toLowerCase().includes("web3") ||
+        formData?.course?.toLowerCase().includes("advance")
           ? ""
           : "https://github.com/web3bridge",
       country: "",
@@ -58,7 +65,50 @@ export default function PersonalInformation({
     },
   });
 
-  // 2. Define a submit handler.
+  useEffect(() => {
+    form.reset({
+      name: formData.name || "",
+      email: formData.email || "",
+      number: formData.number || "",
+      cohort: formData.cohort || "XII",
+      github:
+        (formData.course && formData.course.toLowerCase().includes("web3")) ||
+        formData?.course?.toLowerCase().includes("advance")
+          ? formData.github || ""
+          : "https://github.com/web3bridge",
+      country: formData.country || "",
+      city: formData.city || "",
+      gender: formData.gender || "male",
+    });
+  }, [formData, form]);
+
+  useEffect(() => {
+    // if (isRegistered) {
+    //   form.setError("email", {
+    //     type: "manual",
+    //     message: "This email already exists.",
+    //   });
+    // }
+    if (errorMessage?.name) {
+      form.setError("name", {
+        type: "manual",
+        message: errorMessage?.name,
+      });
+    }
+    if (errorMessage?.email) {
+      form.setError("email", {
+        type: "manual",
+        message: errorMessage?.email,
+      });
+    }
+
+    if (errorMessage?.github) {
+      form.setError("github", {
+        type: "manual",
+        message: errorMessage?.github,
+      });
+    }
+  }, [isRegistered, form, errorMessage]);
   function onSubmit(values: z.infer<typeof formSchema>) {
     nextStep();
     setFormData({ ...formData, ...values });
@@ -96,7 +146,9 @@ export default function PersonalInformation({
                     type="text"
                     name="name"
                     placeholder="Enter your full name"
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    className={`h-12 md:h-14 shadow-none px-4 text-xs md:text-sm ${
+                      form.formState.errors.name ? "border-red-500" : ""
+                    }`}
                   />
                 </FormControl>
                 <FormMessage />
@@ -118,6 +170,10 @@ export default function PersonalInformation({
                     name="email"
                     placeholder="Enter your email address"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.clearErrors("email");
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -146,7 +202,8 @@ export default function PersonalInformation({
             )}
           />
 
-          {formData.course === "Web3 - Solidity" && (
+          {(formData?.course?.toLowerCase().includes("web3") ||
+            formData?.course?.toLowerCase().includes("advance")) && (
             <FormField
               control={form.control}
               name="github"
@@ -299,22 +356,35 @@ export default function PersonalInformation({
               </FormItem>
             )}
           />
-
-          <CustomButton
-            variant="default"
-            disabled={isUpdatingSteps}
-            className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
-          >
-            {isUpdatingSteps ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
-              </>
-            ) : (
-              <>
-                Continue <MoveRight className="w-5 h-5 ml-2" />
-              </>
+          <div className="flex gap-4 w-full">
+            {step > 1 && (
+              <CustomButton
+                // type="button"
+                onClick={prevStep}
+                variant="outline"
+                className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+              >
+                <MoveLeft className="w-5 h-5 mr-2" /> Previous
+              </CustomButton>
             )}
-          </CustomButton>
+
+            <CustomButton
+              variant="default"
+              disabled={isUpdatingSteps}
+              className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+            >
+              {isUpdatingSteps ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please
+                  wait...
+                </>
+              ) : (
+                <>
+                  Continue <MoveRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </CustomButton>
+          </div>
         </form>
       </Form>
     </div>

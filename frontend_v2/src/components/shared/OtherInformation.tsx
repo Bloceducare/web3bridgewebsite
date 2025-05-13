@@ -17,23 +17,30 @@ import {
 import { Input } from "../ui/input";
 
 import CustomButton from "./CustomButton";
-import { Loader2, MoveRight } from "lucide-react";
+import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function OtherInformation({
   step,
   setFormData,
+  prevStep,
   formData,
   isUpdatingSteps,
   submitData,
   isRegistering,
+  isDiscountChecked,
+  setIsDiscountChecked,
 }: {
   step: number;
   setFormData: any;
   formData: any;
+  prevStep: () => void;
   isUpdatingSteps: boolean;
   isRegistering: boolean;
+  isDiscountChecked: boolean;
+  setIsDiscountChecked: any;
   submitData: () => void;
 }) {
   // const router = useRouter();
@@ -54,10 +61,20 @@ export default function OtherInformation({
 
   async function onSubmit(values: z.infer<typeof otherSchema>) {
     // Update form data in parent component
+
+    // Check if discount is required and not provided
+    if (isDiscountChecked && !values.discount) {
+      toast.error(
+        "Please enter a discount code before completing registration."
+      );
+      return; // Prevent submission
+    }
+
     setFormData({ ...formData, ...values });
 
     // Call parent's submitData function which handles the API validation and submission
     submitData();
+    form.setValue("discount", "");
   }
 
   return (
@@ -70,7 +87,8 @@ export default function OtherInformation({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
+          className="mt-6 flex flex-col items-center gap-4"
+        >
           <FormField
             control={form.control}
             name="duration"
@@ -83,8 +101,9 @@ export default function OtherInformation({
                   <Input
                     {...field}
                     type="text"
+                    disabled={true}
                     name="duration"
-                    placeholder="Select training duration"
+                    // placeholder="Select training duration"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
                   />
                 </FormControl>
@@ -156,35 +175,58 @@ export default function OtherInformation({
                   />
                 </FormControl>
                 <FormMessage />
-                <FormDescription className="text-xs md:text-sm">
-                  Please be aware that the address you are to provide is your
-                  MetaMask wallet address, not where you live.
+                <FormDescription className="text-sm md:text-sm bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-3 rounded-md border border-red-200 dark:border-red-700">
+                  Please provide your MetaMask wallet address, not your
+                  residential address. If you don&apos;t have a wallet,
+                  <a
+                    className="px-1.5 text-red-700 dark:text-red-400 underline font-medium"
+                    href="https://metamask.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Click here
+                  </a>
+                  to create one.
                 </FormDescription>
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="discount"
-            render={({ field }) => (
-              <FormItem className="space-y-1 w-full">
-                <FormLabel className="text-xs md:text-sm font-medium">
-                  Discount Code (Optional)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="text"
-                    name="discount"
-                    placeholder="Enter discount code..."
-                    className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+          <div className="flex items-center space-y-1 w-full">
+            <label>
+              <input
+                className="me-1"
+                type="checkbox"
+                checked={isDiscountChecked}
+                onChange={(e) => setIsDiscountChecked(e.target.checked)}
+              />
+              Do you have a discount Code?
+            </label>
+          </div>
+          {isDiscountChecked ? (
+            <FormField
+              control={form.control}
+              name="discount"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-xs md:text-sm font-medium">
+                    {/* Discount Code */}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      name="discount"
+                      placeholder="Enter discount code..."
+                      className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            ""
+          )}
           <FormField
             control={form.control}
             name="cta"
@@ -214,27 +256,56 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-
           <FormDescription className="text-[#FA0101] font-bold text-sm">
             Please do not close this webpage or your browser application
             during/after payment until you are redirected back to this website
             and your registration is fully confirmed.
           </FormDescription>
-
-          <CustomButton
-            variant="default"
-            disabled={isRegistering || isUpdatingSteps || !isCheckboxChecked} // Disable if checkbox is not checked
-            className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
-            {isRegistering || isUpdatingSteps ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
-              </>
-            ) : (
-              <>
-                Proceed To Check Out <MoveRight className="w-5 h-5 ml-2" />
-              </>
-            )}
-          </CustomButton>
+          {isDiscountChecked ? (
+            <CustomButton
+              variant="default"
+              disabled={
+                isRegistering ||
+                isUpdatingSteps ||
+                !isCheckboxChecked ||
+                !isDiscountChecked
+              } // Disable if checkbox is not checked
+              className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+            >
+              Complete registration
+            </CustomButton>
+          ) : (
+            <div className="flex flex-row gap-3 w-full">
+              {step > 1 && (
+                <CustomButton
+                  onClick={prevStep}
+                  variant="outline"
+                  className="bg-[#FB8888]/10 mt-10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:max-w-[261px] mx-auto text-sm"
+                >
+                  <MoveLeft className="w-4 h-4 mr-2" /> Previous
+                </CustomButton>
+              )}
+              <CustomButton
+                variant="default"
+                disabled={
+                  isRegistering || isUpdatingSteps || !isCheckboxChecked
+                }
+                className="mt-10 bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:max-w-[261px] mx-auto text-sm"
+              >
+                {isRegistering || isUpdatingSteps ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Please
+                    wait...
+                  </>
+                ) : (
+                  <>
+                    Check Out
+                    <MoveRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </CustomButton>
+            </div>
+          )}
         </form>
       </Form>
     </div>

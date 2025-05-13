@@ -15,6 +15,7 @@ def send_registration_success_mail(email, course_id, participant):
     from cohort.models import Course
     try:
         course = Course.objects.get(pk=course_id)
+        print('course...', course)
         if "web2" in course.name.lower():
             subject = 'Web2 Registration Success'
             template_name = 'cohort/web2_registration_email.html'
@@ -28,7 +29,7 @@ def send_registration_success_mail(email, course_id, participant):
         context = {'name': participant}
         message = render_to_string(template_name, context)
 
-        from_email = settings.EMAIL_HOST_USER
+        from_email = 'support@web3bridge.com'
         recipient_list = [email]
 
         send_mail(subject, '', from_email, recipient_list,
@@ -65,7 +66,7 @@ def send_participant_details(email, course_id, participant):
         message = render_to_string('cohort/participant_email.html', context)
 
         subject = 'Web3Bridge Cohort Registration Details'
-        from_email = settings.EMAIL_HOST_USER
+        from_email = 'support@web3bridge.com'
         recipient_list = [email]
 
         send_mail(subject, '', from_email, recipient_list,

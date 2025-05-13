@@ -45,11 +45,13 @@ export default function SelectCourse({
 
       <form
         onSubmit={onSubmit}
-        className="mt-6 flex flex-col items-center gap-4">
+        className="mt-6 flex flex-col items-center gap-4"
+      >
         <div className="flex flex-col gap-4 w-full mb-10">
           <RadioGroup
             onValueChange={(e) => setSelectedOption(e)}
-            className="flex flex-col gap-3">
+            className="flex flex-col gap-3"
+          >
             {isLoading ? (
               <p>Loading...</p>
             ) : (
@@ -63,7 +65,8 @@ export default function SelectCourse({
                   />
                   <Label
                     htmlFor={course.name}
-                    className="font-normal capitalize">
+                    className="font-normal capitalize"
+                  >
                     {course.name}
                   </Label>
                 </div>
@@ -75,7 +78,8 @@ export default function SelectCourse({
         <CustomButton
           variant="default"
           disabled={isUpdatingSteps}
-          className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto">
+          className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"
+        >
           {isUpdatingSteps ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Please wait...
@@ -87,42 +91,6 @@ export default function SelectCourse({
           )}
         </CustomButton>
       </form>
-
-      {/* <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 flex flex-col items-center gap-4">
-          <FormField
-            control={form.control}
-            name="course"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-4 w-full mb-10">
-                <FormControl className="flex flex-col gap-4">
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-col">
-                    {courses.map((course) => (
-                      <FormItem
-                        className="flex items-center gap-3"
-                        key={course}>
-                        <FormControl>
-                          <RadioGroupItem
-                            value={course}
-                            className="ring-1 border border-red-500 ring-red-500"
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">{course}</FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form> */}
     </div>
   );
 }

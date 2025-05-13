@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import { MoveRight } from "lucide-react";
@@ -9,7 +9,11 @@ import SelectCourse from "@/components/shared/SelectCourse";
 import PersonalInformation from "@/components/shared/PersonalInformation";
 import OtherInformation from "@/components/shared/OtherInformation";
 import { isValidEthereumAddress } from "@/lib/utils";
-import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
+import {
+  getCohortStatus,
+  useFetchAllCourses,
+  useFetchAllRegistration,
+} from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
@@ -19,7 +23,18 @@ interface FormDataType {
   wallet_address: string;
   course: string;
   discount?: string;
-  duration?: string;
+  // duration?: string;
+  motivation?: string;
+  achievement?: string;
+  cta?: boolean;
+}
+
+interface UserDataType {
+  course: any;
+  registration: any;
+  email: string;
+  wallet_address: string;
+  discount?: string;
   motivation?: string;
   achievement?: string;
   cta?: boolean;
@@ -38,7 +53,18 @@ export default function RegistrationPage() {
   const [step, setStep] = useState(1);
   const [isUpdatingSteps, setIsUpdatingSteps] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<{
+    name?: string;
+    email?: string;
+    github?: string;
+  }>({});
+
   const [formData, setFormData] = useState<FormDataType | null>(null);
+  const [isClose, setIsClose] = useState(false);
+
+  const [isDiscountChecked, setIsDiscountChecked] = useState(false);
 
   const nextStep = () => {
     setIsUpdatingSteps(true);
@@ -48,41 +74,83 @@ export default function RegistrationPage() {
     }, 2000);
     return () => clearTimeout(timeout);
   };
+  const prevStep = () => {
+    setIsUpdatingSteps(true);
+    const timeout = setTimeout(() => {
+      setStep((prevStep) => prevStep - 1);
+      setIsUpdatingSteps(false);
+    }, 20);
+    return () => clearTimeout(timeout);
+  };
 
-  async function validateDiscountCode(code: string, email: string): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code, email }),
-        }
-      );
+  async function getUserData(userForm: UserDataType) {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userForm),
+      }
+    );
 
+    if (!response.ok) {
       const data = await response.json();
-      console.log("Discount validation response:", data); // For debugging
+      // console.log("Response Data:", data);
 
-      // If the API returns success: true, consider it valid
-      if (data.success === true) {
-        return true;
+      let errorMessages: Record<string, string[]> = {};
+      // console.log(data.errors);
+      // Check for email errors
+      if (data.errors && data.errors.email) {
+        errorMessages.email = data.errors.email;
       }
 
-      // Show appropriate error messages
-      if (data.data?.is_used) {
-        toast.error("This discount code has already been used");
+      // Check for wallet_address errors
+      if (data.errors && data.errors.wallet_address) {
+        errorMessages.wallet_address = data.errors.wallet_address;
+      }
+
+      // Check for course errors
+      if (data.errors && data.errors.course) {
+        errorMessages.course = data.errors.course;
+      }
+
+      // Check for GitHub errors
+      if (data.errors && data.errors.github) {
+        errorMessages.github = data.errors.github;
+      }
+
+      // Check for motivation errors
+      if (data.errors && data.errors.motivation) {
+        errorMessages.motivation = data.errors.motivation;
+      }
+
+      // Set the error message state to display all collected error messages
+      if (Object.keys(errorMessages).length > 0) {
+        setErrorMessage({
+          name: errorMessages.name?.join(", "),
+          email: errorMessages.email?.join(", "),
+          github: errorMessages.github?.join(", "),
+        });
       } else {
-        toast.error("Invalid discount code");
+        setErrorMessage(errorMessage);
       }
 
-      return false;
-    } catch (error) {
-      console.error("Error validating discount code:", error);
-      toast.error("Error validating discount code. Please try again.");
-      return false;
+      // console.log("Collected Errors:", errorMessages);
+
+      throw new Error(
+        errorMessages.email?.join(", ") ||
+          errorMessages.github?.join(", ") ||
+          data.message
+      );
+    } else {
+      setIsRegistered(false);
     }
+
+    const savedData = await response.json();
+    // console.log("Participant data saved:", savedData);
+    return savedData;
   }
 
   const submitData = async () => {
@@ -112,6 +180,7 @@ export default function RegistrationPage() {
 
       const courseId = selectedCourse.id;
       const courseName = selectedCourse.name;
+      // console.log(courseName);
 
       // Prepare user form data
       const userForm = {
@@ -120,37 +189,10 @@ export default function RegistrationPage() {
         registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
       };
 
-      // Validate discount code if provided
-      if (formData.discount) {
-        console.log("Validating discount code:", formData.discount);
-        const isDiscountValid = await validateDiscountCode(formData.discount, formData.email);
-        console.log("Discount validation result:", isDiscountValid);
-
-        if (!isDiscountValid) {
-          setIsRegistering(false);
-          toast.dismiss();
-          return;
-        }
-
+      if (isDiscountChecked) {
         try {
-          // Save form data to the endpoint
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(userForm),
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to save participant data");
-          }
-
-          const savedData = await response.json();
-          console.log("Participant data saved:", savedData);
+          const savedData = await getUserData(userForm);
+          // console.log("Participant data saved:", savedData);
 
           // Save to localStorage and show success message
           localStorage.setItem("registrationData", JSON.stringify(userForm));
@@ -160,26 +202,46 @@ export default function RegistrationPage() {
           router.push("/success");
           return;
         } catch (error) {
-          console.error("Error saving participant data:", error);
-          toast.error("Failed to save registration data. Please try again.");
+          // console.log(error);
+          if (error instanceof Error) {
+            toast.error(error.message);
+          }
           return;
         }
       }
 
       // If no discount code, proceed with normal payment flow
-      localStorage.setItem("registrationData", JSON.stringify(userForm));
-
+      localStorage.setItem("regData", JSON.stringify(userForm));
+      try {
+        const savedData = await getUserData(userForm);
+        toast.success("Registration data saved! Redirecting to payment...");
+        // console.log("Participant data saved:", savedData);
+      } catch (error) {
+        if (error instanceof Error) {
+          // console.log("Error saving participant data:", error);
+          toast.error(
+            error.message
+            // errorMessage?.name ||
+            //   errorMessage?.email ||
+            //   errorMessage?.github ||
+            //   "Error creating participant"
+          );
+          return prevStep();
+        } else {
+          toast.error("An unknown error occurred");
+        }
+        console.error("Error saving participant data:", error);
+      }
       const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-        }?data=${encodeURIComponent(encodedData)}`;
-
-      toast.success("Registration data saved! Redirecting to payment...");
+      const paymentUrl = `${
+        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+      }?data=${encodeURIComponent(encodedData)}`;
 
       setTimeout(() => {
         window.location.href = paymentUrl;
       }, 1000);
     } catch (error) {
-      console.error("Error during registration:", error);
+      // console.error("Error during registration:", error);
       toast.error("Registration failed. Please try again");
     } finally {
       setIsRegistering(false);
@@ -189,16 +251,37 @@ export default function RegistrationPage() {
   const props = {
     step,
     nextStep,
+    prevStep,
     setFormData,
     formData,
     isUpdatingSteps,
     submitData,
     isRegistering,
+    isDiscountChecked,
+    setIsDiscountChecked,
+    setIsRegistered,
+    isRegistered,
+    errorMessage,
   };
 
-  const openDate = new Date("2025-3-14");
+  const openDate = new Date("2025-03-17T13:00:00");
   const currentDate = new Date();
-  const isClose = currentDate < openDate;
+  useEffect(() => {
+    async function checkStatus() {
+      const cohortStatus = await getCohortStatus();
+      if (cohortStatus) {
+        setIsClose(false);
+      }
+
+      if (currentDate > openDate) {
+        setIsClose(false);
+      }
+      if (currentDate < openDate) {
+        setIsClose(true);
+      }
+    }
+    checkStatus();
+  }, [setIsClose, currentDate, openDate]);
 
   if (isLoading || loadReg) {
     return (
@@ -215,17 +298,19 @@ export default function RegistrationPage() {
           <p className="text-center text-[2em]">Registration Opens in</p>
           <CountDown targetDate={openDate.toDateString()} />
           <a
-            href="https://forms.gle/WtEw4cDfWEHQcX3h9"
+            href="https://forms.gle/5UJ6wSx1QnkZxGPXA"
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: "bridgePrimary" })}>
+            className={buttonVariants({ variant: "bridgePrimary" })}
+          >
             Join WaitList <MoveRight className="w-5 h-5 ml-2 " />
           </a>
           <a
             href="https://t.me/web3bridge"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm underline hover:text-bridgeRed">
+            className="text-sm underline hover:text-bridgeRed"
+          >
             Do join our Telegram group to get information on the next Cohort
           </a>
         </div>

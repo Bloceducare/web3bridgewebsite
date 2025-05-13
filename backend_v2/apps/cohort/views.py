@@ -420,4 +420,5 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
             send_bulk_email(subject, html_body, recipients)
             return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     

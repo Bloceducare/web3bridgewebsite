@@ -4,10 +4,13 @@ import TestimonialCard from "./TestimonialCard";
 import Slider from "react-slick";
 import { Button } from "../ui/button";
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
-import testimonialsData from "@/data/testimonials";
+// import testimonialsData from "@/data/testimonials";
+import { useFetchTestimonials } from "@/hooks";
 
 const Testimonial = () => {
-  const sliderRef = useRef<Slider | null>();
+  const sliderRef = useRef<Slider | null>(null);
+
+  const { data } = useFetchTestimonials();
 
   // Function for next button
   const next = () => {
@@ -15,7 +18,8 @@ const Testimonial = () => {
       sliderRef.current.slickNext();
     }
   };
-  // function for previous button
+
+  // Function for previous button
   const previous = () => {
     if (sliderRef.current) {
       sliderRef.current.slickPrev();
@@ -27,13 +31,10 @@ const Testimonial = () => {
     dots: false,
     infinite: true,
     speed: 2000,
-    // autoplay: true,
     slidesToShow: 1,
     slidesToScroll: 1,
     initialSlide: 0,
-    arrow: false,
-    // nextArrow: "",
-    // prevArrow: "",
+    arrows: false, // Corrected from `arrow` to `arrows`
     responsive: [
       {
         breakpoint: 1024,
@@ -74,20 +75,25 @@ const Testimonial = () => {
         to say
       </p>
       <main className="w-full lg:px-12 px-2 mt-6">
-        <Slider ref={(slider) => (sliderRef.current = slider)} {...settings}>
-          {testimonialsData.map((data, i) => (
+        <Slider
+          ref={(slider) => {
+            sliderRef.current = slider; // Fixed: No return value
+          }}
+          {...settings}
+        >
+          {data?.map((data: any, i: any) => (
             <TestimonialCard
               key={i}
               title={data.title}
-              description={data.description}
-              user={data.user}
+              description={data.testimony}
+              user={data.full_name}
               role={data.role}
-              image={data.image}
+              image={data.picture_link}
             />
           ))}
         </Slider>
       </main>
-      {/* Controllers  */}
+      {/* Controllers */}
       <div className="lg:mt-6 mt-4 w-full flex justify-center gap-5 items-center md:px-6 px-3">
         <Button
           onClick={previous}
