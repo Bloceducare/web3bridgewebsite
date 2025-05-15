@@ -27,6 +27,7 @@ interface FormDataType {
   motivation?: string;
   achievement?: string;
   cta?: boolean;
+  venue?: string; 
 }
 
 interface UserDataType {
@@ -47,6 +48,8 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
 export default function RegistrationPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
+
+  console.log(courses)
   // const { data: courses, isLoading } = useFetchAllCoursesById();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
@@ -249,11 +252,38 @@ export default function RegistrationPage() {
       toast.dismiss();
     }
   };
+
+  const [venue, setVenues] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!courses || courses.length === 0) {
+      console.log("Courses data is not loaded yet");
+      return;
+    }
+  
+    if (formData?.course) {
+      const selectedCourse = courses.find((item: any) => item.name === formData.course);
+      if (selectedCourse) {
+        console.log("Selected Course:", selectedCourse);  
+        console.log("Venues:", selectedCourse.venue);     
+        setVenues(selectedCourse.venue || []);          
+      } else {
+        console.log("No matching course found");
+      }
+    }
+  }, [formData?.course, courses]);
+  
+  
+console.log(venue);
+
+  
+
   const props = {
     step,
     nextStep,
     prevStep,
     setFormData,
+    venue,
     formData,
     isUpdatingSteps,
     submitData,
@@ -283,6 +313,8 @@ export default function RegistrationPage() {
     }
     checkStatus();
   }, [setIsClose, currentDate, openDate]);
+
+ 
 
   if (isLoading || loadReg) {
     return (

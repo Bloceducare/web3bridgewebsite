@@ -66,16 +66,17 @@ export default function SelectCourse({
                   course.status === false ? "opacity-50 cursor-not-allowed" : "border-red-500"
                 }`}
               />
-              <Label
-                htmlFor={course.name}
-                className={`font-normal capitalize ${
-                  course.status === false
-                    ? "line-through text-red-500 select-none cursor-not-allowed"
-                    : ""
-                }`}
-              >
-                {course.name}
-              </Label>
+            <Label
+              htmlFor={course.name}
+              className={`font-normal capitalize ${
+                course.status === false 
+                  ? "text-gray-500 select-none cursor-not-allowed" 
+                  : ""
+              }`}
+            >
+              {course.name}
+            </Label>
+
             </div>
           ))
         )}

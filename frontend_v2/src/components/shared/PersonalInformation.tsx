@@ -32,6 +32,7 @@ export default function PersonalInformation({
   prevStep,
   setFormData,
   formData,
+  venue,
   isUpdatingSteps,
   isRegistered,
   errorMessage,
@@ -40,6 +41,7 @@ export default function PersonalInformation({
   prevStep: () => void;
   step: number;
   setFormData: any;
+  venue: any;
   formData: any;
   isUpdatingSteps: boolean;
   isRegistered: boolean;
@@ -54,6 +56,7 @@ export default function PersonalInformation({
       email: "",
       number: "",
       cohort: formData.cohort || "XII",
+      venue: "online",
       github:
         formData?.course?.toLowerCase().includes("web3") ||
         formData?.course?.toLowerCase().includes("advance")
@@ -71,6 +74,7 @@ export default function PersonalInformation({
       email: formData.email || "",
       number: formData.number || "",
       cohort: formData.cohort || "XII",
+      venue: formData.venue || "online",
       github:
         (formData.course && formData.course.toLowerCase().includes("web3")) ||
         formData?.course?.toLowerCase().includes("advance")
@@ -116,6 +120,7 @@ export default function PersonalInformation({
 
   const countries = Country.getAllCountries();
   const states = State.getStatesOfCountry(countryCode);
+
 
   return (
     <div className="max-w-[580px] w-full px-4 md:px-6 py-6 md:py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
@@ -201,6 +206,40 @@ export default function PersonalInformation({
               </FormItem>
             )}
           />
+
+          {venue?.length > 0 && (
+            <FormField
+              control={form.control}
+              name="venue"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-xs md:text-sm font-medium">
+                    Select Venue
+                  </FormLabel>
+                  <FormControl>
+                    <Select
+                      name="venue"
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full h-14">
+                        <SelectValue placeholder="Choose a venue" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {venue?.map((venue: string, index: number) => (
+                          <SelectItem key={index} value={venue}>
+                            {venue}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
 
           {(formData?.course?.toLowerCase().includes("web3") ||
             formData?.course?.toLowerCase().includes("advance")) && (
