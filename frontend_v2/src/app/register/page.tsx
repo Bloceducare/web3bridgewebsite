@@ -190,7 +190,7 @@ export default function RegistrationPage() {
       const userForm = {
         ...formData,
         course: courseId,
-        registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
+        registration: selectedCourse.registration,
       };
 
       if (isDiscountChecked) {
