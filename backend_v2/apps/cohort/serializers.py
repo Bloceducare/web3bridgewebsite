@@ -132,6 +132,7 @@ class ParticipantSerializer:
         gender = serializers.CharField(required=True)
         github = serializers.URLField(required=False)
         number = serializers.CharField(required=True)
+        venue = serializers.CharField(required=True)
         class Meta:
             model = models.Participant
             exclude = ["status", "payment_status", "cohort"]
@@ -185,7 +186,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
-                      "city", "state", "country", "gender", "github", "number", "course", "cohort"]
+                      "city", "state", "country", "gender", "github", "number", "course", "cohort", "venue"]
             extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -206,6 +207,7 @@ class ParticipantSerializer:
             instance.number= validated_data.get("number", instance.number)
             instance.course= validated_data.get("course", instance.course)
             instance.cohort= validated_data.get("cohort", instance.cohort)
+            instance.venue= validated_data.get("venue", instance.venue)
             instance.payment_status= validated_data.get("payment_status", instance.payment_status)
 
             instance.save()
