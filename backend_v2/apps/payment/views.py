@@ -52,20 +52,24 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
                 data=request.data)
             if input_serializer.is_valid():
                 quantity = input_serializer.validated_data.get("quantity")
+                percentage = input_serializer.validated_data.get("percentage")
                 generated_codes = []
 
-            for _ in range(quantity):
-                code = self.discount.generate_code()
-                discount = self.queryset.create(code=code)
-                generated_codes.append(discount)
+                for _ in range(quantity):
+                    code = self.discount.generate_code()
+                    discount = self.queryset.create(
+                        code=code,
+                        percentage=percentage
+                    )
+                    generated_codes.append(discount)
 
-            serialized_discount_code_obj = self.serializer_class(
-                generated_codes, many=True)
+                serialized_discount_code_obj = self.serializer_class(
+                    generated_codes, many=True)
 
-            return requestUtils.success_response(
-                data=serialized_discount_code_obj.data,
-                http_status=status.HTTP_201_CREATED
-            )
+                return requestUtils.success_response(
+                    data=serialized_discount_code_obj.data,
+                    http_status=status.HTTP_201_CREATED
+                )
 
         except Exception as e:
             return requestUtils.error_response(

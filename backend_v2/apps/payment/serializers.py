@@ -37,6 +37,14 @@ class GenerateCodeInputSerializer(serializers.Serializer):
         default=1,
         help_text="Number of discount codes to generate (1-100)"
     )
+    percentage = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        min_value=0,
+        max_value=100,
+        required=False,
+        help_text="Discount percentage (0-100)"
+    )
 
 
 class ValidateCodeInputSerializer(serializers.Serializer):
