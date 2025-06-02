@@ -8,7 +8,7 @@ from utils.helpers.requests import Utils as requestUtils
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin
 
 # Static API key for demonstration - in production, this should be in environment variables
-API_KEY = config("DISCOUNT_API_KEY")
+API_KEY = config("PAYMENT_API_KEY")
 
 # Payment viewset
 

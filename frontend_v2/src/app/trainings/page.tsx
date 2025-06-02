@@ -8,6 +8,7 @@ import Pill from "@/components/shared/pill";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useFetchAllCourses } from "@/hooks";
+import { useFetchAllRegistration } from "@/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const details = [
@@ -26,7 +27,7 @@ const details = [
 ];
 
 export default function Trainings() {
-  const { isLoading, data } = useFetchAllCourses();
+  const { isLoading, data } = useFetchAllRegistration();
   const router = useRouter();
 
   return (
@@ -128,7 +129,7 @@ export default function Trainings() {
                   {item.name}
                 </h1>
 
-                <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842]">
+                <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842] shadow-2xl transition-transform duration-300 hover:scale-[1.01]">
                   <div className="w-full h-full bg-background p-6 rounded-sm grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="w-full h-full lg:max-w-[416px] flex flex-col justify-between gap-5">
                       <p className="font-normal text-base sm:text-lg">
@@ -138,28 +139,43 @@ export default function Trainings() {
                        <Calendar className="w-4 h-4" /> 26th August 2024 </p> */}
                       
 
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         {item?.venue.map((venue: string) => (
                           <Pill key={venue} text={venue} />
                         ))}
-                      </div>
+                      </div> */}
 
-                      <div className="flex items-center flex-col md:flex-row gap-4">
-                      <Button
+                      <div className="flex flex-col">
+                        <div className="flex items-center flex-col md:flex-row gap-4">
+                        <Button
                           onClick={() => router.push("/register")}
                           className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 h-14 px-6 rounded-full border-2 ring-2 ring-red-500 border-red-300 text-red-500 font-semibold w-full md:w-max"
-                          disabled={item.status === false}>
+                          disabled={item.is_open === false}>
                           Register For Training{" "}
                           <MoveRight className="w-5 h-5 ml-2" />
                         </Button>
                         <Button className="h-14 px-6 rounded-full border-2 ring-2 ring-red-200 border-red-100 text-primary bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-max">
                           Learn More
                         </Button>
+
+                        </div>
+                   
                       </div>
+
+                      <p
+                      className={`text-sm font-medium ${
+                        item.is_open === false ? "text-red-500" : "text-green-600"
+                      }`}
+                    >
+                      {item.is_open === false ? "Registration Closed" : "Registration Open"}
+                    </p>
                     </div>
 
+                  
+
+
                     <div className="flex-1 w-full max-w-[424px] mx-auto lg:mx-0 aspect-[1.3] gap-4 mt-4 md:mt-0 relative">
-                      <TrainingImages images={item?.images} />
+                      {/* <TrainingImages images={item?.images} /> */}
                     </div>
                   </div>
                 </div>
