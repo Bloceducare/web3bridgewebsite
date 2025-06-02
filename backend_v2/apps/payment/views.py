@@ -36,6 +36,11 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
     serializer_class = serializers.DiscountCodeSerializer
     admin_actions = ["all", "generate", "retrieve", "destroy"]
 
+    def get_permissions(self):
+        if self.action == 'validate':
+            return []
+        return super().get_permissions()
+
     @swagger_auto_schema(
         request_body=serializers.GenerateCodeInputSerializer,
         responses={200: serializer_class(many=True)}
@@ -105,7 +110,10 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 
             if discount_code_object.is_used == False:
                 return requestUtils.success_response(
-                    "Code is valid.",
+                    data={
+                        "message": "Code is valid.",
+                        "percentage": float(discount_code_object.percentage) if discount_code_object.percentage else 100.00
+                    },
                     http_status=status.HTTP_200_OK
                 )
             else:

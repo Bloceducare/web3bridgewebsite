@@ -22,9 +22,9 @@ class DiscountCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DiscountCode
         fields = ["id", "code", "created_at",
-                  "is_used", "validity", "claimant"]
+                  "is_used", "validity", "claimant", "percentage"]
         read_only_fields = ["id", "code", "created_at",
-                            "is_used", "validity", "claimant"]
+                            "is_used", "validity", "claimant", "percentage"]
 
     def get_validity(self, obj):
         return "Valid" if not obj.is_used else "Invalid"

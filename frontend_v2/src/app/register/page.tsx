@@ -191,18 +191,44 @@ export default function RegistrationPage() {
 
       if (isDiscountChecked) {
         try {
-          const savedData = await getUserData(userForm);
-          // console.log("Participant data saved:", savedData);
+          // Validate discount code first
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code: formData.discount }),
+          });
 
-          // Save to localStorage and show success message
+          const data = await response.json();
+          
+          if (!response.ok) {
+            toast.error(data.message || 'Invalid discount code');
+            return;
+          }
+
+          const savedData = await getUserData(userForm);
+          
+          // If discount is not 100%, redirect to payment
+          if (data.percentage < 100) {
+            localStorage.setItem("regData", JSON.stringify(userForm));
+            toast.success("Registration data saved! Redirecting to payment...");
+            
+            const encodedData = btoa(JSON.stringify(userForm));
+            const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN}?data=${encodeURIComponent(encodedData)}`;
+            
+            setTimeout(() => {
+              window.location.href = paymentUrl;
+            }, 1000);
+            return;
+          }
+
+          // For 100% discount, proceed with direct registration
           localStorage.setItem("registrationData", JSON.stringify(userForm));
           toast.success("Registration successful!");
-
-          // Optional: Redirect to a thank you or confirmation page
           router.push("/success");
           return;
         } catch (error) {
-          // console.log(error);
           if (error instanceof Error) {
             toast.error(error.message);
           }
