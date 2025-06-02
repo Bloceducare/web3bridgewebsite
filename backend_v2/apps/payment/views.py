@@ -107,20 +107,26 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
         try:
             code = data.get("code")
             discount_code_object = self.queryset.get(code=code)
+            
+            # Debug log
+            print(f"Discount code status - is_used: {discount_code_object.is_used}, code: {code}, claimant: {discount_code_object.claimant}")
 
-            if discount_code_object.is_used == False:
-                return requestUtils.success_response(
-                    data={
-                        "message": "Code is valid.",
-                        "percentage": float(discount_code_object.percentage) if discount_code_object.percentage else 100.00
-                    },
-                    http_status=status.HTTP_200_OK
-                )
-            else:
+            # Check if code is already used by someone else
+            if discount_code_object.is_used and discount_code_object.claimant:
                 return requestUtils.error_response(
                     "Discount code already used",
-                    str(e), http_status=status.HTTP_403_FORBIDDEN
+                    {}, http_status=status.HTTP_403_FORBIDDEN
                 )
+
+            # Code is valid and available
+            return requestUtils.success_response(
+                data={
+                    "message": "Code is valid.",
+                    "percentage": float(discount_code_object.percentage) if discount_code_object.percentage is not None else None
+                },
+                http_status=status.HTTP_200_OK
+            )
+
         except self.discount.DoesNotExist as e:
             return requestUtils.error_response(
                 "Discount code not found", str(e), http_status=status.HTTP_404_NOT_FOUND

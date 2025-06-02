@@ -213,8 +213,8 @@ export default function RegistrationPage() {
 
           const savedData = await getUserData(userForm);
           
-          // If discount is not 100%, redirect to payment
-          if (data.percentage < 100) {
+          // If discount is not explicitly 100%, redirect to payment
+          if (data.percentage !== 100) {
             localStorage.setItem("regData", JSON.stringify(userForm));
             toast.success("Registration data saved! Redirecting to payment...");
             
@@ -227,7 +227,7 @@ export default function RegistrationPage() {
             return;
           }
 
-          // For 100% discount, proceed with direct registration
+          // Only for explicitly 100% discount, proceed with direct registration
           localStorage.setItem("registrationData", JSON.stringify(userForm));
           toast.success("Registration successful!");
           router.push("/success");
