@@ -22,9 +22,9 @@ class DiscountCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DiscountCode
         fields = ["id", "code", "created_at",
-                  "is_used", "validity", "claimant"]
+                  "is_used", "validity", "claimant", "percentage"]
         read_only_fields = ["id", "code", "created_at",
-                            "is_used", "validity", "claimant"]
+                            "is_used", "validity", "claimant", "percentage"]
 
     def get_validity(self, obj):
         return "Valid" if not obj.is_used else "Invalid"
@@ -36,6 +36,14 @@ class GenerateCodeInputSerializer(serializers.Serializer):
         max_value=100,
         default=1,
         help_text="Number of discount codes to generate (1-100)"
+    )
+    percentage = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        min_value=0,
+        max_value=100,
+        required=False,
+        help_text="Discount percentage (0-100)"
     )
 
 

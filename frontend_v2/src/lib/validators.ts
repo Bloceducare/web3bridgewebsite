@@ -32,6 +32,7 @@ export const formSchema = z.object({
     .string({ required_error: "Github profile link is required" })
     .min(2),
   country: z.string({ required_error: "Please enter your country" }).min(2),
+  venue: z.string({ required_error: "Please enter your venue" }).min(2),
   state: z.string({ required_error: "Please enter your state" }).min(2),
   city: z.string({ required_error: "Where are you coming from?" }).min(2),
   cohort: z.string({ required_error: "cohort" }).min(3),

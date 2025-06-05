@@ -27,6 +27,7 @@ interface FormDataType {
   motivation?: string;
   achievement?: string;
   cta?: boolean;
+  venue?: string; 
 }
 
 interface UserDataType {
@@ -47,6 +48,9 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
 export default function RegistrationPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
+
+  console.log(courses)
+  // const { data: courses, isLoading } = useFetchAllCoursesById();
   const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
   const regId = allReg?.map((item: any) => item?.id);
@@ -186,23 +190,49 @@ export default function RegistrationPage() {
       const userForm = {
         ...formData,
         course: courseId,
-        registration: courseName === "Web3 - Solidity" ? regId[0] : regId[1],
+        registration: selectedCourse.registration,
       };
 
       if (isDiscountChecked) {
         try {
-          const savedData = await getUserData(userForm);
-          // console.log("Participant data saved:", savedData);
+          // Validate discount code first
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/payment/discount/validate/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code: formData.discount }),
+          });
 
-          // Save to localStorage and show success message
+          const data = await response.json();
+          
+          if (!response.ok) {
+            toast.error(data.message || 'Invalid discount code');
+            return;
+          }
+
+          const savedData = await getUserData(userForm);
+          
+          // If discount is not explicitly 100%, redirect to payment
+          if (data.percentage !== 100) {
+            localStorage.setItem("regData", JSON.stringify(userForm));
+            toast.success("Registration data saved! Redirecting to payment...");
+            
+            const encodedData = btoa(JSON.stringify(userForm));
+            const paymentUrl = `${process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN}?data=${encodeURIComponent(encodedData)}`;
+            
+            setTimeout(() => {
+              window.location.href = paymentUrl;
+            }, 1000);
+            return;
+          }
+
+          // Only for explicitly 100% discount, proceed with direct registration
           localStorage.setItem("registrationData", JSON.stringify(userForm));
           toast.success("Registration successful!");
-
-          // Optional: Redirect to a thank you or confirmation page
           router.push("/success");
           return;
         } catch (error) {
-          // console.log(error);
           if (error instanceof Error) {
             toast.error(error.message);
           }
@@ -248,11 +278,38 @@ export default function RegistrationPage() {
       toast.dismiss();
     }
   };
+
+  const [venue, setVenues] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!courses || courses.length === 0) {
+      console.log("Courses data is not loaded yet");
+      return;
+    }
+  
+    if (formData?.course) {
+      const selectedCourse = courses.find((item: any) => item.name === formData.course);
+      if (selectedCourse) {
+        console.log("Selected Course:", selectedCourse);  
+        console.log("Venues:", selectedCourse.venue);     
+        setVenues(selectedCourse.venue || []);          
+      } else {
+        console.log("No matching course found");
+      }
+    }
+  }, [formData?.course, courses]);
+  
+  
+console.log(venue);
+
+  
+
   const props = {
     step,
     nextStep,
     prevStep,
     setFormData,
+    venue,
     formData,
     isUpdatingSteps,
     submitData,
@@ -282,6 +339,8 @@ export default function RegistrationPage() {
     }
     checkStatus();
   }, [setIsClose, currentDate, openDate]);
+
+ 
 
   if (isLoading || loadReg) {
     return (

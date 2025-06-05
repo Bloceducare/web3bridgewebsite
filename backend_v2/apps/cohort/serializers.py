@@ -132,6 +132,7 @@ class ParticipantSerializer:
         gender = serializers.CharField(required=True)
         github = serializers.URLField(required=False)
         number = serializers.CharField(required=True)
+        venue = serializers.CharField(required=True)
         class Meta:
             model = models.Participant
             exclude = ["status", "payment_status", "cohort"]
@@ -142,14 +143,16 @@ class ParticipantSerializer:
             if not request:
                 raise serializers.ValidationError("Request context is required.")
             email = email
-            registration_id = request.data.get('registration')
+            course_id = request.data.get('course')
             try:
-                registration = models.Registration.objects.get(id=registration_id)
-            except models.Registration.DoesNotExist:
-                raise serializers.ValidationError("Registration does not exist")
+                course = models.Course.objects.get(id=course_id)
+            except models.Course.DoesNotExist:
+                raise serializers.ValidationError("Course does not exist")
+            
+            registration = course.registration
 
             participants = models.Participant.objects.filter(email=email).all()
-            if any(participant.registration == registration for participant in participants):
+            if any((participant.registration == registration or participant.course == course) for participant in participants):
                 raise serializers.ValidationError("Participant already registered for this cohort")
             return email
 
@@ -183,7 +186,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             fields = ["id", "name", "wallet_address", "email", "registration", "status", "motivation", "achievement", 
-                      "city", "state", "country", "gender", "github", "number", "course", "cohort"]
+                      "city", "state", "country", "gender", "github", "number", "course", "cohort", "venue"]
             extra_kwargs= { field: {"required": False} for field in fields}
             ref_name= PARTICIPANT_REF_NAME
 
@@ -204,6 +207,7 @@ class ParticipantSerializer:
             instance.number= validated_data.get("number", instance.number)
             instance.course= validated_data.get("course", instance.course)
             instance.cohort= validated_data.get("cohort", instance.cohort)
+            instance.venue= validated_data.get("venue", instance.venue)
             instance.payment_status= validated_data.get("payment_status", instance.payment_status)
 
             instance.save()
@@ -255,7 +259,23 @@ class TestimonialSerializer:
 
 
 class BulkEmailSerializer(serializers.Serializer):
-    message = serializers.CharField()
+    recipients = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=models.Participant.objects.all()),
+        help_text="List of participant IDs to send the email to"
+    )
+    subject = serializers.CharField(
+        max_length=200,
+        help_text="Email subject line"
+    )
+    body = serializers.CharField(
+        help_text="Email body content"
+    )
 
     class Meta:
-        fields = ["message"]
+        fields = ["recipients", "subject", "body"]
+
+    def validate_recipients(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one recipient is required")
+        return value
+
