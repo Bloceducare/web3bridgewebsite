@@ -149,12 +149,6 @@ export const TeamMembers = [
   },
 
   {
-    name: "Ekoh Victor",
-    role: "Marketing Lead",
-    image: "/about/Victor.jpg",
-  },
-
-  {
     name: "Samuel Babalola",
     role: "Operations Lead",
     image: "/about/Sam.jpeg",
@@ -173,16 +167,6 @@ export const TeamMembers = [
     name: "John Deborah",
     role: "HR/Facility Manager",
     image: "/about/debi.JPEG",
-  },
-  {
-    name: "Oluwadunsin Marcus",
-    role: "Social Media",
-    image: "/about/Marc.jpeg",
-  },
-  {
-    name: "Monte Christian",
-    role: "Designer",
-    image: "/about/Christian.jpg",
   },
   {
     name: "Goodness Kolapo ",

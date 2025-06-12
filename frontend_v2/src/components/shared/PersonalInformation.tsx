@@ -59,7 +59,8 @@ export default function PersonalInformation({
       venue: "online",
       github:
         formData?.course?.toLowerCase().includes("web3") ||
-        formData?.course?.toLowerCase().includes("advance")
+        formData?.course?.toLowerCase().includes("advance") ||
+        formData?.course?.toLowerCase().includes("rust")
           ? ""
           : "https://github.com/web3bridge",
       country: "",
@@ -77,7 +78,8 @@ export default function PersonalInformation({
       venue: formData.venue || "online",
       github:
         (formData.course && formData.course.toLowerCase().includes("web3")) ||
-        formData?.course?.toLowerCase().includes("advance")
+        formData?.course?.toLowerCase().includes("advance") ||
+        formData?.course?.toLowerCase().includes("rust")
           ? formData.github || ""
           : "https://github.com/web3bridge",
       country: formData.country || "",
@@ -120,7 +122,6 @@ export default function PersonalInformation({
 
   const countries = Country.getAllCountries();
   const states = State.getStatesOfCountry(countryCode);
-
 
   return (
     <div className="max-w-[580px] w-full px-4 md:px-6 py-6 md:py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
@@ -240,31 +241,31 @@ export default function PersonalInformation({
             />
           )}
 
-
-          {(formData?.course?.toLowerCase().includes("web3") ||
-            formData?.course?.toLowerCase().includes("advance")) && (
-            <FormField
-              control={form.control}
-              name="github"
-              render={({ field }) => (
-                <FormItem className="space-y-1 w-full">
-                  <FormLabel className="text-xs md:text-sm font-medium">
-                    Github Profile Link
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="text"
-                      name="github"
-                      placeholder="Link to your Github Profile "
-                      className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+          {formData?.course?.toLowerCase().includes("web3") ||
+            formData?.course?.toLowerCase().includes("advance") ||
+            (formData?.course?.toLowerCase().includes("rust") && (
+              <FormField
+                control={form.control}
+                name="github"
+                render={({ field }) => (
+                  <FormItem className="space-y-1 w-full">
+                    <FormLabel className="text-xs md:text-sm font-medium">
+                      Github Profile Link
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        name="github"
+                        placeholder="Link to your Github Profile "
+                        className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
           <FormField
             control={form.control}
             name="country"

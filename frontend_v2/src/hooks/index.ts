@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-
 export const useFetchAllCoursesById = (token: string, ids: number[]) => {
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,8 +41,6 @@ export const useFetchAllCoursesById = (token: string, ids: number[]) => {
 
   return { data, isLoading };
 };
-
-
 
 export const useFetchAllCourses = () => {
   const [data, setData] = useState<any>();
