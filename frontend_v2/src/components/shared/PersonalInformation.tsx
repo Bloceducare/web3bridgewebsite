@@ -57,11 +57,9 @@ export default function PersonalInformation({
       number: "",
       cohort: formData.cohort || "XII",
       venue: "online",
-      github:
-        formData?.course?.toLowerCase().includes("web3") ||
-        formData?.course?.toLowerCase().includes("advance")
-          ? ""
-          : "https://github.com/web3bridge",
+      github: !formData?.course?.name?.toLowerCase().includes("beginner")
+        ? ""
+        : "https://github.com/web3bridge",
       country: "",
       city: "",
       gender: "male",
@@ -75,11 +73,9 @@ export default function PersonalInformation({
       number: formData.number || "",
       cohort: formData.cohort || "XII",
       venue: formData.venue || "online",
-      github:
-        (formData.course && formData.course.toLowerCase().includes("web3")) ||
-        formData?.course?.toLowerCase().includes("advance")
-          ? formData.github || ""
-          : "https://github.com/web3bridge",
+      github: !formData?.course?.toLowerCase().includes("beginner")
+        ? formData.github || ""
+        : "https://github.com/web3bridge",
       country: formData.country || "",
       city: formData.city || "",
       gender: formData.gender || "male",
@@ -120,7 +116,6 @@ export default function PersonalInformation({
 
   const countries = Country.getAllCountries();
   const states = State.getStatesOfCountry(countryCode);
-
 
   return (
     <div className="max-w-[580px] w-full px-4 md:px-6 py-6 md:py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
@@ -240,9 +235,7 @@ export default function PersonalInformation({
             />
           )}
 
-
-          {(formData?.course?.toLowerCase().includes("web3") ||
-            formData?.course?.toLowerCase().includes("advance")) && (
+          {!formData?.course?.name?.toLowerCase().includes("beginner") && (
             <FormField
               control={form.control}
               name="github"
