@@ -57,12 +57,9 @@ export default function PersonalInformation({
       number: "",
       cohort: formData.cohort || "XII",
       venue: "online",
-      github:
-        formData?.course?.toLowerCase().includes("web3") ||
-        formData?.course?.toLowerCase().includes("advance") ||
-        formData?.course?.toLowerCase().includes("rust")
-          ? ""
-          : "https://github.com/web3bridge",
+      github: !formData?.course?.name?.toLowerCase().includes("beginner")
+        ? ""
+        : "https://github.com/web3bridge",
       country: "",
       city: "",
       gender: "male",
@@ -76,12 +73,9 @@ export default function PersonalInformation({
       number: formData.number || "",
       cohort: formData.cohort || "XII",
       venue: formData.venue || "online",
-      github:
-        (formData.course && formData.course.toLowerCase().includes("web3")) ||
-        formData?.course?.toLowerCase().includes("advance") ||
-        formData?.course?.toLowerCase().includes("rust")
-          ? formData.github || ""
-          : "https://github.com/web3bridge",
+      github: !formData?.course?.toLowerCase().includes("beginner")
+        ? formData.github || ""
+        : "https://github.com/web3bridge",
       country: formData.country || "",
       city: formData.city || "",
       gender: formData.gender || "male",
@@ -241,31 +235,29 @@ export default function PersonalInformation({
             />
           )}
 
-          {formData?.course?.toLowerCase().includes("web3") ||
-            formData?.course?.toLowerCase().includes("advance") ||
-            (formData?.course?.toLowerCase().includes("rust") && (
-              <FormField
-                control={form.control}
-                name="github"
-                render={({ field }) => (
-                  <FormItem className="space-y-1 w-full">
-                    <FormLabel className="text-xs md:text-sm font-medium">
-                      Github Profile Link
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="text"
-                        name="github"
-                        placeholder="Link to your Github Profile "
-                        className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
+          {!formData?.course?.name?.toLowerCase().includes("beginner") && (
+            <FormField
+              control={form.control}
+              name="github"
+              render={({ field }) => (
+                <FormItem className="space-y-1 w-full">
+                  <FormLabel className="text-xs md:text-sm font-medium">
+                    Github Profile Link
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      name="github"
+                      placeholder="Link to your Github Profile "
+                      className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="country"
