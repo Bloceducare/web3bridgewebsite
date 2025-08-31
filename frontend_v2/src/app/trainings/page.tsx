@@ -7,9 +7,16 @@ import Image from "next/image";
 import Pill from "@/components/shared/pill";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useFetchAllCourses } from "@/hooks";
-import { useFetchAllRegistration } from "@/hooks";
+import { useFetchAllCourses, useFetchAllRegistration } from "@/hooks";
+
+// Function to truncate text to a single line
+const truncateText = (text: string, maxLength: number = 80) => {
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+};
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
 
 const details = [
   {
@@ -27,8 +34,60 @@ const details = [
 ];
 
 export default function Trainings() {
-  const { isLoading, data } = useFetchAllRegistration();
+  const { isLoading: regLoading, data: regData } = useFetchAllRegistration();
+  const { isLoading: courseLoading, data: courseData } = useFetchAllCourses();
   const router = useRouter();
+  const [enrichedData, setEnrichedData] = useState<any[]>([]);
+  const currentCohort = process.env.NEXT_PUBLIC_CURRENT_COHORT || 'XIV';
+
+  useEffect(() => {
+    if (regData && courseData) {
+      const enriched = regData
+        .filter((registration: any) => {
+          // Keep Master Class regardless of cohort
+          if (registration.name.toLowerCase().includes('master class')) {
+             return true;
+           }
+          // Only keep current cohort courses
+          return registration.cohort === currentCohort;
+        })
+        .map((registration: any) => {
+          // Get course details for this registration
+          const courseDetails = registration.courses.map((courseId: number) => {
+            return courseData.find((course: any) => course.id === courseId);
+          }).filter(Boolean);
+
+          // Create a description from course names and details
+          let description = "";
+          if (courseDetails.length > 0) {
+            // Add course descriptions if available
+            const courseDescriptions = courseDetails
+              .map((course: any) => course.description)
+              .filter(Boolean);
+            
+            if (courseDescriptions.length > 0) {
+              description = courseDescriptions.join(" ");
+            } else {
+              // If no descriptions, use course names
+              const courseNames = courseDetails.map((course: any) => course.name).join(", ");
+              description = courseNames;
+            }
+          } else {
+            description = `Join our ${registration.name} to learn Web3 development skills.`;
+          }
+
+          return {
+            ...registration,
+            description,
+            courseDetails
+          };
+        });
+
+              setEnrichedData(enriched);
+      }
+    }, [regData, courseData]);
+
+  const isLoading = regLoading || courseLoading;
 
   return (
     <div className="flex flex-col">
@@ -36,10 +95,10 @@ export default function Trainings() {
         <div className="w-full max-w-full xl:max-w-[754px] text-center flex flex-col items-center justify-center xl:justify-start xl:items-start xl:text-start">
           <Pill text="Web 3.0 Made Easy" />
           <div className="flex flex-col my-2 gap-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl lg:leading-[1.2] font-semibold">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl lg:leading-[1.2] font-semibold text-black">
               Join 2,000+ students Becoming Web3 Developers.
             </h1>
-            <p className="w-full max-w-full xl:max-w-[581px] text-sm md:text-base lg:text-xl font-normal">
+            <p className="w-full max-w-full xl:max-w-[581px] text-sm md:text-base lg:text-xl font-normal text-black">
               We are supporting web3 developers and startups, and lowering
               barriers of entry into the Web3 ecosystem.
             </p>
@@ -61,7 +120,7 @@ export default function Trainings() {
             {details.map((item) => (
               <li key={item.desc} className="flex items-center">
                 <item.icon className="w-4 h-4 mr-2 text-red-500" />
-                <p className="text-sm md:text-base font-medium">{item.desc}</p>
+                <p className="text-sm md:text-base font-medium text-black">{item.desc}</p>
               </li>
             ))}
           </ul>
@@ -120,21 +179,38 @@ export default function Trainings() {
                 <Skeleton className="w-full max-w-[920px] rounded-2xl aspect-[2]"></Skeleton>
               </div>
             ))
-          : data &&
-            data.map((item: any) => (
+          : enrichedData &&
+            enrichedData.map((item: any) => (
               <section
                 key={item.id}
                 className="py-10 md:py-20 flex flex-col gap-3 lg:gap-6 items-center justify-center md:max-w-[727px] mx-auto w-full lg:max-w-[926px]">
-                <h1 className="font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center">
+                <h1 className="font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center text-black">
                   {item.name}
                 </h1>
 
                 <div className="w-full border rounded-lg p-[2px] bg-gradient-to-b from-[#FFB5B5] to-[#FB888842] shadow-2xl transition-transform duration-300 hover:scale-[1.01]">
                   <div className="w-full h-full bg-background p-6 rounded-sm grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="w-full h-full lg:max-w-[416px] flex flex-col justify-between gap-5">
-                      <p className="font-normal text-base sm:text-lg">
-                        {item.description}
-                      </p>
+                                             <p className="font-normal text-base sm:text-lg text-black">
+                         {truncateText(item.description, 80)}
+                       </p>
+                       
+                       {/* Course Names as Features */}
+                       {item.courseDetails && item.courseDetails.length > 0 && (
+                         <div className="mt-4">
+                           <h3 className="font-semibold text-sm text-gray-700 mb-2">Courses Included:</h3>
+                           <div className="flex flex-wrap gap-2">
+                             {item.courseDetails.map((course: any) => (
+                               <span 
+                                 key={course.id} 
+                                 className="px-3 py-1 bg-red-50 text-red-600 text-xs font-medium rounded-full border border-red-200"
+                               >
+                                 {course.name}
+                               </span>
+                             ))}
+                           </div>
+                         </div>
+                       )}
                      {/*  <p className="flex items-center gap-3 text-base font-semibold">
                        <Calendar className="w-4 h-4" /> 26th August 2024 </p> */}
                       
