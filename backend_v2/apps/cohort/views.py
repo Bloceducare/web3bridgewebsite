@@ -415,10 +415,26 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
             subject = serializer.validated_data['subject']
             html_body = serializer.validated_data['body']
             recipients = request.data.get('recipients', [])
+            from_admission = request.data.get('from_admission', False)  # New parameter
             if not recipients:
                 return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
-            send_bulk_email(subject, html_body, recipients)
+            send_bulk_email(subject, html_body, recipients, from_admission=from_admission)
             return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(request_body=serializers.BulkEmailSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="send-admission-email")
+    def send_admission_bulk_email(self, request):
+        """Send bulk emails from admission@web3bridge.com"""
+        serializer = serializers.BulkEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            subject = serializer.validated_data['subject']
+            html_body = serializer.validated_data['body']
+            recipients = request.data.get('recipients', [])
+            if not recipients:
+                return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
+            send_bulk_email(subject, html_body, recipients, from_admission=True)
+            return Response({"message": "Admission emails sent successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     

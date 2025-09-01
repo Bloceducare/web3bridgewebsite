@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 # Testimonial image storage location
 
@@ -32,11 +33,33 @@ def send_registration_success_mail(email, course_id, participant):
         context = {'name': participant}
         message = render_to_string(template_name, context)
 
-        from_email = 'support@web3bridge.com'
+        # Use admission email credentials if available, otherwise fall back to default
+        from_email = getattr(settings, 'ADMISSION_EMAIL_HOST_USER', 'admission@web3bridge.com')
         recipient_list = [email]
 
-        send_mail(subject, '', from_email, recipient_list,
-                  html_message=message, fail_silently=True)
+        # Create EmailMessage for more control over SMTP settings
+        email_msg = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=recipient_list,
+        )
+        email_msg.content_subtype = 'html'
+        
+        # Use admission SMTP settings if available
+        if hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
+            # Use custom connection for admission emails
+            from django.core.mail import get_connection
+            connection = get_connection(
+                host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
+                port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
+                username=getattr(settings, 'ADMISSION_EMAIL_HOST_USER'),
+                password=getattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'),
+                use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
+            )
+            email_msg.connection = connection
+        
+        email_msg.send(fail_silently=True)
     except Course.DoesNotExist:
         # Handle case where course with provided ID does not exist
         pass
@@ -70,11 +93,32 @@ def send_participant_details(email, course_id, participant):
         message = render_to_string('cohort/participant_email.html', context)
 
         subject = 'Web3Bridge Cohort Registration Details'
-        from_email = 'support@web3bridge.com'
+        from_email = getattr(settings, 'ADMISSION_EMAIL_HOST_USER', 'admission@web3bridge.com')
         recipient_list = [email]
 
-        send_mail(subject, '', from_email, recipient_list,
-                  html_message=message, fail_silently=False)
+        # Create EmailMessage for more control over SMTP settings
+        email_msg = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=recipient_list,
+        )
+        email_msg.content_subtype = 'html'
+        
+        # Use admission SMTP settings if available
+        if hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
+            # Use custom connection for admission emails
+            from django.core.mail import get_connection
+            connection = get_connection(
+                host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
+                port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
+                username=getattr(settings, 'ADMISSION_EMAIL_HOST_USER'),
+                password=getattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'),
+                use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
+            )
+            email_msg.connection = connection
+        
+        email_msg.send(fail_silently=False)
     except Course.DoesNotExist:
         # Handle case where course with provided ID does not exist
         pass

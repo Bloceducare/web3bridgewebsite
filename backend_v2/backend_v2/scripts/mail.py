@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from cohort.models import Participant
 
 
-def send_bulk_email(subject, body, recipient_ids):
+def send_bulk_email(subject, body, recipient_ids, from_admission=False):
     """
     Sends a single email to multiple recipients.
     
@@ -13,8 +13,13 @@ def send_bulk_email(subject, body, recipient_ids):
         subject (str): Subject of the email
         body (str): General HTML content/message (no personalization)
         recipient_ids (list): List of participant IDs
+        from_admission (bool): If True, sends from admission@web3bridge.com
     """
-    from_email = settings.EMAIL_HOST_USER
+    # Choose email address based on parameter
+    if from_admission:
+        from_email = getattr(settings, 'ADMISSION_EMAIL_HOST_USER', 'admission@web3bridge.com')
+    else:
+        from_email = settings.EMAIL_HOST_USER
 
     # Fetch emails from participant IDs
     participants = Participant.objects.filter(id__in=recipient_ids).select_related('registration')
@@ -38,6 +43,18 @@ def send_bulk_email(subject, body, recipient_ids):
         bcc=recipient_emails,
     )
     email.content_subtype = 'html'  # Important! Tells Django to treat it as HTML
+
+    # Use custom connection for admission emails if needed
+    if from_admission and hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
+        from django.core.mail import get_connection
+        connection = get_connection(
+            host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
+            port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
+            username=getattr(settings, 'ADMISSION_EMAIL_HOST_USER'),
+            password=getattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'),
+            use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
+        )
+        email.connection = connection
 
     # Send the email
     email.send(fail_silently=False)
@@ -66,5 +83,13 @@ def send_bulk_email(subject, body, recipient_ids):
     #     'cohort/custommail.html', context).format(**context) for _ in participants]
 
     # recipient_list = [participant.email for participant in participants]
+    
+    
+
+def send_admission_bulk_email(subject, body, recipient_ids):
+    """
+    Convenience function to send bulk emails from admission@web3bridge.com
+    """
+    return send_bulk_email(subject, body, recipient_ids, from_admission=True)
     
     
