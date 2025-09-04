@@ -171,7 +171,7 @@ export const TeamMembers = [
   {
     name: "Goodness Kolapo ",
     role: "Developer/PM",
-    image: "/about/goodness.png",
+    image: "/about/Team11.png",
   },
   {
     name: "Ayomide Arowolo",
