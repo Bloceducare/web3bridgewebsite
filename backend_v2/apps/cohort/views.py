@@ -247,6 +247,32 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 data=serialized_participant_obj, http_status=status.HTTP_201_CREATED
             )
 
+        # Check for special case: user already registered but unpaid
+        if serializer.errors and 'email' in serializer.errors:
+            email_errors = serializer.errors['email']
+            if any('payment pending' in str(error) for error in email_errors):
+                # Find the existing participant
+                email = request_data.get('email')
+                course_id = request_data.get('course')
+                try:
+                    course = models.Course.objects.get(id=course_id)
+                    participant = models.Participant.objects.filter(
+                        email=email,
+                        course=course
+                    ).first()
+                    
+                    if participant and not participant.payment_status:
+                        return requestUtils.error_response(
+                            "Already Registered - Payment Pending", {
+                                "already_registered_unpaid": True,
+                                "message": "You are already registered for this course but haven't completed payment. Please proceed to payment to secure your spot.",
+                                "payment_link": "https://payment.web3bridgeafrica.com",
+                                "participant_id": participant.id
+                            }, http_status=status.HTTP_400_BAD_REQUEST
+                        )
+                except models.Course.DoesNotExist:
+                    pass
+
         # Return error response if serializer is invalid
         return requestUtils.error_response(
             "Error Creating Participant", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST
@@ -282,6 +308,47 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
         return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         
+    @swagger_auto_schema(request_body=serializers.EmailSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="check-registration-status")
+    def check_registration_status(self, request, *args, **kwargs):
+        """Check if a user is already registered and their payment status"""
+        email = request.data.get("email")
+        course_id = request.data.get("course")
+        
+        if not email or not course_id:
+            return requestUtils.error_response(
+                "Email and course ID are required", {}, http_status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            course = models.Course.objects.get(id=course_id)
+            registration = course.registration
+            
+            # Find existing participant
+            participant = models.Participant.objects.filter(
+                email=email,
+                course=course
+            ).first()
+            
+            if not participant:
+                return requestUtils.success_response({
+                    "registered": False,
+                    "message": "No registration found for this email and course"
+                }, http_status=status.HTTP_200_OK)
+            
+            return requestUtils.success_response({
+                "registered": True,
+                "payment_status": participant.payment_status,
+                "participant_id": participant.id,
+                "message": "Already paid" if participant.payment_status else "Registered but payment pending",
+                "payment_link": "https://payment.web3bridgeafrica.com" if not participant.payment_status else None
+            }, http_status=status.HTTP_200_OK)
+            
+        except models.Course.DoesNotExist:
+            return requestUtils.error_response(
+                "Course not found", {}, http_status=status.HTTP_404_NOT_FOUND
+            )
+
     @swagger_auto_schema(request_body=serializers.EmailSerializer)
     @decorators.action(detail=False, methods=["post"], url_path="send-confirmation-email")
     def send_confirmation_email(self, request, *args, **kwargs):

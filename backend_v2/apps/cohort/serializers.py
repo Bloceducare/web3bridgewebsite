@@ -152,8 +152,23 @@ class ParticipantSerializer:
             registration = course.registration
 
             participants = models.Participant.objects.filter(email=email).all()
-            if any((participant.registration == registration or participant.course == course) for participant in participants):
-                raise serializers.ValidationError("Participant already registered for this cohort")
+            existing_participant = None
+            for participant in participants:
+                if participant.registration == registration or participant.course == course:
+                    existing_participant = participant
+                    break
+            
+            if existing_participant:
+                if existing_participant.payment_status:
+                    raise serializers.ValidationError("Participant already registered and paid for this cohort")
+                else:
+                    # User is registered but hasn't paid - provide payment link
+                    raise serializers.ValidationError({
+                        "already_registered_unpaid": True,
+                        "message": "You are already registered for this course but haven't completed payment. Please proceed to payment to secure your spot.",
+                        "payment_link": "https://payment.web3bridgeafrica.com",
+                        "participant_id": existing_participant.id
+                    })
             return email
 
         

@@ -16,6 +16,7 @@ import {
 } from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+import PaymentPendingModal from "@/components/shared/PaymentPendingModal";
 
 // Types
 interface FormDataType {
@@ -69,6 +70,14 @@ export default function RegistrationPage() {
   const [isClose, setIsClose] = useState(false);
 
   const [isDiscountChecked, setIsDiscountChecked] = useState(false);
+  
+  // Payment pending modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentModalData, setPaymentModalData] = useState<{
+    message: string;
+    paymentLink: string;
+    participantId?: string;
+  } | null>(null);
 
   const nextStep = () => {
     setIsUpdatingSteps(true);
@@ -103,11 +112,31 @@ export default function RegistrationPage() {
       const data = await response.json();
       // console.log("Response Data:", data);
 
+      // Check for special case: user already registered but unpaid
+      if (data.errors && data.errors.email && typeof data.errors.email === 'object' && data.errors.email.already_registered_unpaid) {
+        // Handle already registered but unpaid case with custom modal
+        setPaymentModalData({
+          message: data.errors.email.message,
+          paymentLink: data.errors.email.payment_link,
+          participantId: data.errors.email.participant_id
+        });
+        setShowPaymentModal(true);
+        throw new Error("ALREADY_REGISTERED_UNPAID");
+      }
+
       let errorMessages: Record<string, string[]> = {};
       // console.log(data.errors);
       // Check for email errors
       if (data.errors && data.errors.email) {
-        errorMessages.email = data.errors.email;
+        // Handle both array and object formats
+        if (Array.isArray(data.errors.email)) {
+          errorMessages.email = data.errors.email;
+        } else if (typeof data.errors.email === 'string') {
+          errorMessages.email = [data.errors.email];
+        } else if (typeof data.errors.email === 'object') {
+          // Convert object to array of strings
+          errorMessages.email = Object.values(data.errors.email).map(String);
+        }
       }
 
       // Check for wallet_address errors
@@ -239,6 +268,11 @@ export default function RegistrationPage() {
           return;
         } catch (error) {
           if (error instanceof Error) {
+            // Handle special case for already registered but unpaid
+            if (error.message === "ALREADY_REGISTERED_UNPAID") {
+              // Don't show additional error, the toast was already shown
+              return;
+            }
             toast.error(error.message);
           }
           return;
@@ -253,6 +287,12 @@ export default function RegistrationPage() {
         // console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
+          // Handle special case for already registered but unpaid
+          if (error.message === "ALREADY_REGISTERED_UNPAID") {
+            // Don't go back to previous step, just stop here
+            return;
+          }
+          
           // console.log("Error saving participant data:", error);
           toast.error(
             error.message
@@ -385,6 +425,20 @@ export default function RegistrationPage() {
             <OtherInformation {...props} />
           )}
         </>
+      )}
+      
+      {/* Payment Pending Modal */}
+      {paymentModalData && (
+        <PaymentPendingModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setPaymentModalData(null);
+          }}
+          message={paymentModalData.message}
+          paymentLink={paymentModalData.paymentLink}
+          participantId={paymentModalData.participantId}
+        />
       )}
     </MaxWrapper>
   );
