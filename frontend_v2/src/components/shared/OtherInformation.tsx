@@ -191,7 +191,7 @@ export default function OtherInformation({
               </FormItem>
             )}
           />
-          <div className="flex items-center space-y-1 w-full">
+          {/* <div className="flex items-center space-y-1 w-full">
             <label>
               <input
                 className="me-1"
@@ -201,15 +201,14 @@ export default function OtherInformation({
               />
               Do you have a discount Code?
             </label>
-          </div>
-          {isDiscountChecked ? (
+          </div> */}
+          {/* {isDiscountChecked ? (
             <FormField
               control={form.control}
               name="discount"
               render={({ field }) => (
                 <FormItem className="space-y-1 w-full">
                   <FormLabel className="text-xs md:text-sm font-medium">
-                    {/* Discount Code */}
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -226,7 +225,7 @@ export default function OtherInformation({
             />
           ) : (
             ""
-          )}
+          )} */}
           <FormField
             control={form.control}
             name="cta"
