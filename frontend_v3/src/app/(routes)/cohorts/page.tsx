@@ -6,16 +6,16 @@ import MaxWrapper from "@/components/shared/MaxWrapper";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 
-import b1 from "../../../public/cohorts/b-1.jpeg";
-import b2 from "../../../public/cohorts/b-2.jpeg";
-import b3 from "../../../public/cohorts/b-3.jpeg";
-import b4 from "../../../public/cohorts/b-4.jpeg";
-import b5 from "../../../public/cohorts/b-5.jpeg";
+import b1 from "../../../../public/cohorts/b-1.jpeg";
+import b2 from "../../../../public/cohorts/b-2.jpeg";
+import b3 from "../../../../public/cohorts/b-3.jpeg";
+import b4 from "../../../../public/cohorts/b-4.jpeg";
+import b5 from "../../../../public/cohorts/b-5.jpeg";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Pill from "@/components/shared/pill";
 
-import part from "../../../public/cohorts/part.svg";
+import part from "../../../../public/cohorts/part.svg";
 import { useRouter } from "next/navigation";
 
 const bannerImgs = [
