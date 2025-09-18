@@ -1,12 +1,12 @@
 {
   "builds": [
     {
-      "src": "frontend_v2/**/*",
+      "src": "frontend_v2/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "frontend_v2/build" }
     },
     {
-      "src": "frontend_v3/**/*",
+      "src": "frontend_v3/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "frontend_v3/build" }
     }
@@ -14,7 +14,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "$VERCEL_BRANCH == 'v3_design' ? '/frontend_v3/$1' : '/frontend_v2/$1'"
+      "dest": "/frontend_v2/$1"
     }
   ]
 }
