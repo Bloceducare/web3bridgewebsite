@@ -2,13 +2,13 @@
   "builds": [
     {
       "src": "frontend_v2/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "frontend_v2/build" }
+      "use": "@vercel/next",
+      "config": { "distDir": "frontend_v2/.next" }
     },
     {
       "src": "frontend_v3/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "frontend_v3/build" }
+      "use": "@vercel/next",
+      "config": { "distDir": "frontend_v3/.next" }
     }
   ],
   "routes": [
