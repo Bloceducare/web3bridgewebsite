@@ -1,0 +1,26 @@
+{
+  "builds": [
+    {
+      "src": "frontend_v2/**/*",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "frontend_v2/build" }
+    },
+    {
+      "src": "frontend_v3/**/*",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "frontend_v3/build" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend_v2/$1",
+      "branches": ["master"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend_v3/$1",
+      "branches": ["v3_design"]
+    }
+  ]
+}
