@@ -14,13 +14,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/frontend_v2/$1",
-      "branches": ["master"]
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend_v3/$1",
-      "branches": ["v3_design"]
+      "dest": "$VERCEL_BRANCH == 'v3_design' ? '/frontend_v3/$1' : '/frontend_v2/$1'"
     }
   ]
 }
