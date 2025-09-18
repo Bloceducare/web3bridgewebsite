@@ -15,12 +15,12 @@
     {
       "src": "/(.*)",
       "dest": "/frontend_v2/$1",
-      "branches": ["main"]
+      "branches": ["master"]
     },
     {
       "src": "/(.*)",
       "dest": "/frontend_v3/$1",
-      "branches": ["frontend-v3"]
+      "branches": ["v3_design"]
     }
   ]
 }
