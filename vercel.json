@@ -1,7 +1,6 @@
 {
   "builds": [
     {
-<<<<<<< HEAD
       "src": "frontend_v2/package.json",
       "use": "@vercel/next",
       "config": { "distDir": "frontend_v2/.next" }
@@ -10,32 +9,12 @@
       "src": "frontend_v3/package.json",
       "use": "@vercel/next",
       "config": { "distDir": "frontend_v3/.next" }
-=======
-      "src": "frontend_v2/**/*",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "frontend_v2/build" }
-    },
-    {
-      "src": "frontend_v3/**/*",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "frontend_v3/build" }
->>>>>>> b7d8faa (chore: added vercel.json to root dir)
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-<<<<<<< HEAD
       "dest": "/frontend_v2/$1"
-=======
-      "dest": "/frontend_v2/$1",
-      "branches": ["main"]
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend_v3/$1",
-      "branches": ["frontend-v3"]
->>>>>>> b7d8faa (chore: added vercel.json to root dir)
     }
   ]
 }
