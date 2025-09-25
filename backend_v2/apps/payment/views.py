@@ -25,8 +25,43 @@ class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
 
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+        # Get pagination parameters
+        page = int(request.GET.get('page', 1))
+        limit = int(request.GET.get('limit', 50))
+        
+        # Ensure limit doesn't exceed 50
+        limit = min(limit, 50)
+        
+        # Calculate offset
+        offset = (page - 1) * limit
+        
+        # Get total count
+        total_count = self.queryset.count()
+        
+        # Get paginated data
+        paginated_queryset = self.queryset[offset:offset + limit]
+        serializer = self.serializer_class(paginated_queryset, many=True)
+        
+        # Calculate pagination info
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
+        has_next = page < total_pages
+        has_previous = page > 1
+        
+        response_data = {
+            "results": serializer.data,
+            "pagination": {
+                "current_page": page,
+                "total_pages": total_pages,
+                "total_count": total_count,
+                "limit": limit,
+                "has_next": has_next,
+                "has_previous": has_previous,
+                "next_page": page + 1 if has_next else None,
+                "previous_page": page - 1 if has_previous else None
+            }
+        }
+        
+        return requestUtils.success_response(data=response_data, http_status=status.HTTP_200_OK)
 
 
 # Discount Code viewset
@@ -124,8 +159,43 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+        # Get pagination parameters
+        page = int(request.GET.get('page', 1))
+        limit = int(request.GET.get('limit', 50))
+        
+        # Ensure limit doesn't exceed 50
+        limit = min(limit, 50)
+        
+        # Calculate offset
+        offset = (page - 1) * limit
+        
+        # Get total count
+        total_count = self.queryset.count()
+        
+        # Get paginated data
+        paginated_queryset = self.queryset[offset:offset + limit]
+        serializer = self.serializer_class(paginated_queryset, many=True)
+        
+        # Calculate pagination info
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
+        has_next = page < total_pages
+        has_previous = page > 1
+        
+        response_data = {
+            "results": serializer.data,
+            "pagination": {
+                "current_page": page,
+                "total_pages": total_pages,
+                "total_count": total_count,
+                "limit": limit,
+                "has_next": has_next,
+                "has_previous": has_previous,
+                "next_page": page + 1 if has_next else None,
+                "previous_page": page - 1 if has_previous else None
+            }
+        }
+        
+        return requestUtils.success_response(data=response_data, http_status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         request_body=serializers.ValidateCodeInputSerializer,
