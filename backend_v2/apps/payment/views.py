@@ -14,7 +14,7 @@ API_KEY = config("PAYMENT_API_KEY")
 
 
 class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
-    queryset = models.Payment.objects.all()
+    queryset = models.Payment.objects.all().order_by('-created_at')
     serializer_class = serializers.PaymentSerializer
     admin_actions = ["retrieve", "all"]
 
@@ -38,7 +38,7 @@ class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         # Get total count
         total_count = self.queryset.count()
         
-        # Get paginated data
+        # Get paginated data (already ordered by created_at desc)
         paginated_queryset = self.queryset[offset:offset + limit]
         serializer = self.serializer_class(paginated_queryset, many=True)
         
@@ -67,7 +67,7 @@ class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
 # Discount Code viewset
 class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     discount = models.DiscountCode
-    queryset = models.DiscountCode.objects.all()
+    queryset = models.DiscountCode.objects.all().order_by('-created_at')
     serializer_class = serializers.DiscountCodeSerializer
     admin_actions = ["all", "generate", "generate_custom", "retrieve", "destroy", "mark_usage"]
 
@@ -172,7 +172,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
         # Get total count
         total_count = self.queryset.count()
         
-        # Get paginated data
+        # Get paginated data (already ordered by created_at desc)
         paginated_queryset = self.queryset[offset:offset + limit]
         serializer = self.serializer_class(paginated_queryset, many=True)
         
