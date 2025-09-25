@@ -27,7 +27,7 @@ class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
     def all(self, request):
         # Get pagination parameters
         page = int(request.GET.get('page', 1))
-        limit = int(request.GET.get('limit', 50))
+        limit = int(request.GET.get('limit', 25))  # Reduced default limit
         
         # Ensure limit doesn't exceed 50
         limit = min(limit, 50)
@@ -35,24 +35,26 @@ class PaymentViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         # Calculate offset
         offset = (page - 1) * limit
         
-        # Get total count
-        total_count = self.queryset.count()
-        
         # Get paginated data (already ordered by created_at desc)
-        paginated_queryset = self.queryset[offset:offset + limit]
+        # Get one extra item to check if there's a next page
+        paginated_queryset = self.queryset[offset:offset + limit + 1]
+        
+        # Check if there's a next page
+        has_next = len(paginated_queryset) > limit
+        if has_next:
+            paginated_queryset = paginated_queryset[:limit]  # Remove the extra item
+        
         serializer = self.serializer_class(paginated_queryset, many=True)
         
-        # Calculate pagination info
-        total_pages = (total_count + limit - 1) // limit  # Ceiling division
-        has_next = page < total_pages
+        # Calculate pagination info without expensive count query
         has_previous = page > 1
         
         response_data = {
             "results": serializer.data,
             "pagination": {
                 "current_page": page,
-                "total_pages": total_pages,
-                "total_count": total_count,
+                "total_pages": None,  # Don't calculate total pages to avoid expensive count
+                "total_count": None,  # Don't calculate total count to avoid expensive count
                 "limit": limit,
                 "has_next": has_next,
                 "has_previous": has_previous,
@@ -161,7 +163,7 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
     def all(self, request):
         # Get pagination parameters
         page = int(request.GET.get('page', 1))
-        limit = int(request.GET.get('limit', 50))
+        limit = int(request.GET.get('limit', 25))  # Reduced default limit
         
         # Ensure limit doesn't exceed 50
         limit = min(limit, 50)
@@ -169,24 +171,26 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
         # Calculate offset
         offset = (page - 1) * limit
         
-        # Get total count
-        total_count = self.queryset.count()
-        
         # Get paginated data (already ordered by created_at desc)
-        paginated_queryset = self.queryset[offset:offset + limit]
+        # Get one extra item to check if there's a next page
+        paginated_queryset = self.queryset[offset:offset + limit + 1]
+        
+        # Check if there's a next page
+        has_next = len(paginated_queryset) > limit
+        if has_next:
+            paginated_queryset = paginated_queryset[:limit]  # Remove the extra item
+        
         serializer = self.serializer_class(paginated_queryset, many=True)
         
-        # Calculate pagination info
-        total_pages = (total_count + limit - 1) // limit  # Ceiling division
-        has_next = page < total_pages
+        # Calculate pagination info without expensive count query
         has_previous = page > 1
         
         response_data = {
             "results": serializer.data,
             "pagination": {
                 "current_page": page,
-                "total_pages": total_pages,
-                "total_count": total_count,
+                "total_pages": None,  # Don't calculate total pages to avoid expensive count
+                "total_count": None,  # Don't calculate total count to avoid expensive count
                 "limit": limit,
                 "has_next": has_next,
                 "has_previous": has_previous,
