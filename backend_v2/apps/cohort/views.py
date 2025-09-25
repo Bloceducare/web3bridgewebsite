@@ -208,10 +208,21 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 return requestUtils.error_response(
                     "Invalid discount code", {}, http_status=status.HTTP_400_BAD_REQUEST
                 )
-            if discount_obj.is_used:
-                return requestUtils.error_response(
-                    "Discount code has already been used", {}, http_status=status.HTTP_400_BAD_REQUEST
-                )
+            
+            # Use the new validation logic
+            user_email = request_data.get('email')
+            if user_email:
+                can_use, message = discount_obj.can_be_used_by(user_email)
+                if not can_use:
+                    return requestUtils.error_response(
+                        message, {}, http_status=status.HTTP_400_BAD_REQUEST
+                    )
+            else:
+                # Fallback for legacy validation
+                if discount_obj.is_used:
+                    return requestUtils.error_response(
+                        "Discount code has already been used", {}, http_status=status.HTTP_400_BAD_REQUEST
+                    )
 
         # Serialize and save participant only after successful discount validation
         serializer = self.serializer_class.Create(data=request_data, context={'request': request})
@@ -227,9 +238,17 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
             # If a valid discount code was provided, mark it as used
             if discount_code:
-                discount_obj.is_used = True
-                discount_obj.claimant = serialized_participant_obj.get('email')
-                discount_obj.save()
+                user_email = serialized_participant_obj.get('email')
+                participant_id = participant_obj.id
+                
+                # Use the new mark_usage method
+                discount_obj.mark_usage(user_email, participant_id)
+                
+                # For legacy single-use codes, also update claimant
+                if discount_obj.offset == 1:
+                    discount_obj.claimant = user_email
+                    discount_obj.save()
+                
                 participant_obj.payment_status = True
                 participant_obj.save()
                 serialized_participant_obj = self.serializer_class.Retrieve(participant_obj).data
