@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_SERVER_URL = 'https://web3bridgeauth-y4kb.onrender.com'
+AUTH_SERVER_URL = 'https://overall-ofella-web3bridge-270edff0.koyeb.app'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
