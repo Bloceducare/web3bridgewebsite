@@ -79,10 +79,10 @@ export default function ZKRegistrationModal({
               </div>
               <div>
                 <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-2">
-                  Payment Process
+                  Confirmation & Payment Process
                 </h3>
                 <p className="text-amber-800 dark:text-amber-200 text-sm leading-relaxed">
-                  Once your Rust knowledge has been verified, you'll receive a $50 payment link to finalize your registration.
+                  After submitting your registration, our team will review your GitHub repositories to verify your Rust experience. Once confirmed, you'll receive a  payment link to finalize your registration.
                 </p>
               </div>
             </div>
@@ -128,7 +128,7 @@ export default function ZKRegistrationModal({
             onClick={onProceed}
             className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
           >
-            I Understand, Proceed
+            I Understand, Submit Registration
           </Button>
         </div>
       </DialogContent>

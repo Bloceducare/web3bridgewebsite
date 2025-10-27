@@ -79,6 +79,14 @@ export default function RegistrationPage() {
     participantId?: string;
   } | null>(null);
 
+  // Helper function to check if a course is ZK-related
+  const isZKCourse = (courseName: string) => {
+    const zkKeywords = ['zk', 'zero knowledge', 'rust', 'blockchain protocol'];
+    return zkKeywords.some(keyword => 
+      courseName.toLowerCase().includes(keyword)
+    );
+  };
+
   const nextStep = () => {
     setIsUpdatingSteps(true);
     const timeout = setTimeout(() => {
@@ -279,11 +287,28 @@ export default function RegistrationPage() {
         }
       }
 
-      // If no discount code, proceed with normal payment flow
+      // If no discount code, proceed with registration flow
       localStorage.setItem("regData", JSON.stringify(userForm));
       try {
         const savedData = await getUserData(userForm);
-        toast.success("Registration data saved! Redirecting to payment...");
+        
+        // Check if this is a ZK course
+        if (isZKCourse(courseName)) {
+          toast.success("Registration submitted successfully! Our team will review your GitHub repositories and contact you with payment details once your Rust experience is verified.");
+          // For ZK courses, don't redirect to payment - just show success message
+          setIsRegistered(true);
+        } else {
+          toast.success("Registration data saved! Redirecting to payment...");
+          // For non-ZK courses, proceed with normal payment flow
+          const encodedData = btoa(JSON.stringify(userForm));
+          const paymentUrl = `${
+            process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+          }?data=${encodeURIComponent(encodedData)}`;
+
+          setTimeout(() => {
+            window.location.href = paymentUrl;
+          }, 1000);
+        }
         // console.log("Participant data saved:", savedData);
       } catch (error) {
         if (error instanceof Error) {
@@ -307,14 +332,6 @@ export default function RegistrationPage() {
         }
         // console.error("Error saving participant data:", error);
       }
-      const encodedData = btoa(JSON.stringify(userForm));
-      const paymentUrl = `${
-        process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
-      }?data=${encodeURIComponent(encodedData)}`;
-
-      setTimeout(() => {
-        window.location.href = paymentUrl;
-      }, 1000);
     } catch (error) {
       // console.error("Error during registration:", error);
       toast.error("Registration failed. Please try again");
@@ -414,6 +431,45 @@ export default function RegistrationPage() {
           >
             Do join our Telegram group to get information on the next Cohort
           </a>
+        </div>
+      ) : isRegistered ? (
+        <div className="text-center flex flex-col items-center gap-6 max-w-2xl">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-green-600 dark:text-green-400">Registration Submitted Successfully!</h2>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-left">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-3">What happens next?</h3>
+            <ul className="space-y-2 text-blue-800 dark:text-blue-200 text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">1.</span>
+                <span>Our team will review your GitHub repositories to verify your Rust experience</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">2.</span>
+                <span>Once confirmed, you'll receive a  payment link via email</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 font-bold">3.</span>
+                <span>Complete payment to finalize your registration</span>
+              </li>
+            </ul>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            Please ensure your GitHub profile and Rust repositories are public and accessible.
+          </p>
+          <button
+            onClick={() => {
+              setIsRegistered(false);
+              setStep(1);
+              setFormData(null);
+            }}
+            className="px-6 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors"
+          >
+            Register for Another Course
+          </button>
         </div>
       ) : (
         <>

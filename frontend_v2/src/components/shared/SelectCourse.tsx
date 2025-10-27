@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useFetchAllCourses } from "@/hooks";
 import { useState } from "react";
 
@@ -70,6 +71,14 @@ export default function SelectCourse({
     setShowZKModal(false);
   };
 
+  // Sort courses: open courses first, then closed courses
+  const sortedCourses = data ? [...data].sort((a, b) => {
+    // If both have same status, maintain original order
+    if (a.status === b.status) return 0;
+    // Open courses (true) come first, closed courses (false) come last
+    return b.status - a.status;
+  }) : [];
+
   return (
     <div className="max-w-[529px] w-full p-5 md:p-10 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
       <div className="flex gap-4 items-center">
@@ -91,16 +100,32 @@ export default function SelectCourse({
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          data &&
-          data.map((course: any) => (
-            <div 
-              className={`flex items-start gap-4 w-full p-4 rounded-lg border transition-all duration-200 ${
-                course.status === false 
-                  ? "bg-gray-50 border-gray-200 opacity-60" 
-                  : "bg-white border-gray-200 hover:border-red-300 hover:shadow-sm"
-              }`} 
-              key={course.id}
-            >
+          sortedCourses &&
+          sortedCourses.map((course: any, index: number) => {
+            // Check if this is the first course (should show "Available Courses" header)
+            const isFirstCourse = index === 0;
+            // Check if this is the first closed course to add a separator
+            const isFirstClosedCourse = !course.status && 
+              (index === 0 || sortedCourses[index - 1].status);
+            
+            return (
+              <React.Fragment key={course.id}>
+                {/* {isFirstClosedCourse && (
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600 my-4">
+                    <div className="text-center -mt-3">
+                      <span className="bg-white dark:bg-secondary/40 px-3 text-sm text-gray-500 dark:text-gray-400">
+                        Currently Closed
+                      </span>
+                    </div>
+                  </div>
+                )} */}
+                <div 
+                  className={`flex items-start gap-4 w-full p-4 rounded-lg border transition-all duration-200 ${
+                    course.status === false 
+                      ? "bg-gray-50 border-gray-200 opacity-60" 
+                      : "bg-white border-gray-200 hover:border-red-300 hover:shadow-sm"
+                  }`} 
+                >
               <RadioGroupItem
                 value={course.name}
                 id={course.name}
@@ -149,7 +174,9 @@ export default function SelectCourse({
                 )}
               </div>
             </div>
-          ))
+              </React.Fragment>
+            );
+          })
         )}
       </RadioGroup>
     </div>
