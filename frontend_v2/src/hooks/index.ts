@@ -120,7 +120,7 @@ export const useFetchTestimonials = () => {
 
 export async function useFetchExistingParticipants() {
   const response = await fetch(
-    "https://web3bridgewebsitebackend.onrender.com/api/v2/cohort/participant/all/"
+    "https://testy-leonanie-web3bridge-3c7204a2.koyeb.app/api/v2/cohort/participant/all/"
   );
 
   if (!response.ok) {
@@ -133,7 +133,7 @@ export async function useFetchExistingParticipants() {
 }
 export async function getCohortStatus() {
   const response = await fetch(
-    "https://web3bridgewebsitebackend.onrender.com/api/v2/cohort/course/all_opened/"
+    "https://testy-leonanie-web3bridge-3c7204a2.koyeb.app/api/v2/cohort/course/all_opened/"
   );
 
   if (!response.ok) {

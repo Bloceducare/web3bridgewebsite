@@ -229,3 +229,8 @@ ADMISSION_EMAIL_PORT = config('ADMISSION_EMAIL_PORT', default=EMAIL_PORT, cast=i
 ADMISSION_EMAIL_HOST_USER = config('ADMISSION_EMAIL_HOST_USER', default=None)
 ADMISSION_EMAIL_HOST_PASSWORD = config('ADMISSION_EMAIL_HOST_PASSWORD', default=None)
 ADMISSION_EMAIL_USE_TLS = config('ADMISSION_EMAIL_USE_TLS', default=EMAIL_USE_TLS, cast=bool)
+
+# _______________________Scholarship Email Script Settings_________________________
+# Number of parallel workers when sending scholarship emails
+SCHOLARSHIP_MAIL_MAX_WORKERS = config('SCHOLARSHIP_MAIL_MAX_WORKERS', default=12, cast=int)
+SCHOLARSHIP_MAIL_BCC_CHUNK_SIZE = config('SCHOLARSHIP_MAIL_BCC_CHUNK_SIZE', default=250, cast=int)

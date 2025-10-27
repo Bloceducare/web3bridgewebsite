@@ -172,3 +172,7 @@ __pycache__/
 *.vscode/
 *.idea/
 **/__pycache__/
+
+**/migrations/
+**/cohort/migrations/
+*.csv

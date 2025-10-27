@@ -21,6 +21,7 @@ import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import ZKRegistrationModal from "./ZKRegistrationModal";
 
 export default function OtherInformation({
   step,
@@ -45,6 +46,15 @@ export default function OtherInformation({
 }) {
   // const router = useRouter();
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [showZKModal, setShowZKModal] = useState(false);
+
+  // Helper function to check if a course is ZK-related
+  const isZKCourse = (courseName: string) => {
+    const zkKeywords = ['zk', 'zero knowledge', 'rust', 'blockchain protocol'];
+    return zkKeywords.some(keyword => 
+      courseName.toLowerCase().includes(keyword)
+    );
+  };
 
   const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
@@ -72,10 +82,22 @@ export default function OtherInformation({
 
     setFormData({ ...formData, ...values });
 
+    // Check if the selected course is ZK-related before proceeding to payment
+    if (isZKCourse(formData?.course || "")) {
+      setShowZKModal(true);
+    } else {
+      // Call parent's submitData function which handles the API validation and submission
+      submitData();
+      form.setValue("discount", "");
+    }
+  }
+
+  const proceedToPayment = () => {
+    setShowZKModal(false);
     // Call parent's submitData function which handles the API validation and submission
     submitData();
     form.setValue("discount", "");
-  }
+  };
 
   return (
     <div className="max-w-[580px] w-full px-4 md:px-6 py-6 md:py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
@@ -307,6 +329,14 @@ export default function OtherInformation({
           )}
         </form>
       </Form>
+      
+      {/* ZK Registration Modal */}
+      <ZKRegistrationModal
+        isOpen={showZKModal}
+        onClose={() => setShowZKModal(false)}
+        onProceed={proceedToPayment}
+        title="Important Payment Information"
+      />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomButton from "./CustomButton";
 import { Loader2, MoveRight } from "lucide-react";
 import { toast } from "sonner";
+import ZKRegistrationModal from "./ZKRegistrationModal";
 
 export default function SelectCourse({
   step,
@@ -32,6 +33,7 @@ export default function SelectCourse({
 
   const [selectedOption, setSelectedOption] = useState("");
   const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
+  const [showZKModal, setShowZKModal] = useState(false);
 
   const toggleDescription = (courseId: string) => {
     setExpandedDescriptions(prev => ({
@@ -40,14 +42,33 @@ export default function SelectCourse({
     }));
   };
 
+  // Helper function to check if a course is ZK-related
+  const isZKCourse = (courseName: string) => {
+    const zkKeywords = ['zk', 'zero knowledge', 'rust', 'blockchain protocol'];
+    return zkKeywords.some(keyword => 
+      courseName.toLowerCase().includes(keyword)
+    );
+  };
+
   function onSubmit(e: any) {
     e.preventDefault();
     if (!selectedOption) {
       return toast.error("You need to select a course");
     }
+    
+    // Check if the selected course is ZK-related
+    if (isZKCourse(selectedOption)) {
+      setShowZKModal(true);
+    } else {
+      proceedToNextStep();
+    }
+  }
+
+  const proceedToNextStep = () => {
     nextStep();
     setFormData({ ...formData, course: selectedOption });
-  }
+    setShowZKModal(false);
+  };
 
   return (
     <div className="max-w-[529px] w-full p-5 md:p-10 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
@@ -150,6 +171,13 @@ export default function SelectCourse({
           )}
         </CustomButton>
       </form>
+      
+      {/* ZK Registration Modal */}
+      <ZKRegistrationModal
+        isOpen={showZKModal}
+        onClose={() => setShowZKModal(false)}
+        onProceed={proceedToNextStep}
+      />
     </div>
   );
 }

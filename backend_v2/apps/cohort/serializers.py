@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from cohort import models
+from . import models
 from utils.serializers import ImageSerializer
 from utils.models import Image
 from .literals import COURSE_REF_NAME, REGISTRATION_REF_NAME, PARTICIPANT_REF_NAME, TESTIMONIAL_REF_NAME
