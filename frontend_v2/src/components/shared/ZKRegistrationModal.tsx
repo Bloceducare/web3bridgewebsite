@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react/no-unescaped-entities */
+
 import React from "react";
 import {
   Dialog,
@@ -65,6 +67,7 @@ export default function ZKRegistrationModal({
                 <h3 className="font-semibold text-green-900 dark:text-green-100 mb-2">
                   GitHub Repository Review
                 </h3>
+         
                 <p className="text-green-800 dark:text-green-200 text-sm leading-relaxed">
                   As part of your registration, you'll be asked to share a GitHub repository that shows your Rust projects or contributions. Our team will review your work to confirm your Rust experience before proceeding.
                 </p>
