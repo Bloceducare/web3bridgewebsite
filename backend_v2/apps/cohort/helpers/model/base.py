@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.conf import settings
+import re
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 
@@ -16,16 +17,22 @@ def send_registration_success_mail(email, course_id, participant):
     from cohort.models import Course
     try:
         course = Course.objects.get(pk=course_id)
-        print('course...', course)
-        if "web2" in course.name.lower():
-            subject = 'Web2 Registration Success'
-            template_name = 'cohort/web2_registration_email.html'
-        elif "web3" in course.name.lower():
-            subject = 'Web3 Registration Success'
-            template_name = 'cohort/web3_registration_email.html'
-        elif "rust" in course.name.lower():
+        name_lc = (course.name or "").lower()
+
+        # Prioritize Rust, then Web2/Web3. Explicitly guard ZK from matching others.
+        if re.search(r"\brust\b", name_lc):
             subject = 'Rust Masterclass Registration Success'
             template_name = 'cohort/rust_registration_email.html'
+        elif re.search(r"\bweb2\b", name_lc):
+            subject = 'Web2 Registration Success'
+            template_name = 'cohort/web2_registration_email.html'
+        elif re.search(r"\bweb3\b", name_lc):
+            subject = 'Web3 Registration Success'
+            template_name = 'cohort/web3_registration_email.html'
+        elif re.search(r"\bzk\b|\bzero[- ]?knowledge\b", name_lc):
+            # Keep ZK on a neutral/other template until a dedicated one exists
+            subject = f'{course.name} Registration Success'
+            template_name = 'other_registration_email.html'
         else:
             subject = f'{course.name} Registration Success'
             template_name = 'other_registration_email.html'
