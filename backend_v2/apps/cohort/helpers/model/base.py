@@ -30,9 +30,8 @@ def send_registration_success_mail(email, course_id, participant):
             subject = 'Web3 Registration Success'
             template_name = 'cohort/web3_registration_email.html'
         elif re.search(r"\bzk\b|\bzero[- ]?knowledge\b", name_lc):
-            # Keep ZK on a neutral/other template until a dedicated one exists
-            subject = f'{course.name} Registration Success'
-            template_name = 'other_registration_email.html'
+            subject = '🎉 Welcome to the Web3Bridge Zero Knowledge Program!'
+            template_name = 'cohort/zk_registration_email.html'
         else:
             subject = f'{course.name} Registration Success'
             template_name = 'other_registration_email.html'
