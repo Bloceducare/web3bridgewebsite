@@ -43,12 +43,12 @@ export default function SelectCourse({
     }));
   };
 
-  // Helper function to check if a course is ZK-related
+  // Helper function to check if a course is ZK-related (strict, excludes Rust)
   const isZKCourse = (courseName: string) => {
-    const zkKeywords = ['zk', 'zero knowledge', 'rust', 'blockchain protocol'];
-    return zkKeywords.some(keyword => 
-      courseName.toLowerCase().includes(keyword)
-    );
+    const name = courseName.toLowerCase();
+    const isZK = name.includes('zk') || name.includes('zero knowledge') || name.includes('zero-knowledge');
+    const isRust = name.includes('rust');
+    return isZK && !isRust;
   };
 
   function onSubmit(e: any) {
