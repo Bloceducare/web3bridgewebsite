@@ -79,12 +79,14 @@ export default function RegistrationPage() {
     participantId?: string;
   } | null>(null);
 
-  // Helper function to check if a course is ZK-related
+  // Helper function to check if a course is ZK-related (strict, excludes Rust)
   const isZKCourse = (courseName: string) => {
-    const zkKeywords = ['zk', 'zero knowledge', 'rust', 'blockchain protocol'];
-    return zkKeywords.some(keyword => 
-      courseName.toLowerCase().includes(keyword)
-    );
+    const name = courseName.toLowerCase();
+    // Positive signals for ZK
+    const isZK = name.includes('zk') || name.includes('zero knowledge') || name.includes('zero-knowledge');
+    // Exclude Rust-only courses from ZK handling
+    const isRust = name.includes('rust');
+    return isZK && !isRust;
   };
 
   const nextStep = () => {
@@ -292,7 +294,7 @@ export default function RegistrationPage() {
       try {
         const savedData = await getUserData(userForm);
         
-        // Check if this is a ZK course
+        // Check if this is a ZK course (not Rust)
         if (isZKCourse(courseName)) {
           toast.success("Registration submitted successfully! Our team will review your GitHub repositories and contact you with payment details once your Rust experience is verified.");
           // For ZK courses, don't redirect to payment - just show success message
