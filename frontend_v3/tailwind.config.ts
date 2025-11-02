@@ -21,14 +21,20 @@ const config = {
       },
     },
     extend: {
+      backgroundImage: {
+        "hero-bg": "url('/home/waves-bg.png')",
+      },
       colors: {
-        bridgeRed: "#FA0101",
+        bridgeRed: "#AB013A",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         darkBg: "dark-bg",
         foreground: "hsl(var(--foreground))",
+        "custom-start": "#FFFBF3",
+        "custom-middle": "#FF759A",
+        "custom-end": "#FFD5E2",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -87,7 +93,7 @@ export default config;
 function addVariablesForColors({ addBase, theme }: any) {
   let allColors = flattenColorPalette(theme("colors"));
   let newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
   );
 
   addBase({

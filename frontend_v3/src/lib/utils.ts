@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const navLinks = [
   {
-    name: "Home",
+    name: "Welcome",
     href: "/",
   },
   {
@@ -23,25 +23,17 @@ export const navLinks = [
     href: "/about",
   },
   {
+    name: "Team",
+    href: "/team",
+  },
+  {
     name: "Blog",
     href: "https://medium.com/@web3bridge",
     target: "_blank",
   },
   {
-    name: "dApps",
-    href: "/dapps",
-  },
-  {
-    name: "NFTs",
-    href: "/nfts",
-  },
-  {
     name: "Events",
     href: "/events",
-  },
-  {
-    name: "Career",
-    href: "/career",
   },
 ];
 

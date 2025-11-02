@@ -13,9 +13,10 @@ import FAQs from "@/components/home/FAQs";
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden flex flex-col">
-      <MaxWrapper className="flex flex-col w-full">
-        <HeroSection />
-      </MaxWrapper>
+       
+      <HeroSection />
+      
+
       <div className="w-full radial-gradient">
         <SponsorLists />
         <MaxWrapper>
