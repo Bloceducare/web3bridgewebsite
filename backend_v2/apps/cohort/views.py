@@ -508,12 +508,19 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
                 return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
             
             # Send email asynchronously in background to avoid timeout
+            print(f"[API] Bulk email request received")
+            print(f"[API] Subject: {subject}")
+            print(f"[API] Recipient IDs: {recipient_ids}")
+            print(f"[API] From admission: {from_admission}")
+            print(f"[API] Starting background thread...")
+            
             thread = threading.Thread(
                 target=send_bulk_email,
                 args=(subject, html_body, recipient_ids, from_admission),
                 daemon=True
             )
             thread.start()
+            print(f"[API] Background thread started, returning 200 response")
             
             # Return immediately
             return Response({
@@ -536,12 +543,18 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
                 return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
             
             # Send email asynchronously in background to avoid timeout
+            print(f"[API] Admission bulk email request received")
+            print(f"[API] Subject: {subject}")
+            print(f"[API] Recipient IDs: {recipient_ids}")
+            print(f"[API] Starting background thread for admission emails...")
+            
             thread = threading.Thread(
                 target=send_bulk_email,
                 args=(subject, html_body, recipient_ids, True),
                 daemon=True
             )
             thread.start()
+            print(f"[API] Background thread started, returning 200 response")
             
             # Return immediately
             return Response({

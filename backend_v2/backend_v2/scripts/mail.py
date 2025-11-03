@@ -10,6 +10,11 @@ def _send_email_batch(subject, html_content, recipient_emails_batch, from_email,
     """
     Helper function to send emails to a batch of recipients.
     """
+    batch_num = len(recipient_emails_batch)
+    print(f"[EMAIL BATCH] Starting to send batch with {batch_num} recipients")
+    print(f"[EMAIL BATCH] From: {from_email}, Admission: {from_admission}")
+    print(f"[EMAIL BATCH] First 3 recipients: {recipient_emails_batch[:3]}")
+    
     try:
         # Construct email
         email = EmailMessage(
@@ -23,6 +28,7 @@ def _send_email_batch(subject, html_content, recipient_emails_batch, from_email,
 
         # Use custom connection for admission emails if needed
         if from_admission and hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
+            print(f"[EMAIL BATCH] Using admission email connection")
             connection = get_connection(
                 host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
                 port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
@@ -31,12 +37,20 @@ def _send_email_batch(subject, html_content, recipient_emails_batch, from_email,
                 use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
             )
             email.connection = connection
+            print(f"[EMAIL BATCH] Connection configured: host={getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST)}, port={getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT)}")
+        else:
+            print(f"[EMAIL BATCH] Using default email connection")
 
         # Send the email
-        email.send(fail_silently=True)  # Don't raise exceptions to avoid breaking batch
+        print(f"[EMAIL BATCH] Attempting to send email...")
+        result = email.send(fail_silently=True)  # Don't raise exceptions to avoid breaking batch
+        print(f"[EMAIL BATCH] Email send result: {result}")
+        print(f"[EMAIL BATCH] Successfully sent batch to {batch_num} recipients")
     except Exception as e:
         # Log error but don't stop other batches
-        print(f"Error sending email batch: {str(e)}")
+        print(f"[EMAIL BATCH] ERROR sending email batch: {str(e)}")
+        import traceback
+        print(f"[EMAIL BATCH] Traceback: {traceback.format_exc()}")
 
 
 def send_bulk_email(subject, body, recipient_ids, from_admission=False):
@@ -49,18 +63,34 @@ def send_bulk_email(subject, body, recipient_ids, from_admission=False):
         recipient_ids (list): List of participant IDs
         from_admission (bool): If True, sends from admission@web3bridge.com
     """
+    print(f"[BULK EMAIL] ========================================")
+    print(f"[BULK EMAIL] Starting bulk email send")
+    print(f"[BULK EMAIL] Subject: {subject}")
+    print(f"[BULK EMAIL] Recipient IDs: {recipient_ids}")
+    print(f"[BULK EMAIL] From admission: {from_admission}")
+    print(f"[BULK EMAIL] Total recipient IDs: {len(recipient_ids)}")
+    
     # Choose email address based on parameter
     if from_admission:
         from_email = getattr(settings, 'ADMISSION_EMAIL_HOST_USER', 'admission@web3bridge.com')
+        print(f"[BULK EMAIL] From email (admission): {from_email}")
     else:
-        from_email = settings.EMAIL_HOST_USER
+        from_email = getattr(settings, 'EMAIL_HOST_USER', 'default@web3bridge.com')
+        print(f"[BULK EMAIL] From email (default): {from_email}")
 
     # Fetch emails from participant IDs - optimize query
+    print(f"[BULK EMAIL] Fetching participants from database...")
     participants = Participant.objects.filter(id__in=recipient_ids).only('email', 'id')
+    participant_count = participants.count()
+    print(f"[BULK EMAIL] Found {participant_count} participants in database")
+    
     recipient_emails = [p.email for p in participants if p.email]
+    print(f"[BULK EMAIL] Valid emails found: {len(recipient_emails)}")
+    print(f"[BULK EMAIL] First 5 emails: {recipient_emails[:5]}")
 
     if not recipient_emails:
-        print("No valid recipient emails found")
+        print("[BULK EMAIL] ERROR: No valid recipient emails found")
+        print(f"[BULK EMAIL] Participants queried: {list(participants.values_list('id', 'email'))}")
         return
 
     # General context (non-personalized)
@@ -70,15 +100,22 @@ def send_bulk_email(subject, body, recipient_ids, from_admission=False):
     }
 
     # Render HTML once for all recipients
+    print(f"[BULK EMAIL] Rendering email template...")
     html_content = render_to_string('cohort/custommail.html', context)
+    print(f"[BULK EMAIL] Template rendered, HTML length: {len(html_content)} characters")
 
     # Send in batches to avoid timeouts and SMTP limits
     # Most SMTP servers limit BCC recipients per email (typically 50-100)
     BATCH_SIZE = 50
     threads = []
+    total_batches = (len(recipient_emails) + BATCH_SIZE - 1) // BATCH_SIZE
+    print(f"[BULK EMAIL] Creating {total_batches} batches of size {BATCH_SIZE}")
 
     for i in range(0, len(recipient_emails), BATCH_SIZE):
         batch = recipient_emails[i:i + BATCH_SIZE]
+        batch_num = (i // BATCH_SIZE) + 1
+        print(f"[BULK EMAIL] Creating thread for batch {batch_num}/{total_batches} ({len(batch)} recipients)")
+        
         # Send each batch in a separate thread to avoid blocking
         thread = threading.Thread(
             target=_send_email_batch,
@@ -87,14 +124,24 @@ def send_bulk_email(subject, body, recipient_ids, from_admission=False):
         )
         thread.start()
         threads.append(thread)
+        print(f"[BULK EMAIL] Started thread for batch {batch_num}")
         
         # Small delay between batches to avoid overwhelming the SMTP server
         if i + BATCH_SIZE < len(recipient_emails):
             time.sleep(0.5)
 
     # Wait for all threads to complete (with timeout)
-    for thread in threads:
+    print(f"[BULK EMAIL] Waiting for {len(threads)} threads to complete...")
+    for idx, thread in enumerate(threads, 1):
+        print(f"[BULK EMAIL] Waiting for thread {idx}/{len(threads)}...")
         thread.join(timeout=30)  # 30 second timeout per batch
+        if thread.is_alive():
+            print(f"[BULK EMAIL] WARNING: Thread {idx} timed out after 30 seconds")
+        else:
+            print(f"[BULK EMAIL] Thread {idx} completed successfully")
+    
+    print(f"[BULK EMAIL] ========================================")
+    print(f"[BULK EMAIL] Bulk email process completed")
 
     # subject = 'Hello from Web3bridge'
     # context = {
