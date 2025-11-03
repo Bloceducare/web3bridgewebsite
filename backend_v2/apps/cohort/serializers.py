@@ -275,7 +275,7 @@ class TestimonialSerializer:
 
 class BulkEmailSerializer(serializers.Serializer):
     recipients = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=models.Participant.objects.all()),
+        child=serializers.IntegerField(),
         help_text="List of participant IDs to send the email to"
     )
     subject = serializers.CharField(
@@ -292,5 +292,28 @@ class BulkEmailSerializer(serializers.Serializer):
     def validate_recipients(self, value):
         if not value:
             raise serializers.ValidationError("At least one recipient is required")
-        return value
+        
+        # Validate all IDs exist in a single bulk query instead of individual queries
+        if not isinstance(value, list):
+            raise serializers.ValidationError("Recipients must be a list")
+        
+        # Convert to integers and remove duplicates
+        try:
+            recipient_ids = [int(id) for id in value]
+            unique_ids = list(set(recipient_ids))
+        except (ValueError, TypeError):
+            raise serializers.ValidationError("All recipient IDs must be valid integers")
+        
+        # Bulk check existence
+        existing_ids = set(
+            models.Participant.objects.filter(id__in=unique_ids).values_list('id', flat=True)
+        )
+        missing_ids = set(unique_ids) - existing_ids
+        
+        if missing_ids:
+            raise serializers.ValidationError(
+                f"Invalid participant IDs: {list(missing_ids)}"
+            )
+        
+        return unique_ids
 

@@ -1,13 +1,47 @@
 import time
+import threading
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, get_connection
 from django.template.loader import render_to_string
 from cohort.models import Participant
 
 
+def _send_email_batch(subject, html_content, recipient_emails_batch, from_email, from_admission=False):
+    """
+    Helper function to send emails to a batch of recipients.
+    """
+    try:
+        # Construct email
+        email = EmailMessage(
+            subject=subject,
+            body=html_content,
+            from_email=from_email,
+            to=[],  # No need to specify 'to' since we're using BCC
+            bcc=recipient_emails_batch,
+        )
+        email.content_subtype = 'html'  # Important! Tells Django to treat it as HTML
+
+        # Use custom connection for admission emails if needed
+        if from_admission and hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
+            connection = get_connection(
+                host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
+                port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
+                username=getattr(settings, 'ADMISSION_EMAIL_HOST_USER'),
+                password=getattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'),
+                use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
+            )
+            email.connection = connection
+
+        # Send the email
+        email.send(fail_silently=True)  # Don't raise exceptions to avoid breaking batch
+    except Exception as e:
+        # Log error but don't stop other batches
+        print(f"Error sending email batch: {str(e)}")
+
+
 def send_bulk_email(subject, body, recipient_ids, from_admission=False):
     """
-    Sends a single email to multiple recipients.
+    Sends a single email to multiple recipients in batches to avoid timeouts.
     
     Args:
         subject (str): Subject of the email
@@ -21,9 +55,13 @@ def send_bulk_email(subject, body, recipient_ids, from_admission=False):
     else:
         from_email = settings.EMAIL_HOST_USER
 
-    # Fetch emails from participant IDs
-    participants = Participant.objects.filter(id__in=recipient_ids).select_related('registration')
-    recipient_emails = [p.email for p in participants]
+    # Fetch emails from participant IDs - optimize query
+    participants = Participant.objects.filter(id__in=recipient_ids).only('email', 'id')
+    recipient_emails = [p.email for p in participants if p.email]
+
+    if not recipient_emails:
+        print("No valid recipient emails found")
+        return
 
     # General context (non-personalized)
     context = {
@@ -34,30 +72,29 @@ def send_bulk_email(subject, body, recipient_ids, from_admission=False):
     # Render HTML once for all recipients
     html_content = render_to_string('cohort/custommail.html', context)
 
-    # Construct email
-    email = EmailMessage(
-        subject=subject,
-        body=html_content,
-        from_email=from_email,
-        to=[],  # No need to specify 'to' since we're using BCC
-        bcc=recipient_emails,
-    )
-    email.content_subtype = 'html'  # Important! Tells Django to treat it as HTML
+    # Send in batches to avoid timeouts and SMTP limits
+    # Most SMTP servers limit BCC recipients per email (typically 50-100)
+    BATCH_SIZE = 50
+    threads = []
 
-    # Use custom connection for admission emails if needed
-    if from_admission and hasattr(settings, 'ADMISSION_EMAIL_HOST_USER') and hasattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'):
-        from django.core.mail import get_connection
-        connection = get_connection(
-            host=getattr(settings, 'ADMISSION_EMAIL_HOST', settings.EMAIL_HOST),
-            port=getattr(settings, 'ADMISSION_EMAIL_PORT', settings.EMAIL_PORT),
-            username=getattr(settings, 'ADMISSION_EMAIL_HOST_USER'),
-            password=getattr(settings, 'ADMISSION_EMAIL_HOST_PASSWORD'),
-            use_tls=getattr(settings, 'ADMISSION_EMAIL_USE_TLS', settings.EMAIL_USE_TLS),
+    for i in range(0, len(recipient_emails), BATCH_SIZE):
+        batch = recipient_emails[i:i + BATCH_SIZE]
+        # Send each batch in a separate thread to avoid blocking
+        thread = threading.Thread(
+            target=_send_email_batch,
+            args=(subject, html_content, batch, from_email, from_admission),
+            daemon=True
         )
-        email.connection = connection
+        thread.start()
+        threads.append(thread)
+        
+        # Small delay between batches to avoid overwhelming the SMTP server
+        if i + BATCH_SIZE < len(recipient_emails):
+            time.sleep(0.5)
 
-    # Send the email
-    email.send(fail_silently=False)
+    # Wait for all threads to complete (with timeout)
+    for thread in threads:
+        thread.join(timeout=30)  # 30 second timeout per batch
 
     # subject = 'Hello from Web3bridge'
     # context = {

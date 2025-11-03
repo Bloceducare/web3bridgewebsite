@@ -5,6 +5,7 @@ from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from decouple import config
+import threading
 from drf_yasg.utils import swagger_auto_schema
 from .helpers.model import send_registration_success_mail, send_participant_details
 from backend_v2.scripts.mail import send_bulk_email
@@ -500,12 +501,25 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
         if serializer.is_valid():
             subject = serializer.validated_data['subject']
             html_body = serializer.validated_data['body']
-            recipients = request.data.get('recipients', [])
+            recipient_ids = serializer.validated_data['recipients']  # Already validated as integers
             from_admission = request.data.get('from_admission', False)  # New parameter
-            if not recipients:
+            
+            if not recipient_ids:
                 return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
-            send_bulk_email(subject, html_body, recipients, from_admission=from_admission)
-            return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
+            
+            # Send email asynchronously in background to avoid timeout
+            thread = threading.Thread(
+                target=send_bulk_email,
+                args=(subject, html_body, recipient_ids, from_admission),
+                daemon=True
+            )
+            thread.start()
+            
+            # Return immediately
+            return Response({
+                "message": "Email sending initiated",
+                "recipient_count": len(recipient_ids)
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=serializers.BulkEmailSerializer)
@@ -516,11 +530,24 @@ class BulkEmailViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewS
         if serializer.is_valid():
             subject = serializer.validated_data['subject']
             html_body = serializer.validated_data['body']
-            recipients = request.data.get('recipients', [])
-            if not recipients:
+            recipient_ids = serializer.validated_data['recipients']  # Already validated as integers
+            
+            if not recipient_ids:
                 return Response({"message": "No recipients provided"}, status=status.HTTP_400_BAD_REQUEST)
-            send_bulk_email(subject, html_body, recipients, from_admission=True)
-            return Response({"message": "Admission emails sent successfully"}, status=status.HTTP_200_OK)
+            
+            # Send email asynchronously in background to avoid timeout
+            thread = threading.Thread(
+                target=send_bulk_email,
+                args=(subject, html_body, recipient_ids, True),
+                daemon=True
+            )
+            thread.start()
+            
+            # Return immediately
+            return Response({
+                "message": "Admission email sending initiated",
+                "recipient_count": len(recipient_ids)
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
