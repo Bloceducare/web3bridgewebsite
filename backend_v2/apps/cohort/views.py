@@ -7,9 +7,10 @@ from utils.helpers.requests import Utils as requestUtils
 from decouple import config
 import threading
 from drf_yasg.utils import swagger_auto_schema
-from .helpers.model import send_registration_success_mail, send_participant_details
+from .helpers.model import send_registration_success_mail, send_participant_details, send_approval_email
 from backend_v2.scripts.mail import send_bulk_email
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
+from utils.enums.models import RegistrationStatus
 
 API_KEY = config("PAYMENT_API_KEY")
 
@@ -175,7 +176,7 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
-    admin_actions= ["update", "destroy", "send_confirmation_email"]
+    admin_actions= ["update", "destroy", "send_confirmation_email", "approve"]
 
     def check_api_key(self, request):
         api_key = request.headers.get('API-Key')
@@ -394,6 +395,27 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
         return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
 
+    @decorators.action(detail=True, methods=["post"], url_path="approve")
+    def approve(self, request, pk=None, *args, **kwargs):
+        """
+        Approve a participant: sets status to ACCEPTED and sends course-based email.
+        For ZK courses, includes a payment link in the email.
+        """
+        try:
+            participant_object = self.queryset.get(pk=pk)
+        except models.Participant.DoesNotExist:
+            return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
+
+        # Update status to ACCEPTED
+        participant_object.status = RegistrationStatus.ACCEPTED.value
+        participant_object.save()
+
+        # Send course-based approval email (ZK includes payment link)
+        payment_link = "https://payment.web3bridgeafrica.com"
+        send_approval_email(participant_object, payment_link=payment_link)
+
+        serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
+        return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
     
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())

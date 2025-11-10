@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web3Bridge ZK Approval</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        p { line-height: 1.6; margin-bottom: 15px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .btn { display: inline-block; padding: 10px 16px; background: #007bff; color: #fff !important; border-radius: 6px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Dear {{name}},</p>
+        <p>Congratulations — your application for the <strong>{{course_name}}</strong> has been <strong>approved</strong>!</p>
+        <p>To secure your spot, please proceed to payment using the link below:</p>
+        <p><a class="btn" href="{{payment_link}}" target="_blank" rel="noopener">Proceed to Payment</a></p>
+        <p>If the button doesn’t work, copy and paste this link into your browser:<br/>
+        <a href="{{payment_link}}" target="_blank" rel="noopener">{{payment_link}}</a></p>
+        <p>We’re excited to have you in the Zero Knowledge Program.</p>
+        <p>Warm regards,<br/>The Web3Bridge Team<br/><a href="https://www.web3bridge.com" target="_blank" rel="noopener">www.web3bridge.com</a></p>
+    </div>
+</body>
+</html>
+
+
