@@ -11,6 +11,8 @@ import Community from "@/components/home/Community";
 import FAQs from "@/components/home/FAQs";
 import WhatWeDo from "@/components/home/WhatWeDo";
 import Cohorts from "@/components/home/Cohorts";
+import Partners from "@/components/home/Partners";
+import Alumni from "@/components/home/Alumni";
 
 export default function Home() {
   return (
@@ -27,12 +29,14 @@ export default function Home() {
 
           <WhatWeDo />
           <Cohorts />
+        <Partners />
 
 
        {/** <Essence />
         <Web3 />
         <Web2 />*/}
       </MaxWrapper>
+      <Alumni />
       {/**<Banner />
       <Community /> */}
       <MaxWrapper className="flex flex-col w-full">

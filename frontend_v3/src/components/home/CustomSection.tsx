@@ -9,10 +9,10 @@ const CustomSection: React.FC<CustomSectionProps> = ({heading, description, chil
   <div  className={cn(
           "h-[10rem] flex items-center justify-center",
         )}>
-      <TextHoverEffect text={heading}  />
+      <TextHoverEffect text={heading.toUpperCase()}  />
     </div>
 
-    <p className="text-2xl w-[600px] mb-8 text-center bg-gradient-to-b text-transparent bg-clip-text from-[hsla(40,100%,98%,1)] to-[hsla(40,100%,98%,0.67)]">{description}</p>
+    <p className="text-2xl w-[600px] text-center bg-gradient-to-b text-transparent bg-clip-text from-[hsla(40,100%,98%,1)] to-[hsla(40,100%,98%,0.67)]">{description}</p>
     
       {children}
     
