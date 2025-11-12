@@ -4,23 +4,23 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+const buttonVariants = cva("inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground rounded-md shadow hover:bg-primary/90",
+          " text-primary-foreground rounded-md shadow hover:bg-primary/90 shadow-[inset_1px_1px_8px_#FFC7E1]",
         destructive:
-          "bg-destructive text-destructive-foreground rounded-md shadow-sm hover:bg-destructive/90",
+          " text-destructive-foreground rounded-md shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-background shadow-sm rounded-md hover:bg-accent hover:text-accent-foreground",
+          " rounded-full shadow-sm dark: hover:bg-accent hover:text-accent-foreground shadow-[inset_1px_1px_8px_#FFC7E1]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm rounded-md hover:bg-secondary/80",
+          "rounded-full bg-[rgba(234,13,83,0.03)] px-12 py-6 text-primary-background capitalize  shadow-[inset_1px_1px_18px_rgba(255,148,198,0.37)] dark:text-primary",
         ghost: "rounded-md hover:bg-accent hover:text-accent-foreground",
         link: "text-primary rounded-md underline-offset-4 hover:underline",
         bridgePrimary:
-          "rounded-full px-12 py-6 border-2 ring-2 ring-red-300 dark:ring-red-500 border-red-500 dark:border-red-300 bg-red-500/10 text-bridgeRed capitalize hover:bg-bridgeRed hover:text-red-100",
+          "rounded-full bg-bridgeRed px-12 py-6 text-primary-foreground capitalize  shadow-[inset_1px_1px_18px_#FFC7E1] dark:text-primary",
+        bridgeOutline: "rounded-full px-12 py-6 text-primary-background capitalize  shadow-[inset_1px_1px_8px_rgba(255,199,225,0.3)] dark:text-primary"
       },
       size: {
         default: "h-9 px-4 py-2",

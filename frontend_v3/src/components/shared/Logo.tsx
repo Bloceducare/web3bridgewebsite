@@ -22,7 +22,7 @@ export default function Logo() {
       <Image
         priority
         quality={100}
-        src={currentTheme === "dark" ? logoDark : logoLight}
+        src={currentTheme === "dark" ? logoLight : logoDark}
         alt="Web3Bridge Logo"
         className="h-14 w-40"
       />
