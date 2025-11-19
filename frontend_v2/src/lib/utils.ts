@@ -178,6 +178,11 @@ export const TeamMembers = [
     role: "Academic Operations and Curriculum Design Lead",
     image: "/about/ayo_img.jpeg",
   },
+  {
+    name: "Casweeny Ojukwu",
+    role: "Lead Mentor",
+    image: "/about/Casweeny.jpeg",
+  },
 ];
 
 export const isValidEthereumAddress = (address: string) => {
