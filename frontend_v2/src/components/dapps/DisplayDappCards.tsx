@@ -11,16 +11,19 @@ export const DisplayDappCards = () => {
         image={HydroSwap}
         description="Swap your tokens with ease. A community favorite that allows you to trade tokens with folks across the network."
         buttonText="Open Hydroswap"
+        link="https://www.hydroswap.org/"
       />
         <DappCard
         image={chained}
         description="A De-Fi app built on the blockchain. Chained Thrift helps achieve financial goals through a decentralized thrift saving scheme."
         buttonText="Open Chained Thrift"
+        link="/"
       />
         <DappCard
         image={shapeDefi}
         description="A De-Fi app built on the blockchain. Chained Thrift helps achieve financial goals through a decentralized thrift saving scheme."
         buttonText="Open Classmate"
+        link="https://classmate-v2.web3bridge.com"
       />
     </section>
   );
