@@ -5,6 +5,7 @@ cloudinary
 Django
 django-cloudinary-storage
 django-cors-headers
+django-redis
 djangorestframework
 djangorestframework-simplejwt
 drf-yasg
@@ -18,6 +19,7 @@ PyJWT
 python-decouple
 pytz
 PyYAML
+redis
 requests
 rest-framework-simplejwt
 six

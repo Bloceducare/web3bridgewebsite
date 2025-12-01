@@ -66,6 +66,13 @@ class Participant(BaseModelBaseMixin, models.Model):
     
     class Meta:
         unique_together = ('email', 'registration',)
+        indexes = [
+            models.Index(fields=['-created_at'], name='participant_created_at_idx'),
+            models.Index(fields=['email'], name='participant_email_idx'),
+            models.Index(fields=['registration'], name='participant_registration_idx'),
+            models.Index(fields=['course'], name='participant_course_idx'),
+            models.Index(fields=['status'], name='participant_status_idx'),
+        ]
     
     def __str__(self):
         return f"< {type(self).__name__}({self.name}) >"

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
     "drf_yasg",
+    'django_redis',
 ]
 
 PROJECT_APPS = [
@@ -234,3 +235,41 @@ ADMISSION_EMAIL_USE_TLS = config('ADMISSION_EMAIL_USE_TLS', default=EMAIL_USE_TL
 # Number of parallel workers when sending scholarship emails
 SCHOLARSHIP_MAIL_MAX_WORKERS = config('SCHOLARSHIP_MAIL_MAX_WORKERS', default=12, cast=int)
 SCHOLARSHIP_MAIL_BCC_CHUNK_SIZE = config('SCHOLARSHIP_MAIL_BCC_CHUNK_SIZE', default=250, cast=int)
+
+# _______________________Redis Cache Configuration_________________________
+# Redis connection for Koyeb deployment
+# Private Address: redis-on-koyeb.male-desdemona.internal:6379
+# TCP proxy: 01.proxy.koyeb.app:12939
+REDIS_HOST = config('REDIS_HOST', default='01.proxy.koyeb.app')
+REDIS_PORT = config('REDIS_PORT', default='12939')
+REDIS_DB = config('REDIS_DB', default='0')
+REDIS_PASSWORD = config('REDIS_PASSWORD', default=None)
+
+# Build Redis URL
+if REDIS_PASSWORD:
+    REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+else:
+    REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'IGNORE_EXCEPTIONS': True,  # Don't fail if Redis is unavailable
+            'CONNECTION_POOL_KWARGS': {
+                'retry_on_timeout': True,
+                'health_check_interval': 30,
+            }
+        },
+        'KEY_PREFIX': 'web3bridge',
+        'TIMEOUT': 300,  # 5 minutes default timeout
+    }
+}
+
+# Cache settings for participant data
+PARTICIPANT_CACHE_TIMEOUT = config('PARTICIPANT_CACHE_TIMEOUT', default=600, cast=int) 

@@ -1,16 +1,36 @@
 from django.forms import ValidationError
+from django.core.cache import cache
+from django.db.models import Q
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from payment.models import DiscountCode, Payment
 from rest_framework import decorators, pagination, status, viewsets
 from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from decouple import config
 import threading
+import json
 from drf_yasg.utils import swagger_auto_schema
 from .helpers.model import send_registration_success_mail, send_participant_details, send_approval_email
 from backend_v2.scripts.mail import send_bulk_email
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin 
 from utils.enums.models import RegistrationStatus
+from django.conf import settings
+
+def invalidate_participant_cache():
+    """Helper function to invalidate participant cache"""
+    try:
+        # Try to use delete_pattern if available (django-redis)
+        if hasattr(cache, 'delete_pattern'):
+            cache.delete_pattern('participants_all_page_*')
+        else:
+            # Fallback: clear all cache or use a different approach
+            # For now, we'll just clear the entire cache namespace
+            # In production, you might want to track cache keys
+            cache.clear()
+    except Exception:
+        # If cache operations fail, continue without cache invalidation
+        pass
 
 API_KEY = config("PAYMENT_API_KEY")
 
@@ -174,9 +194,26 @@ class RegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             return requestUtils.error_response("Error Opening Registration", serializer.errors, http_status=status.HTTP_400_BAD_REQUEST)
 
 class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
-    queryset = models.Participant.objects.all()
     serializer_class = serializers.ParticipantSerializer
     admin_actions= ["update", "destroy", "send_confirmation_email", "approve"]
+    
+    def get_queryset(self):
+        """
+        Optimized queryset with select_related, prefetch_related, and ordering.
+        This prevents N+1 queries and ensures data is ordered by newest first.
+        """
+        return models.Participant.objects.select_related(
+            'course',
+            'registration',
+            'course__registration'
+        ).prefetch_related(
+            'course__images'
+        ).order_by('-created_at')
+    
+    @property
+    def queryset(self):
+        """Property to maintain backward compatibility"""
+        return self.get_queryset()
 
     def check_api_key(self, request):
         api_key = request.headers.get('API-Key')
@@ -232,6 +269,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if serializer.is_valid():
             try:
                 participant_obj = serializer.save()
+                # Invalidate cache when new participant is created
+                invalidate_participant_cache()
             except Exception as e:
                 return requestUtils.error_response(
                     "Error Creating Participant", str(e), http_status=status.HTTP_400_BAD_REQUEST
@@ -311,13 +350,15 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if not email:
             return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
         
-        participant_object = self.queryset.filter(email=email).order_by('-created_at').first()
+        participant_object = self.get_queryset().filter(email=email).first()
         if not participant_object:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
         participant_object.payment_status = True
         participant_object.save()
+        # Invalidate cache when payment status changes
+        invalidate_participant_cache()
 
         # Send registration success email
         email = serialized_participant_obj.get('email')
@@ -377,13 +418,15 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if not email:
             return requestUtils.error_response("Email is required", {}, http_status=status.HTTP_400_BAD_REQUEST)
         
-        participant_object = self.queryset.filter(email=email).order_by('-created_at').first()
+        participant_object = self.get_queryset().filter(email=email).first()
         if not participant_object:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
         
         serialized_participant_obj = self.serializer_class.Retrieve(participant_object).data
         participant_object.payment_status = True
         participant_object.save()
+        # Invalidate cache when payment status changes
+        invalidate_participant_cache()
 
         # Send registration success email
         email = serialized_participant_obj.get('email')
@@ -402,13 +445,15 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         For ZK courses, includes a payment link in the email.
         """
         try:
-            participant_object = self.queryset.get(pk=pk)
+            participant_object = self.get_queryset().get(pk=pk)
         except models.Participant.DoesNotExist:
             return requestUtils.error_response("Participant not found", {}, http_status=status.HTTP_404_NOT_FOUND)
 
         # Update status to ACCEPTED
         participant_object.status = RegistrationStatus.ACCEPTED.value
         participant_object.save()
+        # Invalidate cache when participant is updated
+        invalidate_participant_cache()
 
         # Send course-based approval email (ZK includes payment link)
         payment_link = "https://payment.web3bridgeafrica.com"
@@ -420,11 +465,13 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
     
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())
     def update(self, request, pk, *args, **kwargs): 
-        participant_object= self.queryset.get(pk=pk)
+        participant_object= self.get_queryset().get(pk=pk)
         serializer = self.serializer_class.Update(participant_object, data=request.data)
         
         if serializer.is_valid():
             participant_obj= serializer.save()
+            # Invalidate cache when participant is updated
+            invalidate_participant_cache()
             serialized_participant_obj= self.serializer_class.Retrieve(participant_obj).data
             return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
         else:
@@ -432,42 +479,168 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
        
         
     def retrieve(self, request, pk, *args, **kwargs): 
-        participant_object= self.queryset.get(pk=pk)
+        participant_object= self.get_queryset().get(pk=pk)
         serialized_participant_obj= self.serializer_class.Retrieve(participant_object).data
         return requestUtils.success_response(data=serialized_participant_obj, http_status=status.HTTP_200_OK)
     
     
     def destroy(self, request, pk, *args, **kwargs): 
-        participant_object= self.queryset.get(pk=pk)
+        participant_object= self.get_queryset().get(pk=pk)
         participant_object.delete()
+        # Invalidate cache when participant is deleted
+        invalidate_participant_cache()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
     
     
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
-        page_size = 50
-        paginator = pagination.PageNumberPagination()
-        paginator.page_size = page_size
+        """
+        Optimized participant listing endpoint with:
+        - Redis caching
+        - Optimized pagination (no expensive count query)
+        - Query optimization (select_related/prefetch_related)
+        - Ordering by newest first
+        """
+        # Get pagination parameters
+        page = int(request.GET.get('page', 1))
+        limit = int(request.GET.get('limit', 50))
         
-        page = paginator.paginate_queryset(self.queryset, request)
-        serializer = self.serializer_class.List(page, many=True)
+        # Ensure limit doesn't exceed 200 for performance
+        limit = min(limit, 200)
+        
+        # Calculate offset
+        offset = (page - 1) * limit
+        
+        # Create cache key based on page and limit
+        cache_key = f'participants_all_page_{page}_limit_{limit}'
+        
+        # Try to get from cache first
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return requestUtils.success_response(
+                data=cached_data,
+                http_status=status.HTTP_200_OK
+            )
+        
+        # Get optimized queryset
+        queryset = self.get_queryset()
+        
+        # Get one extra item to check if there's a next page (without expensive count)
+        paginated_queryset = queryset[offset:offset + limit + 1]
+        
+        # Check if there's a next page
+        has_next = len(paginated_queryset) > limit
+        if has_next:
+            paginated_queryset = paginated_queryset[:limit]  # Remove the extra item
+        
+        # Serialize the data
+        serializer = self.serializer_class.List(paginated_queryset, many=True)
+        
+        # Calculate pagination info without expensive count query
+        has_previous = page > 1
+        
+        response_data = {
+            'results': serializer.data,
+            'pagination': {
+                'current_page': page,
+                'limit': limit,
+                'has_next': has_next,
+                'has_previous': has_previous,
+                'next_page': page + 1 if has_next else None,
+                'previous_page': page - 1 if has_previous else None,
+                # Don't include total_count or total_pages to avoid expensive queries
+            }
+        }
+        
+        # Cache the response for 10 minutes (configurable)
+        cache_timeout = getattr(settings, 'PARTICIPANT_CACHE_TIMEOUT', 600)
+        cache.set(cache_key, response_data, cache_timeout)
         
         return requestUtils.success_response(
-            data={
-                'count': self.queryset.count(),
-                'next': paginator.get_next_link(),
-                'previous': paginator.get_previous_link(),
-                'results': serializer.data
-            }, 
+            data=response_data,
             http_status=status.HTTP_200_OK
         )
     
     
     @decorators.action(detail=True, methods=["get"])
     def registration(self, request, pk):
-        query_set= self.queryset.filter(registration=pk)
-        serializer = self.serializer_class.List(query_set, many=True)
+        """
+        Get participants by registration ID with optimization
+        """
+        queryset = self.get_queryset().filter(registration=pk)
+        serializer = self.serializer_class.List(queryset, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+    @decorators.action(detail=False, methods=["get"], url_path="stream")
+    def stream(self, request):
+        """
+        Streaming endpoint for large datasets.
+        Returns data in chunks using Server-Sent Events (SSE) or JSON streaming.
+        This is optimized for fetching thousands of participants without timeout.
+        """
+        from django.http import StreamingHttpResponse
+        
+        # Get parameters
+        chunk_size = int(request.GET.get('chunk_size', 100))
+        registration_id = request.GET.get('registration', None)
+        course_id = request.GET.get('course', None)
+        
+        # Build optimized queryset
+        queryset = self.get_queryset()
+        
+        if registration_id:
+            queryset = queryset.filter(registration_id=registration_id)
+        if course_id:
+            queryset = queryset.filter(course_id=course_id)
+        
+        def generate():
+            """Generator function that yields JSON chunks"""
+            # Send initial metadata
+            yield '{"status": "started", "chunk_size": ' + str(chunk_size) + '}\n'
+            
+            # Process in chunks
+            offset = 0
+            total_sent = 0
+            
+            while True:
+                # Get chunk
+                chunk = queryset[offset:offset + chunk_size]
+                chunk_list = list(chunk)
+                
+                if not chunk_list:
+                    break
+                
+                # Serialize chunk
+                serializer = self.serializer_class.List(chunk_list, many=True)
+                chunk_data = serializer.data
+                
+                # Yield chunk as JSON
+                yield json.dumps({
+                    'chunk': chunk_data,
+                    'offset': offset,
+                    'count': len(chunk_data),
+                    'total_sent': total_sent + len(chunk_data)
+                }) + '\n'
+                
+                offset += chunk_size
+                total_sent += len(chunk_data)
+                
+                # If we got fewer items than chunk_size, we're done
+                if len(chunk_list) < chunk_size:
+                    break
+            
+            # Send completion message
+            yield json.dumps({
+                'status': 'completed',
+                'total_sent': total_sent
+            }) + '\n'
+        
+        response = StreamingHttpResponse(
+            generate(),
+            content_type='application/x-ndjson'  # Newline-delimited JSON
+        )
+        response['X-Accel-Buffering'] = 'no'  # Disable buffering in nginx
+        return response
 
 class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
     queryset = models.Testimonial.objects.all()
