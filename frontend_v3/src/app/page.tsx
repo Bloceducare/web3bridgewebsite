@@ -9,27 +9,36 @@ import Web2 from "@/components/home/Web2";
 import Banner from "@/components/home/Banner";
 import Community from "@/components/home/Community";
 import FAQs from "@/components/home/FAQs";
+import WhatWeDo from "@/components/home/WhatWeDo";
+import Cohorts from "@/components/home/Cohorts";
+import Partners from "@/components/home/Partners";
+import Alumni from "@/components/home/Alumni";
 
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden flex flex-col">
-      <MaxWrapper className="flex flex-col w-full">
-        <HeroSection />
-      </MaxWrapper>
-      <div className="w-full radial-gradient">
-        <SponsorLists />
+      <HeroSection />
+      <Stats />
+
+      {/** <div className="w-full radial-gradient">
         <MaxWrapper>
           <Testimonial />
         </MaxWrapper>
-      </div>
+      </div> */}
       <MaxWrapper>
-        <Stats />
-        <Essence />
+
+          <WhatWeDo />
+          <Cohorts />
+        <Partners />
+
+
+       {/** <Essence />
         <Web3 />
-        <Web2 />
+        <Web2 />*/}
       </MaxWrapper>
-      <Banner />
-      <Community />
+      <Alumni />
+      {/**<Banner />
+      <Community /> */}
       <MaxWrapper className="flex flex-col w-full">
         <FAQs />
       </MaxWrapper>

@@ -132,3 +132,66 @@
 *::-webkit-scrollbar {
   display: none;
 }
+
+/* styles/globals.css */
+
+/* 
+  these type the CSS variable as color
+  unlocking the ability for the browser 
+  to animate just that portion
+*/
+@property --color-1 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value:hsl(40, 100%, 95%);
+}
+
+@property --color-2 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value:  hsl(344, 100%, 71%);
+}
+
+@property --color-3 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: hsl(341, 100%, 90%);
+}
+
+
+
+/* keyframes that change the color variable */
+@keyframes gradient-change {
+  to {
+    --color-1: hsl(40, 100%, 98%);
+    --color-2: hsl(344, 100%, 73%);
+    --color-3: hsl(341, 100%, 92%);
+  }
+}
+
+.animated-heading {
+  /* apply variable changes over time */
+  animation: gradient-change 2s linear infinite alternate;
+
+  
+  background: linear-gradient(
+    /* 
+      in oklch produces more vibrant gradient results 
+      learn more https://developer.chrome.com/docs/css-ui/access-colors-spaces#color_interpolation
+    */
+    to right in oklch, 
+    /* use the variables in a gradient (or wherever!) */
+    var(--color-1), 
+    var(--color-2),
+    var(--color-3)
+  );
+  
+  /* old browser support */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* modern browser version */
+  background-clip: text;
+  color: transparent;
+}
+

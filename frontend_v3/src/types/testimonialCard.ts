@@ -1,12 +1,9 @@
 interface testimonialProps {
-
-    title: string;
-    description: string;
-    user: string;
-    role: string;
-    image: string
-
+  quote: string;
+  name: string;
+  title: string;
+  image?: string;
 }
 
+export default testimonialProps;
 
-export default testimonialProps
