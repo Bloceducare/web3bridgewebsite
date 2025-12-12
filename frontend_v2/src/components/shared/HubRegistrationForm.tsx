@@ -321,7 +321,7 @@ export default function HubRegistrationForm({
                         <div className="h-12 md:h-14 flex items-center justify-center border rounded-md">
                           <span className="text-sm text-muted-foreground">Loading available times...</span>
                         </div>
-                      ) : availableSlots.length > 0 ? (
+                      ) : timeSlots.length > 0 ? (
                         <select
                           {...field}
                           className={`h-12 md:h-14 shadow-none px-4 text-sm border rounded-md bg-background ${
@@ -330,13 +330,26 @@ export default function HubRegistrationForm({
                           disabled={isSubmitting}
                         >
                           <option value="">Select a time</option>
-                          {availableSlots
-                            .filter(slot => slot.date === selectedDate)
-                            .map((slot) => (
-                              <option key={slot.datetime} value={slot.time}>
-                                {slot.time} ({slot.available_spaces} spaces available)
+                          {timeSlots.map((slot) => {
+                            // Find matching available slot to show availability info
+                            const availableSlot = availableSlots.find(
+                              (s) => s.date === selectedDate && s.time === slot.value
+                            );
+                            const displayText = availableSlot
+                              ? `${slot.label} (${availableSlot.available_spaces} spaces available)`
+                              : slot.label;
+                            const isDisabled = availableSlot ? availableSlot.available_spaces <= 0 : false;
+                            
+                            return (
+                              <option 
+                                key={slot.value} 
+                                value={slot.value}
+                                disabled={isDisabled}
+                              >
+                                {displayText}
                               </option>
-                            ))}
+                            );
+                          })}
                         </select>
                       ) : (
                         <div className="h-12 md:h-14 flex items-center justify-center border rounded-md border-yellow-500 bg-yellow-50 dark:bg-yellow-900/10">
