@@ -514,9 +514,6 @@ class CheckInViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         checked_out = recent_queryset.filter(status=models.CheckIn.CHECKED_OUT).count()
         
         # Get today's stats
-        from django.utils import timezone
-        from django.db.models import Count
-        from datetime import timedelta
         
         today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
         today_checkins = self.queryset.filter(check_in_time__gte=today_start).count()
