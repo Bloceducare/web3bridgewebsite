@@ -60,8 +60,13 @@ export default function HubRegistrationForm({
   const fetchAvailableSlots = async (date: string) => {
     setLoadingSlots(true);
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+      // Check if baseUrl already ends with /api/v2, if so, don't add it again
+      const apiPath = baseUrl.endsWith('/api/v2') || baseUrl.endsWith('/api/v2/') 
+        ? '/hub/registration/available_slots/' 
+        : '/api/v2/hub/registration/available_slots/';
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/hub/registration/available_slots/?start_date=${date}&end_date=${date}`
+        `${baseUrl}${apiPath}?start_date=${date}&end_date=${date}`
       );
       const data = await response.json();
       if (data.success) {
