@@ -40,8 +40,8 @@ export const navLinks = [
     href: "/events",
   },
   {
-    name: "Career",
-    href: "/career",
+    name: "Ethereum Community Hub",
+    href: "/hub",
   },
 ];
 

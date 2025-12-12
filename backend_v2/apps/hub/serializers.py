@@ -4,6 +4,17 @@ from .literals import HUB_REGISTRATION_REF_NAME, HUB_SPACE_REF_NAME, HUB_CHECKIN
 
 
 class HubSpaceSerializer:
+    class Create(serializers.ModelSerializer):
+        class Meta:
+            model = models.HubSpace
+            fields = ["name", "total_capacity", "current_occupancy", "is_active"]
+            ref_name = HUB_SPACE_REF_NAME
+        
+        def create(self, validated_data):
+            hub_space_obj = models.HubSpace.objects.create(**validated_data)
+            hub_space_obj.save()
+            return hub_space_obj
+    
     class List(serializers.ModelSerializer):
         available_spaces = serializers.ReadOnlyField()
         occupancy_percentage = serializers.ReadOnlyField()
