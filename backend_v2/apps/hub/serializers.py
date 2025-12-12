@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import F
 from . import models
 from .literals import HUB_REGISTRATION_REF_NAME, HUB_SPACE_REF_NAME, HUB_CHECKIN_REF_NAME
 
@@ -85,6 +86,13 @@ class HubRegistrationSerializer:
 
 class CheckInSerializer:
     class Create(serializers.ModelSerializer):
+        space = serializers.PrimaryKeyRelatedField(
+            queryset=models.HubSpace.objects.filter(is_active=True),
+            required=False,
+            allow_null=True,
+            help_text="Optional: Space ID to assign. If not provided, will auto-assign to available space."
+        )
+        
         class Meta:
             model = models.CheckIn
             fields = ["registration", "space", "purpose", "notes"]
@@ -100,12 +108,6 @@ class CheckInSerializer:
                     {"registration": "Registration must be approved before checking in."}
                 )
             
-            # Check if space has available capacity
-            if space and space.current_occupancy >= space.total_capacity:
-                raise serializers.ValidationError(
-                    {"space": "Space is at full capacity."}
-                )
-            
             # Check if user is already checked in
             active_checkin = models.CheckIn.objects.filter(
                 registration=registration,
@@ -117,14 +119,53 @@ class CheckInSerializer:
                     {"registration": "User is already checked in. Please check out first."}
                 )
             
-            checkin_obj = models.CheckIn.objects.create(**validated_data)
+            # Auto-assign space if not provided
+            if not space:
+                space = self._find_available_space()
+                if not space:
+                    raise serializers.ValidationError(
+                        {"space": "No available spaces in the hub. All spaces are at full capacity."}
+                    )
+            
+            # Check if space has available capacity
+            if space.current_occupancy >= space.total_capacity:
+                raise serializers.ValidationError(
+                    {"space": f"Space '{space.name}' is at full capacity."}
+                )
+            
+            # Check if space is active
+            if not space.is_active:
+                raise serializers.ValidationError(
+                    {"space": f"Space '{space.name}' is not active."}
+                )
+            
+            # Create check-in
+            checkin_obj = models.CheckIn.objects.create(
+                registration=registration,
+                space=space,
+                purpose=validated_data.get('purpose'),
+                notes=validated_data.get('notes')
+            )
             
             # Increase space occupancy
-            if space:
-                space.current_occupancy += 1
-                space.save()
+            space.current_occupancy += 1
+            space.save()
             
             return checkin_obj
+        
+        def _find_available_space(self):
+            """Find an available space with capacity"""
+            # Get active spaces with available capacity
+            # Order by most available first, then by name
+            available_spaces = models.HubSpace.objects.filter(
+                is_active=True
+            ).extra(
+                select={'available': 'total_capacity - current_occupancy'}
+            ).extra(
+                where=['total_capacity > current_occupancy']
+            ).order_by('-available', 'name')
+            
+            return available_spaces.first()
     
     class List(serializers.ModelSerializer):
         registration_name = serializers.CharField(source='registration.name', read_only=True)
