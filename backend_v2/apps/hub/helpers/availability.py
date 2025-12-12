@@ -128,7 +128,7 @@ def get_available_slots(start_date=None, end_date=None, space_id=None):
                     "available_spaces": available,
                     "total_capacity": total_capacity,
                     "booked": booked_count,
-                    "currently_occupied": active_occupancy,
+                    "currently_occupied": active_checkin_count,
                 })
         
         current_date += timedelta(days=1)
