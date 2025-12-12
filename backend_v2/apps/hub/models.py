@@ -39,11 +39,13 @@ class HubRegistration(BaseModelBaseMixin, models.Model):
     PENDING = 'pending'
     APPROVED = 'approved'
     REJECTED = 'rejected'
+    CHECKED_OUT = 'checked_out'
     
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
         (APPROVED, 'Approved'),
         (REJECTED, 'Rejected'),
+        (CHECKED_OUT, 'Checked Out'),
     ]
     
     name = models.CharField(_('full name'), max_length=255, blank=False, null=False)
@@ -121,7 +123,7 @@ class CheckIn(BaseModelBaseMixin, models.Model):
         ordering = ['-check_in_time']
     
     def check_out(self):
-        """Check out the visitor and update space occupancy"""
+        """Check out the visitor, update space occupancy, and mark registration as checked out"""
         if self.status == self.CHECKED_OUT:
             return False
         
@@ -134,6 +136,11 @@ class CheckIn(BaseModelBaseMixin, models.Model):
         if self.space:
             self.space.current_occupancy = max(0, self.space.current_occupancy - 1)
             self.space.save()
+        
+        # Mark registration as checked out to prevent reuse
+        if self.registration.status == self.registration.APPROVED:
+            self.registration.status = self.registration.CHECKED_OUT
+            self.registration.save()
         
         return True
     

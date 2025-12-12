@@ -219,7 +219,7 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
     
     @decorators.action(detail=True, methods=["post"])
     def approve(self, request, pk, *args, **kwargs):
-        """Approve a hub registration (admin only)"""
+        """Approve a hub registration (admin only) - can re-approve checked_out registrations"""
         try:
             hub_registration_obj = self.queryset.get(pk=pk)
             
@@ -230,6 +230,7 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
                     http_status=status.HTTP_400_BAD_REQUEST
                 )
             
+            # Allow re-approving checked_out registrations
             hub_registration_obj.status = models.HubRegistration.APPROVED
             hub_registration_obj.save()
             
@@ -317,12 +318,14 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
         pending = recent_queryset.filter(status='pending').count()
         approved = recent_queryset.filter(status='approved').count()
         rejected = recent_queryset.filter(status='rejected').count()
+        checked_out = recent_queryset.filter(status='checked_out').count()
         
         stats = {
             "total": total,
             "pending": pending,
             "approved": approved,
             "rejected": rejected,
+            "checked_out": checked_out,
         }
         
         return requestUtils.success_response(data=stats, http_status=status.HTTP_200_OK)

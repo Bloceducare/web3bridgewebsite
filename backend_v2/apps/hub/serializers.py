@@ -102,8 +102,12 @@ class CheckInSerializer:
             registration = validated_data.get('registration')
             space = validated_data.get('space')
             
-            # Check if registration is approved
+            # Check if registration is approved (not pending, rejected, or already checked out)
             if registration.status != models.HubRegistration.APPROVED:
+                if registration.status == models.HubRegistration.CHECKED_OUT:
+                    raise serializers.ValidationError(
+                        {"registration": "This registration has been checked out. Please create a new registration or contact admin to re-approve."}
+                    )
                 raise serializers.ValidationError(
                     {"registration": "Registration must be approved before checking in."}
                 )
