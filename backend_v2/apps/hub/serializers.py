@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from . import models
-from .literals import HUB_REGISTRATION_REF_NAME
+from .literals import HUB_REGISTRATION_REF_NAME, HUB_SPACE_REF_NAME, HUB_CHECKIN_REF_NAME
 
 
 class HubSpaceSerializer:
@@ -12,6 +12,7 @@ class HubSpaceSerializer:
             model = models.HubSpace
             fields = ["id", "name", "total_capacity", "current_occupancy", "available_spaces", 
                      "occupancy_percentage", "is_active", "created_at", "updated_at"]
+            ref_name = HUB_SPACE_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         available_spaces = serializers.ReadOnlyField()
@@ -21,12 +22,14 @@ class HubSpaceSerializer:
             model = models.HubSpace
             fields = ["id", "name", "total_capacity", "current_occupancy", "available_spaces", 
                      "occupancy_percentage", "is_active", "created_at", "updated_at"]
+            ref_name = HUB_SPACE_REF_NAME
     
     class Update(serializers.ModelSerializer):
         class Meta:
             model = models.HubSpace
             fields = ["name", "total_capacity", "current_occupancy", "is_active"]
             extra_kwargs = {field: {"required": False} for field in fields}
+            ref_name = HUB_SPACE_REF_NAME
 
 
 class HubRegistrationSerializer:
@@ -60,6 +63,7 @@ class HubRegistrationSerializer:
             model = models.HubRegistration
             fields = ["status", "notes"]
             extra_kwargs = {field: {"required": False} for field in fields}
+            ref_name = HUB_REGISTRATION_REF_NAME
         
         def update(self, instance, validated_data):
             instance.status = validated_data.get("status", instance.status)
@@ -73,6 +77,7 @@ class CheckInSerializer:
         class Meta:
             model = models.CheckIn
             fields = ["registration", "space", "purpose", "notes"]
+            ref_name = HUB_CHECKIN_REF_NAME
         
         def create(self, validated_data):
             registration = validated_data.get('registration')
@@ -120,6 +125,7 @@ class CheckInSerializer:
             fields = ["id", "registration", "registration_name", "registration_email", 
                      "space", "space_name", "status", "check_in_time", "check_out_time", 
                      "purpose", "created_at"]
+            ref_name = HUB_CHECKIN_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         registration_name = serializers.CharField(source='registration.name', read_only=True)
@@ -133,4 +139,5 @@ class CheckInSerializer:
                      "registration_phone", "space", "space_name", "status", 
                      "check_in_time", "check_out_time", "purpose", "notes", 
                      "created_at", "updated_at"]
+            ref_name = HUB_CHECKIN_REF_NAME
 

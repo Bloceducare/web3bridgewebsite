@@ -157,7 +157,7 @@ export const useSubmitHubRegistration = () => {
     contribution: string;
   }) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/hub/registration/`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/hub/registration/`,
       {
         method: "POST",
         headers: {
