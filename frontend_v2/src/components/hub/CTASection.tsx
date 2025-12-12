@@ -18,10 +18,10 @@ export default function CTASection() {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
             Ready to Join the Lagos Ethereum Community Hub?
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
             Become part of a vibrant community of builders, developers, and innovators 
             shaping the future of Ethereum in Lagos. Register now to visit our hub and 
             start your journey.

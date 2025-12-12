@@ -60,7 +60,7 @@ export default function AvailableSpacesSection() {
 
   if (loading) {
     return (
-      <section className="py-16 md:py-24 w-full bg-muted/20">
+      <section className="py-12 md:py-16 w-full bg-muted/20">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center">Loading space availability...</div>
         </div>
@@ -69,16 +69,16 @@ export default function AvailableSpacesSection() {
   }
 
   return (
-    <section className="py-24 md:py-32 w-full bg-background">
+    <section className="py-12 md:py-16 w-full bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">
             Hub Availability
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -93,7 +93,7 @@ export default function AvailableSpacesSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8"
           >
             <div className="p-6 rounded-lg bg-background border border-border">
               <div className="flex items-center gap-3 mb-2">

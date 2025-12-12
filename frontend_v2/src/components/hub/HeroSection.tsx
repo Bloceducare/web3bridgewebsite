@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { MoveRight, MapPin, ArrowDown } from "lucide-react";
+import { MoveRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -29,12 +29,12 @@ export default function HeroSection() {
         backgroundSize: '50px 50px',
       }} />
 
-      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 md:px-6 flex flex-col items-center gap-12 text-center">
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 md:px-6 flex flex-col items-center gap-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col items-center gap-8"
+          className="flex flex-col items-center gap-6"
         >
           {/* Professional badge */}
           <motion.div
@@ -50,7 +50,7 @@ export default function HeroSection() {
           </motion.div>
           
           {/* Main title - clean and professional */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -103,23 +103,6 @@ export default function HeroSection() {
               <MapPin className="w-5 h-5 mr-2" />
               View Location
             </Button>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2 text-muted-foreground"
-          >
-            <span className="text-xs font-medium">Scroll to explore</span>
-            <ArrowDown className="w-5 h-5" />
           </motion.div>
         </motion.div>
       </div>

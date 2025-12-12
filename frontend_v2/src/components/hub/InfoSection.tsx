@@ -29,14 +29,14 @@ const infoSections = [
 
 export default function InfoSection() {
   return (
-    <section className="py-16 md:py-24 w-full bg-background">
+    <section className="py-12 md:py-16 w-full bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
             About the Hub
@@ -46,7 +46,7 @@ export default function InfoSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {infoSections.map((section, index) => {
             const Icon = section.icon;
             return (
