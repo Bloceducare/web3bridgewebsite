@@ -145,3 +145,36 @@ export async function getCohortStatus() {
   // console.log(data);
   return data;
 }
+
+export const useSubmitHubRegistration = () => {
+  const submitRegistration = async (data: {
+    name: string;
+    email: string;
+    phone_number: string;
+    location: string;
+    reason: string;
+    role: string;
+    contribution: string;
+  }) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/hub/registration/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to submit registration");
+    }
+
+    return result;
+  };
+
+  return { submitRegistration };
+};

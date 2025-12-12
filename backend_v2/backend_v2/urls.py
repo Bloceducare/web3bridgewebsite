@@ -39,6 +39,7 @@ urlpatterns = [
     path(f'api/{settings.API_VERSION}/operation/', include('operation.urls', namespace=settings.API_VERSION), name='operation'),
     path(f'api/{settings.API_VERSION}/event/', include('event.urls', namespace=settings.API_VERSION), name='event'),
     path(f'api/{settings.API_VERSION}/payment/', include('payment.urls', namespace=settings.API_VERSION), name='payment'),
+    path(f'api/{settings.API_VERSION}/hub/', include('hub.urls', namespace=settings.API_VERSION), name='hub'),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

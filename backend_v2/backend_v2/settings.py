@@ -63,7 +63,8 @@ PROJECT_APPS = [
     "apps.utils",
     "apps.dapp",
     "apps.operation",
-    "apps.payment"
+    "apps.payment",
+    "apps.hub"
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -244,7 +245,7 @@ REDIS_HOST = config('REDIS_HOST', default='01.proxy.koyeb.app')
 REDIS_PORT = config('REDIS_PORT', default='12939')
 REDIS_DB = config('REDIS_DB', default='0')
 REDIS_PASSWORD = config('REDIS_PASSWORD', default=None)
-
+    
 # Build Redis URL
 if REDIS_PASSWORD:
     REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'

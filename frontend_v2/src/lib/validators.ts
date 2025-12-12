@@ -53,3 +53,42 @@ export const otherSchema = z.object({
     message: "You must agree to the terms before proceeding.",
   }),
 });
+
+export const hubRegistrationSchema = z.object({
+  name: z
+    .string()
+    .min(2, {
+      message: "Name must be at least 2 characters.",
+    })
+    .max(255, {
+      message: "Name must be less than 255 characters.",
+    }),
+  email: z
+    .string({ required_error: "Please enter your email address" })
+    .email("Please enter a valid email address")
+    .min(2),
+  phone_number: z
+    .string({ required_error: "Please enter your phone number" })
+    .min(2)
+    .max(20),
+  location: z
+    .string({ required_error: "Please enter your location" })
+    .min(2)
+    .max(255),
+  reason: z
+    .string({ required_error: "Please explain why you want to use the hub" })
+    .min(10, {
+      message: "Please provide a more detailed reason (at least 10 characters).",
+    })
+    .max(2000),
+  role: z
+    .string({ required_error: "Please describe your role in the ecosystem" })
+    .min(2)
+    .max(255),
+  contribution: z
+    .string({ required_error: "Please share how you contribute to Ethereum" })
+    .min(10, {
+      message: "Please provide more details about your contribution (at least 10 characters).",
+    })
+    .max(2000),
+});
