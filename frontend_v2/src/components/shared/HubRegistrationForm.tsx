@@ -15,7 +15,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import CustomButton from "./CustomButton";
+import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 
 interface HubRegistrationFormProps {
@@ -384,9 +384,10 @@ export default function HubRegistrationForm({
           </div>
 
           <div className="pt-4">
-            <CustomButton
+            <Button
               type="submit"
-              className="w-full h-12 md:h-14 text-sm md:text-base font-medium"
+              size="lg"
+              className="w-full h-12 md:h-14 text-sm md:text-base font-semibold bg-bridgeRed hover:bg-red-600 text-white"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -397,7 +398,7 @@ export default function HubRegistrationForm({
               ) : (
                 "Submit Registration"
               )}
-            </CustomButton>
+            </Button>
           </div>
         </form>
       </Form>
