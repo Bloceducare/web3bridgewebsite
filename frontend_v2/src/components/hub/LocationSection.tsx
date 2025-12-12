@@ -125,7 +125,7 @@ export default function LocationSection() {
               </h4>
               <p className="text-sm text-muted-foreground">
                 To visit the hub, please complete the registration form. 
-                Once approved, you'll receive access details and guidelines 
+                Once approved, you&apos;ll receive access details and guidelines 
                 for using the space.
               </p>
             </div>

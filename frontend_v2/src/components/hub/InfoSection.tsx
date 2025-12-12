@@ -10,19 +10,19 @@ const infoSections = [
   {
     icon: Target,
     title: "Our Mission",
-    description: "To create a thriving ecosystem where Ethereum builders can collaborate, learn, and innovate together. We're building a space that fosters creativity and supports the growth of the decentralized web.",
+    description: "To create a thriving ecosystem where Ethereum builders can collaborate, learn, and innovate together. We&apos;re building a space that fosters creativity and supports the growth of the decentralized web.",
     color: "text-bridgeRed",
   },
   {
     icon: Heart,
     title: "Community First",
-    description: "We believe in the power of community. The hub is more than just a workspace—it's a gathering place for passionate individuals who are shaping the future of blockchain technology.",
+    description: "We believe in the power of community. The hub is more than just a workspace—it&apos;s a gathering place for passionate individuals who are shaping the future of blockchain technology.",
     color: "text-red-600",
   },
   {
     icon: Rocket,
     title: "Build the Future",
-    description: "Whether you're building dApps, researching new protocols, or starting a Web3 company, the hub provides the resources and community support you need to succeed.",
+    description: "Whether you&apos;re building dApps, researching new protocols, or starting a Web3 company, the hub provides the resources and community support you need to succeed.",
     color: "text-orange-500",
   },
 ];
@@ -42,7 +42,7 @@ export default function InfoSection() {
             About the Hub
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Africa's first and only dedicated Ethereum community space, located in the heart of Lagos
+            Africa&apos;s first and only dedicated Ethereum community space, located in the heart of Lagos
           </p>
         </motion.div>
 

@@ -8,6 +8,7 @@ type CustomButtonTypes = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 };
 
 const CustomButton: FC<CustomButtonTypes> = ({
@@ -16,9 +17,11 @@ const CustomButton: FC<CustomButtonTypes> = ({
   className,
   onClick,
   disabled,
+  type = "button",
 }) => {
   return (
     <Button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={cn(

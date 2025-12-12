@@ -32,7 +32,7 @@ export default function PioneerSection() {
           </h2>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Establishing Africa's premier Ethereum community space, fostering innovation 
+            Establishing Africa&apos;s premier Ethereum community space, fostering innovation 
             and collaboration in decentralized technology.
           </p>
         </motion.div>
