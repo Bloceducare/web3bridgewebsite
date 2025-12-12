@@ -91,4 +91,16 @@ export const hubRegistrationSchema = z.object({
       message: "Please provide more details about your contribution (at least 10 characters).",
     })
     .max(2000),
+  preferred_date: z
+    .string({ required_error: "Please select a preferred date" })
+    .min(1, "Please select a preferred date"),
+  preferred_time: z
+    .string({ required_error: "Please select a preferred time" })
+    .min(1, "Please select a preferred time"),
+  expected_duration_hours: z
+    .number()
+    .min(1, "Duration must be at least 1 hour")
+    .max(12, "Duration cannot exceed 12 hours")
+    .default(4)
+    .optional(),
 });

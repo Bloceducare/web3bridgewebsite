@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.db.models import F
+from datetime import timedelta
 from . import models
 from .literals import HUB_REGISTRATION_REF_NAME, HUB_SPACE_REF_NAME, HUB_CHECKIN_REF_NAME
 
@@ -48,8 +49,28 @@ class HubRegistrationSerializer:
     class Create(serializers.ModelSerializer):
         class Meta:
             model = models.HubRegistration
-            fields = ["name", "email", "phone_number", "location", "reason", "role", "contribution"]
+            fields = ["name", "email", "phone_number", "location", "reason", "role", "contribution",
+                     "preferred_date", "preferred_time", "expected_duration_hours"]
             ref_name = HUB_REGISTRATION_REF_NAME
+        
+        def validate(self, data):
+            """Validate that the selected date/time slot is available"""
+            preferred_date = data.get('preferred_date')
+            preferred_time = data.get('preferred_time')
+            
+            if preferred_date and preferred_time:
+                from .helpers.availability import is_slot_available
+                from datetime import datetime
+                
+                # Check if slot is available
+                availability = is_slot_available(preferred_date, preferred_time)
+                
+                if not availability["available"]:
+                    raise serializers.ValidationError(
+                        {"preferred_date": f"The selected date/time slot is no longer available. Only {availability['available_spaces']} spaces available."}
+                    )
+            
+            return data
         
         def create(self, validated_data):
             hub_registration_obj = models.HubRegistration.objects.create(**validated_data)
@@ -60,14 +81,15 @@ class HubRegistrationSerializer:
         class Meta:
             model = models.HubRegistration
             fields = ["id", "name", "email", "phone_number", "location", "reason", "role", 
-                     "contribution", "status", "created_at"]
+                     "contribution", "status", "preferred_date", "preferred_time", "created_at"]
             ref_name = HUB_REGISTRATION_REF_NAME
     
     class Retrieve(serializers.ModelSerializer):
         class Meta:
             model = models.HubRegistration
             fields = ["id", "name", "email", "phone_number", "location", "reason", "role", 
-                     "contribution", "status", "notes", "created_at", "updated_at"]
+                     "contribution", "status", "notes", "preferred_date", "preferred_time", 
+                     "expected_duration_hours", "created_at", "updated_at"]
             ref_name = HUB_REGISTRATION_REF_NAME
     
     class Update(serializers.ModelSerializer):
@@ -122,6 +144,20 @@ class CheckInSerializer:
                 raise serializers.ValidationError(
                     {"registration": "User is already checked in. Please check out first."}
                 )
+            
+            # Validate that check-in is happening on or after the preferred date/time
+            from django.utils import timezone
+            if registration.preferred_date and registration.preferred_time:
+                from datetime import datetime, time as dt_time
+                preferred_datetime = datetime.combine(registration.preferred_date, registration.preferred_time)
+                preferred_datetime_aware = timezone.make_aware(preferred_datetime) if timezone.is_naive(preferred_datetime) else preferred_datetime
+                current_datetime = timezone.now()
+                
+                # Allow check-in up to 1 hour before preferred time (flexibility)
+                if current_datetime < preferred_datetime_aware - timedelta(hours=1):
+                    raise serializers.ValidationError(
+                        {"registration": f"Check-in is only allowed from 1 hour before your scheduled time ({registration.preferred_date} at {registration.preferred_time})."}
+                    )
             
             # Auto-assign space if not provided
             if not space:

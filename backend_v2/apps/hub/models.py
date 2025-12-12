@@ -62,6 +62,14 @@ class HubRegistration(BaseModelBaseMixin, models.Model):
     status = models.CharField(_('status'), max_length=20, choices=STATUS_CHOICES, default=PENDING)
     notes = models.TextField(_('admin notes'), blank=True, null=True, help_text="Internal notes for admins")
     
+    # Booking fields
+    preferred_date = models.DateField(_('preferred date'), blank=True, null=True, 
+                                      help_text="Preferred date for visiting the hub")
+    preferred_time = models.TimeField(_('preferred time'), blank=True, null=True,
+                                     help_text="Preferred time for visiting the hub")
+    expected_duration_hours = models.IntegerField(_('expected duration hours'), default=4,
+                                                  help_text="Expected duration of visit in hours")
+    
     # Timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -73,6 +81,7 @@ class HubRegistration(BaseModelBaseMixin, models.Model):
             models.Index(fields=['-created_at'], name='hub_reg_created_at_idx'),
             models.Index(fields=['email'], name='hub_reg_email_idx'),
             models.Index(fields=['status'], name='hub_reg_status_idx'),
+            models.Index(fields=['preferred_date', 'preferred_time'], name='hub_reg_date_time_idx'),
         ]
     
     def __str__(self):

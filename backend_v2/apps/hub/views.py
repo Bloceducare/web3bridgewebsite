@@ -344,6 +344,70 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
         queryset = queryset.order_by('-created_at')
         serializer = self.serializer_class.List(queryset, many=True)
         return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+    @decorators.action(detail=False, methods=["get"])
+    def available_slots(self, request, *args, **kwargs):
+        """Get available date/time slots for booking (public)"""
+        from .helpers.availability import get_available_slots, get_time_slots
+        from datetime import datetime, timedelta
+        
+        # Get query parameters
+        start_date_str = request.query_params.get('start_date', None)
+        end_date_str = request.query_params.get('end_date', None)
+        space_id = request.query_params.get('space_id', None)
+        
+        start_date = None
+        end_date = None
+        
+        if start_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return requestUtils.error_response(
+                    "Invalid start_date format. Use YYYY-MM-DD",
+                    {},
+                    http_status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        if end_date_str:
+            try:
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return requestUtils.error_response(
+                    "Invalid end_date format. Use YYYY-MM-DD",
+                    {},
+                    http_status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        space_id_int = None
+        if space_id:
+            try:
+                space_id_int = int(space_id)
+            except ValueError:
+                return requestUtils.error_response(
+                    "Invalid space_id. Must be an integer",
+                    {},
+                    http_status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        # Get available slots
+        slots = get_available_slots(
+            start_date=start_date,
+            end_date=end_date,
+            space_id=space_id_int
+        )
+        
+        # Get time slots configuration
+        time_slots = get_time_slots()
+        
+        return requestUtils.success_response(
+            data={
+                "available_slots": slots,
+                "time_slots": time_slots,
+                "total_available": len(slots)
+            },
+            http_status=status.HTTP_200_OK
+        )
 
 
 class CheckInViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
