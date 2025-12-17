@@ -401,6 +401,7 @@ export default function PersonalInformation({
             )}
 
             <CustomButton
+              type="submit"
               variant="default"
               disabled={isUpdatingSteps}
               className="bg-[#FB8888]/10 dark:bg-[#FB8888]/5 hover:bg-[#FB8888]/20 hover:dark:bg-[#FB8888]/10 w-full md:w-full md:max-w-[261px] mx-auto"

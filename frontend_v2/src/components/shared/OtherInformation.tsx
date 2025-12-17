@@ -19,7 +19,7 @@ import { Input } from "../ui/input";
 import CustomButton from "./CustomButton";
 import { Loader2, MoveRight, MoveLeft } from "lucide-react";
 import { Textarea } from "../ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export default function OtherInformation({
@@ -44,7 +44,7 @@ export default function OtherInformation({
   submitData: () => void;
 }) {
   // const router = useRouter();
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(Boolean(formData?.cta));
 
   const form = useForm<z.infer<typeof otherSchema>>({
     resolver: zodResolver(otherSchema),
@@ -58,6 +58,14 @@ export default function OtherInformation({
       cta: formData?.cta || false,
     },
   });
+
+  // Sync checkbox state with form data
+  useEffect(() => {
+    if (formData?.cta !== undefined) {
+      setIsCheckboxChecked(Boolean(formData.cta));
+      form.setValue("cta", Boolean(formData.cta));
+    }
+  }, [formData?.cta, form]);
 
   async function onSubmit(values: z.infer<typeof otherSchema>) {
     // Update form data in parent component
@@ -75,6 +83,28 @@ export default function OtherInformation({
     // Call parent's submitData function which handles the API validation and submission
     submitData();
     form.setValue("discount", "");
+  }
+
+  const handleButtonClick = () => {
+    // Trigger validation to show any errors
+    const isValid = form.trigger();
+    isValid.then((valid) => {
+      if (!valid) {
+        const errors = form.formState.errors;
+        if (errors.motivation) {
+          toast.error("Motivation is required (at least 2 characters)");
+        }
+        if (errors.achievement) {
+          toast.error("Achievement is required (at least 2 characters)");
+        }
+        if (errors.wallet_address) {
+          toast.error("Wallet address is required");
+        }
+        if (errors.cta) {
+          toast.error("You must confirm wallet access to proceed");
+        }
+      }
+    });
   }
 
   return (
@@ -262,7 +292,9 @@ export default function OtherInformation({
           </FormDescription>
           {isDiscountChecked ? (
             <CustomButton
+              type="submit"
               variant="default"
+              onClick={handleButtonClick}
               disabled={
                 isRegistering ||
                 isUpdatingSteps ||
@@ -285,7 +317,9 @@ export default function OtherInformation({
                 </CustomButton>
               )}
               <CustomButton
+                type="submit"
                 variant="default"
+                onClick={handleButtonClick}
                 disabled={
                   isRegistering || isUpdatingSteps || !isCheckboxChecked
                 }
