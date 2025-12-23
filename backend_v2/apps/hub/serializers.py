@@ -233,3 +233,67 @@ class CheckInSerializer:
                      "created_at", "updated_at"]
             ref_name = HUB_CHECKIN_REF_NAME
 
+
+class BlockedDateRangeSerializer:
+    class Create(serializers.ModelSerializer):
+        class Meta:
+            model = models.BlockedDateRange
+            fields = ["start_date", "end_date", "reason", "is_active"]
+            ref_name = "BlockedDateRange"
+        
+        def validate(self, data):
+            """Validate that end_date is after or equal to start_date"""
+            start_date = data.get('start_date')
+            end_date = data.get('end_date')
+            
+            if start_date and end_date and end_date < start_date:
+                raise serializers.ValidationError({
+                    "end_date": "End date must be after or equal to start date."
+                })
+            
+            return data
+        
+        def create(self, validated_data):
+            blocked_range_obj = models.BlockedDateRange.objects.create(**validated_data)
+            blocked_range_obj.save()
+            return blocked_range_obj
+    
+    class List(serializers.ModelSerializer):
+        class Meta:
+            model = models.BlockedDateRange
+            fields = ["id", "start_date", "end_date", "reason", "is_active", "created_at", "updated_at"]
+            ref_name = "BlockedDateRange"
+    
+    class Retrieve(serializers.ModelSerializer):
+        class Meta:
+            model = models.BlockedDateRange
+            fields = ["id", "start_date", "end_date", "reason", "is_active", "created_at", "updated_at"]
+            ref_name = "BlockedDateRange"
+    
+    class Update(serializers.ModelSerializer):
+        class Meta:
+            model = models.BlockedDateRange
+            fields = ["start_date", "end_date", "reason", "is_active"]
+            extra_kwargs = {field: {"required": False} for field in fields}
+            ref_name = "BlockedDateRange"
+        
+        def validate(self, data):
+            """Validate that end_date is after or equal to start_date"""
+            start_date = data.get('start_date', self.instance.start_date if self.instance else None)
+            end_date = data.get('end_date', self.instance.end_date if self.instance else None)
+            
+            if start_date and end_date and end_date < start_date:
+                raise serializers.ValidationError({
+                    "end_date": "End date must be after or equal to start date."
+                })
+            
+            return data
+        
+        def update(self, instance, validated_data):
+            instance.start_date = validated_data.get("start_date", instance.start_date)
+            instance.end_date = validated_data.get("end_date", instance.end_date)
+            instance.reason = validated_data.get("reason", instance.reason)
+            instance.is_active = validated_data.get("is_active", instance.is_active)
+            instance.save()
+            return instance
+

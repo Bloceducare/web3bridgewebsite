@@ -156,3 +156,42 @@ class CheckIn(BaseModelBaseMixin, models.Model):
     def __str__(self):
         return f"< {type(self).__name__}({self.registration.name} - {self.status} - {self.check_in_time}) >"
 
+
+class BlockedDateRange(BaseModelBaseMixin, models.Model):
+    """Model for managing blocked date ranges when hub is unavailable"""
+    start_date = models.DateField(_('start date'), blank=False, null=False, 
+                                  help_text="Start date of the blocked period (inclusive)")
+    end_date = models.DateField(_('end date'), blank=False, null=False,
+                                help_text="End date of the blocked period (inclusive)")
+    reason = models.TextField(_('reason'), blank=True, null=True,
+                             help_text="Reason for blocking these dates (e.g., 'Holiday', 'Maintenance', etc.)")
+    is_active = models.BooleanField(_('is active'), default=True,
+                                   help_text="Whether this blocked date range is currently active")
+    
+    # Timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Blocked Date Range"
+        verbose_name_plural = "Blocked Date Ranges"
+        indexes = [
+            models.Index(fields=['start_date', 'end_date'], name='blocked_date_range_idx'),
+            models.Index(fields=['is_active'], name='blocked_date_range_active_idx'),
+        ]
+        ordering = ['start_date']
+    
+    def clean(self):
+        """Validate that end_date is after start_date"""
+        from django.core.exceptions import ValidationError
+        if self.end_date < self.start_date:
+            raise ValidationError("End date must be after or equal to start date.")
+    
+    def save(self, *args, **kwargs):
+        """Override save to run validation"""
+        self.clean()
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"< {type(self).__name__}({self.start_date} to {self.end_date} - {'Active' if self.is_active else 'Inactive'}) >"
+

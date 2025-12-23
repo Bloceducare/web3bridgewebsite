@@ -594,3 +594,98 @@ class CheckInViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         
         return requestUtils.success_response(data=stats, http_status=status.HTTP_200_OK)
 
+
+class BlockedDateRangeViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
+    """ViewSet for managing blocked date ranges (admin only)"""
+    queryset = models.BlockedDateRange.objects.all()
+    serializer_class = serializers.BlockedDateRangeSerializer
+    admin_actions = ["list", "retrieve", "create", "update", "destroy"]
+    
+    @swagger_auto_schema(request_body=serializers.BlockedDateRangeSerializer.Create)
+    def create(self, request, *args, **kwargs):
+        """Create a new blocked date range (admin only)"""
+        serializer = self.serializer_class.Create(data=request.data)
+        
+        if serializer.is_valid():
+            blocked_range_obj = serializer.save()
+            serialized_obj = self.serializer_class.Retrieve(blocked_range_obj).data
+            return requestUtils.success_response(
+                data=serialized_obj, 
+                http_status=status.HTTP_201_CREATED
+            )
+        
+        return requestUtils.error_response(
+            "Error Creating Blocked Date Range", 
+            serializer.errors, 
+            http_status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    @decorators.action(detail=False, methods=["get"])
+    def all(self, request, *args, **kwargs):
+        """Get all blocked date ranges (admin only)"""
+        queryset = self.queryset.order_by('-start_date')
+        serializer = self.serializer_class.List(queryset, many=True)
+        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+    def list(self, request, *args, **kwargs):
+        """Get all blocked date ranges (admin only)"""
+        queryset = self.queryset.order_by('-start_date')
+        serializer = self.serializer_class.List(queryset, many=True)
+        return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+    
+    def retrieve(self, request, pk, *args, **kwargs):
+        """Get a specific blocked date range (admin only)"""
+        try:
+            blocked_range_obj = self.queryset.get(pk=pk)
+            serializer = self.serializer_class.Retrieve(blocked_range_obj)
+            return requestUtils.success_response(data=serializer.data, http_status=status.HTTP_200_OK)
+        except models.BlockedDateRange.DoesNotExist:
+            return requestUtils.error_response(
+                "Blocked Date Range not found", 
+                {}, 
+                http_status=status.HTTP_404_NOT_FOUND
+            )
+    
+    @swagger_auto_schema(request_body=serializers.BlockedDateRangeSerializer.Update)
+    def update(self, request, pk, *args, **kwargs):
+        """Update a blocked date range (admin only)"""
+        try:
+            blocked_range_obj = self.queryset.get(pk=pk)
+            serializer = self.serializer_class.Update(blocked_range_obj, data=request.data)
+            
+            if serializer.is_valid():
+                updated_obj = serializer.save()
+                serialized_obj = self.serializer_class.Retrieve(updated_obj).data
+                return requestUtils.success_response(
+                    data=serialized_obj, 
+                    http_status=status.HTTP_200_OK
+                )
+            
+            return requestUtils.error_response(
+                "Error Updating Blocked Date Range", 
+                serializer.errors, 
+                http_status=status.HTTP_400_BAD_REQUEST
+            )
+        except models.BlockedDateRange.DoesNotExist:
+            return requestUtils.error_response(
+                "Blocked Date Range not found", 
+                {}, 
+                http_status=status.HTTP_404_NOT_FOUND
+            )
+    
+    def destroy(self, request, pk, *args, **kwargs):
+        """Delete a blocked date range (admin only)"""
+        try:
+            blocked_range_obj = self.queryset.get(pk=pk)
+            blocked_range_obj.delete()
+            return requestUtils.success_response(
+                data={"message": "Blocked Date Range deleted successfully"}, 
+                http_status=status.HTTP_200_OK
+            )
+        except models.BlockedDateRange.DoesNotExist:
+            return requestUtils.error_response(
+                "Blocked Date Range not found", 
+                {}, 
+                http_status=status.HTTP_404_NOT_FOUND
+            )
+
