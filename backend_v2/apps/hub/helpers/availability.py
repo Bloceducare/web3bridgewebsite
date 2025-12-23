@@ -51,14 +51,9 @@ def get_available_slots(start_date=None, end_date=None, space_id=None):
     available_slots = []
     current_date = start_date
     
-    # Define blocked date range: from tomorrow until January 11th
-    tomorrow = timezone.now().date() + timedelta(days=1)
-    current_year = timezone.now().year
-    january_11 = datetime(current_year, 1, 11).date()
-    
-    # If January 11th has already passed this year, use next year
-    if january_11 < tomorrow:
-        january_11 = datetime(current_year + 1, 1, 11).date()
+    # Define blocked date range: from December 24th until January 11th, 2026
+    december_24 = datetime(2025, 12, 24).date()
+    january_11_2026 = datetime(2026, 1, 11).date()
     
     while current_date <= end_date:
         # Skip past dates
@@ -66,8 +61,8 @@ def get_available_slots(start_date=None, end_date=None, space_id=None):
             current_date += timedelta(days=1)
             continue
         
-        # Skip dates from tomorrow until January 11th (inclusive)
-        if tomorrow <= current_date <= january_11:
+        # Skip dates from December 24th, 2025 until January 11th, 2026 (inclusive)
+        if december_24 <= current_date <= january_11_2026:
             current_date += timedelta(days=1)
             continue
         
