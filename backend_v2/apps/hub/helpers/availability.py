@@ -51,28 +51,21 @@ def get_available_slots(start_date=None, end_date=None, space_id=None):
     available_slots = []
     current_date = start_date
     
-    # Get all active blocked date ranges from database
-    blocked_ranges = models.BlockedDateRange.objects.filter(
-        is_active=True
-    ).filter(
-        Q(start_date__lte=end_date) & Q(end_date__gte=start_date)
-    )
-    
-    def is_date_blocked(date):
-        """Check if a date falls within any active blocked date range"""
-        for blocked_range in blocked_ranges:
-            if blocked_range.start_date <= date <= blocked_range.end_date:
-                return True
-        return False
-    
     while current_date <= end_date:
         # Skip past dates
         if current_date < timezone.now().date():
             current_date += timedelta(days=1)
             continue
         
-        # Skip dates that fall within blocked date ranges
-        if is_date_blocked(current_date):
+        # Check if this date is blocked by any active blocked date range
+        # Use a direct database query for efficiency
+        is_blocked = models.BlockedDateRange.objects.filter(
+            is_active=True,
+            start_date__lte=current_date,
+            end_date__gte=current_date
+        ).exists()
+        
+        if is_blocked:
             current_date += timedelta(days=1)
             continue
         
