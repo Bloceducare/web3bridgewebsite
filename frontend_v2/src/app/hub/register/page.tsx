@@ -21,7 +21,7 @@ export default function HubRegistrationPage() {
       toast.loading("Submitting your registration...");
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/hub/registration/`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/hub/registration/`,
         {
           method: "POST",
           headers: {
