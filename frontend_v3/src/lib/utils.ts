@@ -59,6 +59,28 @@ export const footerLinks = [
       },
     ],
   },
+    {
+    title: "Support",
+    links: [
+       {
+        name: "DApps",
+        path: "/dapps",
+      },
+
+      {
+        name: "Terms of Use",
+        path: "",
+      },
+      {
+        name: "Privacy Policy",
+        path: "",
+      },
+      {
+        name: "FAQ",
+        path: "",
+      },
+    ],
+  },
   {
     title: "General",
     links: [
@@ -70,35 +92,14 @@ export const footerLinks = [
         name: "Events",
         path: "/events",
       },
-      {
-        name: "DApps",
-        path: "/dapps",
-      },
-      {
-        name: "Blog",
-        path: "https://medium.com/@web3bridge",
-      },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      {
-        name: "Terms of Use",
-        path: "",
-      },
-      {
-        name: "Privacy Policy",
-        path: "",
-      },
-      {
+       {
         name: "Resources",
         path: "",
       },
       {
-        name: "FAQ",
-        path: "",
-      },
+        name: "Blog",
+        path: "https://medium.com/@web3bridge",
+      }
     ],
   },
 ];
