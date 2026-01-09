@@ -23,7 +23,7 @@ const buttonVariants = cva("inline-flex items-center justify-center whitespace-n
         bridgeOutline: "rounded-full px-12 py-6 text-primary-background capitalize  shadow-[inset_1px_1px_8px_rgba(255,199,225,0.3)] dark:text-primary"
       },
       size: {
-        default: "h-9 px-4 py-2",
+        default: "h-9 px-6 py-6",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
@@ -38,7 +38,7 @@ const buttonVariants = cva("inline-flex items-center justify-center whitespace-n
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

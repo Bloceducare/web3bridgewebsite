@@ -7,7 +7,7 @@ const faqs: FAQ[] = [
   {
     question: "What is Web3bridge?",
     answer:
-      "Web3bridge is a tech company and community that focuses on training blockchain developers and web2 developers, fostering collaboration between the two sectors.",
+      "Arrow Dynamics is a Framer Component to build interactive animations and patterns. It is one single, blazing fast, code-component with Property Controls that make it easy to customise grid layout, interactions, motion controls and object parameters, etc. See Examples ↗︎ \n \n Currently, there are 15 variations available in the component – 11 interactive and 4 static, and future updates will bring more variations at no additional cost. The aim is to push the boundaries of Framer by leveraging the power of p5.js and optimising it to design beautiful and precise interactions.",
   },
   {
     question: "Who can benefit from Web3bridge?",
