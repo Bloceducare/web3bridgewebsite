@@ -95,4 +95,45 @@ class Testimonial(BaseModelBaseMixin, CloudinaryDeleteMixin, models.Model):
         full_name_processed= self.full_name.replace(" ", "_")
         return f"< {type(self).__name__}({full_name_processed})>"
     
+
+# Approved Web3 Participant model
+class ApprovedWeb3Participant(BaseModelBaseMixin, models.Model):
+    """Table to track approved Web3 Cohort XIV participants"""
+    participant = models.ForeignKey(
+        Participant, 
+        on_delete=models.CASCADE, 
+        related_name='approved_web3_status',
+        null=True, 
+        blank=True,
+        help_text="Reference to the participant (optional if participant doesn't exist yet)"
+    )
+    email = models.EmailField(_('email address'), max_length=255, blank=False, null=False, unique=True, help_text="Email for lookup (required even if participant exists)")
+    notes = models.TextField(_('notes'), blank=True, null=True, help_text="Any additional notes about this approval")
+    
+    # New timestamp fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Approved Web3 Participant'
+        verbose_name_plural = 'Approved Web3 Participants'
+        indexes = [
+            models.Index(fields=['email'], name='approved_web3_email_idx'),
+            models.Index(fields=['-created_at'], name='approved_web3_created_at_idx'),
+        ]
+    
+    @property
+    def name(self):
+        """Get name from participant if available, otherwise None"""
+        return self.participant.name if self.participant else None
+    
+    @property
+    def cohort(self):
+        """Get cohort from participant if available, otherwise None"""
+        return self.participant.cohort if self.participant else None
+    
+    def __str__(self):
+        name = self.participant.name if self.participant else self.email
+        return f"< {type(self).__name__}({name}) >"
+    
     
