@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Access - Web3Bridge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        .wallet-address {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #e74c3c;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .discord-link {
+            display: inline-block;
+            background-color: #5865F2;
+            color: #ffffff !important;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .discord-link:hover {
+            background-color: #4752C4;
+            color: #ffffff !important;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Discord Access Update</h1>
+        
+        <p>Dear {{ name }},</p>
+        
+        <p>We sincerely apologise for the delay you experienced in gaining access to our Discord community.</p>
+        
+        <p>Over the past few days, our team has been actively rebuilding and improving our onboarding and verification flow to make the experience smoother, safer, and more organised for all incoming cohorts. While the system is now live, we would like to be transparent that it is still being fine-tuned and may not yet feel perfect. We are committed to continuously improving it, and the next cohort will experience an even better and more seamless process.</p>
+        
+        <p>You can now proceed to join our official Discord server using the link below:</p>
+        
+        <div style="text-align: center;">
+            <a href="https://discord.gg/abr2DQCAM4" class="discord-link">Join Discord Server</a>
+        </div>
+        
+        <p>When you join, please verify using the same wallet address you registered with during your application, which is:</p>
+        
+        <div class="wallet-address">
+            {{ wallet_address }}
+        </div>
+        
+        <p>Your verification will automatically assign your roles and grant you access to the appropriate cohort channels.</p>
+        
+        <div class="warning">
+            <strong>Note:</strong> If you experience any challenges during verification, kindly reach out within the Discord server and a team member will assist you promptly.
+        </div>
+        
+        <p>Thank you for your patience, understanding, and continued interest in Web3Bridge. We truly appreciate you and look forward to building with you.</p>
+        
+        <div class="footer">
+            <p>Warm regards,<br><strong>Web3Bridge Team</strong></p>
+        </div>
+    </div>
+</body>
+</html>
+
