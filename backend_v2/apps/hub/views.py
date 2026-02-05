@@ -1,4 +1,4 @@
-from hub.emails import send_hub_registration_email
+
 from rest_framework import decorators, status, viewsets
 from django.db.models import Q, Count
 from django.utils import timezone
@@ -7,7 +7,7 @@ from . import serializers, models
 from utils.helpers.requests import Utils as requestUtils
 from drf_yasg.utils import swagger_auto_schema
 from utils.helpers.mixins import GuestReadAllWriteAdminOnlyPermissionMixin
-from .helpers.email import send_hub_registration_email, send_hub_approval_email, send_hub_rejection_email
+from .helpers.email import send_hub_admin_registration_email, send_hub_registration_email, send_hub_approval_email, send_hub_rejection_email
 
 
 class HubSpaceViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
@@ -125,16 +125,8 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
     def create(self, request, *args, **kwargs):
         """Create a new hub registration"""
         serializer = self.serializer_class.Create(data=request.data)
-        if serializer .is_valid():
-            
 
-            registration = serializer.save()
-
-            try:
-                send_hub_registration_email(registration)
-                
-            except Exception as e:
-                print(f"Error sending registration email: {str(e)}")
+        print("serializer is valid", serializer.is_valid())
 
 
         if serializer.is_valid():
@@ -142,7 +134,10 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
             
             # Send registration confirmation email
             try:
-                send_hub_registration_email(hub_registration_obj)
+                response = send_hub_registration_email(hub_registration_obj)
+                response2 = send_hub_admin_registration_email(hub_registration_obj)
+                print("response", response)
+                print("response2", response2)
             except Exception as e:
                 print(f"Error sending registration email: {str(e)}")
             
