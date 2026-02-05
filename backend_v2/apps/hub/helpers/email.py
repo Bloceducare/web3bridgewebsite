@@ -28,7 +28,40 @@ def send_hub_registration_email(registration):
     except Exception as e:
         print(f"Error sending hub registration email: {str(e)}")
         pass
+def send_hub_admin_registration_email(registration):
+    """
+    Sends an email to admins whenever a new hub registration occurs.
+    """
 
+    # Email subject
+    subject = f"New Hub Registration: {registration.name}"
+
+    print("sending emails to admins")
+    context = {'registration': registration}
+
+    message = render_to_string('cohort/admin_hub_email.html', context)
+
+    # List of admin emails
+    admin_emails = [
+        "goodnesskolapo@gmail.com"
+    ]
+
+    # Create and send the email
+    email = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=admin_emails,
+    )
+    email.content_subtype = 'html'
+
+    try:
+        email.send(fail_silently=False)
+        print(f"Hub registration email sent to admins for registration ID {registration.id}")
+        return "email sent successfully"
+    except Exception as e:
+        print(f"Error sending hub registration email: {str(e)}")
+        return f"Error sending hub registration email: {str(e)}"
 
 def send_hub_approval_email(registration):
     """Send email when hub registration is approved"""
