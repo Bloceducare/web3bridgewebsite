@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Hub Registration - {{ registration.name }}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background:#f7f7f9; margin:0; padding:20px; }
+        .container { max-width:700px; margin:0 auto; background:#fff; border:1px solid #eee; border-radius:10px; padding:24px; }
+        h2 { color:#111827; margin:0 0 12px; }
+        p { color:#374151; line-height:1.6; margin:8px 0; }
+        .info-section { margin:20px 0; padding:16px; background:#f9fafb; border-radius:8px; border-left:4px solid #2563eb; }
+        .info-row { display:flex; margin:12px 0; padding:8px 0; border-bottom:1px solid #e5e7eb; }
+        .info-row:last-child { border-bottom:none; }
+        .info-label { font-weight:600; color:#374151; min-width:180px; flex-shrink:0; }
+        .info-value { color:#111827; flex:1; }
+        .status-badge { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600; text-transform:uppercase; }
+        .status-pending { background:#fef3c7; color:#92400e; }
+        .status-approved { background:#d1fae5; color:#065f46; }
+        .status-rejected { background:#fee2e2; color:#991b1b; }
+        .status-checked_out { background:#e0e7ff; color:#3730a3; }
+        .text-section { background:#f9fafb; padding:12px; border-radius:6px; margin:8px 0; color:#111827; white-space:pre-wrap; }
+        .footer { font-size:12px; color:#6b7280; margin-top:24px; padding-top:16px; border-top:1px solid #e5e7eb; }
+        a { color:#2563eb; text-decoration:none; }
+    </style>
+    <!-- Keep consistent visual style with scholarship emails -->
+    <!-- This template is intentionally concise to ensure high deliverability. -->
+    <!-- No images to avoid spam filters. -->
+</head>
+<body>
+<div class="container">
+    <h2>New Hub Registration Received</h2>
+    <p>A new registration has been submitted for the Lagos Ethereum Community Hub.</p>
+    
+    <div class="info-section">
+        <h3 style="margin-top:0; color:#111827;">Registration Details</h3>
+        
+        <div class="info-row">
+            <span class="info-label">Registration ID:</span>
+            <span class="info-value">#{{ registration.id }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Status:</span>
+            <span class="info-value">
+                <span class="status-badge status-{{ registration.status }}">
+                    {{ registration.get_status_display }}
+                </span>
+            </span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Registered At:</span>
+            <span class="info-value">{{ registration.created_at|date:"F d, Y g:i A" }}</span>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3 style="margin-top:0; color:#111827;">Contact Information</h3>
+        
+        <div class="info-row">
+            <span class="info-label">Full Name:</span>
+            <span class="info-value">{{ registration.name }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Email Address:</span>
+            <span class="info-value"><a href="mailto:{{ registration.email }}">{{ registration.email }}</a></span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Phone Number:</span>
+            <span class="info-value">{{ registration.phone_number }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Location:</span>
+            <span class="info-value">{{ registration.location }}</span>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3 style="margin-top:0; color:#111827;">Role & Contribution</h3>
+        
+        <div class="info-row">
+            <span class="info-label">Role:</span>
+            <span class="info-value">{{ registration.role }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">Contribution to Ethereum:</span>
+            <span class="info-value">
+                <div class="text-section">{{ registration.contribution }}</div>
+            </span>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h3 style="margin-top:0; color:#111827;">Visit Details</h3>
+        
+        <div class="info-row">
+            <span class="info-label">Reason for Visit:</span>
+            <span class="info-value">
+                <div class="text-section">{{ registration.reason }}</div>
+            </span>
+        </div>
+        
+        {% if registration.preferred_date %}
+        <div class="info-row">
+            <span class="info-label">Preferred Date:</span>
+            <span class="info-value">{{ registration.preferred_date|date:"F d, Y" }}</span>
+        </div>
+        {% endif %}
+        
+        {% if registration.preferred_time %}
+        <div class="info-row">
+            <span class="info-label">Preferred Time:</span>
+            <span class="info-value">{{ registration.preferred_time|time:"g:i A" }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="info-row">
+            <span class="info-label">Expected Duration:</span>
+            <span class="info-value">{{ registration.expected_duration_hours }} hour{{ registration.expected_duration_hours|pluralize }}</span>
+        </div>
+    </div>
+
+    {% if registration.notes %}
+    <div class="info-section">
+        <h3 style="margin-top:0; color:#111827;">Admin Notes</h3>
+        <div class="text-section">{{ registration.notes }}</div>
+    </div>
+    {% endif %}
+
+    <p class="footer">
+        This notification was automatically generated by the Web3Bridge Hub Registration System.<br/>
+        Registration ID: {{ registration.id }} | Created: {{ registration.created_at|date:"Y-m-d H:i:s" }}
+    </p>
+</div>
+</body>
+</html>
+
