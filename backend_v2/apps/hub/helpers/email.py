@@ -43,7 +43,7 @@ def send_hub_admin_registration_email(registration):
 
     # List of admin emails
     admin_emails = [
-        "goodnesskolapo@gmail.com"
+        "support@web3bridge.com"
     ]
 
     # Create and send the email
