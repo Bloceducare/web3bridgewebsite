@@ -1,3 +1,4 @@
+from hub.emails import send_hub_registration_email
 from rest_framework import decorators, status, viewsets
 from django.db.models import Q, Count
 from django.utils import timezone
@@ -124,7 +125,18 @@ class HubRegistrationViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets
     def create(self, request, *args, **kwargs):
         """Create a new hub registration"""
         serializer = self.serializer_class.Create(data=request.data)
-        
+        if serializer .is_valid():
+            
+
+            registration = serializer.save()
+
+            try:
+                send_hub_registration_email(registration)
+                
+            except Exception as e:
+                print(f"Error sending registration email: {str(e)}")
+
+
         if serializer.is_valid():
             hub_registration_obj = serializer.save()
             
