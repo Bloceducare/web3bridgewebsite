@@ -10,6 +10,22 @@ from .literals import (
 )
 
 
+def _merge_registration_and_program_ids(attrs: dict) -> dict:
+    """
+    Accept ``registrationId`` and/or ``program`` (alias) as the Registration (programme) FK.
+
+    When both are sent they must agree. Exposes ``registration_id`` on validated data.
+    """
+    reg_id = attrs.get("registrationId")
+    prog_id = attrs.get("program")
+    if reg_id is not None and prog_id is not None and reg_id != prog_id:
+        raise serializers.ValidationError(
+            {"program": "Must match registrationId when both are provided."}
+        )
+    attrs["registration_id"] = reg_id if reg_id is not None else prog_id
+    return attrs
+
+
 # Serializer
 # Course Serializer
 class CourseSerializer:
@@ -245,29 +261,32 @@ class ParticipantSerializer:
             except models.Course.DoesNotExist:
                 raise serializers.ValidationError("Course does not exist")
 
+            # Programme = Registration (includes cohort). Uniqueness: email + programme + course.
             registration = course.registration
-
-            participants = models.Participant.objects.filter(email=email).all()
-            existing_participant = None
-            for participant in participants:
-                if (
-                    participant.registration == registration
-                    or participant.course == course
-                ):
-                    existing_participant = participant
-                    break
+            if registration is None:
+                existing_participant = models.Participant.objects.filter(
+                    email__iexact=email.strip(),
+                    course=course,
+                    registration__isnull=True,
+                ).first()
+            else:
+                existing_participant = models.Participant.objects.filter(
+                    email__iexact=email.strip(),
+                    registration_id=registration.pk,
+                    course=course,
+                ).first()
 
             if existing_participant:
                 if existing_participant.payment_status:
                     raise serializers.ValidationError(
-                        "Participant already registered and paid for this cohort"
+                        "Participant already registered and paid for this programme and course"
                     )
                 else:
                     # User is registered but hasn't paid - provide payment link
                     raise serializers.ValidationError(
                         {
                             "already_registered_unpaid": True,
-                            "message": "You are already registered for this course but haven't completed payment. Please proceed to payment to secure your spot.",
+                            "message": "You are already registered for this programme and course but haven't completed payment. Please proceed to payment to secure your spot.",
                             "payment_link": "https://payment.web3bridgeafrica.com",
                             "participant_id": existing_participant.id,
                         }
@@ -278,8 +297,8 @@ class ParticipantSerializer:
             participant_obj = models.Participant.objects.create(**validated_data)
             registration = participant_obj.course.registration
             participant_obj.registration = registration
-            cohort = participant_obj.registration.name
-            participant_obj.cohort = cohort
+            if registration is not None:
+                participant_obj.cohort = registration.cohort
             participant_obj.save()
             return participant_obj
 
@@ -376,6 +395,19 @@ class SendConfirmationEmailSerializer(serializers.Serializer):
         allow_null=True,
         help_text="Course id for the registration to confirm (alternative to participantId).",
     )
+    registrationId = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text="Registration (programme) id; alias field ``program``. Scopes payment to one intake.",
+    )
+    program = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text="Alias for registrationId (FK to Registration / programme including cohort).",
+    )
+
+    def validate(self, attrs):
+        return _merge_registration_and_program_ids(attrs)
 
 
 class VerifyPaymentByEmailSerializer(serializers.Serializer):
@@ -399,6 +431,19 @@ class VerifyPaymentByEmailSerializer(serializers.Serializer):
         allow_null=True,
         help_text="Course id for this payment (alternative to participantId).",
     )
+    registrationId = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text="Registration (programme) id; alias ``program``. Use with course for correct row.",
+    )
+    program = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text="Alias for registrationId (Registration / programme intake, includes cohort).",
+    )
+
+    def validate(self, attrs):
+        return _merge_registration_and_program_ids(attrs)
 
 
 class RescheduleAssessmentSerializer(serializers.Serializer):

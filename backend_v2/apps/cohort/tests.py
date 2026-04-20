@@ -36,6 +36,28 @@ class VerifyPaymentSerializerTests(SimpleTestCase):
         s = VerifyPaymentByEmailSerializer(data={"email": "user@example.com"})
         self.assertTrue(s.is_valid(), s.errors)
 
+    def test_verify_payment_serializer_merges_program_into_registration_id(self):
+        from cohort.serializers import VerifyPaymentByEmailSerializer
+
+        s = VerifyPaymentByEmailSerializer(
+            data={"email": "user@example.com", "program": 12, "course": 3}
+        )
+        self.assertTrue(s.is_valid(), s.errors)
+        self.assertEqual(s.validated_data["registration_id"], 12)
+
+    def test_verify_payment_serializer_rejects_conflicting_program(self):
+        from cohort.serializers import VerifyPaymentByEmailSerializer
+
+        s = VerifyPaymentByEmailSerializer(
+            data={
+                "email": "user@example.com",
+                "registrationId": 1,
+                "program": 2,
+                "course": 3,
+            }
+        )
+        self.assertFalse(s.is_valid())
+
 
 @override_settings(
     SECURE_SSL_REDIRECT=False,
@@ -147,6 +169,85 @@ class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         mock_handle.assert_not_called()
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    def test_verify_payment_returns_404_when_registration_mismatches_course(self):
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        response = self._verify_post(
+            {
+                "email": "dup@example.com",
+                "course": self.course_old.id,
+                "registrationId": self.reg_new.id,
+            }
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_accepts_matching_registration_id(self, mock_handle):
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        response = self._verify_post(
+            {
+                "email": "dup@example.com",
+                "course": self.course_old.id,
+                "registrationId": self.reg_old.id,
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.participant_unpaid.refresh_from_db()
+        self.assertTrue(self.participant_unpaid.payment_status)
+        mock_handle.assert_called_once()
+
+    def test_same_email_same_program_two_courses_allowed(self):
+        """DB allows two participant rows: same programme (registration), different courses."""
+        from cohort.models import Course, Participant, Registration
+
+        reg = Registration.objects.create(
+            name="Multi-course intake", cohort="Cohort-TEST", is_open=True
+        )
+        c1 = Course.objects.create(
+            name="Track A",
+            description="d",
+            extra_info="e",
+            registration=reg,
+        )
+        c2 = Course.objects.create(
+            name="Track B",
+            description="d",
+            extra_info="e",
+            registration=reg,
+        )
+        Participant.objects.create(
+            name="Multi",
+            email="multi_course@example.com",
+            wallet_address="0x111",
+            registration=reg,
+            course=c1,
+            cohort=reg.cohort,
+            venue="online",
+            payment_status=False,
+        )
+        Participant.objects.create(
+            name="Multi",
+            email="multi_course@example.com",
+            wallet_address="0x222",
+            registration=reg,
+            course=c2,
+            cohort=reg.cohort,
+            venue="online",
+            payment_status=False,
+        )
 
 
 class PortalInviteHelperTests(SimpleTestCase):

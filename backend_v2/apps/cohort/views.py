@@ -51,27 +51,62 @@ def resolve_participant_for_payment_email(
     email: str,
     participant_id: int | None = None,
     course_id: int | None = None,
+    registration_id: int | None = None,
 ):
     """
     Resolve which Participant row to mark paid or resend confirmation for.
 
-    Using ``.filter(email=...).first()`` on a newest-first queryset updates the
-    wrong row when an older registration is still unpaid. Prefer ``participantId``
-    or ``course`` from the payment service when present; otherwise prefer the
-    newest unpaid row, then the newest row overall.
+    Programme = ``Registration`` (includes ``cohort``). Prefer ``participantId``;
+    otherwise ``course`` plus optional ``registrationId`` / ``program`` so the
+    correct intake row is chosen when the same email has several programmes.
     """
     email = (email or "").strip()
     if not email:
         return None
     qs = base_queryset.filter(email__iexact=email)
     if participant_id is not None:
-        return qs.filter(pk=participant_id).first()
+        row = qs.filter(pk=participant_id).first()
+        if row is None:
+            return None
+        if registration_id is not None and row.registration_id != registration_id:
+            return None
+        if course_id is not None and row.course_id != course_id:
+            return None
+        return row
+
     if course_id is not None:
-        return qs.filter(course_id=course_id).first()
+        try:
+            course = models.Course.objects.get(pk=course_id)
+        except models.Course.DoesNotExist:
+            return None
+        q = qs.filter(course_id=course_id)
+        if registration_id is not None:
+            if (
+                course.registration_id is not None
+                and registration_id != course.registration_id
+            ):
+                return None
+            q = q.filter(registration_id=registration_id)
+        elif course.registration_id is not None:
+            q = q.filter(registration_id=course.registration_id)
+        return q.first()
+
+    if registration_id is not None:
+        unpaid = (
+            qs.filter(registration_id=registration_id, payment_status=False)
+            .order_by("-created_at", "-id")
+            .first()
+        )
+        if unpaid is not None:
+            return unpaid
+        return (
+            qs.filter(registration_id=registration_id)
+            .order_by("-created_at", "-id")
+            .first()
+        )
+
     unpaid = (
-        qs.filter(payment_status=False)
-        .order_by("-created_at", "-id")
-        .first()
+        qs.filter(payment_status=False).order_by("-created_at", "-id").first()
     )
     if unpaid is not None:
         return unpaid
@@ -488,9 +523,10 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 course_id = request_data.get("course")
                 try:
                     course = models.Course.objects.get(id=course_id)
-                    participant = models.Participant.objects.filter(
-                        email=email, course=course
-                    ).first()
+                    pfilter = {"email__iexact": (email or "").strip(), "course": course}
+                    if course.registration_id is not None:
+                        pfilter["registration_id"] = course.registration_id
+                    participant = models.Participant.objects.filter(**pfilter).first()
 
                     if participant and not participant.payment_status:
                         return requestUtils.error_response(
@@ -533,6 +569,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         email = body.validated_data["email"]
         participant_id = body.validated_data.get("participantId")
         course_id = body.validated_data.get("course")
+        registration_id = body.validated_data.get("registration_id")
         mark_paid = body.validated_data.get("status", True)
 
         participant_object = resolve_participant_for_payment_email(
@@ -540,6 +577,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             email=email,
             participant_id=participant_id,
             course_id=course_id,
+            registration_id=registration_id,
         )
         if not participant_object:
             return requestUtils.error_response(
@@ -591,12 +629,15 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
         try:
             course = models.Course.objects.get(id=course_id)
-            registration = course.registration
 
-            # Find existing participant
-            participant = models.Participant.objects.filter(
-                email=email, course=course
-            ).first()
+            # Programme (registration) + course scopes the row (same as payment verify).
+            participant_filter = {
+                "email__iexact": (email or "").strip(),
+                "course": course,
+            }
+            if course.registration_id is not None:
+                participant_filter["registration_id"] = course.registration_id
+            participant = models.Participant.objects.filter(**participant_filter).first()
 
             if not participant:
                 return requestUtils.success_response(
@@ -648,12 +689,14 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         email = body.validated_data["email"]
         participant_id = body.validated_data.get("participantId")
         course_id = body.validated_data.get("course")
+        registration_id = body.validated_data.get("registration_id")
 
         participant_object = resolve_participant_for_payment_email(
             self.get_queryset(),
             email=email,
             participant_id=participant_id,
             course_id=course_id,
+            registration_id=registration_id,
         )
         if not participant_object:
             return requestUtils.error_response(

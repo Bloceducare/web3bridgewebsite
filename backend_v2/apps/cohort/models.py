@@ -102,10 +102,12 @@ class Participant(BaseModelBaseMixin, models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (
-            "email",
-            "registration",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "registration", "course"],
+                name="cohort_participant_email_registration_course_uniq",
+            ),
+        ]
         indexes = [
             models.Index(fields=["-created_at"], name="participant_created_at_idx"),
             models.Index(fields=["email"], name="participant_email_idx"),
