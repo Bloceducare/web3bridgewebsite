@@ -1015,28 +1015,20 @@ class PaymentActivationEmailTests(SimpleTestCase):
 class SubmitAssessmentTemplateTests(SimpleTestCase):
     """Verify pass/fail email templates render correctly."""
 
-    def test_passed_template_renders_name_score_payment_link(self):
+    def test_passed_template_renders_welcome_and_links(self):
         rendered = render_to_string("cohort/assessment_passed_email.html", {
             "name": "John Doe",
-            "cohort": "Web3 Cohort XIV",
-            "score": "85.50",
-            "payment_link": "https://payment.web3bridgeafrica.com",
-            "breakdown_display": None,
         })
-        self.assertIn("John Doe", rendered)
-        self.assertIn("85.50", rendered)
-        self.assertIn("https://payment.web3bridgeafrica.com", rendered)
+        self.assertIn("Welcome to Web3Bridge", rendered)
+        self.assertIn("successfully passed the assessment", rendered.lower())
+        self.assertIn("student portal", rendered.lower())
+        self.assertIn("https://t.me/web3bridge", rendered)
 
-    def test_passed_template_renders_breakdown_when_present(self):
+    def test_passed_template_renders_without_cohort(self):
         rendered = render_to_string("cohort/assessment_passed_email.html", {
             "name": "John Doe",
-            "cohort": "Web3 Cohort XIV",
-            "score": "85.50",
-            "payment_link": "https://payment.web3bridgeafrica.com",
-            "breakdown_display": '{\n  "a": 40\n}',
         })
-        self.assertIn("Score breakdown", rendered)
-        self.assertIn('"a": 40', rendered)
+        self.assertIn("successfully passed the assessment", rendered.lower())
 
     def test_failed_template_renders_name_score_and_encouragement(self):
         rendered = render_to_string("cohort/assessment_failed_email.html", {
@@ -1058,3 +1050,19 @@ class SubmitAssessmentTemplateTests(SimpleTestCase):
         })
         self.assertIn("Score breakdown", rendered)
         self.assertIn("Section A: 10 / 30", rendered)
+
+    def test_assessment_breakdown_suppresses_metadata_only_dict(self):
+        from cohort.helpers.model.base import _format_assessment_breakdown
+
+        self.assertIsNone(
+            _format_assessment_breakdown(
+                {"email": "a@b.com", "score": 29.5, "passed": False}
+            )
+        )
+
+    def test_assessment_breakdown_formats_real_sections(self):
+        from cohort.helpers.model.base import _format_assessment_breakdown
+
+        out = _format_assessment_breakdown({"logic": 40, "solidity": 45})
+        self.assertIn("Logic:", out)
+        self.assertIn("Solidity:", out)

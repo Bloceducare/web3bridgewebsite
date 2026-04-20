@@ -882,11 +882,10 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             date_taken=timezone.now(),
         )
 
-        # Send appropriate email
-        payment_link = "https://payment.web3bridgeafrica.com"
+        # Send appropriate email (pass vs fail templates from submit-assessment)
         if passed:
             send_assessment_passed_email(
-                email, participant.name, participant.cohort, score, payment_link, breakdown=breakdown
+                email, participant.name, participant.cohort, score, breakdown=breakdown
             )
         else:
             send_assessment_failed_email(

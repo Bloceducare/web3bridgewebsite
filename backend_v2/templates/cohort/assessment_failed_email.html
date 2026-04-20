@@ -13,6 +13,8 @@
         a:hover { text-decoration: underline; }
         .footer { margin-top: 30px; font-size: 13px; color: #666; }
         .breakdown { background: #f1f3f5; padding: 12px 16px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; line-height: 1.5; }
+        ul { margin: 0 0 15px 0; padding-left: 22px; }
+        li { margin-bottom: 8px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -21,7 +23,7 @@
 
         <p>Thank you for taking the Web3Bridge assessment for <strong>{{ cohort }}</strong>. We truly appreciate the effort and time you put into it.</p>
 
-        <div class="score">{{ score }} / 100</div>
+        <div class="score">{{ score|floatformat:2 }} / 100</div>
 
         {% if breakdown_display %}
         <p><strong>Score breakdown</strong></p>
@@ -30,19 +32,21 @@
 
         <p>Unfortunately, your score did not meet the passing mark for this cohort. We know this is not the news you were hoping for, and we understand how disappointing it can feel.</p>
 
-        <p>But please do not be discouraged — this is not the end of your journey. Many of our best developers did not make it on their first try. What matters most is that you keep pushing forward.</p>
+        <p>But please do not be discouraged, this is not the end of your journey. Many of our best developers did not make it on their first try. What matters most is that you keep pushing forward.</p>
 
         <p>Here is what we encourage you to do before the next cohort:</p>
         <ul>
             <li>Keep practising your coding and problem-solving skills</li>
-            <li>Engage with our community on <a href="https://discord.gg/zjq3fUDBsV">Discord</a> and <a href="https://t.me/web3bridge">Telegram</a></li>
-            <li>Follow our <a href="https://twitter.com/Web3Bridge">Twitter</a> for updates on the next cohort registration</li>
+            <li>Consider registering for any of our <a href="https://www.web3bridge.com">Web2 programs</a> that can support your learning</li>
+            <li>Engage with our community on <a href="https://t.me/web3bridge">Telegram</a></li>
+            <li>Follow our <a href="https://x.com/Web3Bridge">Twitter</a> for updates on the next cohort registration</li>
         </ul>
 
-        <p>We believe in your potential and we hope to see you again in the next cohort. Your determination today is the foundation of your success tomorrow. 💪</p>
+        <p>We believe in your potential and we hope to see you again in the next cohort. Your determination today is the foundation of your success tomorrow.</p>
 
-        <p>With Love,</p>
-        <p>Ayodeji Awosika<br/>Founder, Web3Bridge</p>
+        <p>With Love,<br/>
+        Ayodeji Awosika<br/>
+        Founder, Web3Bridge</p>
 
         <div class="footer">
             <a href="https://www.web3bridge.com" target="_blank" rel="noopener">www.web3bridge.com</a>

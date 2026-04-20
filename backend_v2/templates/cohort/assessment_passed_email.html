@@ -3,64 +3,44 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Congratulations! You Passed – Web3Bridge</title>
+    <title>Welcome to Web3Bridge</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         p { line-height: 1.6; margin-bottom: 15px; }
-        .score { font-size: 2rem; font-weight: bold; color: #28a745; text-align: center; margin: 20px 0; }
-        .btn {
-            display: inline-block;
-            margin: 20px 0;
-            padding: 14px 28px;
-            background-color: #007bff;
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .btn:hover { background-color: #0056b3; }
-        .center { text-align: center; }
         a { color: #007bff; text-decoration: none; }
         a:hover { text-decoration: underline; }
         .footer { margin-top: 30px; font-size: 13px; color: #666; }
-        .breakdown { background: #f1f3f5; padding: 12px 16px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; line-height: 1.5; }
+        ul { margin: 0 0 15px 0; padding-left: 22px; }
+        li { margin-bottom: 8px; line-height: 1.5; }
     </style>
 </head>
 <body>
     <div class="container">
-        <p>Dear {{ name }},</p>
+        <p>Hi there,</p>
 
-        <p>Congratulations! We are thrilled to inform you that you have <strong>passed</strong> your Web3Bridge assessment for <strong>{{ cohort }}</strong>. 🎉</p>
+        <p>Congratulations, and welcome to Web3Bridge 🎉</p>
 
-        <div class="score">{{ score }} / 100</div>
+        <p>You&rsquo;ve successfully passed the assessment and completed your registration. That alone sets you apart, we&rsquo;re excited to have you take this step with us.</p>
 
-        {% if breakdown_display %}
-        <p><strong>Score breakdown</strong></p>
-        <div class="breakdown">{{ breakdown_display }}</div>
-        {% endif %}
+        <p>We are currently working on improving our onboarding experience to ensure you have a smooth and structured start. Within the next 14 days, you will receive another email from us with access to your student portal and clear next steps for your cohort.</p>
 
-        <p>This is a fantastic achievement and a testament to your hard work and dedication. You have proven that you have what it takes to thrive in our program.</p>
+        <p>If you selected onsite participation during your application, please note that onsite slots are limited due to space constraints. Once registration is fully closed, we will review all applicants and application statuses, and you will be notified if you are selected to participate onsite.</p>
 
-        <p>The next step is to complete your payment to secure your spot in the cohort. Click the button below to proceed:</p>
+        <p>In the meantime, stay connected and plugged into the community:</p>
+        <ul>
+            <li>Follow us on <a href="https://x.com/Web3Bridge">X (Twitter)</a> for updates and opportunities</li>
+            <li>Join our <a href="https://t.me/web3bridge">Telegram channel</a> to stay informed and connect with others in the cohort</li>
+        </ul>
 
-        <div class="center">
-            <a href="{{ payment_link }}" class="btn" target="_blank" rel="noopener">Complete Payment</a>
-        </div>
+        <p>This is the beginning of an intense and rewarding journey. Come prepared to learn deeply, stay consistent, and build with intention.</p>
 
-        <p>If the button above doesn't work, copy and paste the link below into your browser:</p>
-        <p><a href="{{ payment_link }}">{{ payment_link }}</a></p>
+        <p>Welcome once again, we&rsquo;ll be in touch soon.</p>
 
-        <p>We look forward to having you on this journey with us. Welcome to the Web3Bridge family!</p>
-
-        <p>If you have any questions, reach out to us on
-            <a href="https://t.me/web3bridge">Telegram</a> or
-            <a href="https://twitter.com/Web3Bridge">Twitter</a>.
-        </p>
-
-        <p>With Love,</p>
-        <p>Ayodeji Awosika<br/>Founder, Web3Bridge</p>
+        <p>Best Regards<br/>
+        Ayodeji Awosika<br/>
+        Chief Mechanic,<br/>
+        Web3Bridge Team</p>
 
         <div class="footer">
             <a href="https://www.web3bridge.com" target="_blank" rel="noopener">www.web3bridge.com</a>

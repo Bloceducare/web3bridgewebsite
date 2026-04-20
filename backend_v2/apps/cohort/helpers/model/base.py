@@ -1,4 +1,3 @@
-import json
 import logging
 import re
 
@@ -239,26 +238,44 @@ def send_approval_email(participant, payment_link: str | None = None):
 
 
 def _format_assessment_breakdown(breakdown):
-    """Format breakdown for HTML email (JSON, list, or plain text)."""
+    """Format breakdown for HTML email: readable lines only, never raw API/JSON dumps."""
+    meta_keys = frozenset({"email", "score", "passed"})
+
     if breakdown in (None, "", {}, []):
         return None
-    if isinstance(breakdown, (dict, list)):
-        return json.dumps(breakdown, indent=2, ensure_ascii=False)
+
+    def _humanize_key(key):
+        return str(key).replace("_", " ").strip().title()
+
+    if isinstance(breakdown, dict):
+        filtered = {
+            k: v for k, v in breakdown.items() if str(k).lower() not in meta_keys
+        }
+        if not filtered:
+            return None
+        lines = []
+        for k, v in filtered.items():
+            if isinstance(v, dict):
+                inner = ", ".join(f"{_humanize_key(ik)}: {iv}" for ik, iv in v.items())
+                lines.append(f"{_humanize_key(k)}: {inner}")
+            elif isinstance(v, list):
+                lines.append(f"{_humanize_key(k)}: {', '.join(map(str, v))}")
+            else:
+                lines.append(f"{_humanize_key(k)}: {v}")
+        return "\n".join(lines)
+
+    if isinstance(breakdown, list):
+        return "\n".join(str(x) for x in breakdown) if breakdown else None
+
     return str(breakdown)
 
 
-def send_assessment_passed_email(email, name, cohort, score, payment_link, breakdown=None):
-    """Send a congratulations email with a payment CTA when a participant passes."""
+def send_assessment_passed_email(email, name, cohort, score, breakdown=None):
+    """Send welcome / onboarding next-steps email when a participant passes the assessment (submit-assessment only)."""
     try:
-        context = {
-            "name": name,
-            "cohort": cohort,
-            "score": score,
-            "payment_link": payment_link,
-            "breakdown_display": _format_assessment_breakdown(breakdown),
-        }
+        context = {"name": name}
         message = render_to_string("cohort/assessment_passed_email.html", context)
-        subject = f"Congratulations! You Passed Your Web3Bridge Assessment – {cohort}"
+        subject = f"Welcome to Web3Bridge – {cohort}" if cohort else "Welcome to Web3Bridge"
         from_email = getattr(settings, "ADMISSION_EMAIL_HOST_USER", "admission@web3bridge.com")
 
         email_msg = EmailMessage(subject=subject, body=message, from_email=from_email, to=[email])
