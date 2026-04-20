@@ -231,6 +231,13 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 # Comma-separated. When set, portal onboarding invite final failures email these addresses.
 OPERATIONS_ALERT_EMAILS = config("OPERATIONS_ALERT_EMAILS", default="", cast=Csv())
+# Post-payment registration welcome email (`send_registration_success_mail`): retries then ops alert.
+REGISTRATION_WELCOME_EMAIL_MAX_RETRIES = config(
+    "REGISTRATION_WELCOME_EMAIL_MAX_RETRIES", default=3, cast=int
+)
+REGISTRATION_WELCOME_EMAIL_RETRY_BACKOFF_SECONDS = config(
+    "REGISTRATION_WELCOME_EMAIL_RETRY_BACKOFF_SECONDS", default=1.0, cast=float
+)
 
 # Admission email settings (optional - will fall back to main email settings if not set)
 ADMISSION_EMAIL_HOST = config("ADMISSION_EMAIL_HOST", default=EMAIL_HOST)

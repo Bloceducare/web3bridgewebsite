@@ -1012,6 +1012,53 @@ class PaymentActivationEmailTests(SimpleTestCase):
         )
 
 
+class RegistrationWelcomeEmailRetryTests(SimpleTestCase):
+    """Post-payment welcome mail retries SMTP failures and alerts operations."""
+
+    @override_settings(
+        OPERATIONS_ALERT_EMAILS=["ops@example.com"],
+        REGISTRATION_WELCOME_EMAIL_MAX_RETRIES=3,
+        REGISTRATION_WELCOME_EMAIL_RETRY_BACKOFF_SECONDS=0,
+    )
+    @patch("cohort.helpers.model.base.time.sleep")
+    @patch("cohort.helpers.model.base.send_mail")
+    @patch("cohort.helpers.model.base._build_registration_success_email_message")
+    def test_retries_send_until_success(self, mock_build, mock_send_mail, _mock_sleep):
+        mock_msg = MagicMock()
+        mock_msg.send.side_effect = [ConnectionError("smtp down"), ConnectionError("again"), 1]
+        mock_build.return_value = mock_msg
+
+        from cohort.helpers.model.base import send_registration_success_mail
+
+        send_registration_success_mail("stu@example.com", 5, "Sam", activation_url=None)
+
+        self.assertEqual(mock_msg.send.call_count, 3)
+        mock_send_mail.assert_not_called()
+
+    @override_settings(
+        OPERATIONS_ALERT_EMAILS=["ops@example.com"],
+        REGISTRATION_WELCOME_EMAIL_MAX_RETRIES=2,
+        REGISTRATION_WELCOME_EMAIL_RETRY_BACKOFF_SECONDS=0,
+    )
+    @patch("cohort.helpers.model.base.time.sleep")
+    @patch("cohort.helpers.model.base.send_mail")
+    @patch("cohort.helpers.model.base._build_registration_success_email_message")
+    def test_alerts_ops_after_all_retries_fail(self, mock_build, mock_send_mail, _mock_sleep):
+        mock_msg = MagicMock()
+        mock_msg.send.side_effect = ConnectionError("smtp")
+        mock_build.return_value = mock_msg
+
+        from cohort.helpers.model.base import send_registration_success_mail
+
+        send_registration_success_mail("stu@example.com", 5, "Sam", activation_url=None)
+
+        self.assertEqual(mock_msg.send.call_count, 2)
+        mock_send_mail.assert_called_once()
+        kwargs = mock_send_mail.call_args[1]
+        self.assertEqual(kwargs["recipient_list"], ["ops@example.com"])
+        self.assertIn("Registration welcome email (post-payment) failed", kwargs["subject"])
+
+
 class SubmitAssessmentTemplateTests(SimpleTestCase):
     """Verify pass/fail email templates render correctly."""
 
