@@ -32,14 +32,21 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen overflow-x-hidden antialiased flex flex-col bg-background dark:bg-[url('../../public/dark.svg')] bg-fixed",
-          fontSans.className
-        )}>
+          fontSans.className,
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
-          disableTransitionOnChange>
-          <Toaster richColors />
+          disableTransitionOnChange
+        >
+          <Toaster
+            richColors
+            position="top-right"
+            duration={Infinity}
+            closeButton
+          />
           <Header />
 
           <main className="flex-1">{children}</main>

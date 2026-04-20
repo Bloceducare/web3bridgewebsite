@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -69,6 +69,8 @@ export default function UnifiedRegistrationForm({
   const [countryCode, setCountryCode] = useState<string>("");
   const [hasConsented, setHasConsented] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
+  
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.infer<typeof unifiedRegistrationSchema>>({
     resolver: zodResolver(unifiedRegistrationSchema),
@@ -102,6 +104,12 @@ export default function UnifiedRegistrationForm({
   useEffect(() => {
     setHasConsented(false);
     setConsentChecked(false);
+    
+    // Scroll to top of the form when selecting a new course
+    if (selectedCourseName && formContainerRef.current) {
+      const topOffset = formContainerRef.current.getBoundingClientRect().top + window.scrollY - 100; // 100px buffer for header
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
+    }
   }, [selectedCourseName]);
 
   // Sync errorMessage from parent
@@ -221,8 +229,17 @@ export default function UnifiedRegistrationForm({
     }
   }, [venueOptions, form, selectedCourseName]);
 
+  const handleConsentContinue = () => {
+    setHasConsented(true);
+    // Scroll to top of the form when moving to the personal details step
+    if (formContainerRef.current) {
+      const topOffset = formContainerRef.current.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="max-w-[750px] w-full px-4 md:px-8 py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md transition-all duration-500 overflow-hidden">
+    <div ref={formContainerRef} className="max-w-[750px] w-full px-4 md:px-8 py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md transition-all duration-500 overflow-hidden">
       <div className="mb-8 border-b pb-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Registration
@@ -413,7 +430,7 @@ export default function UnifiedRegistrationForm({
                 <div className="flex justify-center">
                   <CustomButton
                     type="button"
-                    onClick={() => setHasConsented(true)}
+                    onClick={handleConsentContinue}
                     disabled={!consentChecked}
                     className="w-full max-w-[340px] h-14 text-base font-black bg-bridgeRed hover:bg-bridgeRed/90 text-white rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-bridgeRed/20 disabled:opacity-50 disabled:grayscale disabled:scale-100 uppercase tracking-wide"
                   >
