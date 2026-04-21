@@ -209,6 +209,85 @@ class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
         self.assertTrue(self.participant_unpaid.payment_status)
         mock_handle.assert_called_once()
 
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_email_only_ignores_unpaid_on_closed_registration(
+        self, mock_handle
+    ):
+        """Payment portal must not resolve to unpaid rows for intakes that are no longer open."""
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+        self.reg_old.is_open = False
+        self.reg_old.save()
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        response = self._verify_post({"email": "dup@example.com"})
+
+        self.assertEqual(response.status_code, 200)
+        self.participant_unpaid.refresh_from_db()
+        self.assertFalse(self.participant_unpaid.payment_status)
+        self.participant_paid_newer.refresh_from_db()
+        self.assertTrue(self.participant_paid_newer.payment_status)
+        mock_handle.assert_not_called()
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_email_only_prefers_open_unpaid_over_closed_unpaid(
+        self, mock_handle
+    ):
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+        self.reg_old.is_open = False
+        self.reg_old.save()
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+        self.participant_paid_newer.payment_status = False
+        self.participant_paid_newer.save()
+
+        response = self._verify_post({"email": "dup@example.com"})
+
+        self.assertEqual(response.status_code, 200)
+        self.participant_unpaid.refresh_from_db()
+        self.assertFalse(self.participant_unpaid.payment_status)
+        self.participant_paid_newer.refresh_from_db()
+        self.assertTrue(self.participant_paid_newer.payment_status)
+        mock_handle.assert_called_once()
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_with_participant_id_still_marks_closed_registration_row(
+        self, mock_handle
+    ):
+        """Explicit participantId must still resolve when the programme is closed."""
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+        self.reg_old.is_open = False
+        self.reg_old.save()
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        response = self._verify_post(
+            {
+                "email": "dup@example.com",
+                "participantId": self.participant_unpaid.id,
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.participant_unpaid.refresh_from_db()
+        self.assertTrue(self.participant_unpaid.payment_status)
+        mock_handle.assert_called_once()
+
     def test_same_email_same_program_two_courses_allowed(self):
         """DB allows two participant rows: same programme (registration), different courses."""
         from cohort.models import Course, Participant, Registration

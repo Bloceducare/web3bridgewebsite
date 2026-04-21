@@ -511,8 +511,9 @@ export default function UnifiedRegistrationForm({
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="+234..."
+                          placeholder="e.g. +1 415 555 0199 or +234 801 234 5678"
                           className="h-12 bg-gray-50/30"
+                          maxLength={64}
                           {...field}
                         />
                       </FormControl>

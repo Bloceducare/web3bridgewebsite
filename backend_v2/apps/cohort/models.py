@@ -88,7 +88,13 @@ class Participant(BaseModelBaseMixin, models.Model):
         help_text="Collected on the registration form (e.g. male, female, other); exposed via Participant create API.",
     )
     github = models.URLField(_("github url"), max_length=250, blank=True, default="")
-    number = models.CharField(_("phone number"), max_length=20, blank=False, null=True)
+    number = models.CharField(
+        _("phone number"),
+        max_length=64,
+        blank=False,
+        null=True,
+        help_text="International formats allowed; validated loosely in the API.",
+    )
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
     cohort = models.CharField(
         _("cohort name"), max_length=20, blank=False, null=False, default="Cohort-XIII"

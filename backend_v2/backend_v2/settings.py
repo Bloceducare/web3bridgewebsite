@@ -111,6 +111,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend_v2.wsgi.application"
 
+# PostgreSQL host (used for production DB + sensible defaults below)
+_DB_HOST = config("DB_HOST", default="")
+# Persistent connections: seconds to keep TCP connections in the Django pool per worker.
+# Neon / PgBouncer *transaction* poolers (hostnames containing "pooler") require CONN_MAX_AGE=0;
+# use Neon's *direct* (non-pooler) endpoint + DB_CONN_MAX_AGE=3600 if you want hour-long reuse.
+_DEFAULT_DB_CONN_MAX_AGE = (
+    0 if ("pooler" in _DB_HOST.lower() or "pgbouncer" in _DB_HOST.lower()) else 3600
+)
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -125,14 +133,24 @@ DATABASES = {
         "NAME": config("DB_NAME"),
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
+        "HOST": _DB_HOST,
         "PORT": config("DB_PORT", default="5432"),
+        "CONN_MAX_AGE": config(
+            "DB_CONN_MAX_AGE", default=_DEFAULT_DB_CONN_MAX_AGE, cast=int
+        ),
+        "OPTIONS": {
+            # psycopg2: fail fast instead of hanging on unreachable DB
+            "connect_timeout": config("DB_CONNECT_TIMEOUT", default=30, cast=int),
+        },
     },
 }
 
 # Determine the database configuration based on environment
 if ENVIROMENT == "production":
     DATABASES["default"] = DATABASES["production"]
+    # Transaction-pooled Postgres (Neon pooler, etc.) breaks server-side cursors
+    if "pooler" in _DB_HOST.lower() or "pgbouncer" in _DB_HOST.lower():
+        DISABLE_SERVER_SIDE_CURSORS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

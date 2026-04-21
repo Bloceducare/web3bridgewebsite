@@ -1,5 +1,22 @@
 import { z } from "zod";
 
+/** Very loose international phone: trim, length, at least one digit; allows +, spaces, punctuation. */
+export const loosePhoneNumber = (
+  requiredError: string,
+  opts?: { min?: number; max?: number },
+) => {
+  const minLen = opts?.min ?? 2;
+  const maxLen = opts?.max ?? 64;
+  return z
+    .string({ required_error: requiredError })
+    .trim()
+    .min(minLen, "Phone number is too short.")
+    .max(maxLen, "Phone number is too long.")
+    .refine((v) => [...v].some((ch) => ch >= "0" && ch <= "9"), {
+      message: "Phone number should include at least one digit.",
+    });
+};
+
 export const coursesSchema = z.object({
   course: z.enum(
     [
@@ -24,10 +41,7 @@ export const formSchema = z.object({
       message: "Name must be less than 30 characters.",
     }),
   email: z.string({ required_error: "Please enter your email address" }).min(2),
-  number: z
-    .string({ required_error: "Please enter your phone number" })
-    .min(2)
-    .max(50),
+  number: loosePhoneNumber("Please enter your phone number", { min: 2, max: 64 }),
   github: z
     .string({ required_error: "Github profile link is required" })
     .min(2),
@@ -67,10 +81,7 @@ export const hubRegistrationSchema = z.object({
     .string({ required_error: "Please enter your email address" })
     .email("Please enter a valid email address")
     .min(2),
-  phone_number: z
-    .string({ required_error: "Please enter your phone number" })
-    .min(2)
-    .max(20),
+  phone_number: loosePhoneNumber("Please enter your phone number"),
   location: z
     .string({ required_error: "Please enter your location" })
     .min(2)
@@ -115,10 +126,7 @@ export const unifiedRegistrationSchema = z.object({
     .string({ required_error: "Email address is required" })
     .email("Please enter a valid email address")
     .min(2),
-  number: z
-    .string({ required_error: "Phone number is required" })
-    .min(5, "Phone number must be at least 5 characters.")
-    .max(20, "Phone number must be less than 20 characters."),
+  number: loosePhoneNumber("Phone number is required", { min: 2, max: 64 }),
   github: z
     .string({ required_error: "Github profile link is required" })
     .url("Please enter a valid GitHub URL")

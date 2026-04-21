@@ -59,11 +59,18 @@ def resolve_participant_for_payment_email(
     Programme = ``Registration`` (includes ``cohort``). Prefer ``participantId``;
     otherwise ``course`` plus optional ``registrationId`` / ``program`` so the
     correct intake row is chosen when the same email has several programmes.
+
+    When resolving without ``participantId``, rows tied to a **closed** programme
+    (``Registration.is_open`` is false) are ignored so the payment portal only
+    surfaces current (open) intakes. Explicit ``participantId`` still resolves
+    the row for completion callbacks.
     """
     email = (email or "").strip()
     if not email:
         return None
     qs = base_queryset.filter(email__iexact=email)
+    if participant_id is None:
+        qs = qs.filter(Q(registration__isnull=True) | Q(registration__is_open=True))
     if participant_id is not None:
         row = qs.filter(pk=participant_id).first()
         if row is None:
@@ -644,6 +651,18 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                     {
                         "registered": False,
                         "message": "No registration found for this email and course",
+                    },
+                    http_status=status.HTTP_200_OK,
+                )
+
+            if (
+                participant.registration_id is not None
+                and not participant.registration.is_open
+            ):
+                return requestUtils.success_response(
+                    {
+                        "registered": False,
+                        "message": "No open registration for this email and course",
                     },
                     http_status=status.HTTP_200_OK,
                 )

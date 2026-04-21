@@ -10,6 +10,26 @@ from .literals import (
 )
 
 
+def _validate_loose_phone_number(value: str | None) -> str:
+    """
+    Very loose international phone check: trim, length cap, any numeric digit (Unicode).
+
+    Allows +, spaces, dashes, parentheses, dots, slashes, etc. No country-specific rules.
+    """
+    value = (value or "").strip()
+    if not value:
+        return ""
+    if len(value) < 2:
+        raise serializers.ValidationError("Phone number is too short.")
+    if len(value) > 64:
+        raise serializers.ValidationError("Phone number is too long.")
+    if not any(ch.isdigit() for ch in value):
+        raise serializers.ValidationError(
+            "Phone number must include at least one digit."
+        )
+    return value
+
+
 def _merge_registration_and_program_ids(attrs: dict) -> dict:
     """
     Accept ``registrationId`` and/or ``program`` (alias) as the Registration (programme) FK.
@@ -242,13 +262,21 @@ class ParticipantSerializer:
             help_text="Required for new registrations; values such as male, female, or other from the registration UI.",
         )
         github = serializers.URLField(required=False)
-        number = serializers.CharField(required=False, allow_blank=True, default="")
+        number = serializers.CharField(
+            required=False,
+            allow_blank=True,
+            default="",
+            max_length=64,
+        )
         venue = serializers.CharField(required=True)
 
         class Meta:
             model = models.Participant
             exclude = ["status", "payment_status", "cohort"]
             ref_name = PARTICIPANT_REF_NAME
+
+        def validate_number(self, value):
+            return _validate_loose_phone_number(value)
 
         def validate_email(self, email):
             request = self.context.get("request")
@@ -344,6 +372,9 @@ class ParticipantSerializer:
             ]
             extra_kwargs = {field: {"required": False} for field in fields}
             ref_name = PARTICIPANT_REF_NAME
+
+        def validate_number(self, value):
+            return _validate_loose_phone_number(value)
 
         def update(self, instance, validated_data):
             instance.name = validated_data.get("name", instance.name)
