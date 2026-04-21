@@ -64,6 +64,97 @@ class VerifyPaymentSerializerTests(SimpleTestCase):
     PORTAL_ONBOARDING_URL="",
     PORTAL_INTERNAL_API_KEY="",
 )
+class ParticipantCreateRegistrationPersistenceTests(TestCase):
+    """
+    Participant.registration must stay set from the request (or resolved server-side),
+    not overwritten by Course.registration when that FK is null.
+    """
+
+    CREATE_URL = "/api/v2/cohort/participant/"
+
+    def setUp(self):
+        self.client = APIClient()
+        from cohort.models import Course, Registration
+
+        self.reg = Registration.objects.create(
+            name="Open intake",
+            cohort="Cohort-TEST",
+            is_open=True,
+        )
+        self.course_unlinked = Course.objects.create(
+            name="Course without programme FK",
+            description="d",
+            extra_info="e",
+        )
+        self.assertIsNone(self.course_unlinked.registration_id)
+        self.course_linked = Course.objects.create(
+            name="Course with programme FK",
+            description="d",
+            extra_info="e",
+            registration=self.reg,
+        )
+
+    def _base_payload(self, **overrides):
+        payload = {
+            "name": "Test User",
+            "wallet_address": "0x1234567890123456789012345678901234567890",
+            "email": "participant_create@example.com",
+            "course": self.course_unlinked.pk,
+            "registration": self.reg.pk,
+            "city": "Lagos",
+            "country": "NG",
+            "gender": "male",
+            "venue": "online",
+        }
+        payload.update(overrides)
+        return payload
+
+    def test_create_preserves_registration_when_course_programme_fk_is_null(self):
+        from cohort.models import Participant
+
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(email="preserve_reg@example.com"),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+        p = Participant.objects.get(email="preserve_reg@example.com")
+        self.assertEqual(p.registration_id, self.reg.pk)
+        self.assertEqual(p.cohort, self.reg.cohort)
+
+    def test_create_resolves_open_registration_when_omitted(self):
+        from cohort.models import Participant
+
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="resolved_reg@example.com",
+                course=self.course_linked.pk,
+                registration=None,
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+        p = Participant.objects.get(email="resolved_reg@example.com")
+        self.assertEqual(p.registration_id, self.reg.pk)
+
+    def test_create_returns_400_when_no_registration_and_course_unlinked(self):
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="no_reg@example.com",
+                registration=None,
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 400)
+
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False,
+    PORTAL_ONBOARDING_URL="",
+    PORTAL_INTERNAL_API_KEY="",
+)
 class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
     """
     Payment portal must mark the correct Participant row paid when one email has

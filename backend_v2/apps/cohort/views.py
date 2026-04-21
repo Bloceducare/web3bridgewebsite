@@ -428,8 +428,34 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Create())
     def create(self, request, *args, **kwargs):
-        # Check if registration is open
-        registration_id = request.data.get("registration")
+        request_data = (
+            request.data.copy()
+            if hasattr(request.data, "copy")
+            else dict(request.data)
+        )
+
+        if request_data.get("registration") in (None, "") and request_data.get(
+            "course"
+        ):
+            course = models.Course.objects.filter(pk=request_data["course"]).first()
+            if course:
+                resolved = serializers.resolve_open_registration_for_course(course)
+                if resolved:
+                    request_data["registration"] = resolved.pk
+
+        registration_id = request_data.get("registration")
+        if registration_id in (None, ""):
+            return requestUtils.error_response(
+                "Missing registration",
+                {
+                    "registration": (
+                        "Registration is required, or no open registration was "
+                        "found for this course."
+                    )
+                },
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             registration_obj = models.Registration.objects.get(pk=registration_id)
             if not registration_obj.is_open:
@@ -444,7 +470,6 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             )
 
         # Handle request data and discount code
-        request_data = request.data
         discount_code = request_data.pop("discount", None)
 
         # Validate discount code if provided

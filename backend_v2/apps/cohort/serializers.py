@@ -30,6 +30,22 @@ def _validate_loose_phone_number(value: str | None) -> str:
     return value
 
 
+def resolve_open_registration_for_course(course: models.Course) -> models.Registration | None:
+    """
+    Latest open Registration linked to this course (via ``Course.registration``).
+
+    Used when the client omits ``registration`` so the participant row still gets
+    a programme FK. Open-only; ordered by ``created_at`` descending.
+    """
+    if course is None:
+        return None
+    return (
+        models.Registration.objects.filter(courses__pk=course.pk, is_open=True)
+        .order_by("-created_at")
+        .first()
+    )
+
+
 def _merge_registration_and_program_ids(attrs: dict) -> dict:
     """
     Accept ``registrationId`` and/or ``program`` (alias) as the Registration (programme) FK.
@@ -283,14 +299,28 @@ class ParticipantSerializer:
             if not request:
                 raise serializers.ValidationError("Request context is required.")
             email = email
-            course_id = request.data.get("course")
+            initial = getattr(self, "initial_data", None) or {}
+            course_id = initial.get("course")
+            if course_id is None:
+                course_id = request.data.get("course")
             try:
                 course = models.Course.objects.get(id=course_id)
             except models.Course.DoesNotExist:
                 raise serializers.ValidationError("Course does not exist")
 
+            registration_id = initial.get("registration")
+            if registration_id is None:
+                registration_id = request.data.get("registration")
+            if registration_id in (None, ""):
+                registration = resolve_open_registration_for_course(course)
+            else:
+                registration = models.Registration.objects.filter(
+                    pk=registration_id
+                ).first()
+                if registration is None:
+                    registration = course.registration
+
             # Programme = Registration (includes cohort). Uniqueness: email + programme + course.
-            registration = course.registration
             if registration is None:
                 existing_participant = models.Participant.objects.filter(
                     email__iexact=email.strip(),
@@ -322,12 +352,16 @@ class ParticipantSerializer:
             return email
 
         def create(self, validated_data):
+            """
+            Persist the validated ``registration`` from the client (do not replace
+            with ``course.registration`` — that FK is often unset and would null out
+            ``participant.registration``).
+            """
             participant_obj = models.Participant.objects.create(**validated_data)
-            registration = participant_obj.course.registration
-            participant_obj.registration = registration
+            registration = participant_obj.registration
             if registration is not None:
                 participant_obj.cohort = registration.cohort
-            participant_obj.save()
+                participant_obj.save(update_fields=["cohort"])
             return participant_obj
 
     class List(serializers.ModelSerializer):

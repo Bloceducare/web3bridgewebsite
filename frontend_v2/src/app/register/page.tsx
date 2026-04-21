@@ -43,6 +43,27 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
 
+/** When course payload has no ``registration`` FK, pick latest open programme that lists this course. */
+function resolveOpenRegistrationIdForCourse(
+  courseId: number,
+  registrations: any[] | undefined
+): number | undefined {
+  if (!registrations?.length) return undefined;
+  const open = registrations.filter((r: any) => r.is_open);
+  const linked = open.filter((r: any) => {
+    const ids = (Array.isArray(r.courses) ? r.courses : [])
+      .map((c: any) => (typeof c === "number" ? c : c?.id))
+      .filter((id: unknown) => id != null);
+    return ids.includes(courseId);
+  });
+  const pool = linked.length ? linked : open;
+  if (!pool.length) return undefined;
+  const best = pool.reduce((a: any, b: any) =>
+    (Number(b.id) || 0) > (Number(a.id) || 0) ? b : a
+  );
+  return typeof best.id === "number" ? best.id : undefined;
+}
+
 export default function RegistrationPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
@@ -156,11 +177,15 @@ export default function RegistrationPage() {
       const courseId = selectedCourse.id;
       const courseName = selectedCourse.name;
 
+      const registrationId =
+        selectedCourse.registration ??
+        resolveOpenRegistrationIdForCourse(courseId, allReg);
+
       // Prepare user form data for API with defaults for hidden fields
       const userForm: UserDataType = {
         ...values,
         course: courseId,
-        registration: selectedCourse.registration,
+        ...(registrationId != null ? { registration: registrationId } : {}),
         // BACKEND COMPATIBILITY: Inject defaults for fields not in the simplified UI
         wallet_address: (values as any).wallet_address || "0x0000000000000000000000000000000000000000",
         city: values.state, // Default city to state name
