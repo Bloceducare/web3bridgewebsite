@@ -6,17 +6,11 @@ import MaxWrapper from "@/components/shared/MaxWrapper";
 import { MoveRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import UnifiedRegistrationForm from "@/components/shared/UnifiedRegistrationForm";
-import {
-  getCohortStatus,
-  useFetchAllCourses,
-  useFetchAllRegistration,
-} from "@/hooks";
+import { getCohortStatus, useFetchAllCourses } from "@/hooks";
 import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import PaymentPendingModal from "@/components/shared/PaymentPendingModal";
 import SolidityAssessmentModal from "@/components/shared/SolidityAssessmentModal";
-import { resolveOpenRegistrationIdForCourse } from "@/lib/open-registration";
-
 // Types
 interface FormDataType {
   email: string;
@@ -47,8 +41,6 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
 export default function RegistrationPage() {
   const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
-
-  const { data: allReg, isLoading: loadReg } = useFetchAllRegistration();
 
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -154,17 +146,15 @@ export default function RegistrationPage() {
         throw new Error("Selected course not found");
       }
 
-      const courseId = selectedCourse.id;
       const courseName = selectedCourse.name;
 
-      const registrationId =
-        selectedCourse.registration ??
-        resolveOpenRegistrationIdForCourse(courseId, allReg);
+      /** Programme id from the course row (server still uses Course → registration as source of truth). */
+      const registrationId = selectedCourse.registration ?? undefined;
 
       // Prepare user form data for API with defaults for hidden fields
       const userForm: UserDataType = {
         ...values,
-        course: courseId,
+        course: selectedCourse.id,
         ...(registrationId != null ? { registration: registrationId } : {}),
         // BACKEND COMPATIBILITY: Inject defaults for fields not in the simplified UI
         wallet_address: (values as any).wallet_address || "0x0000000000000000000000000000000000000000",
@@ -232,7 +222,7 @@ export default function RegistrationPage() {
     checkStatus();
   }, [setIsClose, currentDate, openDate]);
 
-  if (isLoading || loadReg) {
+  if (isLoading) {
     return (
       <MaxWrapper className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">

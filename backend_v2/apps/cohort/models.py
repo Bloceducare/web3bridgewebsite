@@ -44,10 +44,9 @@ class Registration(BaseModelBaseMixin, models.Model):
     cohort = models.CharField(
         _("cohort name"),
         max_length=20,
-        blank=False,
-        null=False,
-        default="",
-        help_text=_("Label for this intake (e.g. Cohort-XV); set explicitly when creating."),
+        blank=True,
+        null=True,
+        help_text=_("Optional label (e.g. Web3, Web2). Set on each programme in admin."),
     )
     registrationFee = models.CharField(
         _("registration fee"), max_length=50, blank=True, null=True
@@ -74,7 +73,15 @@ class Participant(BaseModelBaseMixin, models.Model):
     email = models.EmailField(
         _("participant email"), max_length=255, blank=False, null=False
     )
-    registration = models.ForeignKey(Registration, on_delete=models.SET_NULL, null=True)
+    registration = models.ForeignKey(
+        Registration,
+        on_delete=models.SET_NULL,
+        null=True,
+        help_text=_(
+            "Programme (Registration) for payments and reporting; copied from "
+            "Course.registration on save when missing."
+        ),
+    )
     status = models.CharField(
         max_length=20,
         choices=RegistrationStatus.choices(),
@@ -104,12 +111,9 @@ class Participant(BaseModelBaseMixin, models.Model):
     cohort = models.CharField(
         _("cohort name"),
         max_length=20,
-        blank=False,
-        null=False,
-        default="",
-        help_text=_(
-            "Copied from the participant's Registration on enroll; empty until then."
-        ),
+        blank=True,
+        null=True,
+        help_text=_("Set from the course’s programme on enroll; may be null for legacy rows."),
     )
     payment_status = models.BooleanField(default=False)
     venue = models.CharField(
@@ -118,6 +122,24 @@ class Participant(BaseModelBaseMixin, models.Model):
     # New timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Always persist ``registration_id`` when the course has a programme link.
+        Prevents null programme FKs that break payment matching and reporting.
+        """
+        if self.registration_id is None and self.course_id:
+            try:
+                rid = (
+                    Course.objects.only("registration_id")
+                    .get(pk=self.course_id)
+                    .registration_id
+                )
+            except Course.DoesNotExist:
+                rid = None
+            if rid:
+                self.registration_id = rid
+        super().save(*args, **kwargs)
 
     class Meta:
         constraints = [

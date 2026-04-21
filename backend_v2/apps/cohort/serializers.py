@@ -10,6 +10,17 @@ from .literals import (
 )
 
 
+class BlankStringAsNullPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    """``""`` / whitespace-only strings are treated like a missing value (null)."""
+
+    def to_internal_value(self, data):
+        if data is None:
+            return None
+        if isinstance(data, str) and data.strip() == "":
+            return None
+        return super().to_internal_value(data)
+
+
 def _validate_loose_phone_number(value: str | None) -> str:
     """
     Very loose international phone check: trim, length cap, any numeric digit (Unicode).
@@ -28,22 +39,6 @@ def _validate_loose_phone_number(value: str | None) -> str:
             "Phone number must include at least one digit."
         )
     return value
-
-
-def resolve_open_registration_for_course(course: models.Course) -> models.Registration | None:
-    """
-    Latest open Registration linked to this course (via ``Course.registration``).
-
-    Used when the client omits ``registration`` so the participant row still gets
-    a programme FK. Open-only; ordered by ``created_at`` descending.
-    """
-    if course is None:
-        return None
-    return (
-        models.Registration.objects.filter(courses__pk=course.pk, is_open=True)
-        .order_by("-created_at")
-        .first()
-    )
 
 
 def _merge_registration_and_program_ids(attrs: dict) -> dict:
@@ -96,7 +91,6 @@ class CourseSerializer:
 
     class List(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
-        registration = serializers.SerializerMethodField()
 
         class Meta:
             model = models.Course
@@ -111,16 +105,9 @@ class CourseSerializer:
                 "registration",
                 "duration",
             ]
-
-        def get_registration(self, obj):
-            reg = getattr(obj, "registration", None)
-            if reg is not None and reg.is_open:
-                return reg.pk
-            return None
 
     class Retrieve(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
-        registration = serializers.SerializerMethodField()
 
         class Meta:
             model = models.Course
@@ -135,12 +122,6 @@ class CourseSerializer:
                 "registration",
                 "duration",
             ]
-
-        def get_registration(self, obj):
-            reg = getattr(obj, "registration", None)
-            if reg is not None and reg.is_open:
-                return reg.pk
-            return None
 
     class Update(serializers.ModelSerializer):
         images = serializers.ListField(child=serializers.ImageField(), required=False)
@@ -273,11 +254,13 @@ class ParticipantSerializer:
         name = serializers.CharField(required=True)
         wallet_address = serializers.CharField(required=True)
         course = serializers.PrimaryKeyRelatedField(
-            queryset=models.Course.objects.all(), required=True
-        )
-        registration = serializers.PrimaryKeyRelatedField(
-            queryset=models.Registration.objects.filter(is_open=True),
+            queryset=models.Course.objects.select_related("registration"),
             required=True,
+        )
+        registration = BlankStringAsNullPrimaryKeyRelatedField(
+            queryset=models.Registration.objects.all(),
+            required=False,
+            allow_null=True,
         )
         email = serializers.EmailField(required=True)
         motivation = serializers.CharField(required=False, allow_blank=True, default="")
@@ -319,19 +302,13 @@ class ParticipantSerializer:
             if course_id is None:
                 course_id = request.data.get("course")
             try:
-                course = models.Course.objects.get(id=course_id)
+                course = models.Course.objects.select_related("registration").get(
+                    id=course_id
+                )
             except models.Course.DoesNotExist:
                 raise serializers.ValidationError("Course does not exist")
 
-            registration_id = initial.get("registration")
-            if registration_id is None:
-                registration_id = request.data.get("registration")
-            if registration_id in (None, ""):
-                registration = resolve_open_registration_for_course(course)
-            else:
-                registration = models.Registration.objects.filter(
-                    pk=registration_id, is_open=True
-                ).first()
+            registration = course.registration
 
             # Programme = Registration (includes cohort). Uniqueness: email + programme + course.
             if registration is None:
@@ -364,16 +341,47 @@ class ParticipantSerializer:
                     )
             return email
 
+        def validate(self, attrs):
+            course = attrs.get("course")
+            if not course:
+                return attrs
+            linked = getattr(course, "registration", None)
+            if linked is None:
+                raise serializers.ValidationError(
+                    {
+                        "course": (
+                            "This course has no programme linked. In admin, set "
+                            "Course → registration to your programme."
+                        )
+                    }
+                )
+            if not linked.is_open:
+                raise serializers.ValidationError(
+                    {
+                        "registration": (
+                            "This course’s programme is not open for registration."
+                        )
+                    }
+                )
+            attrs["registration"] = linked
+            return attrs
+
         def create(self, validated_data):
-            """
-            Persist the validated ``registration`` from the client (do not replace
-            with ``course.registration`` — that FK is often unset and would null out
-            ``participant.registration``).
-            """
+            course = validated_data["course"]
+            linked = validated_data.get("registration") or getattr(
+                course, "registration", None
+            )
+            if linked is not None:
+                validated_data["registration"] = linked
             participant_obj = models.Participant.objects.create(**validated_data)
+            if participant_obj.registration_id is None and linked is not None:
+                participant_obj.registration_id = linked.pk
+                participant_obj.save(update_fields=["registration_id"])
             registration = participant_obj.registration
             if registration is not None:
-                participant_obj.cohort = registration.cohort
+                label = (registration.cohort or registration.name or "").strip()
+                max_len = models.Participant._meta.get_field("cohort").max_length
+                participant_obj.cohort = (label[:max_len] if label else None)
                 participant_obj.save(update_fields=["cohort"])
             return participant_obj
 

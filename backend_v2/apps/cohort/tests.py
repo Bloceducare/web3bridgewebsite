@@ -66,8 +66,8 @@ class VerifyPaymentSerializerTests(SimpleTestCase):
 )
 class ParticipantCreateRegistrationPersistenceTests(TestCase):
     """
-    Participant.registration must stay set from the request (or resolved server-side),
-    not overwritten by Course.registration when that FK is null.
+    Participant.registration follows the course’s linked programme (Course.registration),
+    not an arbitrary id from the client.
     """
 
     CREATE_URL = "/api/v2/cohort/participant/"
@@ -79,6 +79,11 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         self.reg = Registration.objects.create(
             name="Open intake",
             cohort="Cohort-TEST",
+            is_open=True,
+        )
+        self.other_reg = Registration.objects.create(
+            name="Other programme",
+            cohort="OTHER",
             is_open=True,
         )
         self.course_unlinked = Course.objects.create(
@@ -99,7 +104,7 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
             "name": "Test User",
             "wallet_address": "0x1234567890123456789012345678901234567890",
             "email": "participant_create@example.com",
-            "course": self.course_unlinked.pk,
+            "course": self.course_linked.pk,
             "registration": self.reg.pk,
             "city": "Lagos",
             "country": "NG",
@@ -109,16 +114,19 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         payload.update(overrides)
         return payload
 
-    def test_create_preserves_registration_when_course_programme_fk_is_null(self):
+    def test_create_uses_course_programme_not_client_registration_id(self):
         from cohort.models import Participant
 
         r = self.client.post(
             self.CREATE_URL,
-            self._base_payload(email="preserve_reg@example.com"),
+            self._base_payload(
+                email="uses_course_prog@example.com",
+                registration=self.other_reg.pk,
+            ),
             format="json",
         )
         self.assertEqual(r.status_code, 201, r.content)
-        p = Participant.objects.get(email="preserve_reg@example.com")
+        p = Participant.objects.get(email="uses_course_prog@example.com")
         self.assertEqual(p.registration_id, self.reg.pk)
         self.assertEqual(p.cohort, self.reg.cohort)
 
@@ -138,6 +146,36 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         p = Participant.objects.get(email="resolved_reg@example.com")
         self.assertEqual(p.registration_id, self.reg.pk)
 
+    def test_create_empty_string_registration_same_as_omitted(self):
+        from cohort.models import Participant
+
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="empty_str_reg@example.com",
+                registration="",
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+        p = Participant.objects.get(email="empty_str_reg@example.com")
+        self.assertEqual(p.registration_id, self.reg.pk)
+
+    def test_create_whitespace_registration_same_as_omitted(self):
+        from cohort.models import Participant
+
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="ws_reg@example.com",
+                registration="   \t  ",
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+        p = Participant.objects.get(email="ws_reg@example.com")
+        self.assertEqual(p.registration_id, self.reg.pk)
+
     def test_create_returns_400_when_no_registration_and_course_unlinked(self):
         r = self.client.post(
             self.CREATE_URL,
@@ -150,26 +188,58 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_create_rejects_closed_registration(self):
-        from cohort.models import Registration
+        from cohort.models import Course, Registration
 
         closed = Registration.objects.create(
             name="Closed intake",
             cohort="Cohort-CLOSED",
             is_open=False,
         )
+        course_closed = Course.objects.create(
+            name="Linked to closed programme",
+            description="d",
+            extra_info="e",
+            registration=closed,
+        )
         r = self.client.post(
             self.CREATE_URL,
             self._base_payload(
                 email="closed_prog@example.com",
-                registration=closed.pk,
+                course=course_closed.pk,
+                registration=None,
             ),
             format="json",
         )
         self.assertEqual(r.status_code, 400)
 
 
-class CourseListOpenRegistrationSerializationTests(TestCase):
-    def test_course_list_registration_null_when_linked_programme_closed(self):
+class ParticipantSaveFillsRegistrationFromCourseTests(TestCase):
+    """Model save() must copy course.registration_id when participant FK is unset."""
+
+    def test_save_sets_registration_id_from_course(self):
+        from cohort.models import Course, Participant, Registration
+
+        reg = Registration.objects.create(
+            name="Prog", cohort="WEB3", is_open=True
+        )
+        course = Course.objects.create(
+            name="C1",
+            description="d",
+            extra_info="e",
+            registration=reg,
+        )
+        p = Participant.objects.create(
+            name="N",
+            email="save_fill@example.com",
+            wallet_address="0x1",
+            course=course,
+            venue="online",
+        )
+        self.assertEqual(p.registration_id, reg.pk)
+
+
+class CourseListRegistrationSerializationTests(TestCase):
+    def test_course_list_includes_registration_pk_when_programme_closed(self):
         from cohort.models import Course, Registration
         from cohort.serializers import CourseSerializer
 
@@ -183,7 +253,7 @@ class CourseListOpenRegistrationSerializationTests(TestCase):
             registration=closed,
         )
         data = CourseSerializer.List(course).data
-        self.assertIsNone(data["registration"])
+        self.assertEqual(data["registration"], closed.pk)
 
 
 @override_settings(

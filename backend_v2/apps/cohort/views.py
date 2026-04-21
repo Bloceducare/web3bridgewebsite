@@ -434,14 +434,21 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             else dict(request.data)
         )
 
+        # Treat "", whitespace-only, and JSON null as missing so we inject from Course.registration.
+        _reg = request_data.get("registration")
+        if _reg is None or (isinstance(_reg, str) and _reg.strip() == ""):
+            request_data["registration"] = None
+
         if request_data.get("registration") in (None, "") and request_data.get(
             "course"
         ):
-            course = models.Course.objects.filter(pk=request_data["course"]).first()
-            if course:
-                resolved = serializers.resolve_open_registration_for_course(course)
-                if resolved:
-                    request_data["registration"] = resolved.pk
+            course = (
+                models.Course.objects.select_related("registration")
+                .filter(pk=request_data["course"])
+                .first()
+            )
+            if course and course.registration_id:
+                request_data["registration"] = course.registration_id
 
         registration_id = request_data.get("registration")
         if registration_id in (None, ""):
@@ -449,8 +456,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 "Missing registration",
                 {
                     "registration": (
-                        "Registration is required, or no open registration was "
-                        "found for this course."
+                        "Link this course to a programme in admin (Course → registration), "
+                        "or send a registration id."
                     )
                 },
                 http_status=status.HTTP_400_BAD_REQUEST,
@@ -505,6 +512,13 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if serializer.is_valid():
             try:
                 participant_obj = serializer.save()
+                # Belt-and-suspenders: programme FK must exist for payment flows.
+                if (
+                    participant_obj.registration_id is None
+                    and participant_obj.course_id
+                ):
+                    participant_obj.save()
+                    participant_obj.refresh_from_db(fields=["registration_id"])
                 # Invalidate cache when new participant is created
                 invalidate_participant_cache()
             except Exception as e:
