@@ -12,7 +12,7 @@ export const loosePhoneNumber = (
     .trim()
     .min(minLen, "Phone number is too short.")
     .max(maxLen, "Phone number is too long.")
-    .refine((v) => [...v].some((ch) => ch >= "0" && ch <= "9"), {
+    .refine((v) => /\d/.test(v), {
       message: "Phone number should include at least one digit.",
     });
 };
