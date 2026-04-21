@@ -50,7 +50,13 @@ class HubRegistration(BaseModelBaseMixin, models.Model):
     
     name = models.CharField(_('full name'), max_length=255, blank=False, null=False)
     email = models.EmailField(_('email address'), max_length=255, blank=False, null=False)
-    phone_number = models.CharField(_('phone number'), max_length=20, blank=False, null=False)
+    phone_number = models.CharField(
+        _('phone number'),
+        max_length=64,
+        blank=False,
+        null=False,
+        help_text='International formats; length only in the API.',
+    )
     location = models.CharField(_('location'), max_length=255, blank=False, null=False, 
                                 help_text="Where are you coming to the hub from")
     reason = models.TextField(_('reason'), blank=False, null=False,

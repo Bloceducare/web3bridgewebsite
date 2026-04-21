@@ -163,8 +163,9 @@ export default function HubRegistrationForm({
                 <FormControl>
                   <Input
                     {...field}
-                    type="tel"
-                    placeholder="Enter your phone number"
+                    type="text"
+                    maxLength={64}
+                    placeholder="International format welcome (e.g. +1 …, +234 …)"
                     className={`h-12 md:h-14 shadow-none px-4 text-sm ${
                       form.formState.errors.phone_number ? "border-red-500" : ""
                     }`}

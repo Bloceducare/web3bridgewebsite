@@ -1032,8 +1032,14 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         # Create cache key based on page and limit
         cache_key = f"participants_all_page_{page}_limit_{limit}"
 
-        # Try to get from cache first
-        cached_data = cache.get(cache_key)
+        # Try to get from cache first (never 500 if Redis is down or misconfigured)
+        cached_data = None
+        try:
+            cached_data = cache.get(cache_key)
+        except Exception:
+            logger.warning(
+                "Participant list cache read failed for %s", cache_key, exc_info=True
+            )
         if cached_data:
             return requestUtils.success_response(
                 data=cached_data, http_status=status.HTTP_200_OK
@@ -1069,9 +1075,14 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             },
         }
 
-        # Cache the response for 10 minutes (configurable)
+        # Cache the response (configurable TTL); ignore Redis failures
         cache_timeout = getattr(settings, "PARTICIPANT_CACHE_TIMEOUT", 600)
-        cache.set(cache_key, response_data, cache_timeout)
+        try:
+            cache.set(cache_key, response_data, cache_timeout)
+        except Exception:
+            logger.warning(
+                "Participant list cache write failed for %s", cache_key, exc_info=True
+            )
 
         return requestUtils.success_response(
             data=response_data, http_status=status.HTTP_200_OK

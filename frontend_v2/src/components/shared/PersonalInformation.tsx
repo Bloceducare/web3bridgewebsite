@@ -193,7 +193,8 @@ export default function PersonalInformation({
                     {...field}
                     type="text"
                     name="number"
-                    placeholder="Enter your phone number"
+                    maxLength={128}
+                    placeholder="e.g. +44 20 7946 0958, +234 801 234 5678"
                     className="h-12 md:h-14 shadow-none px-4 text-xs md:text-sm"
                   />
                 </FormControl>
