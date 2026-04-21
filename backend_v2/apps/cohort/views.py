@@ -161,7 +161,7 @@ def handle_payment_success(
 
 
 class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
-    queryset = models.Course.objects
+    queryset = models.Course.objects.select_related("registration")
     serializer_class = serializers.CourseSerializer
     admin_actions = ["create", "update", "destroy", "open_course", "close_course"]
 

@@ -96,6 +96,7 @@ class CourseSerializer:
 
     class List(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
+        registration = serializers.SerializerMethodField()
 
         class Meta:
             model = models.Course
@@ -110,9 +111,16 @@ class CourseSerializer:
                 "registration",
                 "duration",
             ]
+
+        def get_registration(self, obj):
+            reg = getattr(obj, "registration", None)
+            if reg is not None and reg.is_open:
+                return reg.pk
+            return None
 
     class Retrieve(serializers.ModelSerializer):
         images = ImageSerializer(many=True, read_only=True)
+        registration = serializers.SerializerMethodField()
 
         class Meta:
             model = models.Course
@@ -127,6 +135,12 @@ class CourseSerializer:
                 "registration",
                 "duration",
             ]
+
+        def get_registration(self, obj):
+            reg = getattr(obj, "registration", None)
+            if reg is not None and reg.is_open:
+                return reg.pk
+            return None
 
     class Update(serializers.ModelSerializer):
         images = serializers.ListField(child=serializers.ImageField(), required=False)
@@ -258,13 +272,14 @@ class ParticipantSerializer:
     class Create(serializers.ModelSerializer):
         name = serializers.CharField(required=True)
         wallet_address = serializers.CharField(required=True)
-        email = serializers.EmailField(required=True)
-        registration = serializers.PrimaryKeyRelatedField(
-            queryset=models.Registration.objects.all(), required=True
-        )
         course = serializers.PrimaryKeyRelatedField(
             queryset=models.Course.objects.all(), required=True
         )
+        registration = serializers.PrimaryKeyRelatedField(
+            queryset=models.Registration.objects.filter(is_open=True),
+            required=True,
+        )
+        email = serializers.EmailField(required=True)
         motivation = serializers.CharField(required=False, allow_blank=True, default="")
         achievement = serializers.CharField(
             required=False, allow_blank=True, default=""
@@ -315,10 +330,8 @@ class ParticipantSerializer:
                 registration = resolve_open_registration_for_course(course)
             else:
                 registration = models.Registration.objects.filter(
-                    pk=registration_id
+                    pk=registration_id, is_open=True
                 ).first()
-                if registration is None:
-                    registration = course.registration
 
             # Programme = Registration (includes cohort). Uniqueness: email + programme + course.
             if registration is None:

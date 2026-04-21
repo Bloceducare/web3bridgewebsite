@@ -119,9 +119,11 @@ export const useFetchTestimonials = () => {
 };
 
 export async function useFetchExistingParticipants() {
-  const response = await fetch(
-    "https://testy-leonanie-web3bridge-3c7204a2.koyeb.app/api/v2/cohort/participant/all/"
-  );
+  const base = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!base) {
+    throw new Error("NEXT_PUBLIC_BASE_URL is not set");
+  }
+  const response = await fetch(`${base}/cohort/participant/all/`);
 
   if (!response.ok) {
     console.log("Failed to fetch existing participants");
@@ -132,17 +134,18 @@ export async function useFetchExistingParticipants() {
   return data.results;
 }
 export async function getCohortStatus() {
-  const response = await fetch(
-    "https://testy-leonanie-web3bridge-3c7204a2.koyeb.app/api/v2/cohort/course/all_opened/"
-  );
+  const base = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!base) {
+    throw new Error("NEXT_PUBLIC_BASE_URL is not set");
+  }
+  const response = await fetch(`${base}/cohort/course/all_opened/`);
 
   if (!response.ok) {
-    console.log("Failed to fetch existing participants");
-    throw new Error("Failed to fetch existing participants");
+    console.log("Failed to fetch cohort open courses");
+    throw new Error("Failed to fetch cohort status");
   }
 
   const { data } = await response.json();
-  // console.log(data);
   return data;
 }
 

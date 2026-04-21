@@ -15,6 +15,7 @@ import { buttonVariants } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import PaymentPendingModal from "@/components/shared/PaymentPendingModal";
 import SolidityAssessmentModal from "@/components/shared/SolidityAssessmentModal";
+import { resolveOpenRegistrationIdForCourse } from "@/lib/open-registration";
 
 // Types
 interface FormDataType {
@@ -42,27 +43,6 @@ interface UserDataType extends FormDataType {
 const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
-
-/** When course payload has no ``registration`` FK, pick latest open programme that lists this course. */
-function resolveOpenRegistrationIdForCourse(
-  courseId: number,
-  registrations: any[] | undefined
-): number | undefined {
-  if (!registrations?.length) return undefined;
-  const open = registrations.filter((r: any) => r.is_open);
-  const linked = open.filter((r: any) => {
-    const ids = (Array.isArray(r.courses) ? r.courses : [])
-      .map((c: any) => (typeof c === "number" ? c : c?.id))
-      .filter((id: unknown) => id != null);
-    return ids.includes(courseId);
-  });
-  const pool = linked.length ? linked : open;
-  if (!pool.length) return undefined;
-  const best = pool.reduce((a: any, b: any) =>
-    (Number(b.id) || 0) > (Number(a.id) || 0) ? b : a
-  );
-  return typeof best.id === "number" ? best.id : undefined;
-}
 
 export default function RegistrationPage() {
   const router = useRouter();

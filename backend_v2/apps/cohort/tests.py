@@ -149,6 +149,42 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         )
         self.assertEqual(r.status_code, 400)
 
+    def test_create_rejects_closed_registration(self):
+        from cohort.models import Registration
+
+        closed = Registration.objects.create(
+            name="Closed intake",
+            cohort="Cohort-CLOSED",
+            is_open=False,
+        )
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="closed_prog@example.com",
+                registration=closed.pk,
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 400)
+
+
+class CourseListOpenRegistrationSerializationTests(TestCase):
+    def test_course_list_registration_null_when_linked_programme_closed(self):
+        from cohort.models import Course, Registration
+        from cohort.serializers import CourseSerializer
+
+        closed = Registration.objects.create(
+            name="Past", cohort="Cohort-PAST", is_open=False
+        )
+        course = Course.objects.create(
+            name="With closed programme",
+            description="d",
+            extra_info="e",
+            registration=closed,
+        )
+        data = CourseSerializer.List(course).data
+        self.assertIsNone(data["registration"])
+
 
 @override_settings(
     SECURE_SSL_REDIRECT=False,

@@ -42,7 +42,12 @@ class Registration(BaseModelBaseMixin, models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     cohort = models.CharField(
-        _("cohort name"), max_length=20, blank=False, null=False, default="Cohort-XIII"
+        _("cohort name"),
+        max_length=20,
+        blank=False,
+        null=False,
+        default="",
+        help_text=_("Label for this intake (e.g. Cohort-XV); set explicitly when creating."),
     )
     registrationFee = models.CharField(
         _("registration fee"), max_length=50, blank=True, null=True
@@ -97,7 +102,14 @@ class Participant(BaseModelBaseMixin, models.Model):
     )
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
     cohort = models.CharField(
-        _("cohort name"), max_length=20, blank=False, null=False, default="Cohort-XIII"
+        _("cohort name"),
+        max_length=20,
+        blank=False,
+        null=False,
+        default="",
+        help_text=_(
+            "Copied from the participant's Registration on enroll; empty until then."
+        ),
     )
     payment_status = models.BooleanField(default=False)
     venue = models.CharField(

@@ -38,18 +38,19 @@ export default function Trainings() {
   const { isLoading: courseLoading, data: courseData } = useFetchAllCourses();
   const router = useRouter();
   const [enrichedData, setEnrichedData] = useState<any[]>([]);
-  const currentCohort = process.env.NEXT_PUBLIC_CURRENT_COHORT || 'XIV';
 
   useEffect(() => {
     if (regData && courseData) {
+      const cohortFilter = process.env.NEXT_PUBLIC_CURRENT_COHORT?.trim();
       const enriched = regData
         .filter((registration: any) => {
-          // Keep Master Class regardless of cohort
-          if (registration.name.toLowerCase().includes('master class')) {
-             return true;
-           }
-          // Only keep current cohort courses
-          return registration.cohort === currentCohort;
+          if (!registration.is_open) {
+            return false;
+          }
+          if (cohortFilter && registration.cohort !== cohortFilter) {
+            return false;
+          }
+          return true;
         })
         .map((registration: any) => {
           // Get course details for this registration
@@ -83,7 +84,7 @@ export default function Trainings() {
           };
         });
 
-              setEnrichedData(enriched);
+        setEnrichedData(enriched);
       }
     }, [regData, courseData]);
 
