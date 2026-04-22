@@ -159,6 +159,8 @@ class StudentUpdate(TimestampMixin, Base):
     target_type: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     target_ref: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     is_published: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    send_in_app: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    send_email: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"),

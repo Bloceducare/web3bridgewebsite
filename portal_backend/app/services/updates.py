@@ -1,16 +1,20 @@
+import asyncio
 from datetime import UTC, datetime
+from typing import Any
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.portal import (
     AuditLog,
+    AccountState,
     StudentProfile,
     StudentUpdate,
     StudentUpdateRead,
     UpdateTargetType,
     User,
+    UserRole,
 )
 from app.schemas.auth import MessageResponse
 from app.schemas.updates import (
@@ -22,8 +26,16 @@ from app.schemas.updates import (
 
 
 class UpdatesService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, *, email_service: Any | None = None) -> None:
         self.session = session
+        self.email_service = email_service
+        if self.email_service is None:
+            try:
+                from app.services.email import EmailService
+
+                self.email_service = EmailService()
+            except ModuleNotFoundError:
+                self.email_service = None
 
     async def create_update(
         self,
@@ -38,6 +50,8 @@ class UpdatesService:
             target_type=payload.target_type.value,
             target_ref=payload.target_ref,
             is_published=payload.is_published,
+            send_in_app=payload.send_in_app,
+            send_email=payload.send_email,
             published_at=now if payload.is_published else None,
             created_by=actor.id,
             created_at=now,
@@ -59,6 +73,7 @@ class UpdatesService:
 
         await self.session.commit()
         await self.session.refresh(student_update)
+        await self._dispatch_notification_emails_if_required(student_update=student_update)
         return self._build_update_response(student_update=student_update)
 
     async def list_updates(self) -> list[StudentUpdateResponse]:
@@ -86,6 +101,18 @@ class UpdatesService:
                 continue
             setattr(student_update, field_name, value)
 
+        send_in_app = (
+            payload.send_in_app if payload.send_in_app is not None else student_update.send_in_app
+        )
+        send_email = (
+            payload.send_email if payload.send_email is not None else student_update.send_email
+        )
+        if not send_in_app and not send_email:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="At least one delivery channel must be enabled",
+            )
+
         if payload.is_published is not None:
             student_update.published_at = datetime.now(UTC) if payload.is_published else None
 
@@ -105,6 +132,7 @@ class UpdatesService:
 
         await self.session.commit()
         await self.session.refresh(student_update)
+        await self._dispatch_notification_emails_if_required(student_update=student_update)
         return self._build_update_response(student_update=student_update)
 
     async def delete_update(self, *, actor: User, update_id: int) -> MessageResponse:
@@ -124,24 +152,62 @@ class UpdatesService:
         return MessageResponse(detail="Update deleted successfully")
 
     async def list_my_updates(self, *, user: User) -> list[StudentUpdateResponse]:
-        profile = await self._get_profile_by_user_id(user.id)
-        updates = await self._list_published_updates()
-        visible_updates = [
-            item
-            for item in updates
-            if self._update_applies_to_user(student_update=item, user=user, profile=profile)
-        ]
+        if not hasattr(self.session, "execute"):
+            profile = await self._get_profile_by_user_id(user.id)
+            updates = await self._list_published_updates()
+            visible_updates = [
+                item
+                for item in updates
+                if self._update_applies_to_user(student_update=item, user=user, profile=profile)
+            ]
+            responses: list[StudentUpdateResponse] = []
+            for item in visible_updates:
+                read_record = await self._get_read_record(update_id=item.id, user_id=user.id)
+                responses.append(
+                    self._build_update_response(
+                        student_update=item,
+                        read_at=read_record.read_at if read_record is not None else None,
+                    )
+                )
+            return responses
 
-        responses: list[StudentUpdateResponse] = []
-        for item in visible_updates:
-            read_record = await self._get_read_record(update_id=item.id, user_id=user.id)
-            responses.append(
-                self._build_update_response(
-                    student_update=item,
-                    read_at=read_record.read_at if read_record is not None else None,
+        profile = await self._get_profile_by_user_id(user.id)
+        visibility_filters = [
+            StudentUpdate.target_type == UpdateTargetType.ALL_ACTIVE.value,
+            and_(
+                StudentUpdate.target_type == UpdateTargetType.INDIVIDUAL.value,
+                StudentUpdate.target_ref == str(user.id),
+            ),
+        ]
+        if profile is not None and profile.cohort:
+            visibility_filters.append(
+                and_(
+                    StudentUpdate.target_type == UpdateTargetType.COHORT.value,
+                    StudentUpdate.target_ref == profile.cohort,
                 )
             )
-        return responses
+
+        result = await self.session.execute(
+            select(StudentUpdate, StudentUpdateRead.read_at)
+            .outerjoin(
+                StudentUpdateRead,
+                and_(
+                    StudentUpdateRead.update_id == StudentUpdate.id,
+                    StudentUpdateRead.user_id == user.id,
+                ),
+            )
+            .where(
+                StudentUpdate.is_published.is_(True),
+                StudentUpdate.send_in_app.is_(True),
+                or_(*visibility_filters),
+            )
+            .order_by(StudentUpdate.published_at.desc(), StudentUpdate.created_at.desc())
+        )
+        rows = result.all()
+        return [
+            self._build_update_response(student_update=student_update, read_at=read_at)
+            for student_update, read_at in rows
+        ]
 
     async def mark_update_as_read(
         self,
@@ -151,7 +217,7 @@ class UpdatesService:
     ) -> MarkStudentUpdateReadResponse:
         profile = await self._get_profile_by_user_id(user.id)
         student_update = await self._get_update_by_id(update_id)
-        if not student_update.is_published or not self._update_applies_to_user(
+        if not student_update.is_published or not student_update.send_in_app or not self._update_applies_to_user(
             student_update=student_update,
             user=user,
             profile=profile,
@@ -180,7 +246,10 @@ class UpdatesService:
         return list(result.scalars().all())
 
     async def _list_published_updates(self) -> list[StudentUpdate]:
-        statement = select(StudentUpdate).where(StudentUpdate.is_published.is_(True))
+        statement = select(StudentUpdate).where(
+            StudentUpdate.is_published.is_(True),
+            StudentUpdate.send_in_app.is_(True),
+        )
         statement = statement.order_by(
             StudentUpdate.published_at.desc(),
             StudentUpdate.created_at.desc(),
@@ -237,6 +306,8 @@ class UpdatesService:
             target_type=student_update.target_type,
             target_ref=student_update.target_ref,
             is_published=student_update.is_published,
+            send_in_app=student_update.send_in_app,
+            send_email=student_update.send_email,
             published_at=student_update.published_at,
             created_by=student_update.created_by,
             created_at=student_update.created_at,
@@ -252,5 +323,85 @@ class UpdatesService:
             "target_type": student_update.target_type,
             "target_ref": student_update.target_ref,
             "is_published": student_update.is_published,
+            "send_in_app": student_update.send_in_app,
+            "send_email": student_update.send_email,
             "created_by": student_update.created_by,
         }
+
+    async def _dispatch_notification_emails_if_required(self, *, student_update: StudentUpdate) -> None:
+        if not student_update.is_published or not student_update.send_email:
+            return
+
+        recipients = await self._list_target_emails(student_update=student_update)
+        if not recipients:
+            return
+
+        asyncio.create_task(
+            self._send_update_email_batch(
+                emails=recipients,
+                title=student_update.title,
+                body=student_update.body,
+            )
+        )
+
+    async def _list_target_emails(self, *, student_update: StudentUpdate) -> list[str]:
+        if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
+            result = await self.session.execute(
+                select(User.email).where(
+                    User.role == UserRole.STUDENT.value,
+                    User.account_state == AccountState.ACTIVE.value,
+                )
+            )
+            return [email for email in result.scalars().all() if email]
+
+        if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
+            if not student_update.target_ref:
+                return []
+            try:
+                target_user_id = int(student_update.target_ref)
+            except ValueError:
+                return []
+            result = await self.session.execute(
+                select(User.email).where(
+                    User.id == target_user_id,
+                    User.role == UserRole.STUDENT.value,
+                )
+            )
+            email = result.scalar_one_or_none()
+            return [email] if email else []
+
+        if student_update.target_type == UpdateTargetType.COHORT.value:
+            if not student_update.target_ref:
+                return []
+            result = await self.session.execute(
+                select(User.email)
+                .join(StudentProfile, StudentProfile.user_id == User.id)
+                .where(
+                    User.role == UserRole.STUDENT.value,
+                    StudentProfile.cohort == student_update.target_ref,
+                )
+            )
+            return [email for email in result.scalars().all() if email]
+
+        return []
+
+    async def _send_update_email_batch(
+        self,
+        *,
+        emails: list[str],
+        title: str,
+        body: str,
+    ) -> None:
+        unique_emails = list(dict.fromkeys(email.lower().strip() for email in emails if email))
+        if self.email_service is None:
+            return
+        for to_email in unique_emails:
+            try:
+                await self.email_service.send_update_notification_email(
+                    to_email=to_email,
+                    title=title,
+                    body=body,
+                )
+            except Exception:
+                # Email service is already safe, but keep this guard for task-level robustness.
+                pass

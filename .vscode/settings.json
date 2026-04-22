@@ -10,5 +10,6 @@
     ],
     "files.associations": {
         "*.py": "python"
-    }
+    },
+    "liveServer.settings.port": 5501
 }

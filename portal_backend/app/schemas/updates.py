@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.models.portal import UpdateTargetType
 
@@ -12,6 +12,8 @@ class StudentUpdateResponse(BaseModel):
     target_type: str
     target_ref: str | None = None
     is_published: bool
+    send_in_app: bool
+    send_email: bool
     published_at: datetime | None = None
     created_by: int | None = None
     created_at: datetime
@@ -25,6 +27,14 @@ class CreateStudentUpdateRequest(BaseModel):
     target_type: UpdateTargetType
     target_ref: str | None = Field(default=None, max_length=255)
     is_published: bool = False
+    send_in_app: bool = True
+    send_email: bool = False
+
+    @model_validator(mode="after")
+    def validate_channels(self) -> "CreateStudentUpdateRequest":
+        if not self.send_in_app and not self.send_email:
+            raise ValueError("At least one delivery channel must be enabled")
+        return self
 
 
 class UpdateStudentUpdateRequest(BaseModel):
@@ -33,6 +43,8 @@ class UpdateStudentUpdateRequest(BaseModel):
     target_type: UpdateTargetType | None = None
     target_ref: str | None = Field(default=None, max_length=255)
     is_published: bool | None = None
+    send_in_app: bool | None = None
+    send_email: bool | None = None
 
 
 class MarkStudentUpdateReadResponse(BaseModel):

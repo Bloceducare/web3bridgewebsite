@@ -99,3 +99,18 @@ class EmailService:
 
         subject, html_body = render_verification_email(name=student_name, code=code)
         return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
+
+    async def send_update_notification_email(
+        self,
+        *,
+        to_email: str,
+        title: str,
+        body: str,
+    ) -> bool:
+        """Send a portal in-app notification as email."""
+        from app.services.templates.update_notification_email import (
+            render_update_notification_email,
+        )
+
+        subject, html_body = render_update_notification_email(title=title, body=body)
+        return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)

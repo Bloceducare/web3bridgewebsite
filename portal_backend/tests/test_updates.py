@@ -53,6 +53,8 @@ def build_update(**overrides: object) -> StudentUpdate:
         target_type=overrides.get("target_type", UpdateTargetType.ALL_ACTIVE.value),
         target_ref=overrides.get("target_ref", None),
         is_published=overrides.get("is_published", True),
+        send_in_app=overrides.get("send_in_app", True),
+        send_email=overrides.get("send_email", False),
         published_at=overrides.get("published_at", datetime.now(UTC)),
         created_by=overrides.get("created_by", 1),
         created_at=overrides.get("created_at", datetime.now(UTC)),
@@ -77,6 +79,8 @@ async def test_create_update_creates_audited_published_update() -> None:
     assert response.id == 101
     assert response.title == "Launch day"
     assert response.is_published is True
+    assert response.send_in_app is True
+    assert response.send_email is False
     assert response.published_at is not None
     assert any(type(obj).__name__ == "AuditLog" for obj in session.added)
     assert session.commit_count == 1
