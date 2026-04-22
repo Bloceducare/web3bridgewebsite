@@ -561,7 +561,6 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         activation_url = "https://portal.example.com/activate?token=abc"
         template_names = [
             "cohort/web3_registration_email.html",
-            "cohort/rust_registration_email.html",
             "other_registration_email.html",
         ]
 
@@ -574,6 +573,19 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
 
                 self.assertIn("Activate your student portal account", rendered)
                 self.assertIn(activation_url, rendered)
+
+    def test_rust_template_does_not_render_portal_activation_link(self):
+        rendered = render_to_string(
+            "cohort/rust_registration_email.html",
+            {
+                "name": "Student Example",
+                "activation_url": "https://portal.example.com/activate?token=abc",
+            },
+        )
+
+        self.assertIn("Student Portal Access:", rendered)
+        self.assertIn("will be sent within the next 14 days", rendered)
+        self.assertNotIn("Activate your student portal account", rendered)
 
     def test_web2_welcome_templates_are_static_no_portal_activation_block(self):
         for template_name in (
