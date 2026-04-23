@@ -238,6 +238,45 @@ class ParticipantSaveFillsRegistrationFromCourseTests(TestCase):
         self.assertEqual(p.registration_id, reg.pk)
 
 
+@override_settings(
+    SECURE_SSL_REDIRECT=False,
+    PORTAL_ONBOARDING_URL="",
+    PORTAL_INTERNAL_API_KEY="",
+)
+class ParticipantReadAutoCorrectionTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        from cohort.models import Course, Participant, Registration
+
+        self.reg = Registration.objects.create(
+            name="Web3 Cohort XV", cohort="Cohort-XV", is_open=True
+        )
+        self.course = Course.objects.create(
+            name="Solidity",
+            description="d",
+            extra_info="e",
+            registration=self.reg,
+        )
+        self.participant = Participant.objects.create(
+            name="Legacy User",
+            email="legacy.fix@example.com",
+            wallet_address="0x1111111111111111111111111111111111111111",
+            course=self.course,
+            registration=None,
+            cohort=None,
+            venue="online",
+        )
+
+    def test_retrieve_autofills_registration_and_cohort(self):
+        url = f"/api/v2/cohort/participant/{self.participant.pk}/"
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200, r.content)
+
+        self.participant.refresh_from_db()
+        self.assertEqual(self.participant.registration_id, self.reg.pk)
+        self.assertEqual(self.participant.cohort, self.reg.cohort)
+
+
 class CourseListRegistrationSerializationTests(TestCase):
     def test_course_list_includes_registration_pk_when_programme_closed(self):
         from cohort.models import Course, Registration
@@ -482,6 +521,35 @@ class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.participant_unpaid.refresh_from_db()
+        self.assertTrue(self.participant_unpaid.payment_status)
+        mock_handle.assert_called_once()
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_autocorrects_null_registration_from_course(
+        self, mock_handle
+    ):
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+        self.participant_unpaid.registration = None
+        self.participant_unpaid.cohort = None
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        response = self._verify_post(
+            {
+                "email": "dup@example.com",
+                "course": self.course_old.id,
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.participant_unpaid.refresh_from_db()
+        self.assertEqual(self.participant_unpaid.registration_id, self.reg_old.id)
+        self.assertEqual(self.participant_unpaid.cohort, self.reg_old.cohort)
         self.assertTrue(self.participant_unpaid.payment_status)
         mock_handle.assert_called_once()
 

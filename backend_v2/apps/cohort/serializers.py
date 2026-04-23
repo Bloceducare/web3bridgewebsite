@@ -292,55 +292,6 @@ class ParticipantSerializer:
         def validate_number(self, value):
             return _validate_loose_phone_number(value)
 
-        def validate_email(self, email):
-            request = self.context.get("request")
-            if not request:
-                raise serializers.ValidationError("Request context is required.")
-            email = email
-            initial = getattr(self, "initial_data", None) or {}
-            course_id = initial.get("course")
-            if course_id is None:
-                course_id = request.data.get("course")
-            try:
-                course = models.Course.objects.select_related("registration").get(
-                    id=course_id
-                )
-            except models.Course.DoesNotExist:
-                raise serializers.ValidationError("Course does not exist")
-
-            registration = course.registration
-
-            # Programme = Registration (includes cohort). Uniqueness: email + programme + course.
-            if registration is None:
-                existing_participant = models.Participant.objects.filter(
-                    email__iexact=email.strip(),
-                    course=course,
-                    registration__isnull=True,
-                ).first()
-            else:
-                existing_participant = models.Participant.objects.filter(
-                    email__iexact=email.strip(),
-                    registration_id=registration.pk,
-                    course=course,
-                ).first()
-
-            if existing_participant:
-                if existing_participant.payment_status:
-                    raise serializers.ValidationError(
-                        "Participant already registered and paid for this programme and course"
-                    )
-                else:
-                    # User is registered but hasn't paid - provide payment link
-                    raise serializers.ValidationError(
-                        {
-                            "already_registered_unpaid": True,
-                            "message": "You are already registered for this programme and course but haven't completed payment. Please proceed to payment to secure your spot.",
-                            "payment_link": "https://payment.web3bridgeafrica.com",
-                            "participant_id": existing_participant.id,
-                        }
-                    )
-            return email
-
         def validate(self, attrs):
             course = attrs.get("course")
             if not course:
@@ -363,27 +314,55 @@ class ParticipantSerializer:
                         )
                     }
                 )
+            email = (attrs.get("email") or "").strip()
+            existing_participant = models.Participant.objects.filter(
+                email__iexact=email,
+                registration_id=linked.pk,
+                course=course,
+            ).first()
+            if existing_participant:
+                if existing_participant.payment_status:
+                    raise serializers.ValidationError(
+                        {
+                            "email": (
+                                "Participant already registered and paid for this programme and course"
+                            )
+                        }
+                    )
+                raise serializers.ValidationError(
+                    {
+                        "email": {
+                            "already_registered_unpaid": True,
+                            "message": (
+                                "You are already registered for this programme and course "
+                                "but haven't completed payment. Please proceed to payment "
+                                "to secure your spot."
+                            ),
+                            "payment_link": "https://payment.web3bridgeafrica.com",
+                            "participant_id": existing_participant.id,
+                        }
+                    }
+                )
             attrs["registration"] = linked
             return attrs
 
         def create(self, validated_data):
             course = validated_data["course"]
-            linked = validated_data.get("registration") or getattr(
-                course, "registration", None
-            )
-            if linked is not None:
-                validated_data["registration"] = linked
-            participant_obj = models.Participant.objects.create(**validated_data)
-            if participant_obj.registration_id is None and linked is not None:
-                participant_obj.registration_id = linked.pk
-                participant_obj.save(update_fields=["registration_id"])
-            registration = participant_obj.registration
-            if registration is not None:
-                label = (registration.cohort or registration.name or "").strip()
-                max_len = models.Participant._meta.get_field("cohort").max_length
-                participant_obj.cohort = (label[:max_len] if label else None)
-                participant_obj.save(update_fields=["cohort"])
-            return participant_obj
+            linked = getattr(course, "registration", None)
+            if linked is None:
+                raise serializers.ValidationError(
+                    {
+                        "course": (
+                            "This course has no programme linked. In admin, set "
+                            "Course -> registration to your programme."
+                        )
+                    }
+                )
+            validated_data["registration"] = linked
+            label = (linked.cohort or linked.name or "").strip()
+            max_len = models.Participant._meta.get_field("cohort").max_length
+            validated_data["cohort"] = label[:max_len] if label else None
+            return models.Participant.objects.create(**validated_data)
 
     class List(serializers.ModelSerializer):
         course = CourseSerializer.Retrieve(read_only=True)

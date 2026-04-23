@@ -20,6 +20,7 @@ from .helpers.model import (
     send_registration_success_mail,
     send_reschedule_assessment_email,
 )
+from .helpers.participant_backfill import autocorrect_participant_links
 from backend_v2.scripts.mail import send_bulk_email
 from payment.models import DiscountCode, Payment
 from utils.enums.models import RegistrationStatus
@@ -70,9 +71,11 @@ def resolve_participant_for_payment_email(
         return None
     qs = base_queryset.filter(email__iexact=email)
     if participant_id is None:
-        qs = qs.filter(Q(registration__isnull=True) | Q(registration__is_open=True))
+        qs_open = qs.filter(Q(registration__isnull=True) | Q(registration__is_open=True))
+    else:
+        qs_open = qs
     if participant_id is not None:
-        row = qs.filter(pk=participant_id).first()
+        row = qs_open.filter(pk=participant_id).first()
         if row is None:
             return None
         if registration_id is not None and row.registration_id != registration_id:
@@ -86,7 +89,7 @@ def resolve_participant_for_payment_email(
             course = models.Course.objects.get(pk=course_id)
         except models.Course.DoesNotExist:
             return None
-        q = qs.filter(course_id=course_id)
+        q = qs_open.filter(course_id=course_id)
         if registration_id is not None:
             if (
                 course.registration_id is not None
@@ -96,27 +99,33 @@ def resolve_participant_for_payment_email(
             q = q.filter(registration_id=registration_id)
         elif course.registration_id is not None:
             q = q.filter(registration_id=course.registration_id)
-        return q.first()
+        row = q.first()
+        if row is not None:
+            return row
+        return qs.filter(course_id=course_id).order_by("-created_at", "-id").first()
 
     if registration_id is not None:
         unpaid = (
-            qs.filter(registration_id=registration_id, payment_status=False)
+            qs_open.filter(registration_id=registration_id, payment_status=False)
             .order_by("-created_at", "-id")
             .first()
         )
         if unpaid is not None:
             return unpaid
         return (
-            qs.filter(registration_id=registration_id)
+            qs_open.filter(registration_id=registration_id)
             .order_by("-created_at", "-id")
             .first()
         )
 
     unpaid = (
-        qs.filter(payment_status=False).order_by("-created_at", "-id").first()
+        qs_open.filter(payment_status=False).order_by("-created_at", "-id").first()
     )
     if unpaid is not None:
         return unpaid
+    row = qs_open.order_by("-created_at", "-id").first()
+    if row is not None:
+        return row
     return qs.order_by("-created_at", "-id").first()
 
 
@@ -434,48 +443,6 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             else dict(request.data)
         )
 
-        # Treat "", whitespace-only, and JSON null as missing so we inject from Course.registration.
-        _reg = request_data.get("registration")
-        if _reg is None or (isinstance(_reg, str) and _reg.strip() == ""):
-            request_data["registration"] = None
-
-        if request_data.get("registration") in (None, "") and request_data.get(
-            "course"
-        ):
-            course = (
-                models.Course.objects.select_related("registration")
-                .filter(pk=request_data["course"])
-                .first()
-            )
-            if course and course.registration_id:
-                request_data["registration"] = course.registration_id
-
-        registration_id = request_data.get("registration")
-        if registration_id in (None, ""):
-            return requestUtils.error_response(
-                "Missing registration",
-                {
-                    "registration": (
-                        "Link this course to a programme in admin (Course → registration), "
-                        "or send a registration id."
-                    )
-                },
-                http_status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            registration_obj = models.Registration.objects.get(pk=registration_id)
-            if not registration_obj.is_open:
-                return requestUtils.error_response(
-                    "Registration is closed",
-                    {},
-                    http_status=status.HTTP_400_BAD_REQUEST,
-                )
-        except models.Registration.DoesNotExist:
-            return requestUtils.error_response(
-                "Invalid registration ID", {}, http_status=status.HTTP_400_BAD_REQUEST
-            )
-
         # Handle request data and discount code
         discount_code = request_data.pop("discount", None)
 
@@ -512,13 +479,6 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         if serializer.is_valid():
             try:
                 participant_obj = serializer.save()
-                # Belt-and-suspenders: programme FK must exist for payment flows.
-                if (
-                    participant_obj.registration_id is None
-                    and participant_obj.course_id
-                ):
-                    participant_obj.save()
-                    participant_obj.refresh_from_db(fields=["registration_id"])
                 # Invalidate cache when new participant is created
                 invalidate_participant_cache()
             except Exception as e:
@@ -560,34 +520,6 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 data=serialized_participant_obj, http_status=status.HTTP_201_CREATED
             )
 
-        # Check for special case: user already registered but unpaid
-        if serializer.errors and "email" in serializer.errors:
-            email_errors = serializer.errors["email"]
-            if any("payment pending" in str(error) for error in email_errors):
-                # Find the existing participant
-                email = request_data.get("email")
-                course_id = request_data.get("course")
-                try:
-                    course = models.Course.objects.get(id=course_id)
-                    pfilter = {"email__iexact": (email or "").strip(), "course": course}
-                    if course.registration_id is not None:
-                        pfilter["registration_id"] = course.registration_id
-                    participant = models.Participant.objects.filter(**pfilter).first()
-
-                    if participant and not participant.payment_status:
-                        return requestUtils.error_response(
-                            "Already Registered - Payment Pending",
-                            {
-                                "already_registered_unpaid": True,
-                                "message": "You are already registered for this course but haven't completed payment. Please proceed to payment to secure your spot.",
-                                "payment_link": "https://payment.web3bridgeafrica.com",
-                                "participant_id": participant.id,
-                            },
-                            http_status=status.HTTP_400_BAD_REQUEST,
-                        )
-                except models.Course.DoesNotExist:
-                    pass
-
         # Return error response if serializer is invalid
         return requestUtils.error_response(
             "Error Creating Participant",
@@ -613,6 +545,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 http_status=status.HTTP_400_BAD_REQUEST,
             )
         email = body.validated_data["email"]
+        corrected = autocorrect_participant_links(email=email)
+        if corrected:
+            invalidate_participant_cache()
         participant_id = body.validated_data.get("participantId")
         course_id = body.validated_data.get("course")
         registration_id = body.validated_data.get("registration_id")
@@ -672,6 +607,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 {},
                 http_status=status.HTTP_400_BAD_REQUEST,
             )
+        corrected = autocorrect_participant_links(email=email)
+        if corrected:
+            invalidate_participant_cache()
 
         try:
             course = models.Course.objects.get(id=course_id)
@@ -745,6 +683,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
                 http_status=status.HTTP_400_BAD_REQUEST,
             )
         email = body.validated_data["email"]
+        corrected = autocorrect_participant_links(email=email)
+        if corrected:
+            invalidate_participant_cache()
         participant_id = body.validated_data.get("participantId")
         course_id = body.validated_data.get("course")
         registration_id = body.validated_data.get("registration_id")
@@ -1021,6 +962,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             )
 
     def retrieve(self, request, pk, *args, **kwargs):
+        corrected = autocorrect_participant_links(participant_id=pk)
+        if corrected:
+            invalidate_participant_cache()
         participant_object = self.get_queryset().get(pk=pk)
         serialized_participant_obj = self.serializer_class.Retrieve(
             participant_object
@@ -1070,6 +1014,10 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
 
         # Create cache key based on page and limit
         cache_key = f"participants_all_page_{page}_limit_{limit}"
+
+        corrected = autocorrect_participant_links()
+        if corrected:
+            invalidate_participant_cache()
 
         # Try to get from cache first (never 500 if Redis is down or misconfigured)
         cached_data = None
@@ -1132,6 +1080,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         """
         Get participants by registration ID with optimization
         """
+        corrected = autocorrect_participant_links()
+        if corrected:
+            invalidate_participant_cache()
         queryset = self.get_queryset().filter(registration=pk)
         serializer = self.serializer_class.List(queryset, many=True)
         return requestUtils.success_response(
