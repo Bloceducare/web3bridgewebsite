@@ -174,6 +174,10 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
     serializer_class = serializers.CourseSerializer
     admin_actions = ["create", "update", "destroy", "open_course", "close_course"]
 
+    def get_queryset(self):
+        # Always return a fresh queryset to avoid stale class-level queryset cache.
+        return models.Course.objects.select_related("registration")
+
     @swagger_auto_schema(request_body=serializers.CourseSerializer.Create)
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class.Create(data=request.data)
@@ -192,7 +196,7 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
         )
 
     def retrieve(self, request, pk, *args, **kwargs):
-        course_object = self.queryset.get(pk=pk)
+        course_object = self.get_queryset().get(pk=pk)
         serialized_course_obj = self.serializer_class.Retrieve(course_object).data
         return requestUtils.success_response(
             data=serialized_course_obj, http_status=status.HTTP_200_OK
@@ -200,7 +204,7 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
 
     @swagger_auto_schema(request_body=serializers.CourseSerializer.Update())
     def update(self, request, pk, *args, **kwargs):
-        course_object = self.queryset.get(pk=pk)
+        course_object = self.get_queryset().get(pk=pk)
         serializer = self.serializer_class.Update(course_object, data=request.data)
 
         if serializer.is_valid():
@@ -219,20 +223,20 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
             )
 
     def destroy(self, request, pk, *args, **kwargs):
-        course_object = self.queryset.get(pk=pk)
+        course_object = self.get_queryset().get(pk=pk)
         course_object.delete()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
 
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
-        serializer = self.serializer_class.List(self.queryset, many=True)
+        serializer = self.serializer_class.List(self.get_queryset(), many=True)
         return requestUtils.success_response(
             data=serializer.data, http_status=status.HTTP_200_OK
         )
 
     @decorators.action(detail=False, methods=["get"])
     def all_opened(self, request):
-        query_set = self.queryset.filter(status=True)
+        query_set = self.get_queryset().filter(status=True)
         serializer = self.serializer_class.List(query_set, many=True)
         return requestUtils.success_response(
             data=serializer.data, http_status=status.HTTP_200_OK
@@ -240,7 +244,7 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
 
     @decorators.action(detail=True, methods=["put"])
     def open_course(self, request, pk):
-        course_object = self.queryset.get(pk=pk)
+        course_object = self.get_queryset().get(pk=pk)
         serializer = self.serializer_class.Update(course_object, data={"status": True})
 
         if serializer.is_valid():
@@ -258,7 +262,7 @@ class CoursesViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet
 
     @decorators.action(detail=True, methods=["put"])
     def close_course(self, request, pk):
-        course_object = self.queryset.get(pk=pk)
+        course_object = self.get_queryset().get(pk=pk)
         serializer = self.serializer_class.Update(course_object, data={"status": False})
 
         if serializer.is_valid():
