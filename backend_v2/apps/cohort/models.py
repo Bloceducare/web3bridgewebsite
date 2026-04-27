@@ -139,6 +139,24 @@ class Participant(BaseModelBaseMixin, models.Model):
                 rid = None
             if rid:
                 self.registration_id = rid
+
+        # Keep participant.cohort aligned with programme label when missing.
+        if (self.cohort or "").strip() == "" and self.registration_id:
+            try:
+                registration_obj = Registration.objects.only("cohort", "name").get(
+                    pk=self.registration_id
+                )
+            except Registration.DoesNotExist:
+                registration_obj = None
+            if registration_obj is not None:
+                label = (
+                    # registration_obj.cohort
+                    registration_obj.name
+                    
+                ).strip()
+                if label:
+                    max_len = self._meta.get_field("cohort").max_length
+                    self.cohort = label[:max_len]
         super().save(*args, **kwargs)
 
     class Meta:
