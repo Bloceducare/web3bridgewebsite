@@ -713,22 +713,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         rows.sort(key=lambda p: (p.created_at, p.id), reverse=True)
 
         options = [
-            {
-                "participant_id": participant.id,
-                "name": participant.name,
-                "email": participant.email,
-                "payment_status": participant.payment_status,
-                "course": {
-                    "id": participant.course_id,
-                    "name": getattr(participant.course, "name", None),
-                },
-                "registration": {
-                    "id": participant.registration_id,
-                    "name": getattr(participant.registration, "name", None),
-                    "cohort": getattr(participant.registration, "cohort", None),
-                },
-                "created_at": participant.created_at,
-            }
+            self._build_continue_registration_option(participant)
             for participant in rows
         ]
 
@@ -736,6 +721,69 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             data={"email": email, "options": options},
             http_status=status.HTTP_200_OK,
         )
+
+
+    def _build_continue_registration_option(self, participant):
+        course_name = (getattr(participant.course, "name", "") or "").strip()
+        is_solidity_course = "solidity" in course_name.lower()
+        assessment_link = "https://assessment-incoming.vercel.app/"
+
+        assessment_gate = {
+            "is_solidity_course": is_solidity_course,
+            "can_pay": True,
+            "status": "not_required",
+            "message": "No assessment required. You can proceed to payment.",
+            "assessment_link": None,
+        }
+
+        if is_solidity_course:
+            latest_assessment = (
+                models.Assessment.objects.filter(participant=participant)
+                .order_by("-date_taken", "-id")
+                .first()
+            )
+            if latest_assessment is None:
+                assessment_gate = {
+                    "is_solidity_course": True,
+                    "can_pay": False,
+                    "status": "not_taken",
+                    "message": "You need to take the Solidity assessment before payment.",
+                    "assessment_link": assessment_link,
+                }
+            elif latest_assessment.passed:
+                assessment_gate = {
+                    "is_solidity_course": True,
+                    "can_pay": True,
+                    "status": "passed",
+                    "message": "Assessment passed. You can proceed to payment.",
+                    "assessment_link": None,
+                }
+            else:
+                assessment_gate = {
+                    "is_solidity_course": True,
+                    "can_pay": False,
+                    "status": "failed",
+                    "message": "You did not pass the assessment and cannot proceed to payment yet.",
+                    "assessment_link": None,
+                }
+
+        return {
+            "participant_id": participant.id,
+            "name": participant.name,
+            "email": participant.email,
+            "payment_status": participant.payment_status,
+            "course": {
+                "id": participant.course_id,
+                "name": course_name or None,
+            },
+            "registration": {
+                "id": participant.registration_id,
+                "name": getattr(participant.registration, "name", None),
+                "cohort": getattr(participant.registration, "cohort", None),
+            },
+            "assessment_gate": assessment_gate,
+            "created_at": participant.created_at,
+        }
 
     @swagger_auto_schema(request_body=serializers.SendConfirmationEmailSerializer)
     @decorators.action(

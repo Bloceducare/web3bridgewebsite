@@ -42,6 +42,13 @@ interface ExistingRegistrationOption {
   payment_status: boolean;
   course: { id: number; name: string | null };
   registration: { id: number; name: string | null; cohort: string | null };
+  assessment_gate?: {
+    is_solidity_course: boolean;
+    can_pay: boolean;
+    status: "not_required" | "not_taken" | "passed" | "failed";
+    message: string;
+    assessment_link: string | null;
+  };
   created_at: string;
 }
 
@@ -272,6 +279,18 @@ export default function RegistrationPage() {
       toast.error("This registration is already paid");
       return;
     }
+    const gate = option.assessment_gate;
+    if (gate?.is_solidity_course && !gate.can_pay) {
+      if (gate.status === "not_taken" && gate.assessment_link) {
+        toast.error("Take and pass the assessment before payment.");
+        window.location.href = gate.assessment_link;
+        return;
+      }
+      if (gate.status === "failed") {
+        toast.error("You did not pass the assessment yet.");
+        return;
+      }
+    }
     const payload = {
       participantId: option.participant_id,
       name: option.name,
@@ -474,14 +493,31 @@ export default function RegistrationPage() {
                       Status:{" "}
                       {option.payment_status ? "Paid" : "Payment Pending"}
                     </p>
+                    {option.assessment_gate?.is_solidity_course && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Assessment: {option.assessment_gate.message}
+                      </p>
+                    )}
                   </div>
                   <button
                     type="button"
                     onClick={() => continueWithExistingRegistration(option)}
-                    disabled={option.payment_status}
+                    disabled={
+                      option.payment_status ||
+                      (option.assessment_gate?.is_solidity_course === true &&
+                        option.assessment_gate?.status === "failed")
+                    }
                     className="h-10 px-4 rounded-md bg-bridgeRed text-white text-sm font-medium disabled:bg-gray-300"
                   >
-                    {option.payment_status ? "Already Paid" : "Continue to Payment"}
+                    {option.payment_status
+                      ? "Already Paid"
+                      : option.assessment_gate?.is_solidity_course &&
+                          option.assessment_gate?.status === "not_taken"
+                        ? "Take Assessment"
+                        : option.assessment_gate?.is_solidity_course &&
+                            option.assessment_gate?.status === "failed"
+                          ? "Assessment Not Passed"
+                          : "Continue to Payment"}
                   </button>
                 </div>
               ))}
