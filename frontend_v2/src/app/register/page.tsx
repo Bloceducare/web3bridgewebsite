@@ -76,7 +76,7 @@ export default function RegistrationPage() {
   const [showSolidityModal, setShowSolidityModal] = useState(false);
   const [registrationMode, setRegistrationMode] =
     useState<RegistrationFlowMode>(null);
-  const [existingName, setExistingName] = useState("");
+  const [existingEmail, setExistingEmail] = useState("");
   const [isFetchingExisting, setIsFetchingExisting] = useState(false);
   const [existingOptions, setExistingOptions] = useState<
     ExistingRegistrationOption[]
@@ -221,9 +221,9 @@ export default function RegistrationPage() {
   };
 
   const fetchExistingRegistrations = async () => {
-    const cleanName = existingName.trim();
-    if (!cleanName) {
-      toast.error("Please enter your registration name");
+    const cleanEmail = existingEmail.trim().toLowerCase();
+    if (!cleanEmail) {
+      toast.error("Please enter your email address");
       return;
     }
 
@@ -237,7 +237,7 @@ export default function RegistrationPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: cleanName }),
+          body: JSON.stringify({ email: cleanEmail }),
         }
       );
       const payload = await response.json();
@@ -251,7 +251,7 @@ export default function RegistrationPage() {
       setHasSearchedExisting(true);
       if (!options.length) {
         toast.error(
-          "No active registration found for this name in the current cohort"
+          "No active registration found for this email in the current cohort"
         );
       }
     } catch (error) {
@@ -426,7 +426,7 @@ export default function RegistrationPage() {
               onClick={() => {
                 setRegistrationMode(null);
                 setExistingOptions([]);
-                setExistingName("");
+                setExistingEmail("");
                 setHasSearchedExisting(false);
               }}
               className="text-sm text-gray-500 hover:text-bridgeRed"
@@ -435,13 +435,14 @@ export default function RegistrationPage() {
             </button>
           </div>
           <p className="text-sm text-gray-500 mb-4">
-            Enter your registration name to fetch your latest active registrations in the current cohort.
+            Enter the same email you used to register and we'll find your pending registration(s) for the current cohort.
           </p>
           <div className="flex flex-col md:flex-row gap-3 mb-6">
             <input
-              value={existingName}
-              onChange={(e) => setExistingName(e.target.value)}
-              placeholder="Enter registration name"
+              type="email"
+              value={existingEmail}
+              onChange={(e) => setExistingEmail(e.target.value)}
+              placeholder="e.g. yourname@example.com"
               className="h-12 flex-1 px-4 rounded-lg border border-gray-300 bg-white"
             />
             <button
@@ -488,7 +489,7 @@ export default function RegistrationPage() {
           )}
           {hasSearchedExisting && existingOptions.length === 0 && (
             <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
-              No open/current-cohort registration with a course was found for this name.
+              No open/current-cohort registration with a course was found for this email.
             </div>
           )}
         </div>

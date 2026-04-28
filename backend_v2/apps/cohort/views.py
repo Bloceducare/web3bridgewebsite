@@ -676,23 +676,23 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         Resolve existing registrations for a person so they can finish payment.
 
         Rules:
-        - Match by participant ``name`` (case-insensitive) as requested by frontend flow.
+        - Match by participant ``email`` (case-insensitive).
         - Only include rows from currently open programmes (present cohort).
         - Only include rows that are tied to real courses (ignore legacy/no-course rows).
         - Prefer the latest participant row per (registration, course).
         """
-        name = (request.data.get("name") or "").strip()
-        if not name:
+        email = (request.data.get("email") or "").strip()
+        if not email:
             return requestUtils.error_response(
-                "Registration name is required",
-                {"name": ["This field is required."]},
+                "Participant email is required",
+                {"email": ["This field is required."]},
                 http_status=status.HTTP_400_BAD_REQUEST,
             )
 
         participants_qs = (
             self.get_queryset()
             .filter(
-                name__iexact=name,
+                email__iexact=email,
                 registration__isnull=False,
                 registration__is_open=True,
                 course__isnull=False,
@@ -733,7 +733,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         ]
 
         return requestUtils.success_response(
-            data={"name": name, "options": options},
+            data={"email": email, "options": options},
             http_status=status.HTTP_200_OK,
         )
 
