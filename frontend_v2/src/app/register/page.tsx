@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import MaxWrapper from "@/components/shared/MaxWrapper";
 import { MoveRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -51,7 +50,6 @@ const CountDown = dynamic(() => import("@/components/events/CountDown"), {
 });
 
 export default function RegistrationPage() {
-  const router = useRouter();
   const { data: courses, isLoading } = useFetchAllCourses();
 
   const [isRegistering, setIsRegistering] = useState(false);
@@ -83,6 +81,7 @@ export default function RegistrationPage() {
   const [existingOptions, setExistingOptions] = useState<
     ExistingRegistrationOption[]
   >([]);
+  const [hasSearchedExisting, setHasSearchedExisting] = useState(false);
 
   // Helper function to check if a course is ZK-related (strict, excludes Rust)
   async function getUserData(userForm: UserDataType, courseName: string) {
@@ -231,6 +230,7 @@ export default function RegistrationPage() {
     try {
       setIsFetchingExisting(true);
       setExistingOptions([]);
+      setHasSearchedExisting(false);
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/continue-registration-options/`,
@@ -248,6 +248,7 @@ export default function RegistrationPage() {
 
       const options = payload?.data?.options || [];
       setExistingOptions(options);
+      setHasSearchedExisting(true);
       if (!options.length) {
         toast.error(
           "No active registration found for this name in the current cohort"
@@ -396,13 +397,24 @@ export default function RegistrationPage() {
           </div>
         </div>
       ) : registrationMode === "new" ? (
-        <UnifiedRegistrationForm
-          formData={formData}
-          setFormData={setFormData}
-          submitData={submitData}
-          isRegistering={isRegistering}
-          errorMessage={errorMessage}
-        />
+        <div className="w-full max-w-[750px]">
+          <div className="flex justify-end mb-3">
+            <button
+              type="button"
+              onClick={() => setRegistrationMode(null)}
+              className="text-sm text-gray-500 hover:text-bridgeRed"
+            >
+              Back to options
+            </button>
+          </div>
+          <UnifiedRegistrationForm
+            formData={formData}
+            setFormData={setFormData}
+            submitData={submitData}
+            isRegistering={isRegistering}
+            errorMessage={errorMessage}
+          />
+        </div>
       ) : (
         <div className="w-full max-w-[750px] px-4 md:px-8 py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
           <div className="flex items-center justify-between gap-4 mb-6">
@@ -415,6 +427,7 @@ export default function RegistrationPage() {
                 setRegistrationMode(null);
                 setExistingOptions([]);
                 setExistingName("");
+                setHasSearchedExisting(false);
               }}
               className="text-sm text-gray-500 hover:text-bridgeRed"
             >
@@ -471,6 +484,11 @@ export default function RegistrationPage() {
                   </button>
                 </div>
               ))}
+            </div>
+          )}
+          {hasSearchedExisting && existingOptions.length === 0 && (
+            <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+              No open/current-cohort registration with a course was found for this name.
             </div>
           )}
         </div>
