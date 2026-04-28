@@ -34,6 +34,18 @@ interface UserDataType extends FormDataType {
   achievement: string;
 }
 
+type RegistrationFlowMode = "new" | "existing" | null;
+
+interface ExistingRegistrationOption {
+  participant_id: number;
+  name: string;
+  email: string;
+  payment_status: boolean;
+  course: { id: number; name: string | null };
+  registration: { id: number; name: string | null; cohort: string | null };
+  created_at: string;
+}
+
 const CountDown = dynamic(() => import("@/components/events/CountDown"), {
   ssr: false,
 });
@@ -64,6 +76,13 @@ export default function RegistrationPage() {
 
   // Solidity Assessment Modal state
   const [showSolidityModal, setShowSolidityModal] = useState(false);
+  const [registrationMode, setRegistrationMode] =
+    useState<RegistrationFlowMode>(null);
+  const [existingName, setExistingName] = useState("");
+  const [isFetchingExisting, setIsFetchingExisting] = useState(false);
+  const [existingOptions, setExistingOptions] = useState<
+    ExistingRegistrationOption[]
+  >([]);
 
   // Helper function to check if a course is ZK-related (strict, excludes Rust)
   async function getUserData(userForm: UserDataType, courseName: string) {
@@ -202,6 +221,71 @@ export default function RegistrationPage() {
     }
   };
 
+  const fetchExistingRegistrations = async () => {
+    const cleanName = existingName.trim();
+    if (!cleanName) {
+      toast.error("Please enter your registration name");
+      return;
+    }
+
+    try {
+      setIsFetchingExisting(true);
+      setExistingOptions([]);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/participant/continue-registration-options/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: cleanName }),
+        }
+      );
+      const payload = await response.json();
+
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.message || "Unable to fetch registrations");
+      }
+
+      const options = payload?.data?.options || [];
+      setExistingOptions(options);
+      if (!options.length) {
+        toast.error(
+          "No active registration found for this name in the current cohort"
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch existing registrations"
+      );
+    } finally {
+      setIsFetchingExisting(false);
+    }
+  };
+
+  const continueWithExistingRegistration = (
+    option: ExistingRegistrationOption
+  ) => {
+    if (option.payment_status) {
+      toast.error("This registration is already paid");
+      return;
+    }
+    const payload = {
+      participantId: option.participant_id,
+      name: option.name,
+      email: option.email,
+      course: option.course.id,
+      registration: option.registration.id,
+      source: "existing_registration",
+    };
+    const encodedData = btoa(JSON.stringify(payload));
+    const paymentUrl = `${
+      process.env.NEXT_PUBLIC_PAYMENT_SUBDOMAIN
+    }?data=${encodeURIComponent(encodedData)}`;
+    window.location.href = paymentUrl;
+  };
+
   const openDate = new Date("2025-03-17T13:00:00");
   const currentDate = new Date();
   
@@ -280,7 +364,38 @@ export default function RegistrationPage() {
             Register for Another Course
           </button>
         </div>
-      ) : (
+      ) : registrationMode === null ? (
+        <div className="w-full max-w-[750px] px-4 md:px-8 py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Registration
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2 mb-8 text-sm">
+            Choose whether to start a new registration or finish an existing one.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setRegistrationMode("new")}
+              className="p-5 border border-gray-200 rounded-xl text-left hover:border-bridgeRed transition-colors"
+            >
+              <p className="font-semibold text-base">Start New Registration</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Go through the normal registration flow.
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRegistrationMode("existing")}
+              className="p-5 border border-gray-200 rounded-xl text-left hover:border-bridgeRed transition-colors"
+            >
+              <p className="font-semibold text-base">Finish Existing Registration</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Find an existing registration and complete payment.
+              </p>
+            </button>
+          </div>
+        </div>
+      ) : registrationMode === "new" ? (
         <UnifiedRegistrationForm
           formData={formData}
           setFormData={setFormData}
@@ -288,6 +403,77 @@ export default function RegistrationPage() {
           isRegistering={isRegistering}
           errorMessage={errorMessage}
         />
+      ) : (
+        <div className="w-full max-w-[750px] px-4 md:px-8 py-8 bg-white dark:bg-secondary/40 rounded-xl shadow-md">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Finish Existing Registration
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                setRegistrationMode(null);
+                setExistingOptions([]);
+                setExistingName("");
+              }}
+              className="text-sm text-gray-500 hover:text-bridgeRed"
+            >
+              Back
+            </button>
+          </div>
+          <p className="text-sm text-gray-500 mb-4">
+            Enter your registration name to fetch your latest active registrations in the current cohort.
+          </p>
+          <div className="flex flex-col md:flex-row gap-3 mb-6">
+            <input
+              value={existingName}
+              onChange={(e) => setExistingName(e.target.value)}
+              placeholder="Enter registration name"
+              className="h-12 flex-1 px-4 rounded-lg border border-gray-300 bg-white"
+            />
+            <button
+              type="button"
+              onClick={fetchExistingRegistrations}
+              disabled={isFetchingExisting}
+              className="h-12 px-5 rounded-lg bg-bridgeRed text-white font-medium disabled:opacity-70"
+            >
+              {isFetchingExisting ? "Checking..." : "Fetch Registrations"}
+            </button>
+          </div>
+
+          {existingOptions.length > 0 && (
+            <div className="space-y-3">
+              {existingOptions.map((option) => (
+                <div
+                  key={option.participant_id}
+                  className="border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+                >
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {option.registration.name || "Registration"} -{" "}
+                      {option.course.name || "Course"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {option.email} • {option.registration.cohort || "Current Cohort"}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Status:{" "}
+                      {option.payment_status ? "Paid" : "Payment Pending"}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => continueWithExistingRegistration(option)}
+                    disabled={option.payment_status}
+                    className="h-10 px-4 rounded-md bg-bridgeRed text-white text-sm font-medium disabled:bg-gray-300"
+                  >
+                    {option.payment_status ? "Already Paid" : "Continue to Payment"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
       
       {paymentModalData && (

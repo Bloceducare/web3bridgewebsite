@@ -4,7 +4,7 @@ import threading
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import F, Q
 from django.forms import ValidationError
 from decouple import config
 from drf_yasg.utils import swagger_auto_schema
@@ -667,6 +667,75 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             return requestUtils.error_response(
                 "Course not found", {}, http_status=status.HTTP_404_NOT_FOUND
             )
+
+    @decorators.action(
+        detail=False, methods=["post"], url_path="continue-registration-options"
+    )
+    def continue_registration_options(self, request, *args, **kwargs):
+        """
+        Resolve existing registrations for a person so they can finish payment.
+
+        Rules:
+        - Match by participant ``name`` (case-insensitive) as requested by frontend flow.
+        - Only include rows from currently open programmes (present cohort).
+        - Only include rows that are tied to real courses (ignore legacy/no-course rows).
+        - Prefer the latest participant row per (registration, course).
+        """
+        name = (request.data.get("name") or "").strip()
+        if not name:
+            return requestUtils.error_response(
+                "Registration name is required",
+                {"name": ["This field is required."]},
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participants_qs = (
+            self.get_queryset()
+            .filter(
+                name__iexact=name,
+                registration__isnull=False,
+                registration__is_open=True,
+                course__isnull=False,
+            )
+            .exclude(course__registration__isnull=True)
+            .filter(course__registration_id=F("registration_id"))
+            .order_by("-created_at", "-id")
+        )
+
+        # Keep only the newest row per registration+course pair.
+        latest_rows_by_key: dict[tuple[int, int], models.Participant] = {}
+        for participant in participants_qs:
+            key = (participant.registration_id, participant.course_id)
+            if key not in latest_rows_by_key:
+                latest_rows_by_key[key] = participant
+
+        rows = list(latest_rows_by_key.values())
+        rows.sort(key=lambda p: (p.created_at, p.id), reverse=True)
+
+        options = [
+            {
+                "participant_id": participant.id,
+                "name": participant.name,
+                "email": participant.email,
+                "payment_status": participant.payment_status,
+                "course": {
+                    "id": participant.course_id,
+                    "name": getattr(participant.course, "name", None),
+                },
+                "registration": {
+                    "id": participant.registration_id,
+                    "name": getattr(participant.registration, "name", None),
+                    "cohort": getattr(participant.registration, "cohort", None),
+                },
+                "created_at": participant.created_at,
+            }
+            for participant in rows
+        ]
+
+        return requestUtils.success_response(
+            data={"name": name, "options": options},
+            http_status=status.HTTP_200_OK,
+        )
 
     @swagger_auto_schema(request_body=serializers.SendConfirmationEmailSerializer)
     @decorators.action(
