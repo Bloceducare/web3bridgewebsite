@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework import serializers
 from . import models
 from utils.serializers import ImageSerializer
@@ -287,6 +288,7 @@ class ParticipantSerializer:
         class Meta:
             model = models.Participant
             exclude = ["status", "payment_status", "cohort"]
+            validators = []
             ref_name = PARTICIPANT_REF_NAME
 
         def validate_number(self, value):
@@ -362,7 +364,40 @@ class ParticipantSerializer:
             label = (linked.cohort or linked.name or "").strip()
             max_len = models.Participant._meta.get_field("cohort").max_length
             validated_data["cohort"] = label[:max_len] if label else None
-            return models.Participant.objects.create(**validated_data)
+            try:
+                return models.Participant.objects.create(**validated_data)
+            except IntegrityError:
+                # Handle race conditions where duplicate rows slip between validate and create.
+                email = (validated_data.get("email") or "").strip()
+                existing_participant = models.Participant.objects.filter(
+                    email__iexact=email,
+                    registration_id=linked.pk,
+                    course=course,
+                ).first()
+                if existing_participant:
+                    if existing_participant.payment_status:
+                        raise serializers.ValidationError(
+                            {
+                                "email": (
+                                    "Participant already registered and paid for this programme and course"
+                                )
+                            }
+                        )
+                    raise serializers.ValidationError(
+                        {
+                            "email": {
+                                "already_registered_unpaid": True,
+                                "message": (
+                                    "You are already registered for this programme and course "
+                                    "but haven't completed payment. Please proceed to payment "
+                                    "to secure your spot."
+                                ),
+                                "payment_link": "https://payment.web3bridgeafrica.com",
+                                "participant_id": existing_participant.id,
+                            }
+                        }
+                    )
+                raise
 
     class List(serializers.ModelSerializer):
         course = CourseSerializer.Retrieve(read_only=True)
