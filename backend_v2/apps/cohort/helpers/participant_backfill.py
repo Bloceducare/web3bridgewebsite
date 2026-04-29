@@ -3,16 +3,13 @@ from __future__ import annotations
 from django.db import IntegrityError
 
 from cohort import models
+from cohort.helpers.cohort_label import fit_participant_cohort, resolve_active_cohort_label
 
 
 def normalize_participant_cohort_value(registration):
     if registration is None:
         return None
-    label = (registration.cohort or registration.name or "").strip()
-    if not label:
-        return None
-    max_len = models.Participant._meta.get_field("cohort").max_length
-    return label[:max_len]
+    return fit_participant_cohort(resolve_active_cohort_label(registration=registration))
 
 
 def autocorrect_participant_links(*, participant_id=None, email=None, return_stats=False):
@@ -31,13 +28,11 @@ def autocorrect_participant_links(*, participant_id=None, email=None, return_sta
     skipped_conflicts = 0
     for participant in qs.iterator():
         changed_fields = []
-        target_registration_id = participant.registration_id
         registration_for_cohort = participant.registration
 
         if participant.registration_id is None and participant.course_id:
             linked_registration = getattr(participant.course, "registration", None)
             if linked_registration is not None:
-                target_registration_id = linked_registration.pk
                 participant.registration_id = linked_registration.pk
                 registration_for_cohort = linked_registration
                 changed_fields.append("registration")
@@ -52,14 +47,12 @@ def autocorrect_participant_links(*, participant_id=None, email=None, return_sta
             continue
 
         # Guard uniqueness: do not update rows that would collide on
-        # (email, registration, course) unique constraint.
+        # (email, cohort) unique constraint.
         if (
-            target_registration_id is not None
-            and participant.course_id is not None
+            expected_cohort is not None
             and models.Participant.objects.filter(
                 email__iexact=(participant.email or "").strip(),
-                registration_id=target_registration_id,
-                course_id=participant.course_id,
+                cohort=expected_cohort,
             )
             .exclude(pk=participant.pk)
             .exists()

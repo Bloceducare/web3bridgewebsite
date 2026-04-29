@@ -5,6 +5,7 @@ from utils.helpers.models import BaseModelBaseMixin, CloudinaryDeleteMixin
 from utils.models import Image
 from utils.enums.models import RegistrationStatus
 from .helpers.model import testimonial_image_location
+from .helpers.cohort_label import fit_participant_cohort, resolve_active_cohort_label
 
 
 # Model
@@ -43,7 +44,7 @@ class Registration(BaseModelBaseMixin, models.Model):
     end_date = models.DateField(blank=True, null=True)
     cohort = models.CharField(
         _("cohort name"),
-        max_length=20,
+        max_length=64,
         blank=True,
         null=True,
         help_text=_("Optional label (e.g. Web3, Web2). Set on each programme in admin."),
@@ -110,7 +111,7 @@ class Participant(BaseModelBaseMixin, models.Model):
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
     cohort = models.CharField(
         _("cohort name"),
-        max_length=20,
+        max_length=64,
         blank=True,
         null=True,
         help_text=_("Set from the course’s programme on enroll; may be null for legacy rows."),
@@ -140,7 +141,7 @@ class Participant(BaseModelBaseMixin, models.Model):
             if rid:
                 self.registration_id = rid
 
-        # Keep participant.cohort aligned with programme label when missing.
+        # Keep participant.cohort aligned with active cohort label when missing.
         if (self.cohort or "").strip() == "" and self.registration_id:
             try:
                 registration_obj = Registration.objects.only("cohort", "name").get(
@@ -149,21 +150,19 @@ class Participant(BaseModelBaseMixin, models.Model):
             except Registration.DoesNotExist:
                 registration_obj = None
             if registration_obj is not None:
-                label = (
-                    # registration_obj.cohort
-                    registration_obj.name
-                    
-                ).strip()
+                label = resolve_active_cohort_label(
+                    registration=registration_obj,
+                    course=self.course,
+                )
                 if label:
-                    max_len = self._meta.get_field("cohort").max_length
-                    self.cohort = label[:max_len]
+                    self.cohort = fit_participant_cohort(label)
         super().save(*args, **kwargs)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["email", "registration", "course"],
-                name="cohort_participant_email_registration_course_uniq",
+                fields=["email", "cohort"],
+                name="cohort_participant_email_cohort_uniq",
             ),
         ]
         indexes = [

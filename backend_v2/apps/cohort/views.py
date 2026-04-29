@@ -105,13 +105,8 @@ def resolve_participant_for_payment_email(
         return qs.filter(course_id=course_id).order_by("-created_at", "-id").first()
 
     if registration_id is not None:
-        unpaid = (
-            qs_open.filter(registration_id=registration_id, payment_status=False)
-            .order_by("-created_at", "-id")
-            .first()
-        )
-        if unpaid is not None:
-            return unpaid
+        # Deterministic selection prevents repeated callbacks for the same payment
+        # payload from drifting to a different unpaid row in this registration.
         return (
             qs_open.filter(registration_id=registration_id)
             .order_by("-created_at", "-id")

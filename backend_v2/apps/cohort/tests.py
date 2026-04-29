@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, Mock, patch
 
 import requests
+from django.db import IntegrityError
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -129,6 +130,40 @@ class ParticipantCreateRegistrationPersistenceTests(TestCase):
         p = Participant.objects.get(email="uses_course_prog@example.com")
         self.assertEqual(p.registration_id, self.reg.pk)
         self.assertEqual(p.cohort, self.reg.cohort)
+
+    def test_create_uses_active_cohort_and_normalizes_roman_token(self):
+        from cohort.models import Course, Participant, Registration
+
+        stale_reg = Registration.objects.create(
+            name="Web3 Cohort XIV",
+            cohort="xiv",
+            is_open=True,
+        )
+        Registration.objects.create(
+            name="Web3 Cohort XV",
+            cohort="xv",
+            is_open=True,
+        )
+        stale_course = Course.objects.create(
+            name="Solidity (Web3 Development)",
+            description="d",
+            extra_info="e",
+            registration=stale_reg,
+        )
+        r = self.client.post(
+            self.CREATE_URL,
+            self._base_payload(
+                email="active_cohort@example.com",
+                course=stale_course.pk,
+                registration=stale_reg.pk,
+            ),
+            format="json",
+        )
+        self.assertEqual(r.status_code, 201, r.content)
+
+        p = Participant.objects.get(email="active_cohort@example.com")
+        self.assertEqual(p.registration_id, stale_reg.pk)
+        self.assertEqual(p.cohort, "Cohort XV")
 
     def test_create_resolves_open_registration_when_omitted(self):
         from cohort.models import Participant
@@ -447,6 +482,58 @@ class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
 
     @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
     @patch("cohort.views.handle_payment_success")
+    def test_verify_payment_registration_id_retry_does_not_mark_other_rows(self, mock_handle):
+        """
+        Retries with the same registration-only payload must stay on one row and not
+        progressively mark other unpaid rows in that registration as paid.
+        """
+        from cohort.models import Course, Participant
+
+        mock_handle.side_effect = (
+            lambda participant, serialized, serializer_class: serializer_class.Retrieve(
+                participant
+            ).data
+        )
+
+        second_course_same_registration = Course.objects.create(
+            name="Web3 Cohort XIV - Track 2",
+            description="Desc",
+            extra_info="Extra",
+            registration=self.reg_old,
+        )
+        second_row_same_registration = Participant.objects.create(
+            name="Jane",
+            email="dup@example.com",
+            wallet_address="0xbbb",
+            registration=self.reg_old,
+            course=second_course_same_registration,
+            cohort="Cohort-XIV",
+            venue="online",
+            payment_status=False,
+        )
+        self.participant_unpaid.payment_status = False
+        self.participant_unpaid.save()
+
+        payload = {
+            "email": "dup@example.com",
+            "registrationId": self.reg_old.id,
+        }
+        first_response = self._verify_post(payload)
+        second_response = self._verify_post(payload)
+
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
+
+        self.participant_unpaid.refresh_from_db()
+        second_row_same_registration.refresh_from_db()
+
+        # Latest row in the registration is selected consistently across retries.
+        self.assertFalse(self.participant_unpaid.payment_status)
+        self.assertTrue(second_row_same_registration.payment_status)
+        self.assertEqual(mock_handle.call_count, 1)
+
+    @patch.object(cohort_views, "API_KEY", "test-verify-payment-key")
+    @patch("cohort.views.handle_payment_success")
     def test_verify_payment_email_only_ignores_unpaid_on_closed_registration(
         self, mock_handle
     ):
@@ -553,45 +640,49 @@ class VerifyPaymentAndConfirmationPaymentStatusTests(TestCase):
         self.assertTrue(self.participant_unpaid.payment_status)
         mock_handle.assert_called_once()
 
-    def test_same_email_same_program_two_courses_allowed(self):
-        """DB allows two participant rows: same programme (registration), different courses."""
+    def test_same_email_same_cohort_across_registrations_not_allowed(self):
+        """DB blocks duplicate rows per email+cohort even if registrations differ."""
         from cohort.models import Course, Participant, Registration
 
-        reg = Registration.objects.create(
-            name="Multi-course intake", cohort="Cohort-TEST", is_open=True
+        reg_first = Registration.objects.create(
+            name="Intake A", cohort="Cohort-TEST", is_open=True
+        )
+        reg_second = Registration.objects.create(
+            name="Intake B", cohort="Cohort-TEST", is_open=True
         )
         c1 = Course.objects.create(
             name="Track A",
             description="d",
             extra_info="e",
-            registration=reg,
+            registration=reg_first,
         )
         c2 = Course.objects.create(
             name="Track B",
             description="d",
             extra_info="e",
-            registration=reg,
+            registration=reg_second,
         )
         Participant.objects.create(
             name="Multi",
             email="multi_course@example.com",
             wallet_address="0x111",
-            registration=reg,
+            registration=reg_first,
             course=c1,
-            cohort=reg.cohort,
+            cohort=reg_first.cohort,
             venue="online",
             payment_status=False,
         )
-        Participant.objects.create(
-            name="Multi",
-            email="multi_course@example.com",
-            wallet_address="0x222",
-            registration=reg,
-            course=c2,
-            cohort=reg.cohort,
-            venue="online",
-            payment_status=False,
-        )
+        with self.assertRaises(IntegrityError):
+            Participant.objects.create(
+                name="Multi",
+                email="multi_course@example.com",
+                wallet_address="0x222",
+                registration=reg_second,
+                course=c2,
+                cohort=reg_second.cohort,
+                venue="online",
+                payment_status=False,
+            )
 
 
 class PortalInviteHelperTests(SimpleTestCase):

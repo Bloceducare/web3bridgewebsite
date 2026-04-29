@@ -1,6 +1,7 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 from . import models
+from .helpers.cohort_label import fit_participant_cohort, resolve_active_cohort_label
 from utils.serializers import ImageSerializer
 from utils.models import Image
 from .literals import (
@@ -317,17 +318,19 @@ class ParticipantSerializer:
                     }
                 )
             email = (attrs.get("email") or "").strip()
+            cohort_value = fit_participant_cohort(
+                resolve_active_cohort_label(registration=linked, course=course)
+            )
             existing_participant = models.Participant.objects.filter(
                 email__iexact=email,
-                registration_id=linked.pk,
-                course=course,
+                cohort=cohort_value,
             ).first()
             if existing_participant:
                 if existing_participant.payment_status:
                     raise serializers.ValidationError(
                         {
                             "email": (
-                                "Participant already registered and paid for this programme and course"
+                                "Participant already registered and paid for this cohort"
                             )
                         }
                     )
@@ -336,7 +339,7 @@ class ParticipantSerializer:
                         "email": {
                             "already_registered_unpaid": True,
                             "message": (
-                                "You are already registered for this programme and course "
+                                "You are already registered for this cohort "
                                 "but haven't completed payment. Please proceed to payment "
                                 "to secure your spot."
                             ),
@@ -361,25 +364,25 @@ class ParticipantSerializer:
                     }
                 )
             validated_data["registration"] = linked
-            label = (linked.cohort or linked.name or "").strip()
-            max_len = models.Participant._meta.get_field("cohort").max_length
-            validated_data["cohort"] = label[:max_len] if label else None
+            validated_data["cohort"] = fit_participant_cohort(
+                resolve_active_cohort_label(registration=linked, course=course)
+            )
             try:
                 return models.Participant.objects.create(**validated_data)
             except IntegrityError:
                 # Handle race conditions where duplicate rows slip between validate and create.
                 email = (validated_data.get("email") or "").strip()
+                cohort_value = validated_data.get("cohort")
                 existing_participant = models.Participant.objects.filter(
                     email__iexact=email,
-                    registration_id=linked.pk,
-                    course=course,
+                    cohort=cohort_value,
                 ).first()
                 if existing_participant:
                     if existing_participant.payment_status:
                         raise serializers.ValidationError(
                             {
                                 "email": (
-                                    "Participant already registered and paid for this programme and course"
+                                    "Participant already registered and paid for this cohort"
                                 )
                             }
                         )
@@ -388,7 +391,7 @@ class ParticipantSerializer:
                             "email": {
                                 "already_registered_unpaid": True,
                                 "message": (
-                                    "You are already registered for this programme and course "
+                                    "You are already registered for this cohort "
                                     "but haven't completed payment. Please proceed to payment "
                                     "to secure your spot."
                                 ),
