@@ -26,45 +26,54 @@ def autocorrect_participant_links(*, participant_id=None, email=None, return_sta
 
     updated = 0
     skipped_conflicts = 0
-    for participant in qs.iterator():
-        changed_fields = []
-        registration_for_cohort = participant.registration
+    # Avoid QuerySet.iterator(): server-side cursors conflict with nested queries on the same
+    # connection (.exists() / .save() below) and with PgBouncer transaction pooling.
+    batch_size = 500
+    last_pk = 0
+    while True:
+        chunk = list(qs.filter(pk__gt=last_pk).order_by("pk")[:batch_size])
+        if not chunk:
+            break
+        last_pk = chunk[-1].pk
+        for participant in chunk:
+            changed_fields = []
+            registration_for_cohort = participant.registration
 
-        if participant.registration_id is None and participant.course_id:
-            linked_registration = getattr(participant.course, "registration", None)
-            if linked_registration is not None:
-                participant.registration_id = linked_registration.pk
-                registration_for_cohort = linked_registration
-                changed_fields.append("registration")
+            if participant.registration_id is None and participant.course_id:
+                linked_registration = getattr(participant.course, "registration", None)
+                if linked_registration is not None:
+                    participant.registration_id = linked_registration.pk
+                    registration_for_cohort = linked_registration
+                    changed_fields.append("registration")
 
-        expected_cohort = normalize_participant_cohort_value(registration_for_cohort)
-        # Backfill only when missing (None/blank), do not rewrite existing non-empty cohort.
-        if (participant.cohort or "").strip() == "" and expected_cohort is not None:
-            participant.cohort = expected_cohort
-            changed_fields.append("cohort")
+            expected_cohort = normalize_participant_cohort_value(registration_for_cohort)
+            # Backfill only when missing (None/blank), do not rewrite existing non-empty cohort.
+            if (participant.cohort or "").strip() == "" and expected_cohort is not None:
+                participant.cohort = expected_cohort
+                changed_fields.append("cohort")
 
-        if not changed_fields:
-            continue
+            if not changed_fields:
+                continue
 
-        # Guard uniqueness: do not update rows that would collide on
-        # (email, cohort) unique constraint.
-        if (
-            expected_cohort is not None
-            and models.Participant.objects.filter(
-                email__iexact=(participant.email or "").strip(),
-                cohort=expected_cohort,
-            )
-            .exclude(pk=participant.pk)
-            .exists()
-        ):
-            skipped_conflicts += 1
-            continue
+            # Guard uniqueness: do not update rows that would collide on
+            # (email, cohort) unique constraint.
+            if (
+                expected_cohort is not None
+                and models.Participant.objects.filter(
+                    email__iexact=(participant.email or "").strip(),
+                    cohort=expected_cohort,
+                )
+                .exclude(pk=participant.pk)
+                .exists()
+            ):
+                skipped_conflicts += 1
+                continue
 
-        try:
-            participant.save(update_fields=sorted(set(changed_fields)))
-            updated += 1
-        except IntegrityError:
-            skipped_conflicts += 1
+            try:
+                participant.save(update_fields=sorted(set(changed_fields)))
+                updated += 1
+            except IntegrityError:
+                skipped_conflicts += 1
 
     if return_stats:
         return {"updated": updated, "skipped_conflicts": skipped_conflicts}

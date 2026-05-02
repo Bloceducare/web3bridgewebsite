@@ -148,9 +148,10 @@ DATABASES = {
 # Determine the database configuration based on environment
 if ENVIROMENT == "production":
     DATABASES["default"] = DATABASES["production"]
-    # Transaction-pooled Postgres (Neon pooler, etc.) breaks server-side cursors
+    # Transaction-pooled Postgres (Neon pooler, etc.) breaks server-side cursors.
+    # Must live on the database config dict (module-level DISABLE_SERVER_SIDE_CURSORS is ignored).
     if "pooler" in _DB_HOST.lower() or "pgbouncer" in _DB_HOST.lower():
-        DISABLE_SERVER_SIDE_CURSORS = True
+        DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
