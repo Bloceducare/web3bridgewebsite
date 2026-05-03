@@ -1131,11 +1131,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         # Create cache key based on page and limit
         cache_key = f"participants_all_page_{page}_limit_{limit}"
 
-        corrected = autocorrect_participant_links()
-        if corrected:
-            invalidate_participant_cache()
-
-        # Try to get from cache first (never 500 if Redis is down or misconfigured)
+        # Cache first. Do not run full-table autocorrect here: it scans every participant and
+        # exceeds HTTP gateway timeouts (client 504 while Django still logs 200 afterward).
+        # Backfill runs on scoped writes (email/participant id) via autocorrect_participant_links.
         cached_data = None
         try:
             cached_data = cache.get(cache_key)
@@ -1196,9 +1194,6 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         """
         Get participants by registration ID with optimization
         """
-        corrected = autocorrect_participant_links()
-        if corrected:
-            invalidate_participant_cache()
         queryset = self.get_queryset().filter(registration=pk)
         serializer = self.serializer_class.List(queryset, many=True)
         return requestUtils.success_response(
