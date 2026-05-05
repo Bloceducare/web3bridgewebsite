@@ -6,6 +6,7 @@ from app.db.session import get_db_session
 from app.schemas.discord import (
     DiscordInviteGenerateRequest,
     DiscordInviteGenerateResponse,
+    DiscordInviteRevokeResponse,
     PendingDiscordInviteStudentResponse,
 )
 from app.services.discord import DiscordService
@@ -49,3 +50,19 @@ async def upsert_generated_discord_invite(
 ) -> DiscordInviteGenerateResponse:
     service = DiscordService(db)
     return await service.upsert_generated_invite(payload=payload)
+
+
+@router.post(
+    "/invites/{user_id}/revoke",
+    response_model=DiscordInviteRevokeResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Revoke student Discord invite",
+    description="Internal endpoint to revoke a previously generated student Discord invite.",
+)
+async def revoke_generated_discord_invite(
+    user_id: int,
+    _: str = Depends(verify_internal_api_key),
+    db: AsyncSession = Depends(get_db_session),
+) -> DiscordInviteRevokeResponse:
+    service = DiscordService(db)
+    return await service.revoke_invite(user_id=user_id)

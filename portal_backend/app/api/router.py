@@ -8,6 +8,7 @@ from app.api.routes import (
     health_router,
     notifications_router,
     onboarding_router,
+    portal_management_router,
     profile_router,
     students_router,
     sync_router,
@@ -22,6 +23,7 @@ api_router.include_router(discord_router)
 api_router.include_router(health_router)
 api_router.include_router(notifications_router)
 api_router.include_router(onboarding_router)
+api_router.include_router(portal_management_router)
 api_router.include_router(profile_router)
 api_router.include_router(sync_router)
 api_router.include_router(students_router)

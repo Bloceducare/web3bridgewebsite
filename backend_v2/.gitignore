@@ -172,3 +172,19 @@ __pycache__/
 **/__pycache__/
 
 *.csv
+
+*/migrations/
+***/migrations/
+# ignore migration folder
+
+*/migrations/
+***/migrations/
+# ignore migration folder
+
+*/migrations/
+***/migrations/
+# ignore migration folder
+
+*/migrations/
+***/migrations/
+# ignore migration folder

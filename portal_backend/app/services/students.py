@@ -12,7 +12,12 @@ from app.models.portal import (
     User,
     UserRole,
 )
-from app.schemas.students import ArchiveStudentRequest, StudentResponse, UpdateStudentRequest
+from app.schemas.students import (
+    ArchiveStudentRequest,
+    CreateStudentRequest,
+    StudentResponse,
+    UpdateStudentRequest,
+)
 
 
 class StudentsService:
@@ -26,6 +31,46 @@ class StudentsService:
             profile = await self._get_profile_by_user_id(user.id)
             students.append(self._build_student_response(user=user, profile=profile))
         return students
+
+    async def create_student(self, *, actor: User, payload: CreateStudentRequest) -> StudentResponse:
+        normalized_email = payload.email.strip().lower()
+        existing = await self.session.execute(select(User).where(User.email == normalized_email))
+        if existing.scalar_one_or_none() is not None:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Student already exists")
+
+        user = User(
+            email=normalized_email,
+            role=UserRole.STUDENT.value,
+            account_state=payload.account_state.value,
+            email_verified=payload.email_verified,
+        )
+        self.session.add(user)
+        await self.session.flush()
+
+        profile = StudentProfile(
+            user_id=user.id,
+            full_name=payload.full_name,
+            phone=payload.phone,
+            discord_email=str(payload.discord_email) if payload.discord_email else None,
+            wallet_address=payload.wallet_address,
+            cohort=payload.cohort,
+            onboarding_status=payload.onboarding_status.value,
+        )
+        self.session.add(profile)
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="student_created",
+                resource_type="student",
+                resource_id=str(user.id),
+                after_json=self._student_audit_snapshot(user=user, profile=profile),
+                created_at=datetime.now(UTC),
+            )
+        )
+        await self.session.commit()
+        await self.session.refresh(user)
+        await self.session.refresh(profile)
+        return self._build_student_response(user=user, profile=profile)
 
     async def get_student(self, *, student_id: int) -> StudentResponse:
         user = await self._get_student_by_id(student_id)
@@ -125,6 +170,80 @@ class StudentsService:
             await self.session.refresh(profile)
 
         return self._build_student_response(user=user, profile=profile)
+
+    async def evict_student(
+        self,
+        *,
+        actor: User,
+        student_id: int,
+        reason: str | None = None,
+    ) -> StudentResponse:
+        user = await self._get_student_by_id(student_id)
+        profile = await self._get_profile_by_user_id(user.id)
+        previous_state = user.account_state
+        user.account_state = AccountState.SUSPENDED.value
+        self.session.add(
+            StudentStatusHistory(
+                user_id=user.id,
+                from_state=previous_state,
+                to_state=AccountState.SUSPENDED.value,
+                reason=reason or "evicted_by_system_admin",
+                changed_by=actor.id,
+                changed_at=datetime.now(UTC),
+            )
+        )
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="student_evicted",
+                resource_type="student",
+                resource_id=str(user.id),
+                before_json={"account_state": previous_state},
+                after_json={"account_state": user.account_state, "reason": reason},
+                created_at=datetime.now(UTC),
+            )
+        )
+        await self.session.commit()
+        await self.session.refresh(user)
+        if profile is not None:
+            await self.session.refresh(profile)
+        return self._build_student_response(user=user, profile=profile)
+
+    async def reinstate_student(self, *, actor: User, student_id: int) -> StudentResponse:
+        user = await self._get_student_by_id(student_id)
+        profile = await self._get_profile_by_user_id(user.id)
+        previous_state = user.account_state
+        user.account_state = AccountState.ACTIVE.value
+        self.session.add(
+            StudentStatusHistory(
+                user_id=user.id,
+                from_state=previous_state,
+                to_state=AccountState.ACTIVE.value,
+                reason="reinstated_by_system_admin",
+                changed_by=actor.id,
+                changed_at=datetime.now(UTC),
+            )
+        )
+        await self.session.commit()
+        await self.session.refresh(user)
+        if profile is not None:
+            await self.session.refresh(profile)
+        return self._build_student_response(user=user, profile=profile)
+
+    async def delete_student(self, *, actor: User, student_id: int) -> None:
+        user = await self._get_student_by_id(student_id)
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="student_deleted",
+                resource_type="student",
+                resource_id=str(user.id),
+                before_json={"email": user.email, "account_state": user.account_state},
+                created_at=datetime.now(UTC),
+            )
+        )
+        await self.session.delete(user)
+        await self.session.commit()
 
     async def _list_student_users(self) -> list[User]:
         statement = select(User).where(User.role == UserRole.STUDENT.value).order_by(User.id)

@@ -34,3 +34,23 @@ class UpdateStudentRequest(BaseModel):
 
 class ArchiveStudentRequest(BaseModel):
     reason: str | None = Field(default="archived_by_staff", max_length=255)
+
+
+class CreateStudentRequest(BaseModel):
+    email: EmailStr
+    full_name: str = Field(min_length=1, max_length=255)
+    cohort: str | None = Field(default=None, max_length=100)
+    phone: str | None = Field(default=None, max_length=20)
+    discord_email: EmailStr | None = None
+    wallet_address: str | None = Field(default=None, max_length=255)
+    onboarding_status: OnboardingStatus = OnboardingStatus.PENDING
+    account_state: AccountState = AccountState.INVITED
+    email_verified: bool = False
+
+
+class EvictStudentRequest(BaseModel):
+    reason: str | None = Field(default="evicted_by_system_admin", max_length=255)
+
+
+class DeleteStudentResponse(BaseModel):
+    detail: str

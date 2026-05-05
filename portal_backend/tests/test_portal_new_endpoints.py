@@ -26,6 +26,8 @@ from app.services.courses import CoursesService
 from app.services.dashboard import DashboardService
 from app.services.discord import DiscordService
 from app.services.notifications import NotificationsService
+from app.services.portal_management import PortalManagementService
+from app.services.students import StudentsService
 from app.services.updates import UpdatesService
 
 client = TestClient(app)
@@ -441,3 +443,138 @@ def test_updates_create_rejects_when_no_channel_selected() -> None:
 
     assert response.status_code == 422
     assert "At least one delivery channel must be enabled" in response.json()["detail"]
+
+
+def test_notifications_admin_announcement_endpoint_creates_update() -> None:
+    current_user = build_user(user_id=51, role="staff")
+
+    async def override_staff_user() -> User:
+        return current_user
+
+    async def create_update(
+        _: UpdatesService,
+        *,
+        actor: User,
+        payload: object,
+    ) -> StudentUpdateResponse:
+        assert actor.id == current_user.id
+        assert getattr(payload, "target_type").value == "all_active"
+        return StudentUpdateResponse(
+            id=500,
+            title="Platform Notice",
+            body="Scheduled maintenance",
+            target_type="all_active",
+            target_ref=None,
+            is_published=True,
+            send_in_app=True,
+            send_email=False,
+            published_at=datetime.now(UTC),
+            created_by=actor.id,
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+            read_at=None,
+        )
+
+    original_method = UpdatesService.create_update
+    UpdatesService.create_update = create_update
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_staff_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.post(
+            "/api/v1/notifications/admin/announcements",
+            json={
+                "title": "Platform Notice",
+                "body": "Scheduled maintenance",
+                "scope": "platform",
+                "sender_type": "general_admin",
+                "is_published": True,
+                "send_in_app": True,
+                "send_email": False,
+            },
+        )
+    finally:
+        UpdatesService.create_update = original_method
+        clear_overrides()
+
+    assert response.status_code == 201
+    assert response.json()["update_id"] == 500
+
+
+def test_students_evict_endpoint_calls_service() -> None:
+    current_user = build_user(user_id=52, role="admin")
+
+    async def override_admin_user() -> User:
+        return current_user
+
+    async def evict_student(
+        _: StudentsService,
+        *,
+        actor: User,
+        student_id: int,
+        reason: str | None = None,
+    ):
+        assert actor.id == current_user.id
+        assert student_id == 90
+        from app.schemas.students import StudentResponse
+
+        return StudentResponse(
+            user_id=90,
+            email="evicted@example.com",
+            role="student",
+            account_state="suspended",
+            full_name="Evicted Student",
+            cohort="Cohort XIV",
+        )
+
+    original_method = StudentsService.evict_student
+    StudentsService.evict_student = evict_student
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_admin_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.post("/api/v1/students/90/evict", json={"reason": "violation"})
+    finally:
+        StudentsService.evict_student = original_method
+        clear_overrides()
+
+    assert response.status_code == 200
+    assert response.json()["account_state"] == "suspended"
+
+
+def test_portal_materials_returns_structured_payload() -> None:
+    current_user = build_user(user_id=53, role="staff")
+
+    async def override_staff_user() -> User:
+        return current_user
+
+    async def list_course_materials(
+        _: PortalManagementService, *, course_id: int | None = None
+    ):
+        assert course_id == 7
+        from app.schemas.portal_management import CourseMaterialResponse
+
+        return [
+            CourseMaterialResponse(
+                id=1,
+                course_id=7,
+                title="Week 1 Recording",
+                material_type="video",
+                resource_url="https://example.com/video",
+                content=None,
+                metadata={"duration": "35m"},
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+            )
+        ]
+
+    original_method = PortalManagementService.list_course_materials
+    PortalManagementService.list_course_materials = list_course_materials
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_staff_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/admin/portal/materials?course_id=7")
+    finally:
+        PortalManagementService.list_course_materials = original_method
+        clear_overrides()
+
+    assert response.status_code == 200
+    assert response.json()[0]["material"]["type"] == "video"

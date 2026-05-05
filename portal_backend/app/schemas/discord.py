@@ -24,3 +24,9 @@ class DiscordInviteGenerateResponse(BaseModel):
     user_id: int
     invite_link: str
     updated_at: datetime
+
+
+class DiscordInviteRevokeResponse(BaseModel):
+    detail: str
+    user_id: int
+    revoked_at: datetime

@@ -15,6 +15,9 @@ class UserRole(StrEnum):
     STUDENT = "student"
     STAFF = "staff"
     ADMIN = "admin"
+    MENTOR = "mentor"
+    GENERAL_ADMIN = "general_admin"
+    SYSTEM_ADMIN = "system_admin"
 
 
 class AccountState(StrEnum):
@@ -48,6 +51,41 @@ class SyncJobStatus(StrEnum):
     RUNNING = "running"
     SUCCESS = "success"
     FAILED = "failed"
+
+
+class NotificationScope(StrEnum):
+    PLATFORM = "platform"
+    COURSE = "course"
+
+
+class NotificationSenderType(StrEnum):
+    MENTOR = "mentor"
+    GENERAL_ADMIN = "general_admin"
+    SYSTEM_ADMIN = "system_admin"
+
+
+class CourseMaterialType(StrEnum):
+    PDF = "pdf"
+    VIDEO = "video"
+    LINK = "link"
+    DOC = "doc"
+    TEXT = "text"
+
+
+class AssessmentType(StrEnum):
+    COMBINED = "combined"
+    MULTIPLE_CHOICE = "multiple_choice"
+    OPEN_ENDED = "open_ended"
+
+
+class EvaluationMode(StrEnum):
+    AI = "ai"
+    MANUAL = "manual"
+
+
+class ResultReleaseMode(StrEnum):
+    IMMEDIATE = "immediate"
+    MENTOR_CONTROLLED = "mentor_controlled"
 
 
 class User(TimestampMixin, Base):
@@ -235,3 +273,77 @@ class AuditLog(Base):
     ip: Mapped[str | None] = mapped_column(String(45), nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class Mentor(TimestampMixin, Base):
+    __tablename__ = "mentors"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"),
+        nullable=True,
+        unique=True,
+        index=True,
+    )
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    bio: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+
+
+class MentorCourseMap(TimestampMixin, Base):
+    __tablename__ = "mentor_course_map"
+    __table_args__ = (UniqueConstraint("mentor_id", "course_id", name="uq_mentor_course"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mentor_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}mentors.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    course_id: Mapped[int] = mapped_column(nullable=False, index=True)
+
+
+class CourseMaterial(TimestampMixin, Base):
+    __tablename__ = "course_materials"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    course_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    material_type: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    resource_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    uploaded_by: Mapped[int | None] = mapped_column(
+        ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"), nullable=True
+    )
+
+
+class MentorAssessment(TimestampMixin, Base):
+    __tablename__ = "mentor_assessments"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mentor_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}mentors.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    course_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    special_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
+    input_context: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    generated_assessment: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    assessment_type: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    evaluation_mode: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    result_release_mode: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    accepted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class GuarantorForm(TimestampMixin, Base):
+    __tablename__ = "guarantor_forms"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    form_url: Mapped[str] = mapped_column(String(1000), nullable=False)
+    cohort: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    uploaded_by: Mapped[int | None] = mapped_column(
+        ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"), nullable=True
+    )

@@ -18,12 +18,25 @@ config.set_main_option("sqlalchemy.url", settings.postgres_dsn.replace("+asyncpg
 target_metadata = Base.metadata
 
 
+def include_object(object_, name, type_, reflected, compare_to):
+    """
+    Restrict autogenerate to the configured portal schema only.
+    Prevents Alembic from trying to drop Django/public tables that belong to
+    other apps sharing the same database.
+    """
+    if type_ == "table":
+        schema = getattr(object_, "schema", None)
+        return schema == settings.POSTGRES_SCHEMA
+    return True
+
+
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
         include_schemas=True,
+        include_object=include_object,
         version_table_schema=settings.POSTGRES_SCHEMA,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -45,6 +58,7 @@ def run_migrations_online() -> None:
             connection=connection,
             target_metadata=target_metadata,
             include_schemas=True,
+            include_object=include_object,
             version_table_schema=settings.POSTGRES_SCHEMA,
         )
 

@@ -117,6 +117,9 @@ class Participant(BaseModelBaseMixin, models.Model):
         help_text=_("Set from the course’s programme on enroll; may be null for legacy rows."),
     )
     payment_status = models.BooleanField(default=False)
+    is_evicted = models.BooleanField(default=False)
+    evicted_at = models.DateTimeField(blank=True, null=True)
+    eviction_reason = models.TextField(blank=True, null=True)
     venue = models.CharField(
         _("venue"), max_length=30, blank=False, null=False, default="online"
     )

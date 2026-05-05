@@ -6,6 +6,9 @@ from app.db.session import get_db_session
 from app.models.portal import User
 from app.schemas.students import (
     ArchiveStudentRequest,
+    CreateStudentRequest,
+    DeleteStudentResponse,
+    EvictStudentRequest,
     StudentResponse,
     UpdateStudentRequest,
 )
@@ -27,6 +30,22 @@ async def list_students(
 ) -> list[StudentResponse]:
     service = StudentsService(db)
     return await service.list_students()
+
+
+@router.post(
+    "",
+    response_model=StudentResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create student",
+    description="Create a new student account/profile. Staff or admin only.",
+)
+async def create_student(
+    payload: CreateStudentRequest,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentResponse:
+    service = StudentsService(db)
+    return await service.create_student(actor=current_user, payload=payload)
 
 
 @router.get(
@@ -87,3 +106,54 @@ async def archive_student(
     return await service.archive_student(
         actor=current_user, student_id=student_id, payload=payload
     )
+
+
+@router.post(
+    "/{student_id}/evict",
+    response_model=StudentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Evict student",
+    description="Suspend a student account immediately. Staff or admin only.",
+)
+async def evict_student(
+    student_id: int,
+    payload: EvictStudentRequest,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentResponse:
+    return await StudentsService(db).evict_student(
+        actor=current_user, student_id=student_id, reason=payload.reason
+    )
+
+
+@router.post(
+    "/{student_id}/reinstate",
+    response_model=StudentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Reinstate student",
+    description="Move a suspended/deactivated student back to active. Staff or admin only.",
+)
+async def reinstate_student(
+    student_id: int,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentResponse:
+    return await StudentsService(db).reinstate_student(
+        actor=current_user, student_id=student_id
+    )
+
+
+@router.delete(
+    "/{student_id}",
+    response_model=DeleteStudentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Delete student",
+    description="Permanently delete student account and profile. Staff or admin only.",
+)
+async def delete_student(
+    student_id: int,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> DeleteStudentResponse:
+    await StudentsService(db).delete_student(actor=current_user, student_id=student_id)
+    return DeleteStudentResponse(detail="Student deleted")

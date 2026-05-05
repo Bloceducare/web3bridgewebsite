@@ -8,6 +8,7 @@ from app.models.portal import AuditLog, StudentProfile, User, UserRole
 from app.schemas.discord import (
     DiscordInviteGenerateRequest,
     DiscordInviteGenerateResponse,
+    DiscordInviteRevokeResponse,
     PendingDiscordInviteStudentResponse,
 )
 
@@ -87,3 +88,28 @@ class DiscordService:
             invite_link=profile.discord_invite_link,
             updated_at=now,
         )
+
+    async def revoke_invite(self, *, user_id: int) -> DiscordInviteRevokeResponse:
+        result = await self.session.execute(
+            select(User, StudentProfile)
+            .join(StudentProfile, StudentProfile.user_id == User.id)
+            .where(User.id == user_id, User.role == UserRole.STUDENT.value)
+        )
+        row = result.one_or_none()
+        if row is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+        user, profile = row
+        profile.discord_invite_link = None
+        now = datetime.now(UTC)
+        self.session.add(
+            AuditLog(
+                actor_user_id=None,
+                action="discord_invite_revoked_by_bot",
+                resource_type="student_profile",
+                resource_id=str(user.id),
+                after_json={"discord_invite_link": None},
+                created_at=now,
+            )
+        )
+        await self.session.commit()
+        return DiscordInviteRevokeResponse(detail="Discord invite revoked", user_id=user.id, revoked_at=now)

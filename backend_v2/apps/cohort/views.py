@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models import F, Q
 from django.forms import ValidationError
+from django.utils import timezone
 from decouple import config
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import decorators, pagination, status, viewsets
@@ -408,6 +409,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         "send_confirmation_email",
         "approve",
         "paid_per_cohort",
+        "evict",
     ]
 
     def get_queryset(self):
@@ -1108,6 +1110,34 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         participant_object.delete()
         invalidate_participant_cache()
         return requestUtils.success_response(data={}, http_status=status.HTTP_200_OK)
+
+    @decorators.action(detail=True, methods=["post"], url_path="evict")
+    def evict(self, request, pk=None, *args, **kwargs):
+        participant_object = self.get_queryset().get(pk=pk)
+        reason = (request.data.get("reason") or "").strip()
+        if not reason:
+            return requestUtils.error_response(
+                "Eviction reason is required",
+                {"reason": ["This field is required."]},
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(reason) > 1000:
+            return requestUtils.error_response(
+                "Eviction reason is too long",
+                {"reason": ["Ensure this field has no more than 1000 characters."]},
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+        participant_object.is_evicted = True
+        participant_object.evicted_at = timezone.now()
+        participant_object.eviction_reason = reason
+        participant_object.save()
+        invalidate_participant_cache()
+        serialized_participant_obj = self.serializer_class.Retrieve(
+            participant_object
+        ).data
+        return requestUtils.success_response(
+            data=serialized_participant_obj, http_status=status.HTTP_200_OK
+        )
 
     @decorators.action(detail=False, methods=["get"])
     def all(self, request):
