@@ -28,7 +28,9 @@ export default function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/hub/register">
+            <Link  href="https://lagos-eth-hub.vercel.app/member"
+  target="_blank"
+  rel="noopener noreferrer">
               <Button
                 size="lg"
                 className="rounded-md px-8 py-6 text-base font-semibold bg-bridgeRed hover:bg-red-600 text-white shadow-lg transition-all"
