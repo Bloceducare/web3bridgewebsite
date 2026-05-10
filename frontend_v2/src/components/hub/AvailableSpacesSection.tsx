@@ -24,7 +24,7 @@ export default function AvailableSpacesSection() {
       try {
         const [spacesRes, statsRes] = await Promise.all([
           fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/hub/space/all/`),
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/hub/space/stats/`),
+          fetch(`${process.env.NEXT_PUBLIC_HUB_SERVER}/api/live-data/`),
         ]);
 
         const spacesData = await spacesRes.json();

@@ -82,15 +82,19 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="flex flex-col sm:flex-row items-center gap-4 mt-4"
           >
-            <Link href="/hub/register">
-              <Button
-                size="lg"
-                className="rounded-md px-8 py-6 text-base font-semibold bg-bridgeRed hover:bg-red-600 text-white shadow-lg hover:shadow-xl transition-all"
-              >
-                Register to Visit
-                <MoveRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
+           <Link
+  href="https://lagos-eth-hub.vercel.app/member"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Button
+    size="lg"
+    className="rounded-md px-8 py-6 text-base font-semibold bg-bridgeRed hover:bg-red-600 text-white shadow-lg hover:shadow-xl transition-all"
+  >
+    Register to Visit
+    <MoveRight className="w-5 h-5 ml-2" />
+  </Button>
+</Link>
             
             <Button
               size="lg"
