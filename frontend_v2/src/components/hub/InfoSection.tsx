@@ -84,7 +84,9 @@ export default function InfoSection() {
               Help us manage the space effectively and ensure a productive 
               environment for everyone.
             </p>
-            <Link href="/hub/register">
+            <Link  href="https://lagos-eth-hub.vercel.app/member"
+  target="_blank"
+  rel="noopener noreferrer">
               <Button
                 size="lg"
                 className="rounded-md px-8 py-6 text-base font-semibold bg-bridgeRed hover:bg-red-600 text-white shadow-lg transition-all"

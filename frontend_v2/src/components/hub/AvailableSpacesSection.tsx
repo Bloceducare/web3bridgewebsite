@@ -24,7 +24,7 @@ export default function AvailableSpacesSection() {
       try {
         const [spacesRes, statsRes] = await Promise.all([
           fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/hub/space/all/`),
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/hub/space/stats/`),
+          fetch(`https://lagos-eth-hub.vercel.app/api/live-data/`),
         ]);
 
         const spacesData = await spacesRes.json();
