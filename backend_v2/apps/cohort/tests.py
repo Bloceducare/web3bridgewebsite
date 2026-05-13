@@ -4,6 +4,7 @@ import requests
 from django.db import IntegrityError
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -1478,6 +1479,113 @@ class SubmitAssessmentEndpointTests(TestCase):
         self.assertEqual(str(a_old.score), "55.00")
 
 
+@override_settings(SECURE_SSL_REDIRECT=False)
+class ReconcileAssessmentCutoffEndpointTests(TestCase):
+    """Tests for POST /api/v2/cohort/participant/reconcile-assessment-cutoff/"""
+
+    ENDPOINT = "/api/v2/cohort/participant/reconcile-assessment-cutoff/"
+    API_KEY = "EY63JDFEE9GKNJDBDJ"
+
+    def setUp(self):
+        self.client = APIClient()
+        from cohort.models import Assessment, Registration, Course, Participant
+
+        self.registration = Registration.objects.create(
+            name="Web3 Cohort XIV", cohort="Cohort-XIV", is_open=True
+        )
+        self.course = Course.objects.create(
+            name="Web3 Development",
+            description="Learn Web3",
+            extra_info="Extra",
+            registration=self.registration,
+        )
+        self.participant = Participant.objects.create(
+            name="John Doe",
+            email="john@example.com",
+            wallet_address="0x123",
+            registration=self.registration,
+            course=self.course,
+            cohort="Cohort-XIV",
+            venue="online",
+        )
+        self.assessment = Assessment.objects.create(
+            participant=self.participant,
+            score="45.00",
+            passed=False,
+            breakdown=None,
+            date_taken=timezone.now(),
+        )
+
+    def _post(self, payload, api_key=None):
+        key = api_key if api_key is not None else self.API_KEY
+        return self.client.post(
+            self.ENDPOINT, payload, format="json", headers={"API-Key": key}
+        )
+
+    @patch("cohort.views.send_assessment_cutoff_reconciliation_email")
+    def test_reconciles_failed_assessment_and_sends_email(self, mock_send):
+        payload = {"items": [{"email": "john@example.com"}]}
+        response = self._post(payload)
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["data"]["summary"]["reconciled"], 1)
+        self.assertEqual(body["data"]["results"][0]["status"], "reconciled")
+        self.assessment.refresh_from_db()
+        self.assertTrue(self.assessment.passed)
+        mock_send.assert_called_once()
+
+    @patch("cohort.views.send_assessment_cutoff_reconciliation_email")
+    def test_min_score_skips_when_below(self, mock_send):
+        payload = {
+            "items": [{"email": "john@example.com"}],
+            "min_score": "60.00",
+        }
+        response = self._post(payload)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["data"]["summary"]["reconciled"], 0)
+        self.assertIn("below min_score", response.json()["data"]["results"][0]["detail"])
+        self.assessment.refresh_from_db()
+        self.assertFalse(self.assessment.passed)
+        mock_send.assert_not_called()
+
+    @patch("cohort.views.send_assessment_cutoff_reconciliation_email")
+    def test_already_passed_skipped(self, mock_send):
+        self.assessment.passed = True
+        self.assessment.save()
+        response = self._post({"items": [{"email": "john@example.com"}]})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["data"]["summary"]["reconciled"], 0)
+        self.assertIn("already marked as passed", response.json()["data"]["results"][0]["detail"])
+        mock_send.assert_not_called()
+
+    @patch("cohort.views.send_assessment_cutoff_reconciliation_email")
+    def test_missing_api_key_returns_401(self, mock_send):
+        response = self.client.post(
+            self.ENDPOINT,
+            {"items": [{"email": "john@example.com"}]},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 401)
+        mock_send.assert_not_called()
+
+    def test_cutoff_reconciliation_template_renders(self):
+        rendered = render_to_string(
+            "cohort/assessment_cutoff_reconciliation_email.html",
+            {
+                "cohort": "Web3 Cohort XV",
+                "payment_link": "https://payment.web3bridgeafrica.com",
+                "qualifying_threshold_percent": 50,
+            },
+        )
+        self.assertIn("downward review", rendered.lower())
+        self.assertIn("50", rendered)
+        self.assertIn("https://payment.web3bridgeafrica.com", rendered)
+        self.assertIn("https://t.me/web3bridge", rendered)
+
+
 class PaymentActivationEmailTests(SimpleTestCase):
     """
     ``send_registration_success_mail`` may include an activation URL when passed explicitly.
@@ -1613,15 +1721,19 @@ class SubmitAssessmentTemplateTests(SimpleTestCase):
     def test_passed_template_renders_welcome_and_links(self):
         rendered = render_to_string("cohort/assessment_passed_email.html", {
             "name": "John Doe",
+            "payment_link": "https://payment.web3bridgeafrica.com",
         })
         self.assertIn("Welcome to Web3Bridge", rendered)
         self.assertIn("successfully passed the assessment", rendered.lower())
         self.assertIn("student portal", rendered.lower())
+        self.assertIn("14 days after payment confirmation", rendered.lower())
+        self.assertIn("https://payment.web3bridgeafrica.com", rendered)
         self.assertIn("https://t.me/web3bridge", rendered)
 
     def test_passed_template_renders_without_cohort(self):
         rendered = render_to_string("cohort/assessment_passed_email.html", {
             "name": "John Doe",
+            "payment_link": "https://payment.web3bridgeafrica.com",
         })
         self.assertIn("successfully passed the assessment", rendered.lower())
 

@@ -396,7 +396,10 @@ def _format_assessment_breakdown(breakdown):
 def send_assessment_passed_email(email, name, cohort, score, breakdown=None):
     """Send welcome / onboarding next-steps email when a participant passes the assessment (submit-assessment only)."""
     try:
-        context = {"name": name}
+        context = {
+            "name": name,
+            "payment_link": "https://payment.web3bridgeafrica.com",
+        }
         message = render_to_string("cohort/assessment_passed_email.html", context)
         subject = f"Welcome to Web3Bridge – {cohort}" if cohort else "Welcome to Web3Bridge"
         from_email = _admission_from_email()
@@ -406,6 +409,47 @@ def send_assessment_passed_email(email, name, cohort, score, breakdown=None):
 
         if _admission_smtp_configured():
             from django.core.mail import get_connection
+            connection = get_connection(
+                host=getattr(settings, "ADMISSION_EMAIL_HOST", settings.EMAIL_HOST),
+                port=getattr(settings, "ADMISSION_EMAIL_PORT", settings.EMAIL_PORT),
+                username=getattr(settings, "ADMISSION_EMAIL_HOST_USER"),
+                password=getattr(settings, "ADMISSION_EMAIL_HOST_PASSWORD"),
+                use_tls=getattr(settings, "ADMISSION_EMAIL_USE_TLS", settings.EMAIL_USE_TLS),
+            )
+            email_msg.connection = connection
+
+        email_msg.send(fail_silently=False)
+    except Exception:
+        pass
+
+
+def send_assessment_cutoff_reconciliation_email(
+    email,
+    cohort,
+    *,
+    qualifying_threshold_percent: int = 50,
+):
+    """
+    Notify a participant who previously failed under an older cutoff that they now qualify
+    (e.g. after a downward review). Reuses payment and onboarding CTAs from the pass flow.
+    """
+    try:
+        context = {
+            "cohort": cohort or "",
+            "payment_link": "https://payment.web3bridgeafrica.com",
+            "qualifying_threshold_percent": qualifying_threshold_percent,
+        }
+        message = render_to_string("cohort/assessment_cutoff_reconciliation_email.html", context)
+        cohort_bit = f" – {cohort}" if cohort else ""
+        subject = f"Update: You qualify for Web3Bridge{cohort_bit}"
+        from_email = _admission_from_email()
+
+        email_msg = EmailMessage(subject=subject, body=message, from_email=from_email, to=[email])
+        email_msg.content_subtype = "html"
+
+        if _admission_smtp_configured():
+            from django.core.mail import get_connection
+
             connection = get_connection(
                 host=getattr(settings, "ADMISSION_EMAIL_HOST", settings.EMAIL_HOST),
                 port=getattr(settings, "ADMISSION_EMAIL_PORT", settings.EMAIL_PORT),

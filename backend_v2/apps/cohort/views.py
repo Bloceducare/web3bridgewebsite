@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from . import models, serializers
 from .helpers.model import (
     send_approval_email,
+    send_assessment_cutoff_reconciliation_email,
     send_assessment_failed_email,
     send_assessment_passed_email,
     send_registration_success_mail,
@@ -1055,6 +1056,120 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         return requestUtils.success_response(
             data={"message": f"Assessment submitted and email sent to {email}"},
             http_status=status.HTTP_201_CREATED,
+        )
+
+    @swagger_auto_schema(request_body=serializers.ReconcileAssessmentCutoffSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="reconcile-assessment-cutoff")
+    def reconcile_assessment_cutoff(self, request, *args, **kwargs):
+        """
+        For participants who already have a **failed** assessment record, set ``passed`` to
+        true (e.g. after lowering the cutoff), send the cutoff-reconciliation email, and
+        refresh cached participant payloads. Uses the same ``API-Key`` as submit-assessment.
+
+        Request body: ``items`` (list of ``{ "email", "participant_id"? }``), optional
+        ``min_score`` (stored score must be >= this), optional ``qualifying_threshold_percent``
+        (default 50) for the email wording.
+        """
+        if not self.check_api_key(request):
+            return Response(
+                {"error": "Invalid or missing API key"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        serializer = serializers.ReconcileAssessmentCutoffSerializer(data=request.data)
+        if not serializer.is_valid():
+            return requestUtils.error_response(
+                "Invalid request data",
+                serializer.errors,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        min_score = serializer.validated_data.get("min_score")
+        qualifying_threshold_percent = serializer.validated_data["qualifying_threshold_percent"]
+        results = []
+
+        for item in serializer.validated_data["items"]:
+            email = item["email"]
+            participant_id = item.get("participant_id")
+            entry = {"email": email}
+
+            if participant_id is not None:
+                participant = models.Participant.objects.filter(pk=participant_id).first()
+                if not participant:
+                    entry["status"] = "error"
+                    entry["detail"] = f"No participant with id={participant_id}."
+                    results.append(entry)
+                    continue
+                if participant.email.strip().lower() != email.strip().lower():
+                    entry["status"] = "error"
+                    entry["detail"] = "participant_id does not match the given email for this participant."
+                    results.append(entry)
+                    continue
+            else:
+                participant = (
+                    models.Participant.objects.filter(email__iexact=email)
+                    .order_by("-created_at")
+                    .first()
+                )
+                if not participant:
+                    entry["status"] = "error"
+                    entry["detail"] = "No participant found with this email."
+                    results.append(entry)
+                    continue
+
+            assessment = (
+                models.Assessment.objects.filter(participant=participant)
+                .order_by("-date_taken", "-pk")
+                .first()
+            )
+            if not assessment:
+                entry["status"] = "skipped"
+                entry["detail"] = "No assessment record for this participant."
+                results.append(entry)
+                continue
+
+            if assessment.passed:
+                entry["status"] = "skipped"
+                entry["detail"] = "Assessment is already marked as passed."
+                results.append(entry)
+                continue
+
+            if min_score is not None and assessment.score < min_score:
+                entry["status"] = "skipped"
+                entry["detail"] = (
+                    f"Stored score {assessment.score} is below min_score {min_score}."
+                )
+                results.append(entry)
+                continue
+
+            assessment.passed = True
+            assessment.save(update_fields=["passed", "updated_at"])
+
+            cohort_label = participant.cohort or (
+                participant.registration.name if participant.registration else ""
+            )
+            send_assessment_cutoff_reconciliation_email(
+                participant.email,
+                cohort_label,
+                qualifying_threshold_percent=qualifying_threshold_percent,
+            )
+
+            entry["status"] = "reconciled"
+            entry["detail"] = "Assessment marked passed and reconciliation email sent."
+            results.append(entry)
+
+        if any(r.get("status") == "reconciled" for r in results):
+            invalidate_participant_cache()
+        reconciled = sum(1 for r in results if r.get("status") == "reconciled")
+        return requestUtils.success_response(
+            data={
+                "results": results,
+                "summary": {
+                    "total": len(results),
+                    "reconciled": reconciled,
+                },
+            },
+            http_status=status.HTTP_200_OK,
         )
 
     @swagger_auto_schema(request_body=serializers.ParticipantSerializer.Update())

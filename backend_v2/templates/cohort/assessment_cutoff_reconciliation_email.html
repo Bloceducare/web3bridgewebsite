@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to Web3Bridge</title>
+    <title>Web3Bridge — Assessment update</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -17,11 +17,15 @@
 </head>
 <body>
     <div class="container">
-        <p>Hi there,</p>
+        <p>Hello there,</p>
 
-        <p>Congratulations, and welcome to Web3Bridge 🎉</p>
+        <p>Thank you for your interest in the Web3Bridge cohort. Per our initial design for the assessment, your score fell below the cut-off point; however, after reviewing the grading process we decided to carry out a downward review without lowering the quality of participants we admit into the programme.</p>
 
-        <p>You&rsquo;ve successfully passed the assessment. The next required step is to complete your payment to secure your spot in the cohort.</p>
+        <p>With this in mind, we have decided to allow those who scored {{ qualifying_threshold_percent }}% and above to qualify for the cohort, and you can continue with your registration.</p>
+
+        <p>{% if cohort %}Welcome to Web3Bridge — {{ cohort }}.{% else %}Welcome to Web3Bridge.{% endif %}</p>
+
+        <p>The next required step is to complete your payment to secure your spot in the cohort.</p>
 
         <p>Please complete payment here: <a href="{{ payment_link }}">{{ payment_link }}</a></p>
 
@@ -37,7 +41,7 @@
 
         <p>This is the beginning of an intense and rewarding journey. Come prepared to learn deeply, stay consistent, and build with intention.</p>
 
-        <p>Welcome once again, we&rsquo;ll be in touch soon.</p>
+        <p>We&rsquo;ll be in touch soon.</p>
 
         <p>Best Regards<br/>
         Ayodeji Awosika<br/>

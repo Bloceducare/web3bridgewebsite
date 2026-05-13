@@ -579,6 +579,47 @@ class SubmitAssessmentSerializer(serializers.Serializer):
     breakdown = serializers.JSONField(required=False, allow_null=True)
 
 
+class CutoffReconcileParticipantItemSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    participant_id = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text=(
+            "Optional. When set, must match the participant row and the email must match that "
+            "participant. Use when multiple registrations share an email."
+        ),
+    )
+
+
+class ReconcileAssessmentCutoffSerializer(serializers.Serializer):
+    """
+    Bulk reconcile participants who failed under a previous cutoff: mark assessment passed,
+    send cutoff-reconciliation email. Same participant resolution rules as submit-assessment.
+    """
+
+    items = serializers.ListField(
+        child=CutoffReconcileParticipantItemSerializer(),
+        min_length=1,
+    )
+    min_score = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        required=False,
+        allow_null=True,
+        help_text=(
+            "When set, each participant's stored assessment score must be greater than or equal "
+            "to this value or the item is skipped."
+        ),
+    )
+    qualifying_threshold_percent = serializers.IntegerField(
+        required=False,
+        default=50,
+        min_value=0,
+        max_value=100,
+        help_text="Inserted into the email copy (e.g. 50 → '50% and above').",
+    )
+
+
 # Testimonial Serializer
 class TestimonialSerializer:
     class Create(serializers.ModelSerializer):
