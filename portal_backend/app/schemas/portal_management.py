@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
 from app.models.portal import (
     AssessmentType,
@@ -152,6 +152,12 @@ class InvitePortalUserRequest(BaseModel):
     full_name: str = Field(min_length=1, max_length=255)
     role: UserRole
     bio: str | None = None
+
+
+class InviteStudentByEmailRequest(BaseModel):
+    """Admin-only invite: same backend path as paid non-ZK onboarding, email only."""
+
+    email: EmailStr
 
 
 class InvitePortalUserResponse(BaseModel):

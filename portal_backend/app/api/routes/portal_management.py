@@ -5,6 +5,7 @@ from app.api.deps import get_current_admin_user, get_current_staff_or_admin_user
 from app.db.session import get_db_session
 from app.models.portal import User
 from app.schemas.auth import MessageResponse
+from app.schemas.onboarding import OnboardingInviteResponse
 from app.schemas.portal_management import (
     CourseMaterialCreateRequest,
     CourseMaterialResponse,
@@ -15,6 +16,7 @@ from app.schemas.portal_management import (
     GuarantorFormUpdateRequest,
     InvitePortalUserRequest,
     InvitePortalUserResponse,
+    InviteStudentByEmailRequest,
     MentorAssessmentCreateRequest,
     MentorAssessmentResponse,
     MentorAssessmentUpdateRequest,
@@ -45,6 +47,28 @@ async def invite_portal_user(
 ) -> InvitePortalUserResponse:
     return await PortalManagementService(db).invite_portal_user(
         actor=current_user, payload=payload
+    )
+
+
+@router.post(
+    "/users/invite/student",
+    response_model=OnboardingInviteResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Invite a student by email",
+    description=(
+        "Creates or updates the student onboarding record using the same logic as "
+        "internal non-ZK onboarding, then sends an activation email when applicable. "
+        "Requires the same admin authentication as POST /users/invite (admin or system_admin). "
+        "Body is only `email`."
+    ),
+)
+async def invite_student_by_email(
+    payload: InviteStudentByEmailRequest,
+    current_user: User = Depends(get_current_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> OnboardingInviteResponse:
+    return await PortalManagementService(db).invite_student_by_email(
+        actor=current_user, email=str(payload.email)
     )
 
 

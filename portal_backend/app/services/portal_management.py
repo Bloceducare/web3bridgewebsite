@@ -1,3 +1,4 @@
+import hashlib
 from datetime import UTC, datetime
 from urllib.parse import urlencode
 
@@ -16,6 +17,7 @@ from app.models.portal import (
     UserRole,
     User,
 )
+from app.schemas.onboarding import OnboardingInviteRequest, OnboardingInviteResponse
 from app.schemas.portal_management import (
     CourseMaterialCreateRequest,
     CourseMaterialResponse,
@@ -33,6 +35,7 @@ from app.schemas.portal_management import (
     InvitePortalUserResponse,
 )
 from app.services.auth import AuthService
+from app.services.onboarding import OnboardingService
 from app.services.email import EmailService
 from app.core.config import get_settings
 
@@ -129,6 +132,39 @@ class PortalManagementService:
             account_state=user.account_state,
             activation_url=activation_url,
         )
+
+    async def invite_student_by_email(
+        self, *, actor: User, email: str
+    ) -> OnboardingInviteResponse:
+        """Reuse non-ZK onboarding invite (internal `/onboarding/invite` flow)."""
+        normalized_email = email.strip().lower()
+        result = await self.session.execute(select(User).where(User.email == normalized_email))
+        existing = result.scalar_one_or_none()
+        if existing is not None and existing.role != UserRole.STUDENT.value:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="This email is already registered with a non-student role",
+            )
+
+        local = normalized_email.split("@", 1)[0].replace(".", " ").replace("_", " ").strip()
+        words = local.split() if local else []
+        full_name = " ".join(w.capitalize() for w in words) if words else "Student"
+        ext_suffix = hashlib.sha256(normalized_email.encode()).hexdigest()
+        external_student_id = f"portal_admin_manual:{ext_suffix}"
+        payload = OnboardingInviteRequest(
+            email=normalized_email,
+            full_name=full_name,
+            cohort=None,
+            course_name="Admin portal invite",
+            external_student_id=external_student_id,
+            source_system="portal_admin",
+            approval_status="approved",
+        )
+        onboarding = OnboardingService(self.session)
+        response = await onboarding.invite_non_zk_student(payload=payload)
+        self._audit(actor=actor, action="student_invited_by_admin", resource_id=str(response.user_id))
+        await self.session.commit()
+        return response
 
     async def list_mentors(self) -> list[MentorResponse]:
         result = await self.session.execute(select(Mentor).order_by(Mentor.id.desc()))
