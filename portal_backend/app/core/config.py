@@ -63,8 +63,8 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("JWT_SECRET_KEY", "SECRET_KEY"),
     )
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 6440 
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 90
     ACTIVATION_TOKEN_EXPIRE_HOURS: int = 72
     PASSWORD_RESET_TOKEN_EXPIRE_HOURS: int = 1
     INTERNAL_API_KEY: str = Field(
