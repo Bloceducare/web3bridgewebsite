@@ -80,22 +80,18 @@ class MentorAssessmentCreateRequest(BaseModel):
     course_id: int = Field(gt=0)
     title: str = Field(min_length=1, max_length=255)
     special_prompt: str | None = None
-    input_context: dict = {}
     assessment_type: AssessmentType = AssessmentType.MULTIPLE_CHOICE
     evaluation_mode: EvaluationMode = EvaluationMode.AI
     result_release_mode: ResultReleaseMode = ResultReleaseMode.MENTOR_CONTROLLED
-    generated_assessment: dict = {}
     accepted: bool = False
 
 
 class MentorAssessmentUpdateRequest(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     special_prompt: str | None = None
-    input_context: dict | None = None
     assessment_type: AssessmentType | None = None
     evaluation_mode: EvaluationMode | None = None
     result_release_mode: ResultReleaseMode | None = None
-    generated_assessment: dict | None = None
     accepted: bool | None = None
 
 
@@ -105,21 +101,16 @@ class MentorAssessmentResponse(BaseModel):
     course_id: int
     title: str
     special_prompt: str | None = None
-    input_context: dict
     assessment_type: str
     evaluation_mode: str
     result_release_mode: str
-    generated_assessment: dict
     accepted: bool
     released_at: datetime | None = None
+    duration_minutes: int
+    due_at: datetime | None = None
+    total_questions: int
     created_at: datetime
     updated_at: datetime
-
-
-class ReleaseAssessmentResultResponse(BaseModel):
-    detail: str
-    assessment_id: int
-    released_at: datetime
 
 
 class GuarantorFormCreateRequest(BaseModel):

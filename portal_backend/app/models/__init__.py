@@ -1,8 +1,11 @@
 from app.models.portal import (
+	AssessmentResult,
 	AuditLog,
 	ExternalStudentMap,
 	ExternalSyncRecord,
+	MentorAssessment,
 	RefreshToken,
+	StudentAssessmentStatus,
 	StudentProfile,
 	StudentStatusHistory,
 	StudentUpdate,
@@ -12,10 +15,13 @@ from app.models.portal import (
 from app.models.system import SystemPing
 
 __all__ = [
+	"AssessmentResult",
 	"AuditLog",
 	"ExternalStudentMap",
 	"ExternalSyncRecord",
+	"MentorAssessment",
 	"RefreshToken",
+	"StudentAssessmentStatus",
 	"StudentProfile",
 	"StudentStatusHistory",
 	"StudentUpdate",

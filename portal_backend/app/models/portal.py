@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.config import get_settings
@@ -86,6 +86,13 @@ class EvaluationMode(StrEnum):
 class ResultReleaseMode(StrEnum):
     IMMEDIATE = "immediate"
     MENTOR_CONTROLLED = "mentor_controlled"
+
+
+class StudentAssessmentStatus(StrEnum):
+    NOT_STARTED = "not_started"
+    IN_PROGRESS = "in_progress"
+    SUBMITTED = "submitted"
+    GRADED = "graded"
 
 
 class User(TimestampMixin, Base):
@@ -318,6 +325,8 @@ class CourseMaterial(TimestampMixin, Base):
 
 
 class MentorAssessment(TimestampMixin, Base):
+    """Mentor-authored assessment for a course. Publish via ``released_at``; students attempt via ``results``."""
+
     __tablename__ = "mentor_assessments"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -327,13 +336,63 @@ class MentorAssessment(TimestampMixin, Base):
     course_id: Mapped[int] = mapped_column(nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     special_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
-    input_context: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    generated_assessment: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    assessment_type: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
-    evaluation_mode: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
-    result_release_mode: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    assessment_type: Mapped[str] = mapped_column(
+        String(30), nullable=False, default=AssessmentType.MULTIPLE_CHOICE.value, index=True
+    )
+    evaluation_mode: Mapped[str] = mapped_column(
+        String(20), nullable=False, default=EvaluationMode.AI.value, index=True
+    )
+    result_release_mode: Mapped[str] = mapped_column(
+        String(30), nullable=False, default=ResultReleaseMode.MENTOR_CONTROLLED.value, index=True
+    )
     accepted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    questions: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
+    due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    total_questions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    results: Mapped[list["AssessmentResult"]] = relationship(back_populates="mentor_assessment")
+
+
+class AssessmentResult(TimestampMixin, Base):
+    """Per-student attempt linked to a mentor assessment (progress, score, responses)."""
+
+    __tablename__ = "assessment_results"
+    __table_args__ = (
+        UniqueConstraint(
+            "mentor_assessment_id",
+            "user_id",
+            name="uq_assessment_result_per_student",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mentor_assessment_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}mentor_assessments.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default=StudentAssessmentStatus.NOT_STARTED.value,
+        index=True,
+    )
+    responses: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    grading: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    mentor_assessment: Mapped[MentorAssessment] = relationship(back_populates="results")
+    user: Mapped[User] = relationship()
 
 
 class GuarantorForm(TimestampMixin, Base):

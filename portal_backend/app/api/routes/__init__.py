@@ -1,3 +1,4 @@
+from .assessments import router as assessments_router
 from .auth import router as auth_router
 from .courses import router as courses_router
 from .dashboard import router as dashboard_router
@@ -12,6 +13,7 @@ from .students import router as students_router
 from .updates import router as updates_router
 
 __all__ = [
+    "assessments_router",
     "auth_router",
     "courses_router",
     "dashboard_router",
