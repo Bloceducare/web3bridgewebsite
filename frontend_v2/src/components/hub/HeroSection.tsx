@@ -83,7 +83,7 @@ export default function HeroSection() {
             className="flex flex-col sm:flex-row items-center gap-4 mt-4"
           >
            <Link
-  href="https://lagos-eth-hub.vercel.app/member"
+  href="https://ethereum.web3bridgeafrica.com/member"
   target="_blank"
   rel="noopener noreferrer"
 >

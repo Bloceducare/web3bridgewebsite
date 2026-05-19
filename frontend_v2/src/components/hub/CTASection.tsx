@@ -28,7 +28,7 @@ export default function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link  href="https://lagos-eth-hub.vercel.app/member"
+            <Link  href="https://ethereum.web3bridgeafrica.com/member"
   target="_blank"
   rel="noopener noreferrer">
               <Button

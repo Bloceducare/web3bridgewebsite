@@ -72,7 +72,7 @@ export default function HubRegistrationPage() {
               className="w-full mt-4 flex flex-col items-center gap-4"
             >
               <Link 
-                href="https://lagos-eth-hub.vercel.app/member" 
+                href="https://ethereum.web3bridgeafrica.com/member" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
@@ -89,12 +89,12 @@ export default function HubRegistrationPage() {
               <span className="text-xs text-muted-foreground">
                 Redirecting link:{" "}
                 <a 
-                  href="https://lagos-eth-hub.vercel.app/member" 
+                  href="https://ethereum.web3bridgeafrica.com/member" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-bridgeRed hover:underline transition-all font-medium"
                 >
-                  lagos-eth-hub.vercel.app/member
+                  ethereum.web3bridgeafrica.com/member
                 </a>
               </span>
             </motion.div>

@@ -84,7 +84,7 @@ export default function InfoSection() {
               Help us manage the space effectively and ensure a productive 
               environment for everyone.
             </p>
-            <Link  href="https://lagos-eth-hub.vercel.app/member"
+            <Link  href="https://ethereum.web3bridgeafrica.com/member"
   target="_blank"
   rel="noopener noreferrer">
               <Button
