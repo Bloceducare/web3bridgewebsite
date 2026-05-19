@@ -38,7 +38,7 @@ export default function AvailableSpacesSection() {
         }
       } catch (error) {
         console.error("Error fetching spaces:", error);
-      } finally {
+      } finally { 
         setLoading(false);
       }
     };
