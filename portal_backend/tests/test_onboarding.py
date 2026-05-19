@@ -215,3 +215,57 @@ async def test_invite_non_zk_student_normalizes_approval_status() -> None:
     await service.invite_non_zk_student(payload=payload)
 
     assert external_map.approval_status == "approved"
+
+
+def test_apply_backend_participant_row_overrides_request_fields() -> None:
+    payload = build_payload()
+    payload.course_name = "Wrong Course"
+    payload.cohort = "Wrong Cohort"
+    payload.full_name = "Wrong Name"
+
+    updated = OnboardingService._apply_backend_participant_row(
+        payload,
+        {
+            "participant_id": 99,
+            "email": "student@example.com",
+            "full_name": "DB Student",
+            "cohort": "Cohort XIV",
+            "registration_cohort": "Reg Cohort",
+            "source_status": "ACCEPTED",
+            "payment_status": True,
+            "course_name": "Web3 Cohort XIV",
+        },
+    )
+
+    assert updated.full_name == "DB Student"
+    assert updated.cohort == "Cohort XIV"
+    assert updated.course_name == "Web3 Cohort XIV"
+    assert updated.external_student_id == "99"
+
+
+async def test_invite_non_zk_student_rejects_unpaid_backend_participant() -> None:
+    from fastapi import HTTPException
+
+    session = DummySession()
+    service = OnboardingService(session)  # type: ignore[arg-type]
+    payload = build_payload()
+
+    async def load_unpaid(_external_student_id: str) -> dict:
+        return {
+            "participant_id": 1,
+            "email": "student@example.com",
+            "full_name": "Student",
+            "cohort": "Cohort XIV",
+            "source_status": "ACCEPTED",
+            "payment_status": False,
+            "course_name": "Web3 Cohort XIV",
+        }
+
+    service._load_backend_v2_participant = load_unpaid  # type: ignore[method-assign]
+
+    try:
+        await service.invite_non_zk_student(payload=payload)
+        raise AssertionError("expected HTTPException")
+    except HTTPException as exc:
+        assert exc.status_code == 400
+        assert "payment" in str(exc.detail).lower()

@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from urllib.parse import urlencode
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -75,11 +75,85 @@ class OnboardingService:
             default=ApprovalStatus.PENDING.value,
         )
 
+    async def _load_backend_v2_participant(self, external_student_id: str) -> dict | None:
+        """Resolve cohort participant + course/registration from backend_v2 (source of truth)."""
+        try:
+            participant_pk = int(str(external_student_id).strip())
+        except (TypeError, ValueError):
+            return None
+
+        statement = text(
+            """
+            SELECT
+                p.id AS participant_id,
+                LOWER(TRIM(p.email)) AS email,
+                p.name AS full_name,
+                p.cohort AS cohort,
+                p.status AS source_status,
+                p.payment_status AS payment_status,
+                c.id AS course_id,
+                c.name AS course_name,
+                r.id AS registration_id,
+                r.name AS registration_name,
+                r.cohort AS registration_cohort
+            FROM cohort_participant AS p
+            LEFT JOIN cohort_course AS c ON c.id = p.course_id
+            LEFT JOIN cohort_registration AS r ON r.id = p.registration_id
+            WHERE p.id = :participant_id
+            LIMIT 1
+            """
+        )
+        result = await self.session.execute(statement, {"participant_id": participant_pk})
+        row = result.mappings().first()
+        return dict(row) if row is not None else None
+
+    @staticmethod
+    def _apply_backend_participant_row(
+        payload: OnboardingInviteRequest, row: dict
+    ) -> OnboardingInviteRequest:
+        """Overwrite invite payload fields from the participant's current registration."""
+        email = (row.get("email") or payload.email or "").strip().lower()
+        full_name = (row.get("full_name") or payload.full_name or "").strip()
+        cohort = row.get("cohort") or row.get("registration_cohort") or payload.cohort
+        course_name = (row.get("course_name") or payload.course_name or "").strip()
+        source_status = row.get("source_status") or payload.approval_status
+
+        return payload.model_copy(
+            update={
+                "email": email,
+                "full_name": full_name or payload.full_name,
+                "cohort": cohort,
+                "course_name": course_name or payload.course_name,
+                "external_student_id": str(row.get("participant_id") or payload.external_student_id),
+                "source_email": email,
+                "approval_status": source_status or payload.approval_status,
+            }
+        )
+
     async def invite_non_zk_student(
         self,
         *,
         payload: OnboardingInviteRequest,
     ) -> OnboardingInviteResponse:
+        if payload.source_system == "backend_v2":
+            participant_row = await self._load_backend_v2_participant(payload.external_student_id)
+            if participant_row is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Participant not found in admissions records",
+                )
+            if not participant_row.get("payment_status"):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Participant has not completed payment",
+                )
+            if not (participant_row.get("course_name") or "").strip():
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Participant has no course assigned",
+                )
+            payload = self._apply_backend_participant_row(payload, participant_row)
+
         if self.is_zk_course(payload.course_name):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -189,6 +263,7 @@ class OnboardingService:
                     "email": user.email,
                     "cohort": payload.cohort,
                     "course_name": payload.course_name,
+                    "external_student_id": payload.external_student_id,
                     "source_system": payload.source_system,
                 },
                 request_id=payload.external_student_id,

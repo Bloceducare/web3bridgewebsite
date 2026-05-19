@@ -86,20 +86,62 @@ def normalize_approval_status(raw_status):
     return _APPROVAL_STATUS_ALIASES.get(status_lc, "approved")
 
 
+def validate_participant_for_portal_invite(participant) -> tuple[bool, str]:
+    """
+    Return (eligible, reason) for sending a portal onboarding invite.
+
+    Paid non-ZK participants may be invited or re-invited. Already-active portal
+    accounts are reported as skipped by the portal API, not as validation errors.
+    """
+    email = (getattr(participant, "email", None) or "").strip()
+    if not email:
+        return False, "missing_email"
+
+    if getattr(participant, "is_evicted", False):
+        return False, "evicted"
+
+    if not getattr(participant, "payment_status", False):
+        return False, "unpaid"
+
+    course = getattr(participant, "course", None)
+    course_name = getattr(course, "name", "") if course is not None else ""
+    if not course_name:
+        return False, "missing_course"
+
+    if is_zk_course_name(course_name):
+        return False, "zk_course"
+
+    status_value = (getattr(participant, "status", None) or "").upper()
+    if status_value and status_value not in ("ACCEPTED", "APPROVED"):
+        return False, "not_accepted"
+
+    return True, ""
+
+
+def _empty_portal_invite_result(*, reason: str) -> dict:
+    return {
+        "ok": False,
+        "activation_url": None,
+        "reason": reason,
+        "portal_invite_created": False,
+    }
+
+
 def create_portal_onboarding_invite(participant):
     """
-    Call portal_backend to create an onboarding invite and return ``activation_url``.
+    Call portal_backend to create or resend an onboarding invite.
+
+    Returns a dict with ``activation_url``, ``reason``, and ``portal_invite_created`` from
+    the portal API, or ``ok=False`` when the request could not be completed.
 
     Not wired from ``handle_payment_success`` / verify-payment while the student portal is
-    not publicly active—payment flows send only the standard course welcome mail. Source of
-    truth for onboarding can remain portal_backend cron; this helper is kept for tests and
-    future use.
+    not publicly active—payment flows send only the standard course welcome mail.
     """
     course = getattr(participant, "course", None)
     course_name = getattr(course, "name", "")
 
     if is_zk_course_name(course_name):
-        return None
+        return _empty_portal_invite_result(reason="zk_course")
 
     portal_onboarding_url = (getattr(settings, "PORTAL_ONBOARDING_URL", "") or "").strip()
     internal_api_key = getattr(settings, "PORTAL_INTERNAL_API_KEY", "")
@@ -117,7 +159,7 @@ def create_portal_onboarding_invite(participant):
             "Portal onboarding invite skipped for participant %s because portal config is incomplete",
             getattr(participant, "id", None),
         )
-        return None
+        return _empty_portal_invite_result(reason="portal_not_configured")
 
     payload = {
         "email": participant.email,
@@ -140,7 +182,7 @@ def create_portal_onboarding_invite(participant):
                 wall_seconds,
                 attempt + 1,
             )
-            return None
+            return _empty_portal_invite_result(reason="wall_clock_exceeded")
         # Stay under gunicorn worker timeout: shrink read timeout on the last slice of the budget.
         per_attempt_read = min(read_timeout, max(0.5, remaining))
 
@@ -169,7 +211,7 @@ def create_portal_onboarding_invite(participant):
                     exc=exc,
                     reason="request_failed",
                 )
-                return None
+                return _empty_portal_invite_result(reason="request_failed")
 
             sleep_seconds = min(
                 backoff_seconds * (2**attempt),
@@ -189,12 +231,162 @@ def create_portal_onboarding_invite(participant):
                 exc=exc,
                 reason="invalid_json_response",
             )
-            return None
+            return _empty_portal_invite_result(reason="invalid_json_response")
 
     activation_url = response_data.get("activation_url")
-    if not activation_url:
+    reason = response_data.get("reason")
+    portal_invite_created = bool(response_data.get("portal_invite_created"))
+    if not activation_url and reason in (
+        "portal_invite_created",
+        "portal_invite_resent",
+    ):
         logger.warning(
-            "Portal onboarding invite response missing activation_url for participant %s",
+            "Portal onboarding invite response missing activation_url for participant %s "
+            "(reason=%s)",
             getattr(participant, "id", None),
+            reason,
         )
-    return activation_url
+    return {
+        "ok": True,
+        "activation_url": activation_url,
+        "reason": reason,
+        "portal_invite_created": portal_invite_created,
+    }
+
+
+def send_portal_invite_for_participant(participant) -> dict:
+    """
+    Validate and trigger a portal onboarding invite for one participant.
+
+    Returns a dict suitable for admin API responses with keys:
+    participant_id, email, sent, skipped, reason, activation_url, error.
+    """
+    participant_id = getattr(participant, "id", None)
+    email = (getattr(participant, "email", None) or "").strip()
+
+    eligible, skip_reason = validate_participant_for_portal_invite(participant)
+    if not eligible:
+        return {
+            "participant_id": participant_id,
+            "email": email,
+            "sent": False,
+            "skipped": True,
+            "reason": skip_reason,
+            "activation_url": None,
+            "portal_invite_created": False,
+            "error": skip_reason,
+        }
+
+    try:
+        portal_result = create_portal_onboarding_invite(participant)
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(
+            "Unexpected portal invite failure for participant %s", participant_id
+        )
+        return {
+            "participant_id": participant_id,
+            "email": email,
+            "sent": False,
+            "skipped": False,
+            "reason": "request_failed",
+            "activation_url": None,
+            "portal_invite_created": False,
+            "error": str(exc),
+        }
+
+    if not portal_result.get("ok"):
+        reason = portal_result.get("reason") or "portal_invite_failed"
+        skipped = reason in (
+            "portal_not_configured",
+            "zk_course",
+            "wall_clock_exceeded",
+        )
+        return {
+            "participant_id": participant_id,
+            "email": email,
+            "sent": False,
+            "skipped": skipped,
+            "reason": reason,
+            "activation_url": None,
+            "portal_invite_created": False,
+            "error": reason,
+        }
+
+    reason = portal_result.get("reason") or ""
+    activation_url = portal_result.get("activation_url")
+    portal_invite_created = bool(portal_result.get("portal_invite_created"))
+
+    skipped_reasons = {
+        "portal_invite_skipped_active_account",
+        "portal_invite_skipped_suspended_account",
+        "portal_invite_skipped_deactivated_account",
+        "portal_invite_skipped_existing_account",
+    }
+    if reason in skipped_reasons:
+        return {
+            "participant_id": participant_id,
+            "email": email,
+            "sent": False,
+            "skipped": True,
+            "reason": reason,
+            "activation_url": activation_url,
+            "portal_invite_created": portal_invite_created,
+            "error": reason,
+        }
+
+    sent = bool(activation_url) or reason in (
+        "portal_invite_created",
+        "portal_invite_resent",
+    )
+    return {
+        "participant_id": participant_id,
+        "email": email,
+        "sent": sent,
+        "skipped": not sent,
+        "reason": reason or ("portal_invite_sent" if sent else "portal_invite_failed"),
+        "activation_url": activation_url,
+        "portal_invite_created": portal_invite_created,
+        "error": None if sent else (reason or "portal_invite_failed"),
+    }
+
+
+def execute_portal_invite_bulk(*, participant_ids: list[int], queryset) -> dict:
+    """Send portal invites for many participant IDs; ``queryset`` should be select_related."""
+    participants = {p.id: p for p in queryset.filter(id__in=participant_ids)}
+
+    results = []
+    sent_count = 0
+    skipped_count = 0
+    failed_count = 0
+
+    for participant_id in participant_ids:
+        participant = participants.get(participant_id)
+        if participant is None:
+            row = {
+                "participant_id": participant_id,
+                "email": "",
+                "sent": False,
+                "skipped": False,
+                "reason": "not_found",
+                "activation_url": None,
+                "portal_invite_created": False,
+                "error": "not_found",
+            }
+            failed_count += 1
+        else:
+            row = send_portal_invite_for_participant(participant)
+            if row.get("sent"):
+                sent_count += 1
+            elif row.get("skipped"):
+                skipped_count += 1
+            else:
+                failed_count += 1
+        results.append(row)
+
+    return {
+        "results": results,
+        "sent_count": sent_count,
+        "skipped_count": skipped_count,
+        "failed_count": failed_count,
+        "total": len(participant_ids),
+    }

@@ -724,3 +724,46 @@ class BulkEmailSerializer(serializers.Serializer):
             )
 
         return unique_ids
+
+
+class PortalInviteSerializer(serializers.Serializer):
+    participant_id = serializers.IntegerField(
+        help_text="Participant ID to send the portal onboarding invite to",
+    )
+
+    def validate_participant_id(self, value):
+        if not models.Participant.objects.filter(pk=value).exists():
+            raise serializers.ValidationError(f"Invalid participant ID: {value}")
+        return value
+
+
+class BulkPortalInviteSerializer(serializers.Serializer):
+    participants = serializers.ListField(
+        child=serializers.IntegerField(),
+        help_text="List of participant IDs to send portal onboarding invites to",
+    )
+
+    def validate_participants(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one participant is required")
+
+        try:
+            participant_ids = [int(pid) for pid in value]
+            unique_ids = list(dict.fromkeys(participant_ids))
+        except (ValueError, TypeError):
+            raise serializers.ValidationError(
+                "All participant IDs must be valid integers"
+            )
+
+        existing_ids = set(
+            models.Participant.objects.filter(id__in=unique_ids).values_list(
+                "id", flat=True
+            )
+        )
+        missing_ids = set(unique_ids) - existing_ids
+        if missing_ids:
+            raise serializers.ValidationError(
+                f"Invalid participant IDs: {sorted(missing_ids)}"
+            )
+
+        return unique_ids

@@ -22,6 +22,10 @@ from .helpers.model import (
     send_registration_success_mail,
     send_reschedule_assessment_email,
 )
+from .helpers.portal import (
+    execute_portal_invite_bulk,
+    send_portal_invite_for_participant,
+)
 from .helpers.participant_backfill import autocorrect_participant_links
 from backend_v2.scripts.mail import send_bulk_email
 from payment.models import DiscountCode, Payment
@@ -411,6 +415,8 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         "approve",
         "paid_per_cohort",
         "evict",
+        "send_portal_invite",
+        "send_portal_invite_bulk",
     ]
 
     def get_queryset(self):
@@ -882,6 +888,51 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         ).data
         return requestUtils.success_response(
             data=serialized_participant_obj, http_status=status.HTTP_200_OK
+        )
+
+    @swagger_auto_schema(request_body=serializers.PortalInviteSerializer)
+    @decorators.action(detail=True, methods=["post"], url_path="send-portal-invite")
+    def send_portal_invite(self, request, pk=None, *args, **kwargs):
+        """
+        Send (or resend) the student portal onboarding invite for one paid participant.
+
+        Eligible: paid, accepted, non-ZK, not evicted, with a course and email.
+        Already-invited portal users receive a fresh activation email; active portal
+        accounts are reported as skipped.
+        """
+        participant_object = self.get_queryset().filter(pk=pk).first()
+        if participant_object is None:
+            return requestUtils.error_response(
+                "Participant not found",
+                {},
+                http_status=status.HTTP_404_NOT_FOUND,
+            )
+
+        result = send_portal_invite_for_participant(participant_object)
+        return requestUtils.success_response(data=result, http_status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=serializers.BulkPortalInviteSerializer)
+    @decorators.action(
+        detail=False, methods=["post"], url_path="send-portal-invite-bulk"
+    )
+    def send_portal_invite_bulk(self, request, *args, **kwargs):
+        """Bulk send portal onboarding invites for paid participants."""
+        serializer = serializers.BulkPortalInviteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return requestUtils.error_response(
+                "Invalid request",
+                serializer.errors,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participant_ids = serializer.validated_data["participants"]
+        summary = execute_portal_invite_bulk(
+            participant_ids=participant_ids,
+            queryset=self.get_queryset(),
+        )
+        return requestUtils.success_response(
+            data=summary,
+            http_status=status.HTTP_200_OK,
         )
 
     @decorators.action(detail=False, methods=["get"], url_path="paid")
@@ -1482,6 +1533,75 @@ class TestimonialViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         serializer = self.serializer_class.List(self.queryset, many=True)
         return requestUtils.success_response(
             data=serializer.data, http_status=status.HTTP_200_OK
+        )
+
+
+class PortalInviteViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.ViewSet):
+    """
+    Admin endpoints to send student portal onboarding invites (activation email).
+
+    Mirrors participant send-portal-invite actions under a dedicated route for the
+    general admin dashboard (same auth as approve / bulk-email admin operations).
+    """
+
+    admin_actions = ["send", "send_bulk"]
+
+    def _participant_queryset(self):
+        return models.Participant.objects.select_related(
+            "course", "registration", "course__registration"
+        )
+
+    @swagger_auto_schema(request_body=serializers.PortalInviteSerializer)
+    @decorators.action(detail=False, methods=["post"])
+    def send(self, request):
+        """Send portal invite for one paid participant."""
+        serializer = serializers.PortalInviteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return requestUtils.error_response(
+                "Invalid request",
+                serializer.errors,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participant_id = serializer.validated_data["participant_id"]
+        participant = self._participant_queryset().filter(pk=participant_id).first()
+        if participant is None:
+            return requestUtils.error_response(
+                "Participant not found",
+                {},
+                http_status=status.HTTP_404_NOT_FOUND,
+            )
+
+        result = send_portal_invite_for_participant(participant)
+        return requestUtils.success_response(data=result, http_status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=serializers.BulkPortalInviteSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="send-bulk")
+    def send_bulk(self, request):
+        """Bulk send portal onboarding invites for paid participants."""
+        serializer = serializers.BulkPortalInviteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return requestUtils.error_response(
+                "Invalid request",
+                serializer.errors,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participant_ids = serializer.validated_data["participants"]
+        summary = execute_portal_invite_bulk(
+            participant_ids=participant_ids,
+            queryset=self._participant_queryset(),
+        )
+        logger.info(
+            "Portal invite bulk: total=%s sent=%s skipped=%s failed=%s",
+            summary["total"],
+            summary["sent_count"],
+            summary["skipped_count"],
+            summary["failed_count"],
+        )
+        return requestUtils.success_response(
+            data=summary,
+            http_status=status.HTTP_200_OK,
         )
 
 

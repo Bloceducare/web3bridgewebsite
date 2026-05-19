@@ -15,6 +15,7 @@ router.register("registration", views.RegistrationViewSet, basename=REGISTRATION
 router.register("participant", views.ParticipantViewSet, basename=PARTICIPANT_BASE_NAME)
 router.register("testimonial", views.TestimonialViewSet, basename=TESTIMONIAL_BASE_NAME)
 router.register(r'bulk-email', views.BulkEmailViewSet, basename='bulk-email')
+router.register(r'portal-invite', views.PortalInviteViewSet, basename='portal-invite')
 
 
 urlpatterns= router.urls

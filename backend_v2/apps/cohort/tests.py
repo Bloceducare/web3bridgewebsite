@@ -11,6 +11,8 @@ from rest_framework.test import APIClient
 from cohort import views as cohort_views
 from .helpers.portal import (
     create_portal_onboarding_invite,
+    send_portal_invite_for_participant,
+    validate_participant_for_portal_invite,
     is_zk_course_name,
     normalize_approval_status,
 )
@@ -704,9 +706,10 @@ class PortalInviteHelperTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
-        self.assertIsNone(activation_url)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["reason"], "portal_not_configured")
 
     def test_normalize_approval_status_aliases(self):
         self.assertEqual(normalize_approval_status("accepted"), "approved")
@@ -838,10 +841,11 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
+        self.assertTrue(result["ok"])
         self.assertEqual(
-            activation_url, "https://portal.example.com/activate?token=abc"
+            result["activation_url"], "https://portal.example.com/activate?token=abc"
         )
         mock_post.assert_called_once_with(
             "http://localhost:8000/api/v1/onboarding/invite",
@@ -876,9 +880,10 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "ZK Student"
         participant.course.name = "ZK Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
-        self.assertIsNone(activation_url)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["reason"], "zk_course")
         mock_post.assert_not_called()
 
     @patch("apps.cohort.helpers.portal.requests.post")
@@ -902,9 +907,10 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
-        self.assertIsNone(activation_url)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["reason"], "request_failed")
 
     @patch("apps.cohort.helpers.portal.send_mail")
     @patch("apps.cohort.helpers.portal.requests.post")
@@ -930,9 +936,10 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
-        self.assertIsNone(activation_url)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["reason"], "request_failed")
         mock_send_mail.assert_called_once()
         kwargs = mock_send_mail.call_args[1]
         self.assertEqual(kwargs["recipient_list"], ["ops@example.com"])
@@ -972,10 +979,11 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
+        self.assertTrue(result["ok"])
         self.assertEqual(
-            activation_url,
+            result["activation_url"],
             "https://portal.example.com/activate?token=retry-success",
         )
         self.assertEqual(mock_post.call_count, 2)
@@ -1009,10 +1017,54 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         participant.name = "Student Example"
         participant.course.name = "Web3 Cohort XIV"
 
-        activation_url = create_portal_onboarding_invite(participant)
+        result = create_portal_onboarding_invite(participant)
 
-        self.assertIsNone(activation_url)
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["reason"], "request_failed")
         self.assertEqual(mock_post.call_count, 1)
+
+    def test_validate_participant_for_portal_invite_rules(self):
+        paid = Mock(
+            email="student@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(paid)
+        self.assertTrue(eligible)
+        self.assertEqual(reason, "")
+
+        unpaid = Mock(
+            email="student@example.com",
+            is_evicted=False,
+            payment_status=False,
+            status="ACCEPTED",
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(unpaid)
+        self.assertFalse(eligible)
+        self.assertEqual(reason, "unpaid")
+
+    @patch("apps.cohort.helpers.portal.create_portal_onboarding_invite")
+    def test_send_portal_invite_for_participant_maps_portal_response(self, mock_create):
+        mock_create.return_value = {
+            "ok": True,
+            "activation_url": "https://portal.example.com/activate?token=abc",
+            "reason": "portal_invite_resent",
+            "portal_invite_created": False,
+        }
+        participant = Mock(
+            id=10,
+            email="student@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        result = send_portal_invite_for_participant(participant)
+        self.assertTrue(result["sent"])
+        self.assertEqual(result["reason"], "portal_invite_resent")
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)

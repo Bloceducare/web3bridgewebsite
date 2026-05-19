@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete your Web3Bridge registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        p { line-height: 1.6; margin-bottom: 15px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .cta { display: inline-block; margin: 18px 0; padding: 12px 22px; background-color: #007bff; color: #fff !important; border-radius: 6px; font-weight: bold; text-decoration: none; }
+        .cta:hover { background-color: #0056b3; text-decoration: none; }
+        .footer { margin-top: 30px; font-size: 13px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Dear{% if name %} {{ name }}{% else %} Applicant{% endif %},</p>
+
+        <p>Thank you for completing your assessment for the upcoming Web3Bridge cohort. We&rsquo;re pleased to let you know that you have met the requirement to move forward with registration.</p>
+
+        <p>The next step is to complete your programme fee so your seat can be confirmed. Please use the payment link below:</p>
+
+        <p><a class="cta" href="{{ payment_link }}">Complete payment</a></p>
+
+        <p>Or copy this link: <a href="{{ payment_link }}">{{ payment_link }}</a></p>
+
+        <p>Once your payment is confirmed, you will receive your <strong>student portal invite link</strong> by email so you can complete onboarding and access the cohort portal.</p>
+
+        <p>If you have already paid and believe this message was sent in error, please reply to this email with your payment reference so we can verify your status.</p>
+
+        <p>We look forward to having you in the cohort.</p>
+
+        <p>Best regards,<br/>
+        Web3Bridge Admissions Team</p>
+
+        <div class="footer">
+            <a href="https://www.web3bridge.com" target="_blank" rel="noopener">www.web3bridge.com</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -393,6 +393,37 @@ def _format_assessment_breakdown(breakdown):
     return str(breakdown)
 
 
+def send_web3_payment_reminder_email(email, name=None, *, payment_link: str | None = None):
+    """Remind Web3 applicants who passed assessment but have not paid."""
+    try:
+        context = {
+            "name": (name or "").strip() or None,
+            "payment_link": payment_link or "https://payment.web3bridgeafrica.com",
+        }
+        message = render_to_string("cohort/web3_payment_reminder_email.html", context)
+        subject = "Complete your Web3Bridge registration – payment required"
+        from_email = _admission_from_email()
+
+        email_msg = EmailMessage(subject=subject, body=message, from_email=from_email, to=[email])
+        email_msg.content_subtype = "html"
+
+        if _admission_smtp_configured():
+            from django.core.mail import get_connection
+
+            connection = get_connection(
+                host=getattr(settings, "ADMISSION_EMAIL_HOST", settings.EMAIL_HOST),
+                port=getattr(settings, "ADMISSION_EMAIL_PORT", settings.EMAIL_PORT),
+                username=getattr(settings, "ADMISSION_EMAIL_HOST_USER"),
+                password=getattr(settings, "ADMISSION_EMAIL_HOST_PASSWORD"),
+                use_tls=getattr(settings, "ADMISSION_EMAIL_USE_TLS", settings.EMAIL_USE_TLS),
+            )
+            email_msg.connection = connection
+
+        email_msg.send(fail_silently=False)
+    except Exception:
+        pass
+
+
 def send_assessment_passed_email(email, name, cohort, score, breakdown=None):
     """Send welcome / onboarding next-steps email when a participant passes the assessment (submit-assessment only)."""
     try:
