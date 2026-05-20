@@ -58,13 +58,13 @@ async def invite_portal_user(
     description=(
         "Creates or updates the student onboarding record using the same logic as "
         "internal non-ZK onboarding, then sends an activation email when applicable. "
-        "Requires the same admin authentication as POST /users/invite (admin or system_admin). "
+        "Requires staff or admin authentication (includes general_admin). "
         "Body is only `email`."
     ),
 )
 async def invite_student_by_email(
     payload: InviteStudentByEmailRequest,
-    current_user: User = Depends(get_current_admin_user),
+    current_user: User = Depends(get_current_staff_or_admin_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> OnboardingInviteResponse:
     return await PortalManagementService(db).invite_student_by_email(

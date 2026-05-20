@@ -647,7 +647,7 @@ def test_portal_materials_returns_structured_payload() -> None:
     assert response.json()[0]["material"]["type"] == "video"
 
 
-def test_invite_student_by_email_requires_admin() -> None:
+def test_invite_student_by_email_requires_staff_or_admin() -> None:
     current_user = build_user(user_id=60, role="student")
 
     async def override_current_user() -> User:
@@ -664,6 +664,43 @@ def test_invite_student_by_email_requires_admin() -> None:
         clear_overrides()
 
     assert response.status_code == 403
+
+
+def test_invite_student_by_email_success_for_general_admin() -> None:
+    from app.schemas.onboarding import OnboardingInviteResponse
+
+    general_admin = build_user(user_id=62, role="general_admin")
+
+    async def override_staff_or_admin() -> User:
+        return general_admin
+
+    async def invite_student_by_email(_self, *, actor: User, email: str) -> OnboardingInviteResponse:
+        assert actor.id == general_admin.id
+        return OnboardingInviteResponse(
+            user_id=101,
+            email=email,
+            account_state="invited",
+            onboarding_status="invited",
+            activation_url="https://frontend.example/activate/onboard?token=y",
+            portal_invite_created=True,
+            reason="portal_invite_created",
+        )
+
+    original = PortalManagementService.invite_student_by_email
+    PortalManagementService.invite_student_by_email = invite_student_by_email
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_staff_or_admin
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.post(
+            "/api/v1/admin/portal/users/invite/student",
+            json={"email": "generaladmin-student@example.com"},
+        )
+    finally:
+        PortalManagementService.invite_student_by_email = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    assert response.json()["email"] == "generaladmin-student@example.com"
 
 
 def test_invite_student_by_email_success_for_admin() -> None:
@@ -689,7 +726,7 @@ def test_invite_student_by_email_success_for_admin() -> None:
 
     original = PortalManagementService.invite_student_by_email
     PortalManagementService.invite_student_by_email = invite_student_by_email
-    app.dependency_overrides[deps.get_current_user] = override_current_admin
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_current_admin
     app.dependency_overrides[get_db_session] = override_db_session
     try:
         response = client.post(
