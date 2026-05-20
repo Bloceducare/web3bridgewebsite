@@ -2,10 +2,14 @@ from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from unittest.mock import patch
 
+import base64
+import json
+
 from apps.utils.permissions import (
     IsAuthenticatedByAuthServer,
     _extract_bearer_token,
     _is_admin_user,
+    _jwt_claims_unverified,
 )
 
 
@@ -34,6 +38,19 @@ class AuthServerPermissionTests(TestCase):
 
     def test_is_admin_user_rejects_student(self):
         self.assertFalse(_is_admin_user({"user": {"role": "student"}}))
+
+    def test_is_admin_user_reads_role_from_jwt_claims(self):
+        claims = {"role": "general_admin", "email": "admin@example.com"}
+        segment = (
+            base64.urlsafe_b64encode(json.dumps(claims).encode())
+            .decode()
+            .rstrip("=")
+        )
+        token = f"header.{segment}.signature"
+
+        self.assertFalse(_is_admin_user({}))
+        self.assertTrue(_is_admin_user({}, raw_token=token))
+        self.assertEqual(_jwt_claims_unverified(token)["role"], "general_admin")
 
     @patch("apps.utils.permissions.requests.post")
     def test_permission_accepts_top_level_is_admin(self, mock_post):
@@ -71,3 +88,23 @@ class AuthServerPermissionTests(TestCase):
         request.headers["Authorization"] = "Bearer test-token"
 
         self.assertFalse(self.permission.has_permission(request, None))
+
+    @patch("apps.utils.permissions.requests.post")
+    def test_permission_accepts_general_admin_in_jwt_when_verify_body_empty(
+        self, mock_post
+    ):
+        claims = {"role": "general_admin", "email": "admin@example.com"}
+        segment = (
+            base64.urlsafe_b64encode(json.dumps(claims).encode())
+            .decode()
+            .rstrip("=")
+        )
+        token = f"header.{segment}.signature"
+
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {}
+
+        request = self.factory.post("/api/v2/cohort/portal-invite/send/")
+        request.headers["Authorization"] = f"Bearer {token}"
+
+        self.assertTrue(self.permission.has_permission(request, None))

@@ -728,7 +728,15 @@ class BulkEmailSerializer(serializers.Serializer):
 
 class PortalInviteSerializer(serializers.Serializer):
     participant_id = serializers.IntegerField(
+        required=False,
         help_text="Participant ID to send the portal onboarding invite to",
+    )
+    email = serializers.EmailField(
+        required=False,
+        help_text=(
+            "Student email. Resolves the latest participant row for this email "
+            "(same as reschedule / assessment flows)."
+        ),
     )
 
     def validate_participant_id(self, value):
@@ -736,11 +744,46 @@ class PortalInviteSerializer(serializers.Serializer):
             raise serializers.ValidationError(f"Invalid participant ID: {value}")
         return value
 
+    def validate(self, attrs):
+        participant_id = attrs.get("participant_id")
+        email = (attrs.get("email") or "").strip()
+
+        if participant_id and email:
+            raise serializers.ValidationError(
+                "Provide either participant_id or email, not both."
+            )
+        if not participant_id and not email:
+            raise serializers.ValidationError(
+                "Either participant_id or email is required."
+            )
+
+        if email and not participant_id:
+            participant = (
+                models.Participant.objects.filter(email__iexact=email)
+                .order_by("-created_at", "-id")
+                .first()
+            )
+            if participant is None:
+                raise serializers.ValidationError(
+                    {"email": f"No participant found for email: {email}"}
+                )
+            attrs["participant_id"] = participant.id
+
+        return attrs
+
 
 class BulkPortalInviteSerializer(serializers.Serializer):
     participants = serializers.ListField(
         child=serializers.IntegerField(),
+        required=False,
         help_text="List of participant IDs to send portal onboarding invites to",
+    )
+    emails = serializers.ListField(
+        child=serializers.EmailField(),
+        required=False,
+        help_text=(
+            "Student emails. Each resolves to the latest participant row for that email."
+        ),
     )
 
     def validate_participants(self, value):
@@ -767,3 +810,45 @@ class BulkPortalInviteSerializer(serializers.Serializer):
             )
 
         return unique_ids
+
+    def validate(self, attrs):
+        participant_ids = attrs.get("participants") or []
+        emails = attrs.get("emails") or []
+
+        if participant_ids and emails:
+            raise serializers.ValidationError(
+                "Provide either participants or emails, not both."
+            )
+        if not participant_ids and not emails:
+            raise serializers.ValidationError(
+                "Either participants or emails is required."
+            )
+
+        if emails:
+            resolved_ids = []
+            missing_emails = []
+            for email in emails:
+                normalized = (email or "").strip()
+                participant = (
+                    models.Participant.objects.filter(email__iexact=normalized)
+                    .order_by("-created_at", "-id")
+                    .first()
+                )
+                if participant is None:
+                    missing_emails.append(normalized)
+                else:
+                    resolved_ids.append(participant.id)
+
+            if missing_emails:
+                raise serializers.ValidationError(
+                    {
+                        "emails": (
+                            "No participant found for: "
+                            + ", ".join(sorted(set(missing_emails)))
+                        )
+                    }
+                )
+
+            attrs["participants"] = list(dict.fromkeys(resolved_ids))
+
+        return attrs
