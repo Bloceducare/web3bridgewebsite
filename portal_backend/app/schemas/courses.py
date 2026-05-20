@@ -18,3 +18,11 @@ class AdminCourseSummaryResponse(BaseModel):
     total_students: int
     accepted_students: int
     paid_students: int
+
+
+class StudentGuarantorFormResponse(BaseModel):
+    id: int
+    title: str
+    form_url: str
+    cohort: str | None = None
+    is_active: bool

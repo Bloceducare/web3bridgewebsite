@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 pytest.importorskip("asyncpg")
@@ -10,7 +11,11 @@ from app.api import deps
 from app.db.session import get_db_session
 from app.main import app
 from app.models.portal import AccountState, User
-from app.schemas.courses import AdminCourseSummaryResponse, StudentCourseResponse
+from app.schemas.courses import (
+    AdminCourseSummaryResponse,
+    StudentCourseResponse,
+    StudentGuarantorFormResponse,
+)
 from app.schemas.dashboard import AdminDashboardOverviewResponse, DashboardRecentStudentResponse
 from app.schemas.discord import (
     DiscordInviteGenerateResponse,
@@ -246,6 +251,68 @@ def test_courses_my_returns_courses_for_student() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload[0]["course_name"] == "Solidity Basics"
+
+
+def test_courses_my_guarantor_form_returns_published_form() -> None:
+    current_user = build_user(user_id=32, role="student")
+
+    async def override_verified_user() -> User:
+        return current_user
+
+    async def get_my_published_guarantor_form(
+        _: CoursesService, *, user: User
+    ) -> StudentGuarantorFormResponse:
+        assert user.id == current_user.id
+        return StudentGuarantorFormResponse(
+            id=3,
+            title="Cohort XIV Guarantor Form",
+            form_url="https://forms.example.com/guarantor",
+            cohort="Cohort XIV",
+            is_active=True,
+        )
+
+    original_method = CoursesService.get_my_published_guarantor_form
+    CoursesService.get_my_published_guarantor_form = get_my_published_guarantor_form
+    app.dependency_overrides[deps.get_current_verified_user] = override_verified_user
+    app.dependency_overrides[get_db_session] = override_db_session
+
+    try:
+        response = client.get("/api/v1/courses/my/guarantor-form")
+    finally:
+        CoursesService.get_my_published_guarantor_form = original_method
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["id"] == 3
+    assert payload["is_active"] is True
+
+
+def test_courses_my_guarantor_form_returns_404_when_not_available() -> None:
+    current_user = build_user(user_id=33, role="student")
+
+    async def override_verified_user() -> User:
+        return current_user
+
+    async def get_my_published_guarantor_form(_: CoursesService, *, user: User):
+        assert user.id == current_user.id
+        raise HTTPException(
+            status_code=404, detail="No published guarantor form is available yet"
+        )
+
+    original_method = CoursesService.get_my_published_guarantor_form
+    CoursesService.get_my_published_guarantor_form = get_my_published_guarantor_form
+    app.dependency_overrides[deps.get_current_verified_user] = override_verified_user
+    app.dependency_overrides[get_db_session] = override_db_session
+
+    try:
+        response = client.get("/api/v1/courses/my/guarantor-form")
+    finally:
+        CoursesService.get_my_published_guarantor_form = original_method
+        clear_overrides()
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "No published guarantor form is available yet"
 
 
 def test_courses_admin_summary_returns_aggregates() -> None:

@@ -4,7 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_staff_or_admin_user, get_current_verified_user
 from app.db.session import get_db_session
 from app.models.portal import User
-from app.schemas.courses import AdminCourseSummaryResponse, StudentCourseResponse
+from app.schemas.courses import (
+    AdminCourseSummaryResponse,
+    StudentCourseResponse,
+    StudentGuarantorFormResponse,
+)
 from app.services.courses import CoursesService
 
 router = APIRouter(prefix="/courses", tags=["Courses"])
@@ -26,6 +30,24 @@ async def list_my_courses(
 ) -> list[StudentCourseResponse]:
     service = CoursesService(db)
     return await service.list_my_courses(user=current_user)
+
+
+@router.get(
+    "/my/guarantor-form",
+    response_model=StudentGuarantorFormResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get my published guarantor form",
+    description=(
+        "Return the latest active guarantor form for the authenticated student. "
+        "Uses the student's latest participant cohort, then falls back to a generic form."
+    ),
+)
+async def get_my_guarantor_form(
+    current_user: User = Depends(get_current_verified_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentGuarantorFormResponse:
+    service = CoursesService(db)
+    return await service.get_my_published_guarantor_form(user=current_user)
 
 
 @router.get(
