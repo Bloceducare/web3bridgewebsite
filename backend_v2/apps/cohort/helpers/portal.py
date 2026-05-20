@@ -5,6 +5,7 @@ import time
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
+from utils.enums.models import RegistrationStatus
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,27 @@ def is_zk_course_name(course_name):
     return bool(re.search(r"\bzk\b|\bzero[- ]?knowledge\b", name_lc))
 
 
+def auto_accept_participant_on_payment(participant) -> bool:
+    """
+    Non-ZK participants are marked ACCEPTED when payment completes.
+    ZK participants stay PENDING until an admin approves them.
+    """
+    course = getattr(participant, "course", None)
+    course_name = getattr(course, "name", "") if course is not None else ""
+    if is_zk_course_name(course_name):
+        return False
+
+    current_status = (getattr(participant, "status", None) or "").upper()
+    if current_status == RegistrationStatus.REJECTED.value:
+        return False
+
+    if participant.status != RegistrationStatus.ACCEPTED.value:
+        participant.status = RegistrationStatus.ACCEPTED.value
+        return True
+
+    return False
+
+
 def normalize_approval_status(raw_status):
     status_lc = (raw_status or "").lower().strip()
     if not status_lc:
@@ -86,12 +108,40 @@ def normalize_approval_status(raw_status):
     return _APPROVAL_STATUS_ALIASES.get(status_lc, "approved")
 
 
+PORTAL_INVITE_VALIDATION_SKIP_REASONS = frozenset(
+    {
+        "missing_email",
+        "evicted",
+        "unpaid",
+        "missing_course",
+        "not_accepted",
+        "rejected",
+    }
+)
+
+
+def portal_invite_skip_message(reason: str) -> str:
+    messages = {
+        "missing_email": "Participant has no email address.",
+        "evicted": "Participant was evicted and cannot receive a portal invite.",
+        "unpaid": "Participant has not paid yet.",
+        "missing_course": "Participant has no course assigned.",
+        "not_accepted": (
+            "ZK students must be approved (ACCEPTED) before a portal invite can be sent."
+        ),
+        "rejected": "Participant was rejected and cannot receive a portal invite.",
+    }
+    return messages.get(reason, f"Cannot send portal invite ({reason}).")
+
+
 def validate_participant_for_portal_invite(participant) -> tuple[bool, str]:
     """
     Return (eligible, reason) for sending a portal onboarding invite.
 
-    Paid non-ZK participants may be invited or re-invited. Already-active portal
-    accounts are reported as skipped by the portal API, not as validation errors.
+    Paid non-ZK participants may be invited or re-invited without manual approval.
+    ZK participants must be ACCEPTED (admin approve) before an invite is sent.
+    Rejected registrations are always blocked. Already-active portal accounts are
+    reported as skipped by the portal API, not as validation errors.
     """
     email = (getattr(participant, "email", None) or "").strip()
     if not email:
@@ -108,12 +158,13 @@ def validate_participant_for_portal_invite(participant) -> tuple[bool, str]:
     if not course_name:
         return False, "missing_course"
 
-    if is_zk_course_name(course_name):
-        return False, "zk_course"
-
     status_value = (getattr(participant, "status", None) or "").upper()
-    if status_value and status_value not in ("ACCEPTED", "APPROVED"):
-        return False, "not_accepted"
+    if status_value in ("REJECTED",):
+        return False, "rejected"
+
+    if is_zk_course_name(course_name):
+        if status_value not in ("ACCEPTED", "APPROVED"):
+            return False, "not_accepted"
 
     return True, ""
 
@@ -138,10 +189,7 @@ def create_portal_onboarding_invite(participant):
     not publicly active—payment flows send only the standard course welcome mail.
     """
     course = getattr(participant, "course", None)
-    course_name = getattr(course, "name", "")
-
-    if is_zk_course_name(course_name):
-        return _empty_portal_invite_result(reason="zk_course")
+    course_name = getattr(course, "name", "") if course is not None else ""
 
     portal_onboarding_url = (getattr(settings, "PORTAL_ONBOARDING_URL", "") or "").strip()
     internal_api_key = getattr(settings, "PORTAL_INTERNAL_API_KEY", "")
@@ -266,15 +314,17 @@ def send_portal_invite_for_participant(participant) -> dict:
 
     eligible, skip_reason = validate_participant_for_portal_invite(participant)
     if not eligible:
+        message = portal_invite_skip_message(skip_reason)
         return {
             "participant_id": participant_id,
             "email": email,
             "sent": False,
             "skipped": True,
             "reason": skip_reason,
+            "message": message,
             "activation_url": None,
             "portal_invite_created": False,
-            "error": skip_reason,
+            "error": message,
         }
 
     try:

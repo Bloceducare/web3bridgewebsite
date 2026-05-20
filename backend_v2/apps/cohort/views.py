@@ -23,6 +23,8 @@ from .helpers.model import (
     send_reschedule_assessment_email,
 )
 from .helpers.portal import (
+    PORTAL_INVITE_VALIDATION_SKIP_REASONS,
+    auto_accept_participant_on_payment,
     execute_portal_invite_bulk,
     send_portal_invite_for_participant,
 )
@@ -141,7 +143,12 @@ def handle_payment_success(
 
     Portal activation emails are not sent here: the student portal is not live yet, and
     course templates already explain portal access timelines (e.g. within 14 days).
+
+    Non-ZK participants are auto-accepted on payment; ZK stays PENDING until approved.
     """
+    if auto_accept_participant_on_payment(participant_object):
+        participant_object.save(update_fields=["status"])
+
     email = serialized_participant_obj.get("email")
     participant_name = serialized_participant_obj.get("name")
     course_id = getattr(participant_object, "course_id", None)
@@ -832,6 +839,7 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         ).data
         if not participant_object.payment_status:
             participant_object.payment_status = True
+            auto_accept_participant_on_payment(participant_object)
             participant_object.save()
             invalidate_participant_cache()
 
@@ -896,9 +904,9 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
         """
         Send (or resend) the student portal onboarding invite for one paid participant.
 
-        Eligible: paid, accepted, non-ZK, not evicted, with a course and email.
-        Already-invited portal users receive a fresh activation email; active portal
-        accounts are reported as skipped.
+        Eligible: paid, not evicted, with course and email. Non-ZK need no manual approval;
+        ZK must be ACCEPTED first. Already-invited portal
+        users receive a fresh activation email; active portal accounts are reported as skipped.
         """
         participant_object = self.get_queryset().filter(pk=pk).first()
         if participant_object is None:
@@ -909,6 +917,13 @@ class ParticipantViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vie
             )
 
         result = send_portal_invite_for_participant(participant_object)
+        skip_reason = result.get("reason") or ""
+        if result.get("skipped") and skip_reason in PORTAL_INVITE_VALIDATION_SKIP_REASONS:
+            return requestUtils.error_response(
+                result.get("message") or result.get("error") or skip_reason,
+                result,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
         return requestUtils.success_response(data=result, http_status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=serializers.BulkPortalInviteSerializer)
@@ -1573,6 +1588,13 @@ class PortalInviteViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             )
 
         result = send_portal_invite_for_participant(participant)
+        skip_reason = result.get("reason") or ""
+        if result.get("skipped") and skip_reason in PORTAL_INVITE_VALIDATION_SKIP_REASONS:
+            return requestUtils.error_response(
+                result.get("message") or result.get("error") or skip_reason,
+                result,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
         return requestUtils.success_response(data=result, http_status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=serializers.BulkPortalInviteSerializer)

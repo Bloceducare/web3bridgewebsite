@@ -12,6 +12,7 @@ from cohort import views as cohort_views
 from .helpers.portal import (
     create_portal_onboarding_invite,
     send_portal_invite_for_participant,
+    auto_accept_participant_on_payment,
     validate_participant_for_portal_invite,
     is_zk_course_name,
     normalize_approval_status,
@@ -869,12 +870,20 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         PORTAL_INTERNAL_API_KEY="secret-key",
         PORTAL_REQUEST_TIMEOUT=5,
     )
-    def test_create_portal_onboarding_invite_skips_zk_courses(self, mock_post):
+    def test_create_portal_onboarding_invite_calls_portal_for_accepted_zk(
+        self, mock_post
+    ):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {
+            "activation_url": "https://portal.example.com/activate?token=zk",
+            "reason": "portal_invite_created",
+            "portal_invite_created": True,
+        }
         participant = Mock(
             id=30,
             email="zkstudent@example.com",
             cohort="ZK-XIV",
-            status="accepted",
+            status="ACCEPTED",
             course=Mock(),
         )
         participant.name = "ZK Student"
@@ -882,9 +891,8 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
 
         result = create_portal_onboarding_invite(participant)
 
-        self.assertFalse(result["ok"])
-        self.assertEqual(result["reason"], "zk_course")
-        mock_post.assert_not_called()
+        self.assertTrue(result["ok"])
+        mock_post.assert_called_once()
 
     @patch("apps.cohort.helpers.portal.requests.post")
     @override_settings(
@@ -1045,6 +1053,66 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         eligible, reason = validate_participant_for_portal_invite(unpaid)
         self.assertFalse(eligible)
         self.assertEqual(reason, "unpaid")
+
+        paid_pending = Mock(
+            email="student@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="PENDING",
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(paid_pending)
+        self.assertTrue(eligible)
+        self.assertEqual(reason, "")
+
+        rejected = Mock(
+            email="student@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="REJECTED",
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(rejected)
+        self.assertFalse(eligible)
+        self.assertEqual(reason, "rejected")
+
+        zk_pending = Mock(
+            email="zk@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="PENDING",
+            course=Mock(name="ZK Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(zk_pending)
+        self.assertFalse(eligible)
+        self.assertEqual(reason, "not_accepted")
+
+        zk_accepted = Mock(
+            email="zk@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="ZK Cohort XIV"),
+        )
+        eligible, reason = validate_participant_for_portal_invite(zk_accepted)
+        self.assertTrue(eligible)
+
+    def test_auto_accept_on_payment_skips_zk_and_rejected(self):
+        from utils.enums.models import RegistrationStatus
+
+        web3 = Mock(
+            status=RegistrationStatus.PENDING.value,
+            course=Mock(name="Web3 Cohort XIV"),
+        )
+        self.assertTrue(auto_accept_participant_on_payment(web3))
+        self.assertEqual(web3.status, RegistrationStatus.ACCEPTED.value)
+
+        zk = Mock(
+            status=RegistrationStatus.PENDING.value,
+            course=Mock(name="ZK Cohort XIV"),
+        )
+        self.assertFalse(auto_accept_participant_on_payment(zk))
+        self.assertEqual(zk.status, RegistrationStatus.PENDING.value)
 
     @patch("apps.cohort.helpers.portal.create_portal_onboarding_invite")
     def test_send_portal_invite_for_participant_maps_portal_response(self, mock_create):
