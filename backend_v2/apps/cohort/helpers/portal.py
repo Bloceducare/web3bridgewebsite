@@ -1,11 +1,16 @@
 import logging
 import re
 import time
+from datetime import date, datetime, time as dt_time, timedelta
 
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
+from django.utils import timezone
 from utils.enums.models import RegistrationStatus
+
+DEFAULT_PORTAL_INVITE_REGISTERED_FROM = date(2026, 4, 17)
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +183,7 @@ def _empty_portal_invite_result(*, reason: str) -> dict:
     }
 
 
-def create_portal_onboarding_invite(participant):
+def create_portal_onboarding_invite(participant, *, delivery_email: str | None = None):
     """
     Call portal_backend to create or resend an onboarding invite.
 
@@ -209,8 +214,9 @@ def create_portal_onboarding_invite(participant):
         )
         return _empty_portal_invite_result(reason="portal_not_configured")
 
+    to_email = (delivery_email or participant.email or "").strip()
     payload = {
-        "email": participant.email,
+        "email": to_email,
         "full_name": participant.name,
         "cohort": participant.cohort,
         "course_name": course_name,
@@ -302,7 +308,12 @@ def create_portal_onboarding_invite(participant):
     }
 
 
-def send_portal_invite_for_participant(participant) -> dict:
+def send_portal_invite_for_participant(
+    participant,
+    *,
+    delivery_email: str | None = None,
+    skip_validation: bool = False,
+) -> dict:
     """
     Validate and trigger a portal onboarding invite for one participant.
 
@@ -312,7 +323,11 @@ def send_portal_invite_for_participant(participant) -> dict:
     participant_id = getattr(participant, "id", None)
     email = (getattr(participant, "email", None) or "").strip()
 
-    eligible, skip_reason = validate_participant_for_portal_invite(participant)
+    eligible, skip_reason = (
+        (True, "")
+        if skip_validation
+        else validate_participant_for_portal_invite(participant)
+    )
     if not eligible:
         message = portal_invite_skip_message(skip_reason)
         return {
@@ -328,7 +343,9 @@ def send_portal_invite_for_participant(participant) -> dict:
         }
 
     try:
-        portal_result = create_portal_onboarding_invite(participant)
+        portal_result = create_portal_onboarding_invite(
+            participant, delivery_email=delivery_email
+        )
     except Exception as exc:  # noqa: BLE001
         logger.exception(
             "Unexpected portal invite failure for participant %s", participant_id
@@ -388,9 +405,11 @@ def send_portal_invite_for_participant(participant) -> dict:
         "portal_invite_created",
         "portal_invite_resent",
     )
+    delivery = (delivery_email or email).strip()
     return {
         "participant_id": participant_id,
         "email": email,
+        "delivery_email": delivery,
         "sent": sent,
         "skipped": not sent,
         "reason": reason or ("portal_invite_sent" if sent else "portal_invite_failed"),
@@ -398,6 +417,323 @@ def send_portal_invite_for_participant(participant) -> dict:
         "portal_invite_created": portal_invite_created,
         "error": None if sent else (reason or "portal_invite_failed"),
     }
+
+
+def resolve_open_programme_cohort_labels() -> list[str]:
+    """Cohort labels for current intake programmes (newest open reg per track)."""
+    from .cohort_label import normalize_cohort_label, resolve_current_open_registration_ids
+    from ..models import Registration
+
+    reg_ids = resolve_current_open_registration_ids()
+    if not reg_ids:
+        return []
+
+    labels: list[str] = []
+    seen: set[str] = set()
+    for registration in Registration.objects.filter(id__in=reg_ids).order_by(
+        "-updated_at", "-id"
+    ):
+        for raw in (registration.cohort, registration.name):
+            label = normalize_cohort_label(raw)
+            if label and label not in seen:
+                seen.add(label)
+                labels.append(label)
+    return labels
+
+
+def describe_current_open_programmes() -> list[dict]:
+    """Metadata for logging / management command output."""
+    from .cohort_label import resolve_current_open_registration_ids
+    from ..models import Registration
+
+    reg_ids = resolve_current_open_registration_ids()
+    programmes = []
+    for registration in Registration.objects.filter(id__in=reg_ids).order_by(
+        "-updated_at", "-id"
+    ):
+        programmes.append(
+            {
+                "id": registration.id,
+                "name": registration.name,
+                "cohort": registration.cohort or "",
+                "is_open": registration.is_open,
+            }
+        )
+    return programmes
+
+
+def _paid_participant_base(queryset):
+    return queryset.filter(payment_status=True, is_evicted=False).exclude(
+        status=RegistrationStatus.REJECTED.value
+    )
+
+
+def parse_registered_from_date(value: str | date | None = None) -> date:
+    if isinstance(value, date):
+        return value
+    raw = value or getattr(
+        settings, "PORTAL_INVITE_REGISTERED_FROM", DEFAULT_PORTAL_INVITE_REGISTERED_FROM.isoformat()
+    )
+    return date.fromisoformat(str(raw).strip()[:10])
+
+
+def _start_of_day(value: date) -> datetime:
+    return timezone.make_aware(datetime.combine(value, dt_time.min))
+
+
+def paid_participant_ids_for_registration_window(
+    queryset,
+    *,
+    registered_from: date | None = None,
+    registered_to: date | None = None,
+    cohort_label: str | None = None,
+) -> list[int]:
+    """
+    Paid participants by enrolment time (``participant.created_at``).
+
+    Default window: registered on or after 2026-04-17 (current intake cutoff).
+    """
+    from_date = parse_registered_from_date(registered_from)
+    qs = _paid_participant_base(queryset).filter(created_at__gte=_start_of_day(from_date))
+    if registered_to is not None:
+        qs = qs.filter(
+            created_at__lt=_start_of_day(registered_to) + timedelta(days=1)
+        )
+    if (cohort_label or "").strip():
+        qs = qs.filter(_cohort_text_match_q(cohort_label.strip()))
+    rows = qs.order_by("-created_at", "-id").values_list("id", flat=True)
+    return list(dict.fromkeys(rows))
+
+
+def _cohort_text_match_q(*labels: str) -> Q:
+    """Match ``participant.cohort`` with exact, normalized, and substring variants."""
+    from .cohort_label import normalize_cohort_label
+
+    combined = Q()
+    for raw in labels:
+        label = (raw or "").strip()
+        if not label:
+            continue
+        combined |= Q(cohort__iexact=label) | Q(cohort__icontains=label)
+        normalized = normalize_cohort_label(label)
+        if normalized and normalized != label:
+            combined |= Q(cohort__iexact=normalized) | Q(cohort__icontains=normalized)
+        cohort_match = re.search(r"\bcohort\s*([ivxlcdm0-9]+)\b", label, flags=re.IGNORECASE)
+        if cohort_match:
+            token = cohort_match.group(1).upper()
+            combined |= Q(cohort__icontains=token)
+        master_match = re.search(
+            r"master\s*class(?:\s*cohort)?\s*([ivxlcdm0-9]+)",
+            label,
+            flags=re.IGNORECASE,
+        )
+        if master_match:
+            token = master_match.group(1).upper()
+            combined |= Q(cohort__icontains=token) | Q(cohort__icontains="master")
+    return combined
+
+
+def paid_participant_ids_for_open_intake(queryset) -> list[int]:
+    """
+    Paid participants on the **current** open intake per track (newest ``is_open`` reg only).
+
+    Requires ``participant.registration_id`` on that programme. When a course is set, it
+    must belong to the same registration (aligned enrolment).
+    """
+    from .cohort_label import resolve_current_open_registration_ids
+
+    open_reg_ids = resolve_current_open_registration_ids()
+    if not open_reg_ids:
+        return []
+
+    rows = (
+        _paid_participant_base(queryset)
+        .filter(registration_id__in=open_reg_ids)
+        .filter(Q(course_id__isnull=True) | Q(course__registration_id=F("registration_id")))
+        .order_by("-created_at", "-id")
+        .values_list("id", flat=True)
+    )
+    return list(dict.fromkeys(rows))
+
+
+def _paid_participant_ids_for_all_open_registrations(queryset) -> list[int]:
+    """Legacy broad selector (any ``is_open`` reg) — used only in breakdown stats."""
+    from ..models import Registration
+
+    open_reg_ids = list(
+        Registration.objects.filter(is_open=True).values_list("id", flat=True)
+    )
+    if not open_reg_ids:
+        return []
+    intake_q = Q(registration_id__in=open_reg_ids) | Q(
+        course__registration_id__in=open_reg_ids
+    )
+    rows = (
+        _paid_participant_base(queryset)
+        .filter(intake_q)
+        .order_by("-created_at", "-id")
+        .values_list("id", flat=True)
+    )
+    return list(dict.fromkeys(rows))
+
+
+def paid_participant_ids_for_cohorts(queryset, cohort_labels: list[str]) -> list[int]:
+    """Paid participants whose cohort label matches any of the given strings (fuzzy)."""
+    if not cohort_labels:
+        return []
+
+    rows = (
+        _paid_participant_base(queryset)
+        .filter(_cohort_text_match_q(*cohort_labels))
+        .order_by("-created_at", "-id")
+        .values_list("id", flat=True)
+    )
+    return list(dict.fromkeys(rows))
+
+
+def resolve_paid_participant_ids(
+    queryset,
+    *,
+    cohort: str | None = None,
+    all_paid: bool = False,
+    registered_from: date | str | None = None,
+    registered_to: date | str | None = None,
+) -> tuple[list[int], str, dict]:
+    """
+    Return (participant_ids, selection_mode, selection_meta).
+
+    Default: paid + registered on/after ``PORTAL_INVITE_REGISTERED_FROM`` (2026-04-17).
+    """
+    explicit = (cohort or "").strip()
+    if all_paid:
+        rows = (
+            _paid_participant_base(queryset)
+            .order_by("-created_at", "-id")
+            .values_list("id", flat=True)
+        )
+        return list(dict.fromkeys(rows)), "all_paid", {}
+
+    from_date = parse_registered_from_date(registered_from)
+    to_date = None
+    if registered_to:
+        to_date = (
+            registered_to
+            if isinstance(registered_to, date)
+            else date.fromisoformat(str(registered_to).strip()[:10])
+        )
+
+    ids = paid_participant_ids_for_registration_window(
+        queryset,
+        registered_from=from_date,
+        registered_to=to_date,
+        cohort_label=explicit or None,
+    )
+    mode = "registered_since_and_cohort" if explicit else "registered_since"
+    return (
+        ids,
+        mode,
+        {
+            "registered_from": from_date.isoformat(),
+            "registered_to": to_date.isoformat() if to_date else None,
+            "cohort_filter": explicit or None,
+        },
+    )
+
+
+def portal_invite_selection_breakdown(
+    queryset,
+    *,
+    registered_from: date | str | None = None,
+    registered_to: date | str | None = None,
+) -> dict:
+    """Counts for management command / API diagnostics."""
+    from_date = parse_registered_from_date(registered_from)
+    to_date = None
+    if registered_to:
+        to_date = (
+            registered_to
+            if isinstance(registered_to, date)
+            else date.fromisoformat(str(registered_to).strip()[:10])
+        )
+
+    base = _paid_participant_base(queryset)
+    window_ids = paid_participant_ids_for_registration_window(
+        queryset,
+        registered_from=from_date,
+        registered_to=to_date,
+    )
+    return {
+        "total_paid": base.count(),
+        "registered_since_count": len(window_ids),
+        "registered_from": from_date.isoformat(),
+        "registered_to": to_date.isoformat() if to_date else None,
+        "registration_field": "participant.created_at",
+    }
+
+
+def execute_portal_invite_for_paid_cohort(
+    *,
+    queryset,
+    cohort: str | None = None,
+    dry_run: bool = False,
+    registered_from: date | str | None = None,
+    registered_to: date | str | None = None,
+) -> dict:
+    """
+    Send portal invites to every paid participant in a cohort.
+
+    When ``cohort`` is omitted, uses paid participants registered on/after the configured
+    registration cutoff date (default 2026-04-17).
+    """
+    participant_ids, selection_mode, selection_meta = resolve_paid_participant_ids(
+        queryset,
+        cohort=cohort,
+        registered_from=registered_from,
+        registered_to=registered_to,
+    )
+
+    breakdown = portal_invite_selection_breakdown(
+        queryset,
+        registered_from=registered_from,
+        registered_to=registered_to,
+    )
+
+    if dry_run:
+        return {
+            "ok": True,
+            "dry_run": True,
+            "selection_mode": selection_mode,
+            "selection": selection_meta,
+            "participant_ids": participant_ids,
+            "eligible_count": len(participant_ids),
+            "breakdown": breakdown,
+        }
+
+    if not participant_ids:
+        return {
+            "ok": False,
+            "reason": "no_participants",
+            "message": (
+                "No paid participants found for this registration window. "
+                "Adjust PORTAL_INVITE_REGISTERED_FROM or pass --registered-from."
+            ),
+            "participant_ids": [],
+            "eligible_count": 0,
+            "selection_mode": selection_mode,
+            "selection": selection_meta,
+            "breakdown": breakdown,
+        }
+
+    summary = execute_portal_invite_bulk(
+        participant_ids=participant_ids,
+        queryset=queryset,
+    )
+    summary["ok"] = True
+    summary["selection_mode"] = selection_mode
+    summary["selection"] = selection_meta
+    summary["eligible_count"] = len(participant_ids)
+    summary["breakdown"] = portal_invite_selection_breakdown(queryset)
+    return summary
 
 
 def execute_portal_invite_bulk(*, participant_ids: list[int], queryset) -> dict:

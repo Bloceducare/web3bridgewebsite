@@ -32,17 +32,16 @@ ONBOARDING_EMAIL_HTML = """\
         }}
         .btn {{
             display: inline-block;
-            padding: 14px 28px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 6px;
+            padding: 16px 36px;
+            background-color: #0056d6;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
-            margin: 10px 0;
-        }}
-        .btn:hover {{
-            background-color: #0056b3;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin: 16px 0;
+            border: 1px solid #004bb5;
         }}
         .note {{
             font-size: 0.9rem;
@@ -53,15 +52,19 @@ ONBOARDING_EMAIL_HTML = """\
 </head>
 <body>
     <div class="container">
-        <h1>Hello, {name}! 🎉</h1>
+        <h1>Hello, {name}!</h1>
         <p>Congratulations on your successful registration with Web3Bridge!</p>
         <p>Your <strong>Student Portal</strong> account has been created. The portal is your
            personal hub for tracking updates, managing your profile, and staying connected
            with your cohort.</p>
         <p>To get started, click the button below to set up your password and activate
            your account:</p>
-        <p style="text-align: center;">
-            <a class="btn" href="{activation_url}">Activate My Portal Account</a>
+        <p style="text-align: center; margin: 28px 0;">
+            <a
+                class="btn"
+                href="{activation_url}"
+                style="display: inline-block; padding: 16px 36px; background-color: #0056d6; color: #ffffff !important; text-decoration: none !important; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: Arial, Helvetica, sans-serif; letter-spacing: 0.02em; border: 1px solid #004bb5;"
+            >Activate My Portal Account</a>
         </p>
         <p class="note">
             If the button above doesn't work, copy and paste this link into your browser:<br>

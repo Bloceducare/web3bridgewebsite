@@ -51,14 +51,37 @@ class OnboardingService:
         return f"{settings.PORTAL_FRONTEND_URL.rstrip('/')}/activate/onboard?{query}"
 
     @staticmethod
-    def should_issue_activation_invite(*, portal_invite_created: bool, account_state: str) -> bool:
-        return portal_invite_created or account_state == AccountState.INVITED.value
+    def should_issue_activation_invite(
+        *,
+        portal_invite_created: bool,
+        account_state: str,
+        onboarding_status: str | None = None,
+    ) -> bool:
+        if portal_invite_created:
+            return True
+        if account_state == AccountState.INVITED.value:
+            return True
+        if (onboarding_status or "") in (
+            OnboardingStatus.PENDING.value,
+            OnboardingStatus.INVITED.value,
+        ):
+            return account_state not in (
+                AccountState.ACTIVE.value,
+                AccountState.SUSPENDED.value,
+                AccountState.DEACTIVATED.value,
+            )
+        return False
 
     @staticmethod
-    def resolve_invite_reason(*, portal_invite_created: bool, account_state: str) -> str:
+    def resolve_invite_reason(
+        *,
+        portal_invite_created: bool,
+        account_state: str,
+        issued_invite: bool,
+    ) -> str:
         if portal_invite_created:
             return "portal_invite_created"
-        if account_state == AccountState.INVITED.value:
+        if issued_invite:
             return "portal_invite_resent"
         if account_state == AccountState.ACTIVE.value:
             return "portal_invite_skipped_active_account"
@@ -176,10 +199,6 @@ class OnboardingService:
             portal_invite_created = True
 
         current_account_state = user.account_state
-        should_issue_activation_invite = self.should_issue_activation_invite(
-            portal_invite_created=portal_invite_created,
-            account_state=current_account_state,
-        )
 
         profile = await self._get_profile_by_user_id(user.id)
         if profile is None:
@@ -193,11 +212,18 @@ class OnboardingService:
         else:
             profile.full_name = payload.full_name
             profile.cohort = payload.cohort
-            if (
-                should_issue_activation_invite
-                and profile.onboarding_status == OnboardingStatus.PENDING.value
-            ):
-                profile.onboarding_status = OnboardingStatus.INVITED.value
+
+        should_issue_activation_invite = self.should_issue_activation_invite(
+            portal_invite_created=portal_invite_created,
+            account_state=current_account_state,
+            onboarding_status=profile.onboarding_status,
+        )
+
+        if (
+            should_issue_activation_invite
+            and profile.onboarding_status == OnboardingStatus.PENDING.value
+        ):
+            profile.onboarding_status = OnboardingStatus.INVITED.value
 
         external_map = await self._get_external_map(payload.external_student_id)
         if external_map is None:
@@ -251,6 +277,7 @@ class OnboardingService:
         reason = self.resolve_invite_reason(
             portal_invite_created=portal_invite_created,
             account_state=current_account_state,
+            issued_invite=bool(activation_url),
         )
 
         self.session.add(

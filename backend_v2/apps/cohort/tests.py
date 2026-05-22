@@ -13,6 +13,7 @@ from .helpers.portal import (
     create_portal_onboarding_invite,
     send_portal_invite_for_participant,
     auto_accept_participant_on_payment,
+    paid_participant_ids_for_cohorts,
     validate_participant_for_portal_invite,
     is_zk_course_name,
     normalize_approval_status,
@@ -1096,6 +1097,130 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         )
         eligible, reason = validate_participant_for_portal_invite(zk_accepted)
         self.assertTrue(eligible)
+
+    def test_resolve_current_open_registration_ids_one_per_track(self):
+        from apps.cohort.models import Registration
+        from apps.cohort.helpers.cohort_label import resolve_current_open_registration_ids
+
+        Registration.objects.all().delete()
+        web2_old = Registration.objects.create(
+            name="Web2 Cohort XIV",
+            cohort="Cohort XIV",
+            is_open=True,
+        )
+        web2_new = Registration.objects.create(
+            name="Web2 Cohort XV",
+            cohort="Cohort XV",
+            is_open=True,
+        )
+        master_old = Registration.objects.create(
+            name="Master Class II",
+            cohort="master Class II",
+            is_open=True,
+        )
+        master_new = Registration.objects.create(
+            name="Master Class III",
+            cohort="master Class III",
+            is_open=True,
+        )
+
+        chosen = set(resolve_current_open_registration_ids())
+        self.assertIn(web2_new.id, chosen)
+        self.assertIn(master_new.id, chosen)
+        self.assertNotIn(web2_old.id, chosen)
+        self.assertNotIn(master_old.id, chosen)
+
+    def test_paid_participant_ids_for_registration_window_from_april_17(self):
+        from datetime import date, datetime
+
+        from apps.cohort.models import Course, Participant, Registration
+        from apps.cohort.helpers.portal import paid_participant_ids_for_registration_window
+        from django.utils import timezone
+        from utils.enums.models import RegistrationStatus
+
+        registration = Registration.objects.create(
+            name="Web3 Cohort XV",
+            is_open=True,
+            cohort="Cohort XV",
+        )
+        course = Course.objects.create(
+            name="Web3 Cohort XV",
+            description="d",
+            extra_info="e",
+            registration=registration,
+        )
+        in_window = Participant.objects.create(
+            name="In Window",
+            email="in-window@example.com",
+            wallet_address="0x1",
+            course=course,
+            registration=registration,
+            cohort="Cohort XV",
+            payment_status=True,
+            status=RegistrationStatus.ACCEPTED.value,
+        )
+        Participant.objects.filter(pk=in_window.pk).update(
+            created_at=timezone.make_aware(datetime(2026, 4, 18, 12, 0, 0))
+        )
+        too_old = Participant.objects.create(
+            name="Too Old",
+            email="too-old@example.com",
+            wallet_address="0x2",
+            course=course,
+            registration=registration,
+            cohort="Cohort XIV",
+            payment_status=True,
+            status=RegistrationStatus.ACCEPTED.value,
+        )
+        Participant.objects.filter(pk=too_old.pk).update(
+            created_at=timezone.make_aware(datetime(2026, 4, 10, 12, 0, 0))
+        )
+
+        qs = Participant.objects.select_related("course", "registration")
+        ids = paid_participant_ids_for_registration_window(
+            qs, registered_from=date(2026, 4, 17)
+        )
+        self.assertEqual(ids, [in_window.id])
+
+    def test_paid_participant_ids_for_cohorts_filters_correctly(self):
+        from apps.cohort.models import Course, Participant, Registration
+        from utils.enums.models import RegistrationStatus
+
+        registration = Registration.objects.create(
+            name="Web3 XIV",
+            is_open=True,
+            cohort="Cohort XIV",
+        )
+        course = Course.objects.create(
+            name="Web3 Cohort XIV",
+            description="d",
+            extra_info="e",
+            registration=registration,
+        )
+        paid = Participant.objects.create(
+            name="Paid Student",
+            email="paid-cohort@example.com",
+            wallet_address="0x1",
+            course=course,
+            registration=registration,
+            cohort="Cohort XIV",
+            payment_status=True,
+            status=RegistrationStatus.ACCEPTED.value,
+        )
+        Participant.objects.create(
+            name="Unpaid Student",
+            email="unpaid-cohort@example.com",
+            wallet_address="0x2",
+            course=course,
+            registration=registration,
+            cohort="Cohort XIV",
+            payment_status=False,
+            status=RegistrationStatus.ACCEPTED.value,
+        )
+
+        qs = Participant.objects.select_related("course", "registration")
+        ids = paid_participant_ids_for_cohorts(qs, ["Cohort XIV"])
+        self.assertEqual(ids, [paid.id])
 
     def test_auto_accept_on_payment_skips_zk_and_rejected(self):
         from utils.enums.models import RegistrationStatus

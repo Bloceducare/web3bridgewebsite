@@ -26,6 +26,7 @@ from .helpers.portal import (
     PORTAL_INVITE_VALIDATION_SKIP_REASONS,
     auto_accept_participant_on_payment,
     execute_portal_invite_bulk,
+    execute_portal_invite_for_paid_cohort,
     send_portal_invite_for_participant,
 )
 from .helpers.participant_backfill import autocorrect_participant_links
@@ -1559,7 +1560,7 @@ class PortalInviteViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
     general admin dashboard (same auth as approve / bulk-email admin operations).
     """
 
-    admin_actions = ["send", "send_bulk"]
+    admin_actions = ["send", "send_bulk", "send_cohort"]
 
     def _participant_queryset(self):
         return models.Participant.objects.select_related(
@@ -1620,6 +1621,60 @@ class PortalInviteViewSet(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
             summary["sent_count"],
             summary["skipped_count"],
             summary["failed_count"],
+        )
+        return requestUtils.success_response(
+            data=summary,
+            http_status=status.HTTP_200_OK,
+        )
+
+    @swagger_auto_schema(request_body=serializers.CohortPortalInviteSerializer)
+    @decorators.action(detail=False, methods=["post"], url_path="send-cohort")
+    def send_cohort(self, request):
+        """
+        Send portal invites to paid participants in the registration window.
+
+        Body (optional):
+        - ``registered_from``: default 2026-04-17 (participant.created_at).
+        - ``registered_to``: inclusive end date.
+        - ``cohort``: optional fuzzy filter on participant.cohort.
+        - ``dry_run``: ``true`` to list eligible IDs without sending.
+        """
+        serializer = serializers.CohortPortalInviteSerializer(data=request.data)
+        if not serializer.is_valid():
+            return requestUtils.error_response(
+                "Invalid request",
+                serializer.errors,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        cohort = (serializer.validated_data.get("cohort") or "").strip() or None
+        dry_run = bool(serializer.validated_data.get("dry_run"))
+        registered_from = serializer.validated_data.get("registered_from")
+        registered_to = serializer.validated_data.get("registered_to")
+
+        summary = execute_portal_invite_for_paid_cohort(
+            queryset=self._participant_queryset(),
+            cohort=cohort,
+            dry_run=dry_run,
+            registered_from=registered_from,
+            registered_to=registered_to,
+        )
+
+        if not summary.get("ok"):
+            return requestUtils.error_response(
+                summary.get("message") or "No participants matched",
+                summary,
+                http_status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        logger.info(
+            "Portal invite cohort: selection=%s dry_run=%s eligible=%s sent=%s skipped=%s failed=%s",
+            summary.get("selection"),
+            dry_run,
+            summary.get("eligible_count", 0),
+            summary.get("sent_count", 0),
+            summary.get("skipped_count", 0),
+            summary.get("failed_count", 0),
         )
         return requestUtils.success_response(
             data=summary,

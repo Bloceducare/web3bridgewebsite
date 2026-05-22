@@ -81,6 +81,35 @@ def _registration_matches_track(registration, track_key: str) -> bool:
     return True
 
 
+def resolve_current_open_registration_ids() -> list[int]:
+    """
+    Active intake registration IDs: newest ``is_open`` programme per track (web3/web2/zk/rust).
+
+    Older programmes often stay ``is_open=True`` in admin; this avoids pulling every
+    historical paid row linked to any open registration.
+    """
+    registration_model = apps.get_model("cohort", "Registration")
+    open_regs = list(
+        registration_model.objects.filter(is_open=True).order_by("-updated_at", "-id")
+    )
+    if not open_regs:
+        return []
+
+    chosen_ids: list[int] = []
+    seen_tracks: set[str] = set()
+    for registration in open_regs:
+        track_key = _course_track_key(
+            registration_name=registration.name or "",
+            cohort_label=registration.cohort or "",
+            course_name="",
+        )
+        if track_key in seen_tracks:
+            continue
+        seen_tracks.add(track_key)
+        chosen_ids.append(registration.id)
+    return chosen_ids
+
+
 def resolve_active_cohort_label(*, registration=None, course=None) -> str | None:
     """
     Resolve the cohort label from the current active intake when possible.

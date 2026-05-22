@@ -304,6 +304,10 @@ PORTAL_REQUEST_RETRY_STATUS_CODES = config(
     default="429,500,502,503,504",
     cast=Csv(cast=int),
 )
+# Paid portal invites: include participants registered on/after this date (participant.created_at).
+PORTAL_INVITE_REGISTERED_FROM = config(
+    "PORTAL_INVITE_REGISTERED_FROM", default="2026-04-17"
+)
 
 # _______________________Redis Cache Configuration_________________________
 # Redis connection for Koyeb deployment

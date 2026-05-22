@@ -852,3 +852,25 @@ class BulkPortalInviteSerializer(serializers.Serializer):
             attrs["participants"] = list(dict.fromkeys(resolved_ids))
 
         return attrs
+
+
+class CohortPortalInviteSerializer(serializers.Serializer):
+    registered_from = serializers.DateField(
+        required=False,
+        help_text="Paid participants registered on/after this date (participant.created_at).",
+    )
+    registered_to = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Optional inclusive end date for participant.created_at.",
+    )
+    cohort = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Optional fuzzy filter on participant.cohort text.",
+    )
+    dry_run = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="If true, return eligible paid participant IDs without sending emails.",
+    )
