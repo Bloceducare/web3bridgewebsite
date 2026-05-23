@@ -72,6 +72,8 @@ class PublishedAssessmentResponse(BaseModel):
 
 
 class StudentAssessmentListItemResponse(BaseModel):
+    """Published assessment summary for students — no question bodies or answer keys."""
+
     mentor_assessment_id: int
     course_id: int
     title: str

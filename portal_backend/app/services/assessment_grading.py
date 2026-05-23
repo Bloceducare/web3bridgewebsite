@@ -48,7 +48,7 @@ def normalize_answer(value: Any) -> str:
 
 
 def strip_answer_from_question(question: dict[str, Any]) -> dict[str, Any]:
-    blocked = {"answer"}
+    blocked = {"answer", "explanation"}
     return {
         key: value
         for key, value in question.items()
@@ -58,6 +58,27 @@ def strip_answer_from_question(question: dict[str, Any]) -> dict[str, Any]:
 
 def questions_for_student(questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [strip_answer_from_question(item) for item in questions]
+
+
+def breakdown_for_student_view(
+    breakdown: list[dict[str, Any]],
+    *,
+    result_release_mode: str,
+    result_status: str,
+) -> list[dict[str, Any]]:
+    """Remove answer keys from grading breakdown returned to students."""
+    show_correct = result_status == "graded" or (
+        result_release_mode == "immediate"
+        and result_status in {"submitted", "graded"}
+    )
+    sanitized: list[dict[str, Any]] = []
+    for item in breakdown:
+        row = dict(item)
+        row.pop("expected", None)
+        if not show_correct:
+            row["correct"] = None
+        sanitized.append(row)
+    return sanitized
 
 
 def serialize_questions(questions: list[Any]) -> list[dict[str, Any]]:

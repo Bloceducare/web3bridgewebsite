@@ -32,6 +32,7 @@ from app.schemas.assessments import (
 from app.services.assessment_grading import (
     SUBMISSION_GRACE_SECONDS,
     auto_grade_submission,
+    breakdown_for_student_view,
     questions_for_student,
     serialize_questions,
 )
@@ -284,6 +285,11 @@ class AssessmentService:
         await self.session.commit()
         await self.session.refresh(result)
 
+        student_breakdown = breakdown_for_student_view(
+            breakdown,
+            result_release_mode=assessment.result_release_mode,
+            result_status=result.status,
+        )
         return SubmitAssessmentResponse(
             result_id=result.id,
             mentor_assessment_id=assessment.id,
@@ -291,7 +297,7 @@ class AssessmentService:
             max_score=max_score,
             status=result.status,
             submitted_at=result.submitted_at,
-            breakdown=[QuestionGradeBreakdown(**item) for item in breakdown],
+            breakdown=[QuestionGradeBreakdown(**item) for item in student_breakdown],
         )
 
     async def mentor_grade_result(
@@ -377,15 +383,21 @@ class AssessmentService:
             if result.user_id != actor.id:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
-        breakdown = [
-            QuestionGradeBreakdown(**item)
-            for item in (result.grading or {}).get("breakdown", [])
-        ]
+        raw_breakdown = (result.grading or {}).get("breakdown", [])
+        if actor.role == UserRole.STUDENT.value:
+            raw_breakdown = breakdown_for_student_view(
+                raw_breakdown,
+                result_release_mode=assessment.result_release_mode,
+                result_status=result.status,
+            )
+        breakdown = [QuestionGradeBreakdown(**item) for item in raw_breakdown]
         return AssessmentResultDetailResponse(
             id=result.id,
             mentor_assessment_id=result.mentor_assessment_id,
             user_id=result.user_id,
-            score=result.score,
+            score=self._student_visible_score(assessment=assessment, result=result)
+            if actor.role == UserRole.STUDENT.value
+            else result.score,
             max_score=len(assessment.questions),
             status=result.status,
             started_at=result.started_at,
