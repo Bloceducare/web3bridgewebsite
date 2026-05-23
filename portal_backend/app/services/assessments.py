@@ -42,12 +42,19 @@ class AssessmentService:
     async def save_mentor_assessment(
         self,
         *,
-        actor: User,
+        actor: User | None,
         mentor_assessment_id: int,
         payload: SaveMentorAssessmentRequest,
+        bypass_mentor_access: bool = False,
     ) -> SaveMentorAssessmentResponse:
         row = await self._get_mentor_assessment(mentor_assessment_id)
-        await self._ensure_mentor_access(actor=actor, mentor_assessment=row)
+        if not bypass_mentor_access:
+            if actor is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Mentor access required",
+                )
+            await self._ensure_mentor_access(actor=actor, mentor_assessment=row)
 
         questions = serialize_questions(payload.questions)
         if payload.title is not None:

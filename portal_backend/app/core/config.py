@@ -71,6 +71,10 @@ class Settings(BaseSettings):
         default="change-me-internal-key",
         validation_alias=AliasChoices("INTERNAL_API_KEY", "PAYMENT_API_KEY"),
     )
+    AUTOMATION_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("AUTOMATION_API_KEY"),
+    )
     PORTAL_FRONTEND_URL: str = "https://portal.web3bridge.com"
 
     EMAIL_HOST: str = Field(default="smtp.gmail.com")
@@ -104,6 +108,11 @@ class Settings(BaseSettings):
         if errors:
             raise ValueError("; ".join(errors))
         return self
+
+    @property
+    def effective_automation_api_key(self) -> str:
+        """API key for automation clients (API-Key header); falls back to INTERNAL_API_KEY."""
+        return self.AUTOMATION_API_KEY or self.INTERNAL_API_KEY
 
     @property
     def postgres_dsn(self) -> str:

@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_active_user, get_current_verified_user
+from app.api.deps import (
+    AutomationAuth,
+    get_active_user_or_automation_api_key,
+    get_current_active_user,
+    get_current_verified_user,
+)
 from app.db.session import get_db_session
 from app.models.portal import User
 from app.schemas.assessments import (
@@ -25,17 +30,22 @@ router = APIRouter(tags=["Assessments"])
     response_model=SaveMentorAssessmentResponse,
     status_code=status.HTTP_200_OK,
     summary="Save mentor assessment questions",
+    description=(
+        "Authenticate with a Bearer access token (mentor/staff/admin) or an "
+        "automation API key via the API-Key header."
+    ),
 )
 async def save_mentor_assessment(
     mentor_assessment_id: int,
     payload: SaveMentorAssessmentRequest,
-    current_user: User = Depends(get_current_active_user),
+    auth: AutomationAuth = Depends(get_active_user_or_automation_api_key),
     db: AsyncSession = Depends(get_db_session),
 ) -> SaveMentorAssessmentResponse:
     return await AssessmentService(db).save_mentor_assessment(
-        actor=current_user,
+        actor=auth.user,
         mentor_assessment_id=mentor_assessment_id,
         payload=payload,
+        bypass_mentor_access=auth.via_api_key,
     )
 
 
