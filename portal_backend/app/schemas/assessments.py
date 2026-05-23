@@ -71,6 +71,26 @@ class PublishedAssessmentResponse(BaseModel):
     released_at: datetime | None = None
 
 
+class StudentAssessmentListItemResponse(BaseModel):
+    mentor_assessment_id: int
+    course_id: int
+    title: str
+    assessment_type: str
+    duration_minutes: int
+    due_at: datetime | None
+    total_questions: int
+    released_at: datetime
+    result_id: int | None = None
+    status: str
+    score: int | None = None
+    max_score: int
+    started_at: datetime | None = None
+    expires_at: datetime | None = None
+    submitted_at: datetime | None = None
+    can_start: bool
+    is_overdue: bool
+
+
 class StartAssessmentResponse(BaseModel):
     result_id: int
     mentor_assessment_id: int

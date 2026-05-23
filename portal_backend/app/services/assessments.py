@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import and_, nulls_last, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.portal import (
@@ -11,6 +11,7 @@ from app.models.portal import (
     AuditLog,
     Mentor,
     MentorAssessment,
+    ResultReleaseMode,
     StudentAssessmentStatus,
     User,
     UserRole,
@@ -24,6 +25,7 @@ from app.schemas.assessments import (
     SaveMentorAssessmentRequest,
     SaveMentorAssessmentResponse,
     StartAssessmentResponse,
+    StudentAssessmentListItemResponse,
     SubmitAssessmentRequest,
     SubmitAssessmentResponse,
 )
@@ -118,6 +120,50 @@ class AssessmentService:
             total_questions=row.total_questions,
             released_at=row.released_at,
         )
+
+    async def list_student_assessments(
+        self,
+        *,
+        student: User,
+        course_id: int | None = None,
+    ) -> list[StudentAssessmentListItemResponse]:
+        self._ensure_student_role(student)
+        course_ids = await self._get_student_course_ids(student)
+        if not course_ids:
+            return []
+        if course_id is not None:
+            if course_id not in course_ids:
+                return []
+            course_ids = [course_id]
+
+        statement = (
+            select(MentorAssessment, AssessmentResult)
+            .outerjoin(
+                AssessmentResult,
+                and_(
+                    AssessmentResult.mentor_assessment_id == MentorAssessment.id,
+                    AssessmentResult.user_id == student.id,
+                ),
+            )
+            .where(
+                MentorAssessment.released_at.is_not(None),
+                MentorAssessment.course_id.in_(course_ids),
+            )
+            .order_by(
+                nulls_last(MentorAssessment.due_at.asc()),
+                MentorAssessment.released_at.desc(),
+            )
+        )
+        rows = (await self.session.execute(statement)).all()
+        now = datetime.now(UTC)
+        return [
+            self._student_assessment_list_item(
+                assessment=assessment,
+                result=result,
+                now=now,
+            )
+            for assessment, result in rows
+        ]
 
     async def start_assessment(
         self,
@@ -360,6 +406,126 @@ class AssessmentService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Student access required",
             )
+
+    async def _get_student_course_ids(self, student: User) -> list[int]:
+        statement = text(
+            """
+            SELECT DISTINCT p.course_id
+            FROM cohort_participant AS p
+            WHERE LOWER(TRIM(p.email)) = :email
+              AND p.course_id IS NOT NULL
+            """
+        )
+        result = await self.session.execute(
+            statement,
+            {"email": student.email.lower().strip()},
+        )
+        return [int(row[0]) for row in result.all()]
+
+    @classmethod
+    def _student_assessment_list_item(
+        cls,
+        *,
+        assessment: MentorAssessment,
+        result: AssessmentResult | None,
+        now: datetime,
+    ) -> StudentAssessmentListItemResponse:
+        if assessment.released_at is None:
+            raise ValueError("released_at is required for published assessments")
+        status_value = (
+            result.status
+            if result is not None
+            else StudentAssessmentStatus.NOT_STARTED.value
+        )
+        return StudentAssessmentListItemResponse(
+            mentor_assessment_id=assessment.id,
+            course_id=assessment.course_id,
+            title=assessment.title,
+            assessment_type=assessment.assessment_type,
+            duration_minutes=assessment.duration_minutes,
+            due_at=assessment.due_at,
+            total_questions=assessment.total_questions,
+            released_at=assessment.released_at,
+            result_id=result.id if result is not None else None,
+            status=status_value,
+            score=cls._student_visible_score(assessment=assessment, result=result),
+            max_score=assessment.total_questions,
+            started_at=result.started_at if result is not None else None,
+            expires_at=result.expires_at if result is not None else None,
+            submitted_at=result.submitted_at if result is not None else None,
+            can_start=cls._can_start_assessment(
+                assessment=assessment,
+                result=result,
+                now=now,
+            ),
+            is_overdue=cls._is_assessment_overdue(
+                assessment=assessment,
+                status_value=status_value,
+                now=now,
+            ),
+        )
+
+    @staticmethod
+    def _student_visible_score(
+        *,
+        assessment: MentorAssessment,
+        result: AssessmentResult | None,
+    ) -> int | None:
+        if result is None or result.score is None:
+            return None
+        if result.status not in {
+            StudentAssessmentStatus.SUBMITTED.value,
+            StudentAssessmentStatus.GRADED.value,
+        }:
+            return None
+        if assessment.result_release_mode == ResultReleaseMode.MENTOR_CONTROLLED.value:
+            if result.status != StudentAssessmentStatus.GRADED.value:
+                return None
+        return result.score
+
+    @staticmethod
+    def _is_assessment_overdue(
+        *,
+        assessment: MentorAssessment,
+        status_value: str,
+        now: datetime,
+    ) -> bool:
+        if assessment.due_at is None:
+            return False
+        if status_value in {
+            StudentAssessmentStatus.SUBMITTED.value,
+            StudentAssessmentStatus.GRADED.value,
+        }:
+            return False
+        return now > assessment.due_at
+
+    @staticmethod
+    def _can_start_assessment(
+        *,
+        assessment: MentorAssessment,
+        result: AssessmentResult | None,
+        now: datetime,
+    ) -> bool:
+        status_value = (
+            result.status
+            if result is not None
+            else StudentAssessmentStatus.NOT_STARTED.value
+        )
+        if status_value in {
+            StudentAssessmentStatus.SUBMITTED.value,
+            StudentAssessmentStatus.GRADED.value,
+        }:
+            return False
+        if assessment.due_at and now > assessment.due_at:
+            return False
+        if (
+            status_value == StudentAssessmentStatus.IN_PROGRESS.value
+            and result is not None
+            and result.expires_at
+            and now > result.expires_at
+        ):
+            return False
+        return True
 
     async def _ensure_mentor_access(self, *, actor: User, mentor_assessment: MentorAssessment) -> None:
         if actor.role in {

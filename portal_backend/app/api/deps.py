@@ -2,12 +2,7 @@ import secrets
 from dataclasses import dataclass
 
 from fastapi import Depends, Header, HTTPException, status
-from fastapi.security import (
-    APIKeyHeader,
-    HTTPAuthorizationCredentials,
-    HTTPBearer,
-    OAuth2PasswordBearer,
-)
+from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -16,8 +11,11 @@ from app.db.session import get_db_session
 from app.models.portal import AccountState, User, UserRole
 from app.services.auth import AuthService
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-http_bearer = HTTPBearer(auto_error=False)
+bearer_scheme = HTTPBearer(
+    scheme_name="BearerAuth",
+    description="Paste your JWT access token from POST /api/v1/auth/login",
+)
+http_bearer_optional = HTTPBearer(auto_error=False)
 automation_api_key_header = APIKeyHeader(name="API-Key", auto_error=False)
 settings = get_settings()
 
@@ -29,10 +27,10 @@ class AutomationAuth:
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db_session),
 ) -> User:
-    payload = decode_token(token, expected_type=TokenType.ACCESS)
+    payload = decode_token(credentials.credentials, expected_type=TokenType.ACCESS)
     service = AuthService(db)
     user = await service.get_user_by_id(int(payload["sub"]))
     if user is None:
@@ -102,7 +100,7 @@ def _is_valid_automation_api_key(api_key: str) -> bool:
 
 
 async def get_active_user_or_automation_api_key(
-    credentials: HTTPAuthorizationCredentials | None = Depends(http_bearer),
+    credentials: HTTPAuthorizationCredentials | None = Depends(http_bearer_optional),
     api_key: str | None = Depends(automation_api_key_header),
     db: AsyncSession = Depends(get_db_session),
 ) -> AutomationAuth:

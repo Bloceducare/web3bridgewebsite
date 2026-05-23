@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import (
@@ -17,6 +17,7 @@ from app.schemas.assessments import (
     SaveMentorAssessmentRequest,
     SaveMentorAssessmentResponse,
     StartAssessmentResponse,
+    StudentAssessmentListItemResponse,
     SubmitAssessmentRequest,
     SubmitAssessmentResponse,
 )
@@ -63,6 +64,28 @@ async def publish_mentor_assessment(
     return await AssessmentService(db).publish_assessment(
         actor=current_user,
         mentor_assessment_id=mentor_assessment_id,
+    )
+
+
+@router.get(
+    "/mentor-assessments/my",
+    response_model=list[StudentAssessmentListItemResponse],
+    status_code=status.HTTP_200_OK,
+    summary="List published assessments for the authenticated student",
+    description=(
+        "Returns published mentor assessments for courses the student is enrolled in "
+        "(via cohort participant records), including attempt status and whether they "
+        "can start. Optionally filter by course_id."
+    ),
+)
+async def list_my_assessments(
+    course_id: int | None = Query(default=None, gt=0),
+    current_user: User = Depends(get_current_verified_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[StudentAssessmentListItemResponse]:
+    return await AssessmentService(db).list_student_assessments(
+        student=current_user,
+        course_id=course_id,
     )
 
 
