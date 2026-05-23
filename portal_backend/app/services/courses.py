@@ -2,7 +2,11 @@ from fastapi import HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.models.portal import User
+
+settings = get_settings()
+_portal_schema = settings.POSTGRES_SCHEMA
 from app.schemas.courses import (
     AdminCourseSummaryResponse,
     StudentCourseResponse,
@@ -78,14 +82,14 @@ class CoursesService:
         cohort = cohort_result.scalar_one_or_none()
 
         form_statement = text(
-            """
+            f"""
             SELECT
                 g.id,
                 g.title,
                 g.form_url,
                 g.cohort,
                 g.is_active
-            FROM guarantor_forms AS g
+            FROM {_portal_schema}.guarantor_forms AS g
             WHERE
                 g.is_active = TRUE
                 AND (
