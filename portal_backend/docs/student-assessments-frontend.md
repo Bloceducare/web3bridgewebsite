@@ -206,3 +206,9 @@ Returns `course_id` values you can pass to `?course_id=` on the list endpoint.
 | `422` | Validation (body/query) |
 
 Full OpenAPI: `/docs` on the portal API host.
+
+---
+
+## Discord invite (students)
+
+See [`student-discord-invite-frontend.md`](student-discord-invite-frontend.md).

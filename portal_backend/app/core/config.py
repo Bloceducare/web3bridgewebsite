@@ -77,6 +77,16 @@ class Settings(BaseSettings):
     )
     PORTAL_FRONTEND_URL: str = "https://portal.web3bridge.com"
 
+    DISCORD_BOT_API_URL: str = Field(
+        default="https://dreadful-addia-web3bridge-84cd21c2.koyeb.app",
+    )
+    DISCORD_BOT_API_KEY: str = Field(default="")
+    DISCORD_STUDENT_ROLE: str = Field(
+        default="cohort-xv",
+        validation_alias=AliasChoices("DISCORD_STUDENT_ROLE", "DISCORD_COHORT_ROLE"),
+    )
+    DISCORD_INVITE_CATEGORY_ID: str = Field(default="")
+
     EMAIL_HOST: str = Field(default="smtp.gmail.com")
     EMAIL_PORT: int = Field(default=587)
     EMAIL_HOST_USER: str = Field(default="")

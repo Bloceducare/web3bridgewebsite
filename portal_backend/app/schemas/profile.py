@@ -21,7 +21,17 @@ class MyProfileResponse(BaseModel):
 class UpdateMyProfileRequest(BaseModel):
     phone: str | None = Field(default=None, max_length=20)
     discord_id: str | None = Field(default=None, max_length=100)
-    discord_invite_link: str | None = Field(default=None, max_length=500)
-    discord_email: EmailStr | None = None
     wallet_address: str | None = Field(default=None, max_length=255)
     bio: str | None = None
+
+
+class GenerateMyDiscordInviteRequest(BaseModel):
+    discord_email: EmailStr
+
+
+class GenerateMyDiscordInviteResponse(BaseModel):
+    invite_url: str
+    invite_code: str | None = None
+    discord_email: str
+    replaced_previous_invite: bool = False
+    message: str
