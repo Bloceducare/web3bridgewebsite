@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 6440 
     REFRESH_TOKEN_EXPIRE_DAYS: int = 90
-    ACTIVATION_TOKEN_EXPIRE_HOURS: int = 72
+    ACTIVATION_TOKEN_EXPIRE_HOURS: int = 168  # 7 days
     PASSWORD_RESET_TOKEN_EXPIRE_HOURS: int = 1
     INTERNAL_API_KEY: str = Field(
         default="change-me-internal-key",

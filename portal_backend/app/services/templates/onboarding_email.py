@@ -71,7 +71,7 @@ ONBOARDING_EMAIL_HTML = """\
             <a href="{activation_url}">{activation_url}</a>
         </p>
         <p class="note">
-            This link expires in 72 hours. If it expires, contact support for a new one.
+            This link expires in 7 days. If it expires, contact support for a new one.
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
         <p>With Love,</p>
