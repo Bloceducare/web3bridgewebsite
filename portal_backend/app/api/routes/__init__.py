@@ -4,6 +4,7 @@ from .courses import router as courses_router
 from .dashboard import router as dashboard_router
 from .discord import router as discord_router
 from .health import router as health_router
+from .mentor import router as mentor_router
 from .notifications import router as notifications_router
 from .onboarding import router as onboarding_router
 from .portal_management import router as portal_management_router
@@ -19,6 +20,7 @@ __all__ = [
     "dashboard_router",
     "discord_router",
     "health_router",
+    "mentor_router",
     "notifications_router",
     "onboarding_router",
     "portal_management_router",

@@ -26,8 +26,10 @@ from app.schemas.notifications import (
     NotificationItemResponse,
     NotificationSummaryResponse,
 )
+from app.schemas.mentor import MentorStudentResponse
 from app.schemas.updates import StudentUpdateResponse
 from app.services.courses import CoursesService
+from app.services.mentor import MentorPortalService
 from app.services.dashboard import DashboardService
 from app.services.discord import DiscordService
 from app.services.notifications import NotificationsService
@@ -742,3 +744,164 @@ def test_invite_student_by_email_success_for_admin() -> None:
     assert body["user_id"] == 100
     assert body["email"] == "newstudent@example.com"
     assert body["portal_invite_created"] is True
+
+
+def test_mentor_course_summary_requires_mentor_role() -> None:
+    staff = build_user(user_id=70, role="staff")
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = lambda: staff
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/mentor/courses/summary")
+    finally:
+        clear_overrides()
+    assert response.status_code == 403
+
+
+def test_mentor_course_summary_returns_assigned_summaries() -> None:
+    mentor_user = build_user(user_id=71, role="mentor")
+
+    async def override_mentor_user() -> User:
+        return mentor_user
+
+    async def list_course_summaries(
+        _: MentorPortalService, *, actor: User
+    ) -> list[AdminCourseSummaryResponse]:
+        assert actor.id == mentor_user.id
+        return [
+            AdminCourseSummaryResponse(
+                course_id=5,
+                course_name="Web3 Basics",
+                total_students=20,
+                accepted_students=18,
+                paid_students=15,
+            )
+        ]
+
+    original = MentorPortalService.list_course_summaries
+    MentorPortalService.list_course_summaries = list_course_summaries
+    app.dependency_overrides[deps.get_current_mentor_user] = override_mentor_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/mentor/courses/summary")
+    finally:
+        MentorPortalService.list_course_summaries = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]["course_id"] == 5
+
+
+def test_mentor_create_update_broadcasts_to_course() -> None:
+    mentor_user = build_user(user_id=72, role="mentor")
+
+    async def override_mentor_user() -> User:
+        return mentor_user
+
+    async def create_course_update(
+        _: MentorPortalService, *, actor: User, payload: object
+    ) -> StudentUpdateResponse:
+        assert actor.id == mentor_user.id
+        assert getattr(payload, "course_id") == 5
+        return StudentUpdateResponse(
+            id=200,
+            title="Week 1",
+            body="Read chapter 1",
+            target_type="course",
+            target_ref="5",
+            is_published=True,
+            send_in_app=True,
+            send_email=False,
+            published_at=datetime.now(UTC),
+            created_by=actor.id,
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+            read_at=None,
+        )
+
+    original = MentorPortalService.create_course_update
+    MentorPortalService.create_course_update = create_course_update
+    app.dependency_overrides[deps.get_current_mentor_user] = override_mentor_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.post(
+            "/api/v1/mentor/updates",
+            json={
+                "course_id": 5,
+                "title": "Week 1",
+                "body": "Read chapter 1",
+                "is_published": True,
+            },
+        )
+    finally:
+        MentorPortalService.create_course_update = original
+        clear_overrides()
+
+    assert response.status_code == 201
+    assert response.json()["target_type"] == "course"
+
+
+def test_mentor_students_list_returns_enrollments() -> None:
+    mentor_user = build_user(user_id=73, role="mentor")
+
+    async def override_mentor_user() -> User:
+        return mentor_user
+
+    async def list_students(
+        _: MentorPortalService, *, actor: User, course_id: int | None
+    ) -> list[MentorStudentResponse]:
+        assert actor.id == mentor_user.id
+        assert course_id == 5
+        return [
+            MentorStudentResponse(
+                participant_name="Ada Lovelace",
+                email="ada@example.com",
+                course_id=5,
+                course_name="Web3 Basics",
+                cohort="Cohort XIV",
+                approval_status="ACCEPTED",
+                payment_status=True,
+                portal_user_id=10,
+                account_state="active",
+                source_updated_at=datetime.now(UTC),
+            )
+        ]
+
+    original = MentorPortalService.list_students
+    MentorPortalService.list_students = list_students
+    app.dependency_overrides[deps.get_current_mentor_user] = override_mentor_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/mentor/students?course_id=5")
+    finally:
+        MentorPortalService.list_students = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload[0]["email"] == "ada@example.com"
+
+
+def test_invite_portal_user_rejects_course_id_for_non_mentor() -> None:
+    admin = build_user(user_id=74, role="system_admin")
+
+    async def override_current_admin() -> User:
+        return admin
+
+    app.dependency_overrides[deps.get_current_admin_user] = override_current_admin
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.post(
+            "/api/v1/admin/portal/users/invite",
+            json={
+                "email": "admin2@example.com",
+                "full_name": "General Admin",
+                "role": "general_admin",
+                "course_id": 3,
+            },
+        )
+    finally:
+        clear_overrides()
+
+    assert response.status_code == 422

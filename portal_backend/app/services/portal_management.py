@@ -94,6 +94,7 @@ class PortalManagementService:
                 user.account_state = AccountState.INVITED.value
             user.email_verified = False
 
+        mentor_row: Mentor | None = None
         if payload.role.value == UserRole.MENTOR.value:
             mentor_row = await self._get_mentor_by_user_id(user.id)
             if mentor_row is None:
@@ -105,11 +106,24 @@ class PortalManagementService:
                     is_active=True,
                 )
                 self.session.add(mentor_row)
+                await self.session.flush()
             else:
                 mentor_row.full_name = payload.full_name
                 mentor_row.email = normalized_email
                 mentor_row.bio = payload.bio
                 mentor_row.is_active = True
+
+            if payload.course_id is not None:
+                result = await self.session.execute(
+                    select(MentorCourseMap).where(
+                        MentorCourseMap.mentor_id == mentor_row.id,
+                        MentorCourseMap.course_id == payload.course_id,
+                    )
+                )
+                if result.scalar_one_or_none() is None:
+                    self.session.add(
+                        MentorCourseMap(mentor_id=mentor_row.id, course_id=payload.course_id)
+                    )
 
         activation_token = await self.auth_service.create_activation_token_for_user(user=user)
         query = urlencode({"token": activation_token})

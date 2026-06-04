@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import HTTPException, status
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.portal import (
@@ -152,13 +152,19 @@ class UpdatesService:
         return MessageResponse(detail="Update deleted successfully")
 
     async def list_my_updates(self, *, user: User) -> list[StudentUpdateResponse]:
+        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
         if not hasattr(self.session, "execute"):
             profile = await self._get_profile_by_user_id(user.id)
             updates = await self._list_published_updates()
             visible_updates = [
                 item
                 for item in updates
-                if self._update_applies_to_user(student_update=item, user=user, profile=profile)
+                if self._update_applies_to_user(
+                    student_update=item,
+                    user=user,
+                    profile=profile,
+                    enrolled_course_ids=enrolled_course_ids,
+                )
             ]
             responses: list[StudentUpdateResponse] = []
             for item in visible_updates:
@@ -184,6 +190,15 @@ class UpdatesService:
                 and_(
                     StudentUpdate.target_type == UpdateTargetType.COHORT.value,
                     StudentUpdate.target_ref == profile.cohort,
+                )
+            )
+        if enrolled_course_ids:
+            visibility_filters.append(
+                and_(
+                    StudentUpdate.target_type == UpdateTargetType.COURSE.value,
+                    StudentUpdate.target_ref.in_(
+                        [str(course_id) for course_id in enrolled_course_ids]
+                    ),
                 )
             )
 
@@ -216,11 +231,13 @@ class UpdatesService:
         update_id: int,
     ) -> MarkStudentUpdateReadResponse:
         profile = await self._get_profile_by_user_id(user.id)
+        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
         student_update = await self._get_update_by_id(update_id)
         if not student_update.is_published or not student_update.send_in_app or not self._update_applies_to_user(
             student_update=student_update,
             user=user,
             profile=profile,
+            enrolled_course_ids=enrolled_course_ids,
         ):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Update not found")
 
@@ -284,6 +301,7 @@ class UpdatesService:
         student_update: StudentUpdate,
         user: User,
         profile: StudentProfile | None,
+        enrolled_course_ids: set[int] | None = None,
     ) -> bool:
         if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
             return True
@@ -291,7 +309,31 @@ class UpdatesService:
             return student_update.target_ref == str(user.id)
         if student_update.target_type == UpdateTargetType.COHORT.value:
             return profile is not None and student_update.target_ref == profile.cohort
+        if student_update.target_type == UpdateTargetType.COURSE.value:
+            if not student_update.target_ref:
+                return False
+            try:
+                course_id = int(student_update.target_ref)
+            except ValueError:
+                return False
+            return course_id in (enrolled_course_ids or set())
         return False
+
+    async def _list_enrolled_course_ids_for_email(self, email: str) -> set[int]:
+        if not hasattr(self.session, "execute"):
+            return set()
+        statement = text(
+            """
+            SELECT DISTINCT p.course_id
+            FROM cohort_participant AS p
+            WHERE LOWER(TRIM(p.email)) = :email
+              AND p.course_id IS NOT NULL
+            """
+        )
+        result = await self.session.execute(
+            statement, {"email": email.lower().strip()}
+        )
+        return {int(course_id) for course_id in result.scalars().all() if course_id is not None}
 
     @staticmethod
     def _build_update_response(
@@ -380,6 +422,25 @@ class UpdatesService:
                     User.role == UserRole.STUDENT.value,
                     StudentProfile.cohort == student_update.target_ref,
                 )
+            )
+            return [email for email in result.scalars().all() if email]
+
+        if student_update.target_type == UpdateTargetType.COURSE.value:
+            if not student_update.target_ref:
+                return []
+            try:
+                course_id = int(student_update.target_ref)
+            except ValueError:
+                return []
+            result = await self.session.execute(
+                text(
+                    """
+                    SELECT DISTINCT LOWER(TRIM(p.email)) AS email
+                    FROM cohort_participant AS p
+                    WHERE p.course_id = :course_id
+                    """
+                ),
+                {"course_id": course_id},
             )
             return [email for email in result.scalars().all() if email]
 

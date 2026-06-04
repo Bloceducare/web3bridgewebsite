@@ -8,7 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.security import TokenType, decode_token
 from app.db.session import get_db_session
-from app.models.portal import AccountState, User, UserRole
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.portal import AccountState, Mentor, User, UserRole
 from app.services.auth import AuthService
 
 bearer_scheme = HTTPBearer(
@@ -78,6 +81,27 @@ async def get_current_admin_user(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required",
+        )
+    return current_user
+
+
+async def get_current_mentor_user(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> User:
+    if current_user.role != UserRole.MENTOR.value:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Mentor access required",
+        )
+    result = await db.execute(
+        select(Mentor).where(Mentor.user_id == current_user.id, Mentor.is_active.is_(True))
+    )
+    mentor = result.scalar_one_or_none()
+    if mentor is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Active mentor profile required",
         )
     return current_user
 

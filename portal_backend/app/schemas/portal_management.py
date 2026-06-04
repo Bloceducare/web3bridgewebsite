@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, model_validator
 
 from app.models.portal import (
     AssessmentType,
@@ -143,6 +143,17 @@ class InvitePortalUserRequest(BaseModel):
     full_name: str = Field(min_length=1, max_length=255)
     role: UserRole
     bio: str | None = None
+    course_id: int | None = Field(
+        default=None,
+        gt=0,
+        description="When inviting a mentor, assign this course on activation",
+    )
+
+    @model_validator(mode="after")
+    def validate_mentor_course(self) -> "InvitePortalUserRequest":
+        if self.course_id is not None and self.role != UserRole.MENTOR:
+            raise ValueError("course_id is only supported when inviting a mentor")
+        return self
 
 
 class InviteStudentByEmailRequest(BaseModel):

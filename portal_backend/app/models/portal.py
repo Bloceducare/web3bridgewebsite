@@ -43,6 +43,7 @@ class ApprovalStatus(StrEnum):
 class UpdateTargetType(StrEnum):
     INDIVIDUAL = "individual"
     COHORT = "cohort"
+    COURSE = "course"
     ALL_ACTIVE = "all_active"
 
 
