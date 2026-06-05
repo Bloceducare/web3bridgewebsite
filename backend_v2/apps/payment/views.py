@@ -71,12 +71,18 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
     discount = models.DiscountCode
     queryset = models.DiscountCode.objects.all().order_by('-created_at')
     serializer_class = serializers.DiscountCodeSerializer
-    admin_actions = ["all", "generate", "generate_custom", "retrieve", "destroy", "mark_usage"]
+    admin_actions = ["all", "generate", "generate_custom", "retrieve", "destroy"]
 
     def get_permissions(self):
-        if self.action == 'validate':
+        if self.action in ('validate', 'mark_usage'):
             return []
         return super().get_permissions()
+
+    def check_api_key(self, request):
+        api_key = request.headers.get('API-Key')
+        if not api_key or api_key != API_KEY:
+            return False
+        return True
 
     @swagger_auto_schema(
         request_body=serializers.GenerateCodeInputSerializer,
@@ -278,6 +284,11 @@ class DiscountCodeViewset(GuestReadAllWriteAdminOnlyPermissionMixin, viewsets.Vi
     @decorators.action(detail=False, methods=["post"])
     def mark_usage(self, request):
         """Mark a discount code as used by a specific user"""
+        if not self.check_api_key(request):
+            return Response(
+                {"error": "Invalid or missing API key"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         input_serializer = serializers.MarkCodeUsageInputSerializer(data=request.data)
         if not input_serializer.is_valid():
             return requestUtils.error_response(
