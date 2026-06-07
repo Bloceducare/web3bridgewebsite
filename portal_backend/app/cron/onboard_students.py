@@ -78,6 +78,7 @@ async def _fetch_paid_non_zk_students(session: AsyncSession, *, cursor: str | No
             p.name AS full_name,
             p.cohort AS cohort,
             c.name AS course_name,
+            c.start_date AS course_start_date,
             p.number AS phone,
             p.wallet_address AS wallet_address,
             p.status AS source_status,
@@ -226,10 +227,14 @@ async def _onboard_student(
 
         activation_url = _build_activation_url(token)
         try:
+            class_start_date = student.get("course_start_date")
+            if isinstance(class_start_date, datetime):
+                class_start_date = class_start_date.date()
             await email_service.send_onboarding_email(
                 to_email=email,
                 student_name=full_name,
                 activation_url=activation_url,
+                class_start_date=class_start_date,
             )
         except Exception:
             logger.exception("Failed to send onboarding email to %s", email)

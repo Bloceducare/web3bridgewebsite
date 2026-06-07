@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from email.message import EmailMessage
 
 import aiosmtplib
@@ -78,12 +79,15 @@ class EmailService:
         to_email: str,
         student_name: str,
         activation_url: str,
+        class_start_date: date | None = None,
     ) -> bool:
         """Send the portal onboarding/activation email to a student."""
         from app.services.templates.onboarding_email import render_onboarding_email
 
         subject, html_body = render_onboarding_email(
-            name=student_name, activation_url=activation_url
+            name=student_name,
+            activation_url=activation_url,
+            class_start_date=class_start_date,
         )
         return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
 

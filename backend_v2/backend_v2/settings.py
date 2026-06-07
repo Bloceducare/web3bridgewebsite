@@ -308,6 +308,7 @@ PORTAL_REQUEST_RETRY_STATUS_CODES = config(
 PORTAL_INVITE_REGISTERED_FROM = config(
     "PORTAL_INVITE_REGISTERED_FROM", default="2026-04-17"
 )
+PORTAL_DB_SCHEMA = config("PORTAL_DB_SCHEMA", default="portal")
 
 # _______________________Redis Cache Configuration_________________________
 # Redis connection for Koyeb deployment

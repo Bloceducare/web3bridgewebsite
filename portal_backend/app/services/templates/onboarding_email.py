@@ -1,4 +1,12 @@
+from datetime import date
+
 ONBOARDING_EMAIL_SUBJECT = "Welcome to the Web3Bridge Student Portal — Set Up Your Account"
+
+CLASS_START_BLOCK = """\
+        <p style="font-size: 1.05rem; margin: 20px 0;">
+            <strong>Class starts {class_start_date}.</strong>
+        </p>
+"""
 
 ONBOARDING_EMAIL_HTML = """\
 <!DOCTYPE html>
@@ -54,7 +62,7 @@ ONBOARDING_EMAIL_HTML = """\
     <div class="container">
         <h1>Hello, {name}!</h1>
         <p>Congratulations on your successful registration with Web3Bridge!</p>
-        <p>Your <strong>Student Portal</strong> account has been created. The portal is your
+{class_start_block}        <p>Your <strong>Student Portal</strong> account has been created. The portal is your
            personal hub for tracking updates, managing your profile, and staying connected
            with your cohort.</p>
         <p>To get started, click the button below to set up your password and activate
@@ -82,7 +90,36 @@ ONBOARDING_EMAIL_HTML = """\
 """
 
 
-def render_onboarding_email(*, name: str, activation_url: str) -> tuple[str, str]:
+def format_class_start_date(value: date | str | None) -> str | None:
+    """Format a date as e.g. 'July 6th' for student-facing emails."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = date.fromisoformat(value)
+    day = value.day
+    if 11 <= day <= 13:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+    return f"{value.strftime('%B')} {day}{suffix}"
+
+
+def render_onboarding_email(
+    *,
+    name: str,
+    activation_url: str,
+    class_start_date: date | str | None = None,
+) -> tuple[str, str]:
     """Return (subject, html_body) for the portal onboarding email."""
-    html_body = ONBOARDING_EMAIL_HTML.format(name=name, activation_url=activation_url)
+    formatted_start = format_class_start_date(class_start_date)
+    class_start_block = (
+        CLASS_START_BLOCK.format(class_start_date=formatted_start)
+        if formatted_start
+        else ""
+    )
+    html_body = ONBOARDING_EMAIL_HTML.format(
+        name=name,
+        activation_url=activation_url,
+        class_start_block=class_start_block,
+    )
     return ONBOARDING_EMAIL_SUBJECT, html_body

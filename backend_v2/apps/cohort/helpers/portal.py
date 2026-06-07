@@ -6,11 +6,18 @@ from datetime import date, datetime, time as dt_time, timedelta
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db import connection
+from django.db.models import F, Q
 from django.utils import timezone
 from utils.enums.models import RegistrationStatus
 
 DEFAULT_PORTAL_INVITE_REGISTERED_FROM = date(2026, 4, 17)
+
+PORTAL_ACCOUNT_SKIP_STATES = frozenset({"active", "suspended", "deactivated"})
+_PORTAL_INVITE_ACCEPTED_STATUSES = (
+    RegistrationStatus.ACCEPTED.value,
+    "APPROVED",
+)
 
 logger = logging.getLogger(__name__)
 
@@ -139,6 +146,16 @@ def portal_invite_skip_message(reason: str) -> str:
     return messages.get(reason, f"Cannot send portal invite ({reason}).")
 
 
+def validate_participant_paid_for_portal_invite(participant) -> tuple[bool, str]:
+    """Bulk cohort invites: paid + email only (no approval/status checks)."""
+    email = (getattr(participant, "email", None) or "").strip()
+    if not email:
+        return False, "missing_email"
+    if not getattr(participant, "payment_status", False):
+        return False, "unpaid"
+    return True, ""
+
+
 def validate_participant_for_portal_invite(participant) -> tuple[bool, str]:
     """
     Return (eligible, reason) for sending a portal onboarding invite.
@@ -168,7 +185,7 @@ def validate_participant_for_portal_invite(participant) -> tuple[bool, str]:
         return False, "rejected"
 
     if is_zk_course_name(course_name):
-        if status_value not in ("ACCEPTED", "APPROVED"):
+        if status_value not in _PORTAL_INVITE_ACCEPTED_STATUSES:
             return False, "not_accepted"
 
     return True, ""
@@ -225,6 +242,9 @@ def create_portal_onboarding_invite(participant, *, delivery_email: str | None =
         "source_email": participant.email,
         "approval_status": normalize_approval_status(getattr(participant, "status", None)),
     }
+    course_start = getattr(course, "start_date", None) if course is not None else None
+    if course_start:
+        payload["class_start_date"] = course_start.isoformat()
 
     for attempt in range(max_retries + 1):
         remaining = deadline - time.monotonic()
@@ -313,6 +333,7 @@ def send_portal_invite_for_participant(
     *,
     delivery_email: str | None = None,
     skip_validation: bool = False,
+    paid_only: bool = False,
 ) -> dict:
     """
     Validate and trigger a portal onboarding invite for one participant.
@@ -323,11 +344,12 @@ def send_portal_invite_for_participant(
     participant_id = getattr(participant, "id", None)
     email = (getattr(participant, "email", None) or "").strip()
 
-    eligible, skip_reason = (
-        (True, "")
-        if skip_validation
-        else validate_participant_for_portal_invite(participant)
-    )
+    if skip_validation:
+        eligible, skip_reason = True, ""
+    elif paid_only:
+        eligible, skip_reason = validate_participant_paid_for_portal_invite(participant)
+    else:
+        eligible, skip_reason = validate_participant_for_portal_invite(participant)
     if not eligible:
         message = portal_invite_skip_message(skip_reason)
         return {
@@ -468,6 +490,225 @@ def _paid_participant_base(queryset):
     )
 
 
+def _paid_only_participant_base(queryset):
+    """Cohort bulk invites: payment_status only."""
+    return queryset.filter(payment_status=True)
+
+
+def _portal_invite_participant_base(queryset):
+    """Paid, accepted participants eligible for portal onboarding."""
+    return _paid_participant_base(queryset).filter(status__in=_PORTAL_INVITE_ACCEPTED_STATUSES)
+
+
+def _portal_db_schema() -> str:
+    return (getattr(settings, "PORTAL_DB_SCHEMA", None) or "portal").strip() or "portal"
+
+
+def get_portal_student_states_by_email(emails: list[str]) -> dict[str, dict[str, str | None]]:
+    """
+    Look up portal student account state by email (shared Postgres ``portal`` schema).
+
+    Returns ``email -> {account_state, onboarding_status, role}``.
+    On SQLite/local dev without portal tables, returns an empty dict.
+    """
+    normalized = list(dict.fromkeys(email.lower().strip() for email in emails if email))
+    if not normalized:
+        return {}
+
+    schema = _portal_db_schema()
+    sql = f"""
+        SELECT
+            LOWER(TRIM(u.email)) AS email,
+            u.account_state,
+            u.role,
+            sp.onboarding_status
+        FROM {schema}.users AS u
+        LEFT JOIN {schema}.student_profiles AS sp ON sp.user_id = u.id
+        WHERE LOWER(TRIM(u.email)) = ANY(%s)
+          AND u.role = 'student'
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [normalized])
+            rows = cursor.fetchall()
+    except Exception:
+        logger.exception(
+            "Portal invite pre-filter skipped: could not read %s.users (is PORTAL_DB_SCHEMA correct?)",
+            schema,
+        )
+        return {}
+
+    return {
+        email: {
+            "account_state": account_state,
+            "onboarding_status": onboarding_status,
+            "role": role,
+        }
+        for email, account_state, role, onboarding_status in rows
+        if email
+    }
+
+
+def get_portal_student_emails_by_account_state(
+    account_states: list[str],
+) -> set[str]:
+    """Emails from ``portal.users`` with the given ``account_state`` (student role)."""
+    normalized_states = [
+        state.strip().lower() for state in account_states if (state or "").strip()
+    ]
+    if not normalized_states:
+        return set()
+
+    schema = _portal_db_schema()
+    sql = f"""
+        SELECT LOWER(TRIM(u.email)) AS email
+        FROM {schema}.users AS u
+        WHERE u.role = 'student'
+          AND LOWER(TRIM(u.account_state)) = ANY(%s)
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [normalized_states])
+            rows = cursor.fetchall()
+    except Exception:
+        logger.exception(
+            "Could not read %s.users by account_state (is PORTAL_DB_SCHEMA correct?)",
+            schema,
+        )
+        return set()
+
+    return {email for (email,) in rows if email}
+
+
+def assess_participant_portal_invite_need(
+    participant,
+    *,
+    portal_states: dict[str, dict[str, str | None]] | None = None,
+    paid_only: bool = False,
+) -> tuple[bool, str]:
+    """
+    Decide whether a participant should receive (or be queued for) a portal invite.
+
+    Excludes students who already activated the portal (``account_state=active``).
+    Resends when ``portal.users.account_state`` is ``invited`` (not yet activated).
+    """
+    if paid_only:
+        eligible, validation_reason = validate_participant_paid_for_portal_invite(
+            participant
+        )
+    else:
+        eligible, validation_reason = validate_participant_for_portal_invite(participant)
+    if not eligible:
+        return False, validation_reason
+
+    email = (getattr(participant, "email", None) or "").strip().lower()
+    if not email:
+        return False, "missing_email"
+
+    portal_row = (portal_states or {}).get(email)
+    if portal_row is None:
+        return True, "no_portal_account"
+
+    account_state = (portal_row.get("account_state") or "").lower()
+    if account_state == "active":
+        return False, "portal_active_account"
+    if account_state in PORTAL_ACCOUNT_SKIP_STATES:
+        return False, f"portal_{account_state}_account"
+    if account_state == "invited":
+        return True, "portal_account_state_invited"
+
+    onboarding_status = (portal_row.get("onboarding_status") or "").lower()
+    if onboarding_status in {"pending", "invited"}:
+        return True, "portal_invite_pending_activation"
+
+    return True, "no_portal_account"
+
+
+def dedupe_participants_by_email(participants: list) -> tuple[list, int]:
+    """Keep the newest participant row per email (by created_at, then id)."""
+    best_by_email: dict[str, object] = {}
+    for participant in participants:
+        email = (getattr(participant, "email", None) or "").strip().lower()
+        if not email:
+            continue
+        current = best_by_email.get(email)
+        if current is None:
+            best_by_email[email] = participant
+            continue
+        current_key = (
+            getattr(current, "created_at", None) or datetime.min.replace(tzinfo=timezone.utc),
+            getattr(current, "id", 0) or 0,
+        )
+        candidate_key = (
+            getattr(participant, "created_at", None) or datetime.min.replace(tzinfo=timezone.utc),
+            getattr(participant, "id", 0) or 0,
+        )
+        if candidate_key >= current_key:
+            best_by_email[email] = participant
+
+    deduped = list(best_by_email.values())
+    removed = max(0, len(participants) - len(deduped))
+    return deduped, removed
+
+
+def refine_participants_for_portal_invite(
+    participants: list,
+    *,
+    portal_states: dict[str, dict[str, str | None]] | None = None,
+    dedupe_email: bool = True,
+    paid_only: bool = False,
+) -> tuple[list, list[dict]]:
+    """
+    Apply email de-duplication and portal-state filtering.
+
+    Returns ``(eligible_participants, audit_rows)`` where each audit row contains
+    ``participant``, ``eligible``, and ``reason``.
+    """
+    audit_rows: list[dict] = []
+    candidates = list(participants)
+
+    if dedupe_email:
+        deduped, _duplicate_count = dedupe_participants_by_email(candidates)
+        kept_ids = {getattr(p, "id", None) for p in deduped}
+        for participant in candidates:
+            if getattr(participant, "id", None) not in kept_ids:
+                audit_rows.append(
+                    {
+                        "participant": participant,
+                        "eligible": False,
+                        "reason": "duplicate_email_newer_row_kept",
+                    }
+                )
+        candidates = deduped
+
+    states = portal_states
+    if states is None:
+        states = get_portal_student_states_by_email(
+            [getattr(p, "email", "") or "" for p in candidates]
+        )
+
+    eligible: list = []
+    for participant in candidates:
+        should_send, reason = assess_participant_portal_invite_need(
+            participant, portal_states=states, paid_only=paid_only
+        )
+        audit_rows.append(
+            {"participant": participant, "eligible": should_send, "reason": reason}
+        )
+        if should_send:
+            eligible.append(participant)
+
+    return eligible, audit_rows
+
+
+def summarize_portal_invite_audit(audit_rows: list[dict]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in audit_rows:
+        key = "eligible" if row.get("eligible") else row.get("reason") or "skipped"
+        counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
 def parse_registered_from_date(value: str | date | None = None) -> date:
     if isinstance(value, date):
         return value
@@ -494,7 +735,7 @@ def paid_participant_ids_for_registration_window(
     Default window: registered on or after 2026-04-17 (current intake cutoff).
     """
     from_date = parse_registered_from_date(registered_from)
-    qs = _paid_participant_base(queryset).filter(created_at__gte=_start_of_day(from_date))
+    qs = _paid_only_participant_base(queryset).filter(created_at__gte=_start_of_day(from_date))
     if registered_to is not None:
         qs = qs.filter(
             created_at__lt=_start_of_day(registered_to) + timedelta(days=1)
@@ -577,17 +818,35 @@ def _paid_participant_ids_for_all_open_registrations(queryset) -> list[int]:
     return list(dict.fromkeys(rows))
 
 
-def paid_participant_ids_for_cohorts(queryset, cohort_labels: list[str]) -> list[int]:
-    """Paid participants whose cohort label matches any of the given strings (fuzzy)."""
+def paid_participant_ids_for_cohorts(
+    queryset,
+    cohort_labels: list[str],
+    *,
+    registered_from: date | str | None = None,
+    registered_to: date | str | None = None,
+) -> list[int]:
+    """
+    Paid participants (payment_status only) in cohort labels, registered on/after
+    ``registered_from`` (default 2026-04-17).
+    """
     if not cohort_labels:
         return []
 
-    rows = (
-        _paid_participant_base(queryset)
+    from_date = parse_registered_from_date(registered_from)
+    qs = (
+        _paid_only_participant_base(queryset)
         .filter(_cohort_text_match_q(*cohort_labels))
-        .order_by("-created_at", "-id")
-        .values_list("id", flat=True)
+        .filter(created_at__gte=_start_of_day(from_date))
     )
+    if registered_to is not None:
+        to_date = (
+            registered_to
+            if isinstance(registered_to, date)
+            else date.fromisoformat(str(registered_to).strip()[:10])
+        )
+        qs = qs.filter(created_at__lt=_start_of_day(to_date) + timedelta(days=1))
+
+    rows = qs.order_by("-created_at", "-id").values_list("id", flat=True)
     return list(dict.fromkeys(rows))
 
 
@@ -602,17 +861,10 @@ def resolve_paid_participant_ids(
     """
     Return (participant_ids, selection_mode, selection_meta).
 
-    Default: paid + registered on/after ``PORTAL_INVITE_REGISTERED_FROM`` (2026-04-17).
+    Selects paid participants (payment_status only). When ``cohort`` is set, matches
+    that label (fuzzy) and ``participant.created_at`` on/after 2026-04-17. Portal
+    account state is applied later in ``refine_participants_for_portal_invite``.
     """
-    explicit = (cohort or "").strip()
-    if all_paid:
-        rows = (
-            _paid_participant_base(queryset)
-            .order_by("-created_at", "-id")
-            .values_list("id", flat=True)
-        )
-        return list(dict.fromkeys(rows)), "all_paid", {}
-
     from_date = parse_registered_from_date(registered_from)
     to_date = None
     if registered_to:
@@ -622,20 +874,44 @@ def resolve_paid_participant_ids(
             else date.fromisoformat(str(registered_to).strip()[:10])
         )
 
+    if all_paid:
+        rows = (
+            _paid_only_participant_base(queryset)
+            .filter(created_at__gte=_start_of_day(from_date))
+            .order_by("-created_at", "-id")
+            .values_list("id", flat=True)
+        )
+        return list(dict.fromkeys(rows)), "all_paid", {
+            "registered_from": from_date.isoformat(),
+            "registered_to": to_date.isoformat() if to_date else None,
+        }
+
+    cohort_label = (cohort or "").strip()
+    if cohort_label:
+        ids = paid_participant_ids_for_cohorts(
+            queryset,
+            [cohort_label],
+            registered_from=from_date,
+            registered_to=to_date,
+        )
+        return ids, "cohort", {
+            "cohort_filter": cohort_label,
+            "registered_from": from_date.isoformat(),
+            "registered_to": to_date.isoformat() if to_date else None,
+        }
+
     ids = paid_participant_ids_for_registration_window(
         queryset,
         registered_from=from_date,
         registered_to=to_date,
-        cohort_label=explicit or None,
+        cohort_label=None,
     )
-    mode = "registered_since_and_cohort" if explicit else "registered_since"
     return (
         ids,
-        mode,
+        "registered_since",
         {
             "registered_from": from_date.isoformat(),
             "registered_to": to_date.isoformat() if to_date else None,
-            "cohort_filter": explicit or None,
         },
     )
 
@@ -656,15 +932,15 @@ def portal_invite_selection_breakdown(
             else date.fromisoformat(str(registered_to).strip()[:10])
         )
 
-    base = _paid_participant_base(queryset)
-    window_ids = paid_participant_ids_for_registration_window(
+    base = _paid_only_participant_base(queryset)
+    accepted_window_ids = paid_participant_ids_for_registration_window(
         queryset,
         registered_from=from_date,
         registered_to=to_date,
     )
     return {
         "total_paid": base.count(),
-        "registered_since_count": len(window_ids),
+        "registered_since_count": len(accepted_window_ids),
         "registered_from": from_date.isoformat(),
         "registered_to": to_date.isoformat() if to_date else None,
         "registration_field": "participant.created_at",
@@ -698,6 +974,16 @@ def execute_portal_invite_for_paid_cohort(
         registered_to=registered_to,
     )
 
+    participants = list(queryset.filter(id__in=participant_ids).order_by("-created_at", "-id"))
+    id_order = {pid: index for index, pid in enumerate(participant_ids)}
+    participants.sort(key=lambda p: id_order.get(p.id, 10**9))
+
+    eligible_participants, audit_rows = refine_participants_for_portal_invite(
+        participants, paid_only=True
+    )
+    eligible_ids = [getattr(p, "id", None) for p in eligible_participants]
+    audit_summary = summarize_portal_invite_audit(audit_rows)
+
     if dry_run:
         return {
             "ok": True,
@@ -705,33 +991,41 @@ def execute_portal_invite_for_paid_cohort(
             "selection_mode": selection_mode,
             "selection": selection_meta,
             "participant_ids": participant_ids,
-            "eligible_count": len(participant_ids),
+            "eligible_ids": eligible_ids,
+            "eligible_count": len(eligible_ids),
+            "matched_count": len(participant_ids),
+            "audit_summary": audit_summary,
             "breakdown": breakdown,
         }
 
-    if not participant_ids:
+    if not eligible_ids:
         return {
             "ok": False,
-            "reason": "no_participants",
+            "reason": "no_eligible_participants",
             "message": (
-                "No paid participants found for this registration window. "
-                "Adjust PORTAL_INVITE_REGISTERED_FROM or pass --registered-from."
+                "No participants need a portal invite (all activated or none matched). "
+                "Adjust cohort/registration filters or check portal account states."
             ),
-            "participant_ids": [],
+            "participant_ids": participant_ids,
+            "eligible_ids": [],
             "eligible_count": 0,
+            "matched_count": len(participant_ids),
+            "audit_summary": audit_summary,
             "selection_mode": selection_mode,
             "selection": selection_meta,
             "breakdown": breakdown,
         }
 
     summary = execute_portal_invite_bulk(
-        participant_ids=participant_ids,
+        participant_ids=eligible_ids,
         queryset=queryset,
     )
     summary["ok"] = True
     summary["selection_mode"] = selection_mode
     summary["selection"] = selection_meta
-    summary["eligible_count"] = len(participant_ids)
+    summary["eligible_count"] = len(eligible_ids)
+    summary["matched_count"] = len(participant_ids)
+    summary["audit_summary"] = audit_summary
     summary["breakdown"] = portal_invite_selection_breakdown(queryset)
     return summary
 

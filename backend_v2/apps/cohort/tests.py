@@ -1098,6 +1098,61 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         eligible, reason = validate_participant_for_portal_invite(zk_accepted)
         self.assertTrue(eligible)
 
+    def test_assess_participant_portal_invite_need_skips_active_accounts(self):
+        from apps.cohort.helpers.portal import assess_participant_portal_invite_need
+
+        participant = Mock(
+            email="active@example.com",
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="Web3 Cohort XV"),
+        )
+        portal_states = {
+            "active@example.com": {
+                "account_state": "active",
+                "onboarding_status": "completed",
+                "role": "student",
+            }
+        }
+        eligible, reason = assess_participant_portal_invite_need(
+            participant, portal_states=portal_states
+        )
+        self.assertFalse(eligible)
+        self.assertEqual(reason, "portal_active_account")
+
+    def test_refine_participants_for_portal_invite_dedupes_email(self):
+        from datetime import datetime
+
+        from apps.cohort.helpers.portal import refine_participants_for_portal_invite
+
+        older = Mock(
+            id=1,
+            email="dup@example.com",
+            created_at=datetime(2026, 4, 20),
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="Web3 Cohort XV"),
+        )
+        newer = Mock(
+            id=2,
+            email="dup@example.com",
+            created_at=datetime(2026, 5, 1),
+            is_evicted=False,
+            payment_status=True,
+            status="ACCEPTED",
+            course=Mock(name="Web2 Cohort XV"),
+        )
+        eligible, audit = refine_participants_for_portal_invite(
+            [older, newer], portal_states={}
+        )
+        self.assertEqual(len(eligible), 1)
+        self.assertEqual(eligible[0].id, 2)
+        self.assertTrue(
+            any(row["reason"] == "duplicate_email_newer_row_kept" for row in audit)
+        )
+
     def test_resolve_current_open_registration_ids_one_per_track(self):
         from apps.cohort.models import Registration
         from apps.cohort.helpers.cohort_label import resolve_current_open_registration_ids

@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from urllib.parse import urlencode
 
 from fastapi import HTTPException, status
@@ -116,6 +116,7 @@ class OnboardingService:
                 p.payment_status AS payment_status,
                 c.id AS course_id,
                 c.name AS course_name,
+                c.start_date AS course_start_date,
                 r.id AS registration_id,
                 r.name AS registration_name,
                 r.cohort AS registration_cohort
@@ -140,6 +141,7 @@ class OnboardingService:
         cohort = row.get("cohort") or row.get("registration_cohort") or payload.cohort
         course_name = (row.get("course_name") or payload.course_name or "").strip()
         source_status = row.get("source_status") or payload.approval_status
+        course_start = row.get("course_start_date") or payload.class_start_date
 
         return payload.model_copy(
             update={
@@ -150,6 +152,7 @@ class OnboardingService:
                 "external_student_id": str(row.get("participant_id") or payload.external_student_id),
                 "source_email": email,
                 "approval_status": source_status or payload.approval_status,
+                "class_start_date": course_start,
             }
         )
 
@@ -271,6 +274,7 @@ class OnboardingService:
                     to_email=normalized_email,
                     student_name=payload.full_name,
                     activation_url=activation_url,
+                    class_start_date=payload.class_start_date,
                 )
             )
 
@@ -332,6 +336,7 @@ class OnboardingService:
         to_email: str,
         student_name: str,
         activation_url: str,
+        class_start_date: date | None = None,
     ) -> None:
         """Fire-and-forget wrapper — logs errors but never raises."""
         try:
@@ -339,6 +344,7 @@ class OnboardingService:
                 to_email=to_email,
                 student_name=student_name,
                 activation_url=activation_url,
+                class_start_date=class_start_date,
             )
             if not sent:
                 logger.warning(

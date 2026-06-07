@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -10,6 +12,10 @@ class OnboardingInviteRequest(BaseModel):
     source_system: str = Field(default="backend_v2", min_length=1, max_length=100)
     source_email: EmailStr | None = None
     approval_status: str = Field(default="approved", min_length=1, max_length=20)
+    class_start_date: date | None = Field(
+        default=None,
+        description="Course start date shown in the portal onboarding email",
+    )
 
 
 class OnboardingInviteResponse(BaseModel):
