@@ -78,7 +78,7 @@ async def _fetch_paid_non_zk_students(session: AsyncSession, *, cursor: str | No
             p.name AS full_name,
             p.cohort AS cohort,
             c.name AS course_name,
-            c.start_date AS course_start_date,
+            r.start_date AS course_start_date,
             p.number AS phone,
             p.wallet_address AS wallet_address,
             p.status AS source_status,
@@ -86,6 +86,7 @@ async def _fetch_paid_non_zk_students(session: AsyncSession, *, cursor: str | No
             COALESCE(p.updated_at, p.created_at) AS source_updated_at
         FROM cohort_participant AS p
         LEFT JOIN cohort_course AS c ON c.id = p.course_id
+        LEFT JOIN cohort_registration AS r ON r.id = p.registration_id
         WHERE UPPER(p.status) = 'ACCEPTED'
           AND p.payment_status = TRUE
           {cursor_filter}

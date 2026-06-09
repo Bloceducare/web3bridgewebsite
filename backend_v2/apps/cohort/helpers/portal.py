@@ -242,7 +242,12 @@ def create_portal_onboarding_invite(participant, *, delivery_email: str | None =
         "source_email": participant.email,
         "approval_status": normalize_approval_status(getattr(participant, "status", None)),
     }
-    course_start = getattr(course, "start_date", None) if course is not None else None
+    registration = getattr(participant, "registration", None)
+    if registration is None and course is not None:
+        registration = getattr(course, "registration", None)
+    course_start = (
+        getattr(registration, "start_date", None) if registration is not None else None
+    )
     if course_start:
         payload["class_start_date"] = course_start.isoformat()
 

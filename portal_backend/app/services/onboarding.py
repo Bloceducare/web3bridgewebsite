@@ -116,7 +116,7 @@ class OnboardingService:
                 p.payment_status AS payment_status,
                 c.id AS course_id,
                 c.name AS course_name,
-                c.start_date AS course_start_date,
+                r.start_date AS course_start_date,
                 r.id AS registration_id,
                 r.name AS registration_name,
                 r.cohort AS registration_cohort
