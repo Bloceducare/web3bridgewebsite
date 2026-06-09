@@ -38,6 +38,26 @@ async def create_mentor_update(
 
 
 @router.get(
+    "/updates",
+    response_model=list[StudentUpdateResponse],
+    status_code=status.HTTP_200_OK,
+    summary="List course announcements",
+    description=(
+        "Return announcements the mentor created for assigned courses, "
+        "including drafts. Optionally filter by course_id."
+    ),
+)
+async def list_mentor_updates(
+    course_id: int | None = Query(default=None),
+    current_user: User = Depends(get_current_mentor_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[StudentUpdateResponse]:
+    return await MentorPortalService(db).list_course_updates(
+        actor=current_user, course_id=course_id
+    )
+
+
+@router.get(
     "/courses/summary",
     response_model=list[AdminCourseSummaryResponse],
     status_code=status.HTTP_200_OK,

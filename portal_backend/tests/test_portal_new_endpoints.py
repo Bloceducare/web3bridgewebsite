@@ -842,6 +842,90 @@ def test_mentor_create_update_broadcasts_to_course() -> None:
     assert response.json()["target_type"] == "course"
 
 
+def test_mentor_list_updates_returns_course_announcements() -> None:
+    mentor_user = build_user(user_id=75, role="mentor")
+
+    async def override_mentor_user() -> User:
+        return mentor_user
+
+    async def list_course_updates(
+        _: MentorPortalService, *, actor: User, course_id: int | None
+    ) -> list[StudentUpdateResponse]:
+        assert actor.id == mentor_user.id
+        assert course_id == 5
+        return [
+            StudentUpdateResponse(
+                id=201,
+                title="Week 2",
+                body="Complete assignment",
+                target_type="course",
+                target_ref="5",
+                is_published=True,
+                send_in_app=True,
+                send_email=False,
+                published_at=datetime.now(UTC),
+                created_by=actor.id,
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+                read_at=None,
+            )
+        ]
+
+    original = MentorPortalService.list_course_updates
+    MentorPortalService.list_course_updates = list_course_updates
+    app.dependency_overrides[deps.get_current_mentor_user] = override_mentor_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/mentor/updates?course_id=5")
+    finally:
+        MentorPortalService.list_course_updates = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]["title"] == "Week 2"
+
+
+def test_mentor_course_materials_by_course_id() -> None:
+    mentor_user = build_user(user_id=76, role="mentor")
+
+    async def override_mentor_user() -> User:
+        return mentor_user
+
+    class _MaterialRow:
+        def __init__(self) -> None:
+            self.id = 1
+            self.course_id = 5
+            self.title = "Intro slides"
+            self.material_type = "link"
+            self.resource_url = "https://example.com/slides"
+            self.content = None
+            self.metadata_json = {"week": 1}
+
+    async def list_materials(
+        _: MentorPortalService, *, actor: User, course_id: int | None
+    ) -> list[_MaterialRow]:
+        assert actor.id == mentor_user.id
+        assert course_id == 5
+        return [_MaterialRow()]
+
+    original = MentorPortalService.list_materials
+    MentorPortalService.list_materials = list_materials
+    app.dependency_overrides[deps.get_current_mentor_user] = override_mentor_user
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/courses/5/materials")
+    finally:
+        MentorPortalService.list_materials = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload[0]["course_id"] == 5
+    assert payload[0]["title"] == "Intro slides"
+
+
 def test_mentor_students_list_returns_enrollments() -> None:
     mentor_user = build_user(user_id=73, role="mentor")
 

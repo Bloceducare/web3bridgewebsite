@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_staff_or_admin_user, get_current_verified_user
+from app.api.deps import (
+    get_current_mentor_user,
+    get_current_staff_or_admin_user,
+    get_current_verified_user,
+)
 from app.db.session import get_db_session
 from app.models.portal import User
 from app.schemas.courses import (
@@ -9,7 +13,9 @@ from app.schemas.courses import (
     StudentCourseResponse,
     StudentGuarantorFormResponse,
 )
+from app.schemas.portal_management import CourseMaterialStructuredResponse
 from app.services.courses import CoursesService
+from app.services.mentor import MentorPortalService
 
 router = APIRouter(prefix="/courses", tags=["Courses"])
 
@@ -63,3 +69,37 @@ async def list_admin_course_summaries(
 ) -> list[AdminCourseSummaryResponse]:
     service = CoursesService(db)
     return await service.list_admin_course_summaries()
+
+
+@router.get(
+    "/{course_id}/materials",
+    response_model=list[CourseMaterialStructuredResponse],
+    status_code=status.HTTP_200_OK,
+    summary="List materials for an assigned course",
+    description=(
+        "Return course materials for a course assigned to the authenticated mentor. "
+        "Mentor access required."
+    ),
+)
+async def list_mentor_course_materials(
+    course_id: int,
+    current_user: User = Depends(get_current_mentor_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[CourseMaterialStructuredResponse]:
+    rows = await MentorPortalService(db).list_materials(
+        actor=current_user, course_id=course_id
+    )
+    return [
+        CourseMaterialStructuredResponse(
+            id=row.id,
+            course_id=row.course_id,
+            title=row.title,
+            material={
+                "type": row.material_type,
+                "resource_url": row.resource_url,
+                "content": row.content,
+                "metadata": row.metadata_json,
+            },
+        )
+        for row in rows
+    ]

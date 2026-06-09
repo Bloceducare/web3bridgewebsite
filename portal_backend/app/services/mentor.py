@@ -7,6 +7,7 @@ from app.models.portal import (
     CourseMaterial,
     Mentor,
     MentorCourseMap,
+    StudentUpdate,
     UpdateTargetType,
     User,
     UserRole,
@@ -48,6 +49,33 @@ class MentorPortalService:
             send_email=payload.send_email,
         )
         return await UpdatesService(self.session).create_update(actor=actor, payload=update_payload)
+
+    async def list_course_updates(
+        self, *, actor: User, course_id: int | None = None
+    ) -> list[StudentUpdateResponse]:
+        mentor = await self._require_mentor(actor)
+        course_ids = await self._assigned_course_ids(mentor.id)
+        if not course_ids:
+            return []
+        if course_id is not None:
+            await self._ensure_course_assigned(mentor=mentor, course_id=course_id)
+            course_ids = [course_id]
+
+        statement = (
+            select(StudentUpdate)
+            .where(
+                StudentUpdate.created_by == actor.id,
+                StudentUpdate.target_type == UpdateTargetType.COURSE.value,
+                StudentUpdate.target_ref.in_([str(cid) for cid in course_ids]),
+            )
+            .order_by(StudentUpdate.created_at.desc())
+        )
+        result = await self.session.execute(statement)
+        updates_service = UpdatesService(self.session)
+        return [
+            updates_service._build_update_response(student_update=item)
+            for item in result.scalars().all()
+        ]
 
     async def list_course_summaries(self, *, actor: User) -> list[AdminCourseSummaryResponse]:
         mentor = await self._require_mentor(actor)
