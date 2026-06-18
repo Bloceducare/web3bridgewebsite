@@ -13,6 +13,7 @@ from app.schemas.portal_management import (
     CourseMaterialStructuredResponse,
     CourseMaterialUpdateRequest,
 )
+from app.schemas.students import StudentParticipationResponse, UpdateParticipationRequest
 from app.schemas.updates import StudentUpdateResponse
 from app.services.mentor import MentorPortalService
 
@@ -161,3 +162,26 @@ async def list_mentor_students(
     db: AsyncSession = Depends(get_db_session),
 ) -> list[MentorStudentResponse]:
     return await MentorPortalService(db).list_students(actor=current_user, course_id=course_id)
+
+
+@router.patch(
+    "/students/{portal_user_id}/participation",
+    response_model=StudentParticipationResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Set participation mode for a student in an assigned course",
+    description=(
+        "Set a student's mode of participation to 'onsite', 'online', or null. "
+        "The student must be enrolled in one of the mentor's assigned courses."
+    ),
+)
+async def set_mentor_student_participation(
+    portal_user_id: int,
+    payload: UpdateParticipationRequest,
+    current_user: User = Depends(get_current_mentor_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentParticipationResponse:
+    return await MentorPortalService(db).set_student_participation(
+        actor=current_user,
+        portal_user_id=portal_user_id,
+        participation=payload.participation,
+    )

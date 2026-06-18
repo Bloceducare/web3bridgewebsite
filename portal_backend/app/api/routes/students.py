@@ -10,6 +10,7 @@ from app.schemas.students import (
     DeleteStudentResponse,
     EvictStudentRequest,
     StudentResponse,
+    UpdateParticipationRequest,
     UpdateStudentRequest,
 )
 from app.services.students import StudentsService
@@ -83,6 +84,28 @@ async def update_student(
     service = StudentsService(db)
     return await service.update_student(
         actor=current_user, student_id=student_id, payload=payload
+    )
+
+
+@router.patch(
+    "/{student_id}/participation",
+    response_model=StudentResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Set student participation mode",
+    description=(
+        "Set a student's mode of participation to 'onsite', 'online', or null. "
+        "Staff or admin only."
+    ),
+)
+async def set_student_participation(
+    student_id: int,
+    payload: UpdateParticipationRequest,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> StudentResponse:
+    service = StudentsService(db)
+    return await service.set_participation(
+        actor=current_user, student_id=student_id, participation=payload.participation
     )
 
 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 
-from app.models.portal import AccountState, OnboardingStatus
+from app.models.portal import AccountState, OnboardingStatus, ParticipationMode
 
 
 class StudentResponse(BaseModel):
@@ -16,6 +16,7 @@ class StudentResponse(BaseModel):
     wallet_address: str | None = None
     cohort: str | None = None
     onboarding_status: str | None = None
+    participation: str | None = None
     bio: str | None = None
 
 
@@ -28,8 +29,23 @@ class UpdateStudentRequest(BaseModel):
     wallet_address: str | None = Field(default=None, max_length=255)
     cohort: str | None = Field(default=None, max_length=100)
     onboarding_status: OnboardingStatus | None = None
+    participation: ParticipationMode | None = None
     bio: str | None = None
     account_state: AccountState | None = None
+
+
+class UpdateParticipationRequest(BaseModel):
+    participation: ParticipationMode | None = Field(
+        default=None,
+        description="Mode of participation: 'onsite', 'online', or null to clear.",
+    )
+
+
+class StudentParticipationResponse(BaseModel):
+    user_id: int
+    email: str
+    full_name: str | None = None
+    participation: str | None = None
 
 
 class ArchiveStudentRequest(BaseModel):
@@ -44,6 +60,7 @@ class CreateStudentRequest(BaseModel):
     discord_email: EmailStr | None = None
     wallet_address: str | None = Field(default=None, max_length=255)
     onboarding_status: OnboardingStatus = OnboardingStatus.PENDING
+    participation: ParticipationMode | None = None
     account_state: AccountState = AccountState.INVITED
     email_verified: bool = False
 

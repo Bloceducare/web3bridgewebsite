@@ -9,8 +9,9 @@ from .notifications import router as notifications_router
 from .onboarding import router as onboarding_router
 from .portal_management import router as portal_management_router
 from .profile import router as profile_router
-from .sync import router as sync_router
+from .student import router as student_router
 from .students import router as students_router
+from .sync import router as sync_router
 from .updates import router as updates_router
 
 __all__ = [
@@ -25,7 +26,8 @@ __all__ = [
     "onboarding_router",
     "portal_management_router",
     "profile_router",
-    "sync_router",
+    "student_router",
     "students_router",
+    "sync_router",
     "updates_router",
 ]

@@ -12,6 +12,7 @@ from app.api.routes import (
     onboarding_router,
     portal_management_router,
     profile_router,
+    student_router,
     students_router,
     sync_router,
     updates_router,
@@ -29,6 +30,7 @@ api_router.include_router(notifications_router)
 api_router.include_router(onboarding_router)
 api_router.include_router(portal_management_router)
 api_router.include_router(profile_router)
+api_router.include_router(student_router)
 api_router.include_router(sync_router)
 api_router.include_router(students_router)
 api_router.include_router(updates_router)

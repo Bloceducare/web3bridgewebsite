@@ -15,6 +15,7 @@ class MyProfileResponse(BaseModel):
     wallet_address: str | None = None
     cohort: str | None = None
     onboarding_status: str
+    participation: str | None = None
     bio: str | None = None
 
 

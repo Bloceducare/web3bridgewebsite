@@ -73,6 +73,7 @@ class ProfileService:
             wallet_address=profile.wallet_address,
             cohort=profile.cohort,
             onboarding_status=profile.onboarding_status,
+            participation=profile.participation,
             bio=profile.bio,
         )
 

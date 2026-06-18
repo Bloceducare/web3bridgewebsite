@@ -1,12 +1,17 @@
+from datetime import UTC, datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.models.portal import (
+    AuditLog,
     CourseMaterial,
     Mentor,
     MentorCourseMap,
+    ParticipationMode,
+    StudentProfile,
     StudentUpdate,
     UpdateTargetType,
     User,
@@ -22,6 +27,7 @@ from app.schemas.portal_management import (
     CourseMaterialResponse,
     CourseMaterialUpdateRequest,
 )
+from app.schemas.students import StudentParticipationResponse
 from app.schemas.updates import CreateStudentUpdateRequest, StudentUpdateResponse
 from app.services.portal_management import PortalManagementService
 from app.services.updates import UpdatesService
@@ -186,6 +192,81 @@ class MentorPortalService:
             {"course_ids": course_ids, "student_role": UserRole.STUDENT.value},
         )
         return [MentorStudentResponse(**dict(row._mapping)) for row in result.all()]
+
+    async def set_student_participation(
+        self,
+        *,
+        actor: User,
+        portal_user_id: int,
+        participation: ParticipationMode | None,
+    ) -> StudentParticipationResponse:
+        mentor = await self._require_mentor(actor)
+        course_ids = await self._assigned_course_ids(mentor.id)
+        if not course_ids:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not assigned to any courses",
+            )
+
+        student = await self.session.execute(
+            select(User).where(
+                User.id == portal_user_id, User.role == UserRole.STUDENT.value
+            )
+        )
+        student_user = student.scalar_one_or_none()
+        if student_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Student not found"
+            )
+
+        enrollment = await self.session.execute(
+            text(
+                """
+                SELECT 1
+                FROM cohort_participant AS p
+                WHERE LOWER(TRIM(p.email)) = :email
+                  AND p.course_id = ANY(:course_ids)
+                LIMIT 1
+                """
+            ),
+            {"email": student_user.email.lower().strip(), "course_ids": course_ids},
+        )
+        if enrollment.first() is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="This student is not enrolled in any of your assigned courses",
+            )
+
+        profile_result = await self.session.execute(
+            select(StudentProfile).where(StudentProfile.user_id == portal_user_id)
+        )
+        profile = profile_result.scalar_one_or_none()
+        if profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found"
+            )
+
+        before = {"participation": profile.participation}
+        profile.participation = participation.value if participation is not None else None
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="student_participation_updated",
+                resource_type="student",
+                resource_id=str(portal_user_id),
+                before_json=before,
+                after_json={"participation": profile.participation},
+                created_at=datetime.now(UTC),
+            )
+        )
+        await self.session.commit()
+        await self.session.refresh(profile)
+        return StudentParticipationResponse(
+            user_id=student_user.id,
+            email=student_user.email,
+            full_name=profile.full_name,
+            participation=profile.participation,
+        )
 
     async def _require_mentor(self, actor: User) -> Mentor:
         result = await self.session.execute(

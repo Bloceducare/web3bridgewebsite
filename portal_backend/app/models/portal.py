@@ -33,6 +33,11 @@ class OnboardingStatus(StrEnum):
     COMPLETED = "completed"
 
 
+class ParticipationMode(StrEnum):
+    ONSITE = "onsite"
+    ONLINE = "online"
+
+
 class ApprovalStatus(StrEnum):
     APPROVED = "approved"
     REVOKED = "revoked"
@@ -147,6 +152,7 @@ class StudentProfile(TimestampMixin, Base):
         default=OnboardingStatus.PENDING.value,
         index=True,
     )
+    participation: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     user: Mapped[User] = relationship(back_populates="profile")

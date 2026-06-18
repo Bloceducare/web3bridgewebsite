@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.portal import (
     AccountState,
     AuditLog,
+    ParticipationMode,
     StudentProfile,
     StudentStatusHistory,
     User,
@@ -55,6 +56,7 @@ class StudentsService:
             wallet_address=payload.wallet_address,
             cohort=payload.cohort,
             onboarding_status=payload.onboarding_status.value,
+            participation=payload.participation.value if payload.participation else None,
         )
         self.session.add(profile)
         self.session.add(
@@ -122,6 +124,36 @@ class StudentsService:
             )
         )
 
+        await self.session.commit()
+        await self.session.refresh(user)
+        await self.session.refresh(profile)
+        return self._build_student_response(user=user, profile=profile)
+
+    async def set_participation(
+        self,
+        *,
+        actor: User,
+        student_id: int,
+        participation: ParticipationMode | None,
+    ) -> StudentResponse:
+        user = await self._get_student_by_id(student_id)
+        profile = await self._get_profile_by_user_id(user.id)
+        if profile is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found")
+
+        before = {"participation": profile.participation}
+        profile.participation = participation.value if participation is not None else None
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="student_participation_updated",
+                resource_type="student",
+                resource_id=str(user.id),
+                before_json=before,
+                after_json={"participation": profile.participation},
+                created_at=datetime.now(UTC),
+            )
+        )
         await self.session.commit()
         await self.session.refresh(user)
         await self.session.refresh(profile)
@@ -278,6 +310,7 @@ class StudentsService:
             wallet_address=profile.wallet_address if profile is not None else None,
             cohort=profile.cohort if profile is not None else None,
             onboarding_status=profile.onboarding_status if profile is not None else None,
+            participation=profile.participation if profile is not None else None,
             bio=profile.bio if profile is not None else None,
         )
 
@@ -298,5 +331,6 @@ class StudentsService:
             "wallet_address": profile.wallet_address if profile is not None else None,
             "cohort": profile.cohort if profile is not None else None,
             "onboarding_status": profile.onboarding_status if profile is not None else None,
+            "participation": profile.participation if profile is not None else None,
             "bio": profile.bio if profile is not None else None,
         }
