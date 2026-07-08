@@ -739,7 +739,7 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
                 self.assertIn("Activate your student portal account", rendered)
                 self.assertIn(activation_url, rendered)
 
-    def test_rust_template_does_not_render_portal_activation_link(self):
+    def test_rust_template_renders_portal_activation_link_when_provided(self):
         rendered = render_to_string(
             "cohort/rust_registration_email.html",
             {
@@ -749,8 +749,8 @@ class RegistrationEmailTemplateTests(SimpleTestCase):
         )
 
         self.assertIn("Student Portal Access:", rendered)
-        self.assertIn("will be sent within the next 14 days", rendered)
-        self.assertNotIn("Activate your student portal account", rendered)
+        self.assertIn("Activate your student portal account", rendered)
+        self.assertIn("https://portal.example.com/activate?token=abc", rendered)
 
     def test_web2_welcome_templates_are_static_no_portal_activation_block(self):
         for template_name in (
@@ -1943,14 +1943,21 @@ class PaymentActivationEmailTests(SimpleTestCase):
         self.assertIsNone(context.get("activation_url"))
         self.assertEqual(context.get("name"), "ZK Student")
 
+    @patch("cohort.views.send_portal_invite_for_participant")
     @patch("cohort.views.send_registration_success_mail")
-    def test_handle_payment_success_sends_one_mail_without_portal_activation(
-        self, mock_mail
+    def test_handle_payment_success_sends_portal_invite_immediately(
+        self, mock_mail, mock_invite
     ):
         from cohort.views import handle_payment_success
 
         participant = MagicMock()
         participant.course_id = 1
+        mock_invite.return_value = {
+            "sent": True,
+            "skipped": False,
+            "activation_url": "https://portal.example.com/activate?token=abc",
+            "reason": "portal_invite_created",
+        }
         serialized = {
             "email": "student@example.com",
             "name": "John Doe",
@@ -1960,11 +1967,12 @@ class PaymentActivationEmailTests(SimpleTestCase):
 
         handle_payment_success(participant, serialized, serializer_class)
 
+        mock_invite.assert_called_once_with(participant, paid_only=True)
         mock_mail.assert_called_once_with(
             "student@example.com",
             1,
             "John Doe",
-            activation_url=None,
+            activation_url="https://portal.example.com/activate?token=abc",
         )
 
 
@@ -2026,7 +2034,7 @@ class SubmitAssessmentTemplateTests(SimpleTestCase):
         self.assertIn("Welcome to Web3Bridge", rendered)
         self.assertIn("successfully passed the assessment", rendered.lower())
         self.assertIn("student portal", rendered.lower())
-        self.assertIn("14 days after payment confirmation", rendered.lower())
+        self.assertIn("after your payment is confirmed", rendered.lower())
         self.assertIn("https://payment.web3bridgeafrica.com", rendered)
         self.assertIn("https://t.me/web3bridge", rendered)
 

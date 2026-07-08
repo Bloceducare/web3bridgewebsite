@@ -269,3 +269,88 @@ async def test_invite_non_zk_student_rejects_unpaid_backend_participant() -> Non
     except HTTPException as exc:
         assert exc.status_code == 400
         assert "payment" in str(exc.detail).lower()
+
+
+async def test_invite_zk_student_requires_approval() -> None:
+    from fastapi import HTTPException
+
+    session = DummySession()
+    service = OnboardingService(session)  # type: ignore[arg-type]
+    payload = OnboardingInviteRequest(
+        email="zk@example.com",
+        full_name="ZK Student",
+        cohort="Master Class III",
+        course_name="ZK Engineering: Cryptography, Circuits & Protocols",
+        external_student_id="99",
+        source_system="backend_v2",
+        approval_status="pending",
+    )
+
+    async def load_pending_zk(_external_student_id: str) -> dict:
+        return {
+            "participant_id": 99,
+            "email": "zk@example.com",
+            "full_name": "ZK Student",
+            "cohort": "Master Class III",
+            "source_status": "PENDING",
+            "payment_status": True,
+            "course_name": "ZK Engineering: Cryptography, Circuits & Protocols",
+        }
+
+    service._load_backend_v2_participant = load_pending_zk  # type: ignore[method-assign]
+
+    try:
+        await service.invite_non_zk_student(payload=payload)
+        raise AssertionError("expected HTTPException")
+    except HTTPException as exc:
+        assert exc.status_code == 400
+        assert "approved" in str(exc.detail).lower()
+
+
+async def test_invite_zk_student_succeeds_when_approved() -> None:
+    session = DummySession()
+    service = OnboardingService(session)  # type: ignore[arg-type]
+    payload = OnboardingInviteRequest(
+        email="zk@example.com",
+        full_name="ZK Student",
+        cohort="Master Class III",
+        course_name="ZK Engineering: Cryptography, Circuits & Protocols",
+        external_student_id="99",
+        source_system="backend_v2",
+        approval_status="accepted",
+    )
+
+    async def load_approved_zk(_external_student_id: str) -> dict:
+        return {
+            "participant_id": 99,
+            "email": "zk@example.com",
+            "full_name": "ZK Student",
+            "cohort": "Master Class III",
+            "source_status": "ACCEPTED",
+            "payment_status": True,
+            "course_name": "ZK Engineering: Cryptography, Circuits & Protocols",
+        }
+
+    async def get_user(_: str) -> User | None:
+        return None
+
+    async def get_profile(_: int) -> StudentProfile | None:
+        return None
+
+    async def get_external_map(_: str) -> ExternalStudentMap | None:
+        return None
+
+    async def create_activation(*, user: User) -> str:
+        return "zk-token"
+
+    service._load_backend_v2_participant = load_approved_zk  # type: ignore[method-assign]
+    service._get_user_by_email = get_user  # type: ignore[method-assign]
+    service._get_profile_by_user_id = get_profile  # type: ignore[method-assign]
+    service._get_external_map = get_external_map  # type: ignore[method-assign]
+    service.auth_service.create_activation_token_for_user = create_activation  # type: ignore[method-assign]
+
+    response = await service.invite_non_zk_student(payload=payload)
+
+    assert response.portal_invite_created is True
+    assert response.reason == "portal_invite_created"
+    assert response.activation_url == OnboardingService.build_activation_url("zk-token")

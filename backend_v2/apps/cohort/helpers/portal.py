@@ -147,12 +147,18 @@ def portal_invite_skip_message(reason: str) -> str:
 
 
 def validate_participant_paid_for_portal_invite(participant) -> tuple[bool, str]:
-    """Bulk cohort invites: paid + email only (no approval/status checks)."""
+    """Bulk cohort invites: paid + email; ZK requires ACCEPTED status."""
     email = (getattr(participant, "email", None) or "").strip()
     if not email:
         return False, "missing_email"
     if not getattr(participant, "payment_status", False):
         return False, "unpaid"
+    course = getattr(participant, "course", None)
+    course_name = getattr(course, "name", "") if course is not None else ""
+    if is_zk_course_name(course_name):
+        status_value = (getattr(participant, "status", None) or "").upper()
+        if status_value not in _PORTAL_INVITE_ACCEPTED_STATUSES:
+            return False, "not_accepted"
     return True, ""
 
 
@@ -278,19 +284,34 @@ def create_portal_onboarding_invite(participant, *, delivery_email: str | None =
         except requests.RequestException as exc:
             is_last_attempt = attempt >= max_retries
             if is_last_attempt or not _should_retry_request_error(exc):
+                detail = ""
+                response = getattr(exc, "response", None)
+                if response is not None:
+                    try:
+                        body = response.json()
+                        detail = body.get("detail") if isinstance(body, dict) else str(body)
+                    except ValueError:
+                        detail = (response.text or "")[:500]
                 logger.exception(
-                    "Portal onboarding invite failed for participant %s after %s attempt(s)",
+                    "Portal onboarding invite failed for participant %s after %s attempt(s)%s",
                     getattr(participant, "id", None),
                     attempt + 1,
+                    f": {detail}" if detail else "",
                 )
+                reason = "request_failed"
+                if detail and "zk" in detail.lower():
+                    reason = "zk_course"
                 _notify_portal_invite_failure(
                     participant=participant,
                     portal_onboarding_url=portal_onboarding_url,
                     attempts=attempt + 1,
                     exc=exc,
-                    reason="request_failed",
+                    reason=reason,
                 )
-                return _empty_portal_invite_result(reason="request_failed")
+                result = _empty_portal_invite_result(reason=reason)
+                if detail:
+                    result["error_detail"] = detail
+                return result
 
             sleep_seconds = min(
                 backoff_seconds * (2**attempt),
@@ -395,6 +416,7 @@ def send_portal_invite_for_participant(
             "zk_course",
             "wall_clock_exceeded",
         )
+        error = portal_result.get("error_detail") or reason
         return {
             "participant_id": participant_id,
             "email": email,
@@ -403,7 +425,8 @@ def send_portal_invite_for_participant(
             "reason": reason,
             "activation_url": None,
             "portal_invite_created": False,
-            "error": reason,
+            "error": error,
+            "error_detail": portal_result.get("error_detail"),
         }
 
     reason = portal_result.get("reason") or ""

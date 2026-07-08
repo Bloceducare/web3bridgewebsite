@@ -180,14 +180,15 @@ class OnboardingService:
                 )
             payload = self._apply_backend_participant_row(payload, participant_row)
 
+        normalized_approval_status = self.normalize_approval_status(payload.approval_status)
         if self.is_zk_course(payload.course_name):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="ZK cohorts must not use the standard onboarding invite flow",
-            )
+            if normalized_approval_status != ApprovalStatus.APPROVED.value:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="ZK students must be approved before receiving a portal invite",
+                )
 
         normalized_email = payload.email.lower().strip()
-        normalized_approval_status = self.normalize_approval_status(payload.approval_status)
         user = await self._get_user_by_email(normalized_email)
         portal_invite_created = False
 
@@ -249,12 +250,17 @@ class OnboardingService:
             external_map.last_synced_at = datetime.now(UTC)
 
         if portal_invite_created:
+            onboard_reason = (
+                "zk_approved_onboarding"
+                if self.is_zk_course(payload.course_name)
+                else "non_zk_payment_onboarding"
+            )
             self.session.add(
                 StudentStatusHistory(
                     user_id=user.id,
                     from_state=current_account_state,
                     to_state=AccountState.INVITED.value,
-                    reason="non_zk_payment_onboarding",
+                    reason=onboard_reason,
                     changed_at=datetime.now(UTC),
                 )
             )

@@ -70,7 +70,8 @@
         </ul>
         <p><strong>Important Notice:</strong> Your payment confirms your place in this cohort. Participants are expected
             to stay consistent, meet program expectations, and actively engage throughout the training.</p>
-        <p><strong>Student Portal Access:</strong> Your portal activation email will be sent within the next 14 days.
+        <p><strong>Student Portal Access:</strong> Check your inbox for a separate email with your portal activation link.
+           {% if activation_url %}<a href="{{ activation_url }}">Activate your student portal account</a>{% endif %}
            </p>
 
         <p>Come prepared to learn intensively, build fearlessly, and contribute meaningfully. The Rust journey isn’t

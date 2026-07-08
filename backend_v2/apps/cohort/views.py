@@ -140,12 +140,10 @@ def handle_payment_success(
     participant_object, serialized_participant_obj, serializer_class
 ):
     """
-    Send one standard registration success email after payment.
+    After payment: send the welcome email, then send the portal invite immediately.
 
-    Portal activation emails are not sent here: the student portal is not live yet, and
-    course templates already explain portal access timelines (e.g. within 14 days).
-
-    Non-ZK participants are auto-accepted on payment; ZK stays PENDING until approved.
+    Non-ZK participants are auto-accepted on payment; ZK stays PENDING until approved
+    (portal invite waits for ACCEPTED).
     """
     if auto_accept_participant_on_payment(participant_object):
         participant_object.save(update_fields=["status"])
@@ -164,9 +162,28 @@ def handle_payment_success(
         )
         return serializer_class.Retrieve(participant_object).data
 
+    activation_url = None
+    try:
+        invite = send_portal_invite_for_participant(participant_object, paid_only=True)
+        if invite.get("sent"):
+            activation_url = invite.get("activation_url")
+        elif not invite.get("skipped"):
+            logger.warning(
+                "Portal invite failed after payment for %s (id=%s): %s",
+                email,
+                getattr(participant_object, "id", None),
+                invite.get("error") or invite.get("reason"),
+            )
+    except Exception:
+        logger.exception(
+            "Portal invite raised after payment for %s (id=%s)",
+            email,
+            getattr(participant_object, "id", None),
+        )
+
     try:
         send_registration_success_mail(
-            email, course_id, participant_name, activation_url=None
+            email, course_id, participant_name, activation_url=activation_url
         )
     except Exception:
         logger.exception(

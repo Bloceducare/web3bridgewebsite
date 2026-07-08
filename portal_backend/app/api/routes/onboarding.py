@@ -16,12 +16,12 @@ router = APIRouter(prefix="/onboarding", tags=["Onboarding"])
     "/invite",
     response_model=OnboardingInviteResponse,
     status_code=status.HTTP_200_OK,
-    summary="Invite a non-ZK student",
+    summary="Invite a paid student",
     description=(
-        "Create a portal account for a paid non-ZK student and "
+        "Create a portal account for a paid student and "
         "send an activation email. Requires the internal API key "
-        "via X-Internal-API-Key header. ZK course students are "
-        "rejected with 400."
+        "via X-Internal-API-Key header. ZK students must be approved "
+        "before an invite is sent."
     ),
 )
 async def invite_non_zk_student(
