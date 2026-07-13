@@ -171,8 +171,11 @@ async def resend_verification(
     response_model=PasswordResetResponse,
     status_code=status.HTTP_200_OK,
     summary="Request password reset",
-    description="Request a password reset token for the given email. "
-    "Returns a generic message regardless of whether the account exists (to prevent enumeration).",
+    description=(
+        "Request a password reset email for the given address. "
+        "If the account exists, an email with a reset link is sent. "
+        "Always returns a generic message (to prevent enumeration)."
+    ),
 )
 async def request_password_reset(
     payload: PasswordResetRequest,

@@ -78,7 +78,6 @@ class LogoutResponse(BaseModel):
 
 class PasswordResetResponse(BaseModel):
     detail: str
-    reset_token: str | None = None
 
 
 class MessageResponse(BaseModel):

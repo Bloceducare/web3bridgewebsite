@@ -104,6 +104,24 @@ class EmailService:
         subject, html_body = render_verification_email(name=student_name, code=code)
         return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
 
+    async def send_password_reset_email(
+        self,
+        *,
+        to_email: str,
+        student_name: str,
+        reset_url: str,
+        expire_hours: int,
+    ) -> bool:
+        """Send a password reset link to a student."""
+        from app.services.templates.password_reset_email import render_password_reset_email
+
+        subject, html_body = render_password_reset_email(
+            name=student_name,
+            reset_url=reset_url,
+            expire_hours=expire_hours,
+        )
+        return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
+
     async def send_update_notification_email(
         self,
         *,

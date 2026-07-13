@@ -202,17 +202,30 @@ class AuthService:
         await self.session.commit()
 
     async def request_password_reset(self, *, email: str) -> PasswordResetResponse:
+        generic_detail = (
+            "If the account exists, a password reset email has been sent"
+        )
         user = await self._get_user_by_email(email)
         if user is None:
-            return PasswordResetResponse(
-                detail="If the account exists, a reset token has been issued"
-            )
+            return PasswordResetResponse(detail=generic_detail)
 
         reset_token, _, _ = create_password_reset_token(user_id=user.id, email=user.email)
-        return PasswordResetResponse(
-            detail="If the account exists, a reset token has been issued",
-            reset_token=reset_token,
+        profile = await self._get_profile_by_user_id(user.id)
+        student_name = profile.full_name if profile else user.email
+        reset_url = (
+            f"{settings.PORTAL_FRONTEND_URL.rstrip('/')}"
+            f"/reset-password?token={reset_token}"
         )
+
+        asyncio.create_task(
+            self._send_password_reset_email_safe(
+                to_email=user.email,
+                student_name=student_name,
+                reset_url=reset_url,
+            )
+        )
+
+        return PasswordResetResponse(detail=generic_detail)
 
     async def reset_password(self, *, token: str, new_password: str) -> None:
         payload = decode_token(token, expected_type=TokenType.PASSWORD_RESET)
@@ -384,6 +397,25 @@ class AuthService:
     @staticmethod
     def _generate_verification_code() -> str:
         return f"{secrets.randbelow(1000000):06d}"
+
+    async def _send_password_reset_email_safe(
+        self,
+        *,
+        to_email: str,
+        student_name: str,
+        reset_url: str,
+    ) -> None:
+        try:
+            sent = await self.email_service.send_password_reset_email(
+                to_email=to_email,
+                student_name=student_name,
+                reset_url=reset_url,
+                expire_hours=settings.PASSWORD_RESET_TOKEN_EXPIRE_HOURS,
+            )
+            if not sent:
+                logger.warning("Password reset email was not sent to %s", to_email)
+        except Exception:
+            logger.exception("Failed to send password reset email to %s", to_email)
 
     async def _send_verification_email_safe(
         self,
