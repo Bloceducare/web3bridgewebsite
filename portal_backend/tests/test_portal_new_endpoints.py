@@ -350,15 +350,15 @@ def test_courses_admin_summary_returns_aggregates() -> None:
     assert payload[0]["paid_students"] == 29
 
 
-def test_discord_pending_invites_requires_internal_auth() -> None:
+def test_discord_pending_invites_requires_auth() -> None:
     response = client.get("/api/v1/admin/discord/invites/pending")
     assert response.status_code == 401
-    assert response.json()["detail"] == "Invalid internal API key"
+    assert response.json()["detail"] == "Not authenticated"
 
 
 def test_discord_pending_invites_returns_students() -> None:
-    async def override_internal_key() -> str:
-        return "ok"
+    async def override_admin_or_mentor() -> User:
+        return build_user(user_id=99, role="system_admin")
 
     async def list_pending_invites(
         _: DiscordService,
@@ -379,7 +379,9 @@ def test_discord_pending_invites_returns_students() -> None:
 
     original_method = DiscordService.list_pending_invites
     DiscordService.list_pending_invites = list_pending_invites
-    app.dependency_overrides[deps.verify_internal_api_key] = override_internal_key
+    app.dependency_overrides[deps.get_current_system_admin_or_mentor_user] = (
+        override_admin_or_mentor
+    )
     app.dependency_overrides[get_db_session] = override_db_session
 
     try:
@@ -393,8 +395,8 @@ def test_discord_pending_invites_returns_students() -> None:
 
 
 def test_discord_generate_invite_stores_record() -> None:
-    async def override_internal_key() -> str:
-        return "ok"
+    async def override_admin_or_mentor() -> User:
+        return build_user(user_id=99, role="system_admin")
 
     async def upsert_generated_invite(
         _: DiscordService,
@@ -410,7 +412,9 @@ def test_discord_generate_invite_stores_record() -> None:
 
     original_method = DiscordService.upsert_generated_invite
     DiscordService.upsert_generated_invite = upsert_generated_invite
-    app.dependency_overrides[deps.verify_internal_api_key] = override_internal_key
+    app.dependency_overrides[deps.get_current_system_admin_or_mentor_user] = (
+        override_admin_or_mentor
+    )
     app.dependency_overrides[get_db_session] = override_db_session
 
     try:

@@ -106,6 +106,31 @@ async def get_current_mentor_user(
     return current_user
 
 
+async def get_current_system_admin_or_mentor_user(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> User:
+    if current_user.role == UserRole.SYSTEM_ADMIN.value:
+        return current_user
+
+    if current_user.role == UserRole.MENTOR.value:
+        result = await db.execute(
+            select(Mentor).where(Mentor.user_id == current_user.id, Mentor.is_active.is_(True))
+        )
+        mentor = result.scalar_one_or_none()
+        if mentor is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Active mentor profile required",
+            )
+        return current_user
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="System admin or mentor access required",
+    )
+
+
 async def verify_internal_api_key(
     x_internal_api_key: str = Header(default="", alias="X-Internal-API-Key"),
 ) -> str:

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import verify_internal_api_key
+from app.api.deps import get_current_system_admin_or_mentor_user
 from app.db.session import get_db_session
+from app.models.portal import User
 from app.schemas.discord import (
     DiscordInviteGenerateRequest,
     DiscordInviteGenerateResponse,
@@ -20,13 +21,13 @@ router = APIRouter(prefix="/admin/discord", tags=["Discord Admin"])
     status_code=status.HTTP_200_OK,
     summary="List students pending Discord invites",
     description=(
-        "Internal endpoint for the Discord bot to fetch students "
-        "that still need an invite link."
+        "List students that still need a Discord invite link. "
+        "Requires a system admin or active mentor Bearer token."
     ),
 )
 async def list_pending_discord_invites(
     limit: int = Query(default=100, ge=1, le=500),
-    _: str = Depends(verify_internal_api_key),
+    _: User = Depends(get_current_system_admin_or_mentor_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> list[PendingDiscordInviteStudentResponse]:
     service = DiscordService(db)
@@ -39,13 +40,14 @@ async def list_pending_discord_invites(
     status_code=status.HTTP_200_OK,
     summary="Store generated Discord invite",
     description=(
-        "Internal endpoint for the Discord bot to persist a generated "
-        "invite link and optional Discord metadata for a student."
+        "Persist a generated Discord invite link and optional Discord "
+        "metadata for a student. Requires a system admin or active mentor "
+        "Bearer token."
     ),
 )
 async def upsert_generated_discord_invite(
     payload: DiscordInviteGenerateRequest,
-    _: str = Depends(verify_internal_api_key),
+    _: User = Depends(get_current_system_admin_or_mentor_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> DiscordInviteGenerateResponse:
     service = DiscordService(db)
@@ -57,11 +59,14 @@ async def upsert_generated_discord_invite(
     response_model=DiscordInviteRevokeResponse,
     status_code=status.HTTP_200_OK,
     summary="Revoke student Discord invite",
-    description="Internal endpoint to revoke a previously generated student Discord invite.",
+    description=(
+        "Revoke a previously generated student Discord invite. "
+        "Requires a system admin or active mentor Bearer token."
+    ),
 )
 async def revoke_generated_discord_invite(
     user_id: int,
-    _: str = Depends(verify_internal_api_key),
+    _: User = Depends(get_current_system_admin_or_mentor_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> DiscordInviteRevokeResponse:
     service = DiscordService(db)
