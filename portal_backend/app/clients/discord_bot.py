@@ -8,6 +8,9 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+# Discord gateway can take up to ~60s on cold start before creating an invite.
+_DISCORD_BOT_TIMEOUT = httpx.Timeout(90.0, connect=10.0)
+
 
 class DiscordBotError(Exception):
     def __init__(self, *, status_code: int, detail: str) -> None:
@@ -25,12 +28,23 @@ class DiscordBotClient:
         }
 
     async def get_invite_by_email(self, *, email: str) -> dict[str, Any] | None:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(
-                f"{self.base}/api/v1/invites",
-                params={"email": email},
-                headers=self.headers,
-            )
+        try:
+            async with httpx.AsyncClient(timeout=_DISCORD_BOT_TIMEOUT) as client:
+                response = await client.get(
+                    f"{self.base}/api/v1/invites",
+                    params={"email": email},
+                    headers=self.headers,
+                )
+        except httpx.TimeoutException as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service timed out. Please try again.",
+            ) from exc
+        except httpx.HTTPError as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service is unreachable. Please try again later.",
+            ) from exc
         if response.status_code == 404:
             return None
         if response.status_code >= 400:
@@ -61,22 +75,44 @@ class DiscordBotClient:
         }
         if category_id:
             body["category_id"] = category_id
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                f"{self.base}/api/v1/invites",
-                json=body,
-                headers=self.headers,
-            )
+        try:
+            async with httpx.AsyncClient(timeout=_DISCORD_BOT_TIMEOUT) as client:
+                response = await client.post(
+                    f"{self.base}/api/v1/invites",
+                    json=body,
+                    headers=self.headers,
+                )
+        except httpx.TimeoutException as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service timed out. Please try again.",
+            ) from exc
+        except httpx.HTTPError as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service is unreachable. Please try again later.",
+            ) from exc
         if response.status_code >= 400:
             raise self._error_from_response(response)
         return response.json()
 
     async def revoke_invite(self, *, invite_code: str) -> dict[str, Any] | None:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.delete(
-                f"{self.base}/api/v1/invites/{invite_code}",
-                headers=self.headers,
-            )
+        try:
+            async with httpx.AsyncClient(timeout=_DISCORD_BOT_TIMEOUT) as client:
+                response = await client.delete(
+                    f"{self.base}/api/v1/invites/{invite_code}",
+                    headers=self.headers,
+                )
+        except httpx.TimeoutException as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service timed out. Please try again.",
+            ) from exc
+        except httpx.HTTPError as exc:
+            raise DiscordBotError(
+                status_code=503,
+                detail="Discord invite service is unreachable. Please try again later.",
+            ) from exc
         if response.status_code in {200, 204, 404}:
             if response.content:
                 return response.json()
