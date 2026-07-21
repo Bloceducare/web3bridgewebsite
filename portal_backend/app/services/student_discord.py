@@ -65,7 +65,10 @@ class StudentDiscordService:
             )
 
         profile.discord_email = discord_email
-        await self.session.flush()
+        # Commit before calling discord-bot so we do not hold a row lock on
+        # student_profiles while the bot updates discord_invite_link.
+        await self.session.commit()
+        await self.session.refresh(profile)
 
         try:
             invite_payload = await self.discord_bot.create_invite(
@@ -84,9 +87,9 @@ class StudentDiscordService:
         )
         invite_code = invite_payload.get("invite_code") or extract_discord_invite_code(invite_url)
 
+        # discord-bot owns discord_invite_link; refresh to read what it persisted.
         await self.session.refresh(profile)
-        if not profile.discord_invite_link and invite_url:
-            profile.discord_invite_link = invite_url
+        stored_invite_url = profile.discord_invite_link or invite_url
 
         self.session.add(
             AuditLog(
@@ -96,18 +99,18 @@ class StudentDiscordService:
                 resource_id=str(profile.id),
                 after_json={
                     "discord_email": discord_email,
-                    "discord_invite_link": profile.discord_invite_link or invite_url,
+                    "discord_invite_link": stored_invite_url,
                     "role": settings.DISCORD_STUDENT_ROLE,
                     "replaced_previous_invite": replaced_previous_invite,
+                    "profile_synced": invite_payload.get("profile_synced", True),
                 },
                 created_at=datetime.now(UTC),
             )
         )
         await self.session.commit()
-        await self.session.refresh(profile)
 
         return GenerateMyDiscordInviteResponse(
-            invite_url=profile.discord_invite_link or invite_url,
+            invite_url=stored_invite_url,
             invite_code=invite_code,
             discord_email=discord_email,
             replaced_previous_invite=replaced_previous_invite,
