@@ -14,6 +14,10 @@ from app.schemas.profile import GenerateMyDiscordInviteRequest, GenerateMyDiscor
 settings = get_settings()
 
 
+def _normalize_discord_username(value: str) -> str:
+    return value.strip().lstrip("@").lower()
+
+
 class StudentDiscordService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -37,36 +41,35 @@ class StudentDiscordService:
             )
 
         profile = await self._get_profile(user.id)
-        discord_email = str(payload.discord_email).strip().lower()
-        await self._ensure_discord_email_available(
-            discord_email=discord_email,
+        discord_username = _normalize_discord_username(str(payload.discord_username))
+        await self._ensure_discord_username_available(
+            discord_username=discord_username,
             user_id=user.id,
         )
 
-        previous_discord_email = (profile.discord_email or "").strip().lower()
-        email_changed = previous_discord_email != discord_email
+        previous_discord_username = _normalize_discord_username(profile.discord_email or "")
+        username_changed = previous_discord_username != discord_username
         replaced_previous_invite = False
 
-        if email_changed and profile.discord_invite_link:
+        if username_changed and profile.discord_invite_link:
             await self._revoke_existing_invite(profile.discord_invite_link)
             replaced_previous_invite = True
             await self.session.refresh(profile)
 
-        if not email_changed and profile.discord_invite_link:
-            profile.discord_email = discord_email
+        if not username_changed and profile.discord_invite_link:
+            profile.discord_email = discord_username
             await self.session.commit()
             await self.session.refresh(profile)
             return GenerateMyDiscordInviteResponse(
                 invite_url=profile.discord_invite_link,
                 invite_code=extract_discord_invite_code(profile.discord_invite_link),
-                discord_email=discord_email,
+                discord_username=discord_username,
                 replaced_previous_invite=False,
-                message="Existing invite returned for your Discord email",
+                message="Existing invite returned for your Discord username",
+                role_assigned=False,
             )
 
-        profile.discord_email = discord_email
-        # Commit before calling discord-bot so we do not hold a row lock on
-        # student_profiles while the bot updates discord_invite_link.
+        profile.discord_email = discord_username
         await self.session.commit()
         await self.session.refresh(profile)
 
@@ -74,6 +77,7 @@ class StudentDiscordService:
             invite_payload = await self.discord_bot.create_invite(
                 email=user.email,
                 user_id=user.id,
+                discord_username=discord_username,
                 role=settings.DISCORD_STUDENT_ROLE,
                 category_id=settings.DISCORD_INVITE_CATEGORY_ID or None,
             )
@@ -86,8 +90,8 @@ class StudentDiscordService:
             or ""
         )
         invite_code = invite_payload.get("invite_code") or extract_discord_invite_code(invite_url)
+        role_assigned = bool(invite_payload.get("role_assigned"))
 
-        # discord-bot owns discord_invite_link; refresh to read what it persisted.
         await self.session.refresh(profile)
         stored_invite_url = profile.discord_invite_link or invite_url
 
@@ -98,10 +102,11 @@ class StudentDiscordService:
                 resource_type="student_profile",
                 resource_id=str(profile.id),
                 after_json={
-                    "discord_email": discord_email,
+                    "discord_username": discord_username,
                     "discord_invite_link": stored_invite_url,
                     "role": settings.DISCORD_STUDENT_ROLE,
                     "replaced_previous_invite": replaced_previous_invite,
+                    "role_assigned": role_assigned,
                     "profile_synced": invite_payload.get("profile_synced", True),
                 },
                 created_at=datetime.now(UTC),
@@ -109,12 +114,23 @@ class StudentDiscordService:
         )
         await self.session.commit()
 
+        if role_assigned:
+            message = "Discord invite created and cohort role granted"
+        elif invite_payload.get("existing_member", {}).get("found"):
+            message = "Discord invite created (role assignment failed — contact support)"
+        else:
+            message = (
+                "Discord invite created. Join the server with the link, or use Claim Cohort Access "
+                "if you are already a member."
+            )
+
         return GenerateMyDiscordInviteResponse(
             invite_url=stored_invite_url,
             invite_code=invite_code,
-            discord_email=discord_email,
+            discord_username=discord_username,
             replaced_previous_invite=replaced_previous_invite,
-            message="Discord invite created",
+            message=message,
+            role_assigned=role_assigned,
         )
 
     async def _revoke_existing_invite(self, invite_link: str) -> None:
@@ -127,16 +143,18 @@ class StudentDiscordService:
             if exc.status_code != 404:
                 raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
 
-    async def _ensure_discord_email_available(self, *, discord_email: str, user_id: int) -> None:
+    async def _ensure_discord_username_available(
+        self, *, discord_username: str, user_id: int
+    ) -> None:
         statement = select(StudentProfile.id).where(
-            func.lower(StudentProfile.discord_email) == discord_email,
+            func.lower(StudentProfile.discord_email) == discord_username,
             StudentProfile.user_id != user_id,
         )
         result = await self.session.execute(statement)
         if result.scalar_one_or_none() is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="This Discord email is already linked to another student account",
+                detail="This Discord username is already linked to another student account",
             )
 
     async def _get_profile(self, user_id: int) -> StudentProfile:

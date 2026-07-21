@@ -70,6 +70,7 @@ class ProfileService:
             discord_id=profile.discord_id,
             discord_invite_link=profile.discord_invite_link,
             discord_email=profile.discord_email,
+            discord_username=profile.discord_email,
             wallet_address=profile.wallet_address,
             cohort=profile.cohort,
             onboarding_status=profile.onboarding_status,

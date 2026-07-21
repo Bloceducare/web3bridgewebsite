@@ -61,9 +61,9 @@ async def update_my_profile(
     summary="Generate my Discord invite",
     description=(
         "Creates a Discord invite for the authenticated student only. "
-        "Requires discord_email (the email they will use on Discord). "
-        "If they change discord_email, any previous invite is revoked first. "
-        "Re-requesting with the same email returns the existing invite."
+        "Requires discord_username (exact Discord username, without @). "
+        "If they change username, any previous invite is revoked first. "
+        "Re-requesting with the same username returns the existing invite."
     ),
 )
 async def generate_my_discord_invite(

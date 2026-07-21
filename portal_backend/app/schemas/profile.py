@@ -11,7 +11,8 @@ class MyProfileResponse(BaseModel):
     phone: str | None = None
     discord_id: str | None = None
     discord_invite_link: str | None = None
-    discord_email: str | None = None
+    discord_email: str | None = None  # legacy column name; stores Discord username
+    discord_username: str | None = None
     wallet_address: str | None = None
     cohort: str | None = None
     onboarding_status: str
@@ -27,12 +28,13 @@ class UpdateMyProfileRequest(BaseModel):
 
 
 class GenerateMyDiscordInviteRequest(BaseModel):
-    discord_email: EmailStr
+    discord_username: str = Field(..., min_length=1, max_length=100)
 
 
 class GenerateMyDiscordInviteResponse(BaseModel):
     invite_url: str
     invite_code: str | None = None
-    discord_email: str
+    discord_username: str
     replaced_previous_invite: bool = False
     message: str
+    role_assigned: bool = False

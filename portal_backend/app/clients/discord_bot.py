@@ -61,6 +61,7 @@ class DiscordBotClient:
         *,
         email: str,
         user_id: int,
+        discord_username: str,
         role: str,
         category_id: str | None = None,
         max_uses: int = 1,
@@ -69,6 +70,7 @@ class DiscordBotClient:
         body: dict[str, Any] = {
             "email": email,
             "user_id": user_id,
+            "discord_username": discord_username.strip().lstrip("@"),
             "role": role,
             "max_uses": max_uses,
             "max_age": max_age,
