@@ -413,3 +413,41 @@ class GuarantorForm(TimestampMixin, Base):
     uploaded_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"), nullable=True
     )
+
+
+class AttendanceCode(TimestampMixin, Base):
+    __tablename__ = "attendance_codes"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    code: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
+    programme: Mapped[str] = mapped_column(String(255), nullable=False)
+    track: Mapped[str] = mapped_column(String(255), nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    mentor_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}mentors.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    mentor: Mapped["Mentor"] = relationship()
+    attendances: Mapped[list["Attendance"]] = relationship(
+        back_populates="attendance_code", cascade="all, delete-orphan"
+    )
+
+
+class Attendance(TimestampMixin, Base):
+    __tablename__ = "attendances"
+    __table_args__ = (
+        UniqueConstraint("attendance_code_id", "student_name", name="uq_attendance_code_student"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    attendance_code_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}attendance_codes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    student_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    date: Mapped[str] = mapped_column(String(50), nullable=False)
+    time: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    attendance_code: Mapped["AttendanceCode"] = relationship(back_populates="attendances")
+
