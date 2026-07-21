@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.routes import (
     assessments_router,
+    attendance_router,
     auth_router,
     courses_router,
     dashboard_router,
@@ -20,6 +21,7 @@ from app.api.routes import (
 
 api_router = APIRouter()
 api_router.include_router(assessments_router)
+api_router.include_router(attendance_router)
 api_router.include_router(auth_router)
 api_router.include_router(courses_router)
 api_router.include_router(dashboard_router)
@@ -34,3 +36,4 @@ api_router.include_router(student_router)
 api_router.include_router(sync_router)
 api_router.include_router(students_router)
 api_router.include_router(updates_router)
+
