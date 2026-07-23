@@ -20,24 +20,38 @@ schema_name = settings.POSTGRES_SCHEMA
 
 
 def upgrade() -> None:
-    op.add_column(
-        "student_updates",
-        sa.Column("programme", sa.String(length=255), nullable=True),
-        schema=schema_name,
-    )
-    op.add_column(
-        "student_updates",
-        sa.Column("track", sa.String(length=255), nullable=True),
-        schema=schema_name,
-    )
-    op.add_column(
-        "student_updates",
-        sa.Column("target_role", sa.String(length=50), nullable=True),
-        schema=schema_name,
-    )
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = [c["name"] for c in inspector.get_columns("student_updates", schema=schema_name)]
+
+    if "programme" not in columns:
+        op.add_column(
+            "student_updates",
+            sa.Column("programme", sa.String(length=255), nullable=True),
+            schema=schema_name,
+        )
+    if "track" not in columns:
+        op.add_column(
+            "student_updates",
+            sa.Column("track", sa.String(length=255), nullable=True),
+            schema=schema_name,
+        )
+    if "target_role" not in columns:
+        op.add_column(
+            "student_updates",
+            sa.Column("target_role", sa.String(length=50), nullable=True),
+            schema=schema_name,
+        )
 
 
 def downgrade() -> None:
-    op.drop_column("student_updates", "target_role", schema=schema_name)
-    op.drop_column("student_updates", "track", schema=schema_name)
-    op.drop_column("student_updates", "programme", schema=schema_name)
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = [c["name"] for c in inspector.get_columns("student_updates", schema=schema_name)]
+
+    if "target_role" in columns:
+        op.drop_column("student_updates", "target_role", schema=schema_name)
+    if "track" in columns:
+        op.drop_column("student_updates", "track", schema=schema_name)
+    if "programme" in columns:
+        op.drop_column("student_updates", "programme", schema=schema_name)
