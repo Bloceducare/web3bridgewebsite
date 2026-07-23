@@ -136,3 +136,24 @@ class EmailService:
 
         subject, html_body = render_update_notification_email(title=title, body=body)
         return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
+
+    async def send_mentor_onboarding_email(
+        self,
+        *,
+        to_email: str,
+        mentor_name: str,
+        activation_url: str,
+        programme: str,
+        track: str,
+    ) -> bool:
+        """Send the portal onboarding/activation email to a mentor."""
+        from app.services.templates.mentor_onboarding_email import render_mentor_onboarding_email
+
+        subject, html_body = render_mentor_onboarding_email(
+            name=mentor_name,
+            activation_url=activation_url,
+            programme=programme,
+            track=track,
+        )
+        return await self.send_email(to_email=to_email, subject=subject, html_body=html_body)
+

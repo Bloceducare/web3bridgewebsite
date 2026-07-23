@@ -132,7 +132,7 @@ def test_mentor_create_duplicate_custom_code_fails() -> None:
         clear_overrides()
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "Attendance code already exists. Please choose a different code."
+    assert response.json()["detail"] == "Attendance code exists. Please choose a different code "
 
 
 def test_mentor_list_attendance_codes() -> None:

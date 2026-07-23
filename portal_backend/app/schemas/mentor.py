@@ -12,12 +12,15 @@ class CreateMentorUpdateRequest(BaseModel):
     is_published: bool = False
     send_in_app: bool = True
     send_email: bool = False
+    programme: str = Field(min_length=1, max_length=255)
+    track: str = Field(min_length=1, max_length=255)
 
     @model_validator(mode="after")
     def validate_channels(self) -> "CreateMentorUpdateRequest":
         if not self.send_in_app and not self.send_email:
             raise ValueError("At least one delivery channel must be enabled")
         return self
+
 
 
 class MentorStudentResponse(BaseModel):

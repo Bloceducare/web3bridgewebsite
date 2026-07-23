@@ -53,8 +53,12 @@ class MentorPortalService:
             is_published=payload.is_published,
             send_in_app=payload.send_in_app,
             send_email=payload.send_email,
+            programme=payload.programme,
+            track=payload.track,
+            target_role=UserRole.STUDENT.value,
         )
         return await UpdatesService(self.session).create_update(actor=actor, payload=update_payload)
+
 
     async def list_course_updates(
         self, *, actor: User, course_id: int | None = None
