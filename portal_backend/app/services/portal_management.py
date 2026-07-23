@@ -54,6 +54,8 @@ class PortalManagementService:
             email=payload.email.strip().lower(),
             bio=payload.bio,
             is_active=payload.is_active,
+            programme=payload.programme,
+            track=payload.track,
         )
         self.session.add(mentor)
         await self.session.flush()
@@ -61,6 +63,7 @@ class PortalManagementService:
         await self.session.commit()
         await self.session.refresh(mentor)
         return await self._mentor_response(mentor)
+
 
     async def invite_portal_user(
         self, *, actor: User, payload: InvitePortalUserRequest
@@ -104,6 +107,8 @@ class PortalManagementService:
                     email=normalized_email,
                     bio=payload.bio,
                     is_active=True,
+                    programme=payload.programme,
+                    track=payload.track,
                 )
                 self.session.add(mentor_row)
                 await self.session.flush()
@@ -112,6 +117,8 @@ class PortalManagementService:
                 mentor_row.email = normalized_email
                 mentor_row.bio = payload.bio
                 mentor_row.is_active = True
+                mentor_row.programme = payload.programme
+                mentor_row.track = payload.track
 
             if payload.course_id is not None:
                 result = await self.session.execute(
@@ -133,11 +140,21 @@ class PortalManagementService:
         self._audit(actor=actor, action="portal_user_invited", resource_id=str(user.id))
         await self.session.commit()
 
-        await self.email_service.send_onboarding_email(
-            to_email=normalized_email,
-            student_name=payload.full_name,
-            activation_url=activation_url,
-        )
+        if payload.role.value == UserRole.MENTOR.value:
+            await self.email_service.send_mentor_onboarding_email(
+                to_email=normalized_email,
+                mentor_name=payload.full_name,
+                activation_url=activation_url,
+                programme=payload.programme or "",
+                track=payload.track or "",
+            )
+        else:
+            await self.email_service.send_onboarding_email(
+                to_email=normalized_email,
+                student_name=payload.full_name,
+                activation_url=activation_url,
+            )
+
 
         return InvitePortalUserResponse(
             user_id=user.id,
@@ -380,10 +397,13 @@ class PortalManagementService:
             email=mentor.email,
             bio=mentor.bio,
             is_active=mentor.is_active,
+            programme=mentor.programme,
+            track=mentor.track,
             created_at=mentor.created_at,
             updated_at=mentor.updated_at,
             course_ids=list(result.scalars().all()),
         )
+
 
     @staticmethod
     def _material_response(material: CourseMaterial) -> CourseMaterialResponse:

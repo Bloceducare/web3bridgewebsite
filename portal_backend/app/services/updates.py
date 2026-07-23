@@ -54,9 +54,13 @@ class UpdatesService:
             send_email=payload.send_email,
             published_at=now if payload.is_published else None,
             created_by=actor.id,
+            programme=payload.programme,
+            track=payload.track,
+            target_role=payload.target_role,
             created_at=now,
             updated_at=now,
         )
+
         self.session.add(student_update)
         await self.session.flush()
 
@@ -152,55 +156,29 @@ class UpdatesService:
         return MessageResponse(detail="Update deleted successfully")
 
     async def list_my_updates(self, *, user: User) -> list[StudentUpdateResponse]:
-        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
-        if not hasattr(self.session, "execute"):
-            profile = await self._get_profile_by_user_id(user.id)
-            updates = await self._list_published_updates()
-            visible_updates = [
-                item
-                for item in updates
-                if self._update_applies_to_user(
-                    student_update=item,
-                    user=user,
-                    profile=profile,
-                    enrolled_course_ids=enrolled_course_ids,
-                )
-            ]
-            responses: list[StudentUpdateResponse] = []
-            for item in visible_updates:
-                read_record = await self._get_read_record(update_id=item.id, user_id=user.id)
-                responses.append(
-                    self._build_update_response(
-                        student_update=item,
-                        read_at=read_record.read_at if read_record is not None else None,
-                    )
-                )
-            return responses
-
         profile = await self._get_profile_by_user_id(user.id)
-        visibility_filters = [
-            StudentUpdate.target_type == UpdateTargetType.ALL_ACTIVE.value,
-            and_(
-                StudentUpdate.target_type == UpdateTargetType.INDIVIDUAL.value,
-                StudentUpdate.target_ref == str(user.id),
-            ),
-        ]
-        if profile is not None and profile.cohort:
-            visibility_filters.append(
-                and_(
-                    StudentUpdate.target_type == UpdateTargetType.COHORT.value,
-                    StudentUpdate.target_ref == profile.cohort,
-                )
-            )
-        if enrolled_course_ids:
-            visibility_filters.append(
-                and_(
-                    StudentUpdate.target_type == UpdateTargetType.COURSE.value,
-                    StudentUpdate.target_ref.in_(
-                        [str(course_id) for course_id in enrolled_course_ids]
-                    ),
-                )
-            )
+        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
+
+        course_names = set()
+        if user.role == UserRole.STUDENT.value:
+            stmt = text("""
+                SELECT DISTINCT LOWER(TRIM(c.name))
+                FROM cohort_participant AS p
+                JOIN cohort_course AS c ON c.id = p.course_id
+                WHERE LOWER(TRIM(p.email)) = :email
+            """)
+            res = await self.session.execute(stmt, {"email": user.email.lower().strip()})
+            course_names = {row[0] for row in res.all() if row[0]}
+
+        mentor_programme = None
+        mentor_track = None
+        if user.role == UserRole.MENTOR.value:
+            from app.models.portal import Mentor
+            res = await self.session.execute(select(Mentor).where(Mentor.user_id == user.id))
+            mentor = res.scalar_one_or_none()
+            if mentor:
+                mentor_programme = mentor.programme
+                mentor_track = mentor.track
 
         result = await self.session.execute(
             select(StudentUpdate, StudentUpdateRead.read_at)
@@ -214,15 +192,58 @@ class UpdatesService:
             .where(
                 StudentUpdate.is_published.is_(True),
                 StudentUpdate.send_in_app.is_(True),
-                or_(*visibility_filters),
             )
             .order_by(StudentUpdate.published_at.desc(), StudentUpdate.created_at.desc())
         )
         rows = result.all()
-        return [
-            self._build_update_response(student_update=student_update, read_at=read_at)
-            for student_update, read_at in rows
-        ]
+
+        responses: list[StudentUpdateResponse] = []
+        for student_update, read_at in rows:
+            # 1. Target Role
+            if student_update.target_role and student_update.target_role != user.role:
+                continue
+
+            # 2. Programme
+            if student_update.programme:
+                if user.role == UserRole.STUDENT.value:
+                    if not profile or profile.cohort != student_update.programme:
+                        continue
+                elif user.role == UserRole.MENTOR.value:
+                    if not mentor_programme or mentor_programme != student_update.programme:
+                        continue
+
+            # 3. Track
+            if student_update.track:
+                if user.role == UserRole.STUDENT.value:
+                    if student_update.track.lower().strip() not in course_names:
+                        continue
+                elif user.role == UserRole.MENTOR.value:
+                    if not mentor_track or mentor_track.lower().strip() != student_update.track.lower().strip():
+                        continue
+
+            # Check original target fallback
+            if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
+                if student_update.target_ref != str(user.id):
+                    continue
+            elif student_update.target_type == UpdateTargetType.COHORT.value:
+                if not profile or profile.cohort != student_update.target_ref:
+                    continue
+            elif student_update.target_type == UpdateTargetType.COURSE.value:
+                if not student_update.target_ref:
+                    continue
+                try:
+                    course_id = int(student_update.target_ref)
+                except ValueError:
+                    continue
+                if course_id not in enrolled_course_ids:
+                    continue
+
+            responses.append(
+                self._build_update_response(student_update=student_update, read_at=read_at)
+            )
+
+        return responses
+
 
     async def mark_update_as_read(
         self,
@@ -352,6 +373,9 @@ class UpdatesService:
             send_email=student_update.send_email,
             published_at=student_update.published_at,
             created_by=student_update.created_by,
+            programme=student_update.programme,
+            track=student_update.track,
+            target_role=student_update.target_role,
             created_at=student_update.created_at,
             updated_at=student_update.updated_at,
             read_at=read_at,
@@ -368,7 +392,11 @@ class UpdatesService:
             "send_in_app": student_update.send_in_app,
             "send_email": student_update.send_email,
             "created_by": student_update.created_by,
+            "programme": student_update.programme,
+            "track": student_update.track,
+            "target_role": student_update.target_role,
         }
+
 
     async def _dispatch_notification_emails_if_required(self, *, student_update: StudentUpdate) -> None:
         if not student_update.is_published or not student_update.send_email:

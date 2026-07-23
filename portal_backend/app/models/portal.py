@@ -218,6 +218,10 @@ class StudentUpdate(TimestampMixin, Base):
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"),
         nullable=True,
     )
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    target_role: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
 
 
 class StudentUpdateRead(Base):
@@ -303,6 +307,9 @@ class Mentor(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
 
 
 class MentorCourseMap(TimestampMixin, Base):

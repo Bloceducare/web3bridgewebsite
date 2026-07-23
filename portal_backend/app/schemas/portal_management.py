@@ -16,12 +16,16 @@ class MentorCreateRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     bio: str | None = None
     is_active: bool = True
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
 
 class MentorUpdateRequest(BaseModel):
     full_name: str | None = Field(default=None, min_length=1, max_length=255)
     bio: str | None = None
     is_active: bool | None = None
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
 
 class MentorResponse(BaseModel):
@@ -30,9 +34,12 @@ class MentorResponse(BaseModel):
     email: str
     bio: str | None = None
     is_active: bool
+    programme: str | None = None
+    track: str | None = None
     created_at: datetime
     updated_at: datetime
     course_ids: list[int] = []
+
 
 
 class MentorCourseAssignRequest(BaseModel):
@@ -148,12 +155,17 @@ class InvitePortalUserRequest(BaseModel):
         gt=0,
         description="When inviting a mentor, assign this course on activation",
     )
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
     @model_validator(mode="after")
     def validate_mentor_course(self) -> "InvitePortalUserRequest":
         if self.course_id is not None and self.role != UserRole.MENTOR:
             raise ValueError("course_id is only supported when inviting a mentor")
+        if (self.programme is not None or self.track is not None) and self.role != UserRole.MENTOR:
+            raise ValueError("programme and track are only supported when inviting a mentor")
         return self
+
 
 
 class InviteStudentByEmailRequest(BaseModel):
