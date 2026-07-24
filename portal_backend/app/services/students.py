@@ -25,8 +25,11 @@ class StudentsService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def list_students(self) -> list[StudentResponse]:
-        users = await self._list_student_users()
+    async def list_students(self, cohort: str | None = None) -> list[StudentResponse]:
+        if cohort is not None:
+            users = await self._list_student_users(cohort)
+        else:
+            users = await self._list_student_users()
         students: list[StudentResponse] = []
         for user in users:
             profile = await self._get_profile_by_user_id(user.id)
@@ -37,7 +40,7 @@ class StudentsService:
         normalized_email = payload.email.strip().lower()
         existing = await self.session.execute(select(User).where(User.email == normalized_email))
         if existing.scalar_one_or_none() is not None:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Student already exists")
+         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Student already exists")
 
         user = User(
             email=normalized_email,
@@ -277,8 +280,13 @@ class StudentsService:
         await self.session.delete(user)
         await self.session.commit()
 
-    async def _list_student_users(self) -> list[User]:
-        statement = select(User).where(User.role == UserRole.STUDENT.value).order_by(User.id)
+    async def _list_student_users(self, cohort: str | None = None) -> list[User]:
+        statement = select(User).where(User.role == UserRole.STUDENT.value)
+        if cohort is not None:
+            statement = statement.join(StudentProfile, User.id == StudentProfile.user_id).where(
+                StudentProfile.cohort == cohort
+            )
+        statement = statement.order_by(User.id)
         result = await self.session.execute(statement)
         return list(result.scalars().all())
 
