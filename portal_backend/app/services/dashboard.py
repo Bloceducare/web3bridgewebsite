@@ -55,7 +55,10 @@ class DashboardService:
 
     async def _count_published_announcements(self) -> int:
         result = await self.session.execute(
-            select(func.count(StudentUpdate.id)).where(StudentUpdate.is_published.is_(True))
+            select(func.count(StudentUpdate.id)).where(
+                StudentUpdate.is_published.is_(True),
+                StudentUpdate.is_deleted.is_(False),
+            )
         )
         return int(result.scalar() or 0)
 

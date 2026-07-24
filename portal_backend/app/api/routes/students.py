@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_staff_or_admin_user
@@ -26,11 +26,12 @@ router = APIRouter(prefix="/students", tags=["Students"])
     description="Return all student accounts. Staff or admin only.",
 )
 async def list_students(
+    cohort: str | None = Query(default=None),
     _: User = Depends(get_current_staff_or_admin_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> list[StudentResponse]:
     service = StudentsService(db)
-    return await service.list_students()
+    return await service.list_students(cohort=cohort)
 
 
 @router.post(

@@ -77,6 +77,7 @@ class MentorPortalService:
                 StudentUpdate.created_by == actor.id,
                 StudentUpdate.target_type == UpdateTargetType.COURSE.value,
                 StudentUpdate.target_ref.in_([str(cid) for cid in course_ids]),
+                StudentUpdate.is_deleted.is_(False),
             )
             .order_by(StudentUpdate.created_at.desc())
         )
