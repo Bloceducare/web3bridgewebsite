@@ -12,6 +12,7 @@ from app.schemas.notifications import (
     NotificationItemResponse,
     NotificationSummaryResponse,
 )
+from app.schemas.auth import MessageResponse
 from app.services.notifications import NotificationsService
 from app.services.updates import UpdatesService
 from app.schemas.updates import CreateStudentUpdateRequest
@@ -105,3 +106,19 @@ async def create_admin_announcement(
         ),
     )
     return AdminAnnouncementResponse(detail="Announcement created", update_id=update.id)
+
+
+@router.delete(
+    "/admin/announcements/{announcement_id}",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Delete admin announcement (soft delete)",
+    description="Soft-delete an existing announcement. Staff or admin only.",
+)
+async def delete_admin_announcement(
+    announcement_id: int,
+    current_user: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> MessageResponse:
+    service = UpdatesService(db)
+    return await service.delete_update(actor=current_user, update_id=announcement_id)

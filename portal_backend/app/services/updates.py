@@ -141,6 +141,8 @@ class UpdatesService:
 
     async def delete_update(self, *, actor: User, update_id: int) -> MessageResponse:
         student_update = await self._get_update_by_id(update_id)
+        student_update.is_deleted = True
+        self.session.add(student_update)
         self.session.add(
             AuditLog(
                 actor_user_id=actor.id,
@@ -151,7 +153,6 @@ class UpdatesService:
                 created_at=datetime.now(UTC),
             )
         )
-        await self.session.delete(student_update)
         await self.session.commit()
         return MessageResponse(detail="Update deleted successfully")
 
@@ -192,6 +193,7 @@ class UpdatesService:
             .where(
                 StudentUpdate.is_published.is_(True),
                 StudentUpdate.send_in_app.is_(True),
+                StudentUpdate.is_deleted.is_(False),
             )
             .order_by(StudentUpdate.published_at.desc(), StudentUpdate.created_at.desc())
         )
@@ -279,7 +281,11 @@ class UpdatesService:
         )
 
     async def _list_all_updates(self) -> list[StudentUpdate]:
-        statement = select(StudentUpdate).order_by(StudentUpdate.created_at.desc())
+        statement = (
+            select(StudentUpdate)
+            .where(StudentUpdate.is_deleted.is_(False))
+            .order_by(StudentUpdate.created_at.desc())
+        )
         result = await self.session.execute(statement)
         return list(result.scalars().all())
 
@@ -287,6 +293,7 @@ class UpdatesService:
         statement = select(StudentUpdate).where(
             StudentUpdate.is_published.is_(True),
             StudentUpdate.send_in_app.is_(True),
+            StudentUpdate.is_deleted.is_(False),
         )
         statement = statement.order_by(
             StudentUpdate.published_at.desc(),
@@ -296,7 +303,10 @@ class UpdatesService:
         return list(result.scalars().all())
 
     async def _get_update_by_id(self, update_id: int) -> StudentUpdate:
-        statement = select(StudentUpdate).where(StudentUpdate.id == update_id)
+        statement = select(StudentUpdate).where(
+            StudentUpdate.id == update_id,
+            StudentUpdate.is_deleted.is_(False),
+        )
         result = await self.session.execute(statement)
         student_update = result.scalar_one_or_none()
         if student_update is None:

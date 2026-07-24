@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.config import get_settings
@@ -213,6 +213,9 @@ class StudentUpdate(TimestampMixin, Base):
     is_published: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     send_in_app: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
     send_email: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=text("false"), index=True
+    )
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"),

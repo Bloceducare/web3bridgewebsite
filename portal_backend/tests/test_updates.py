@@ -183,5 +183,5 @@ async def test_delete_update_deletes_and_audits() -> None:
     response = await service.delete_update(actor=build_staff_user(), update_id=50)
 
     assert response.detail == "Update deleted successfully"
-    assert session.deleted == [student_update]
+    assert student_update.is_deleted is True
     assert any(type(obj).__name__ == "AuditLog" for obj in session.added)
