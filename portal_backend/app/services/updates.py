@@ -376,7 +376,7 @@ class UpdatesService:
                 return profile is not None and student_update.target_ref == profile.cohort
             if student_update.target_type == UpdateTargetType.COURSE.value:
                 if not student_update.target_ref:
-                    return False
+                    return True
                 try:
                     course_id = int(student_update.target_ref)
                 except ValueError:
@@ -389,7 +389,7 @@ class UpdatesService:
                 return student_update.target_ref == str(user.id)
             if student_update.target_type == UpdateTargetType.COURSE.value:
                 if not student_update.target_ref:
-                    return False
+                    return True
                 try:
                     course_id = int(student_update.target_ref)
                 except ValueError:
