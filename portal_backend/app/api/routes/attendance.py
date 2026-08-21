@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_mentor_user
+from app.api.deps import get_current_mentor_user, get_current_staff_or_admin_user
 from app.db.session import get_db_session
 from app.models.portal import User
 from app.schemas.attendance import (
@@ -10,6 +10,8 @@ from app.schemas.attendance import (
     CreateAttendanceCodeRequest,
     StudentAttendanceSubmitRequest,
     StudentAttendanceSubmitResponse,
+    AdminAttendanceCodesResponse,
+    AdminAttendanceDetailResponse,
 )
 from app.schemas.auth import MessageResponse
 from app.services.attendance import AttendanceService
@@ -126,3 +128,44 @@ async def submit_attendance(
     db: AsyncSession = Depends(get_db_session),
 ) -> StudentAttendanceSubmitResponse:
     return await AttendanceService(db).submit_student_attendance(payload=payload)
+
+
+@router.get(
+    "/admin/attendance/codes",
+    response_model=AdminAttendanceCodesResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get attendance codes for a programme",
+    description="Returns list of attendance codes for a selected programme. Staff or Admin only.",
+)
+async def admin_get_attendance_codes(
+    programme: str,
+    page: int = 1,
+    page_size: int = 20,
+    _: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> AdminAttendanceCodesResponse:
+    res = await AttendanceService(db).admin_list_attendance_codes(
+        programme=programme, page=page, page_size=page_size
+    )
+    return AdminAttendanceCodesResponse(**res)
+
+
+@router.get(
+    "/admin/attendance/codes/{code}",
+    response_model=AdminAttendanceDetailResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get attendance details for a code",
+    description="Returns mentor, student logs, and program status details for a code. Staff or Admin only.",
+)
+async def admin_get_attendance_code_details(
+    code: str,
+    page: int = 1,
+    page_size: int = 50,
+    _: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> AdminAttendanceDetailResponse:
+    res = await AttendanceService(db).admin_get_attendance_code_details(
+        code_str=code, page=page, page_size=page_size
+    )
+    return AdminAttendanceDetailResponse(**res)
+

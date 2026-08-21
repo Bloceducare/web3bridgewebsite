@@ -75,3 +75,59 @@ class AttendanceCodeDetailResponse(BaseModel):
     attendees: list[AttendanceRecordResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class AdminAttendanceCodeItem(BaseModel):
+    code: str
+    programme: str
+    createdAt: datetime = Field(validation_alias=AliasChoices("created_at", "createdAt"))
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class AdminAttendanceCodesResponse(BaseModel):
+    success: bool = True
+    data: list[AdminAttendanceCodeItem]
+    total: int
+    page: int
+    page_size: int
+
+
+class AdminAttendanceMentor(BaseModel):
+    id: int
+    name: str
+    email: str
+
+
+class AdminAttendanceDetailRecord(BaseModel):
+    id: int
+    studentName: str = Field(validation_alias=AliasChoices("student_name", "studentName"))
+    date: str
+    time: str
+    timeIn: str | None = Field(default=None, validation_alias=AliasChoices("time_in", "timeIn"))
+    timeOut: str | None = Field(default=None, validation_alias=AliasChoices("time_out", "timeOut"))
+    createdAt: datetime = Field(validation_alias=AliasChoices("created_at", "createdAt"))
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class AdminAttendanceDetailData(BaseModel):
+    code: str
+    programme: str
+    track: str
+    duration: int
+    expiresAt: datetime = Field(validation_alias=AliasChoices("expires_at", "expiresAt"))
+    isActive: bool = Field(validation_alias=AliasChoices("is_active", "isActive"))
+    status: str
+    createdAt: datetime = Field(validation_alias=AliasChoices("created_at", "createdAt"))
+    mentor: AdminAttendanceMentor
+    attendance: list[AdminAttendanceDetailRecord]
+    totalAttendance: int
+    page: int
+    page_size: int
+
+
+class AdminAttendanceDetailResponse(BaseModel):
+    success: bool = True
+    data: AdminAttendanceDetailData
+

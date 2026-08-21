@@ -406,3 +406,122 @@ class AttendanceService:
             message="Attendance recorded successfully",
             attendance=record_resp,
         )
+
+    async def admin_list_attendance_codes(
+        self, programme: str, page: int = 1, page_size: int = 20
+    ) -> dict:
+        count_stmt = select(func.count(AttendanceCode.id)).where(
+            func.lower(func.trim(AttendanceCode.programme)) == programme.lower().strip()
+        )
+        count_res = await self.session.execute(count_stmt)
+        total = count_res.scalar() or 0
+
+        stmt = (
+            select(AttendanceCode)
+            .where(func.lower(func.trim(AttendanceCode.programme)) == programme.lower().strip())
+            .order_by(AttendanceCode.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+        res = await self.session.execute(stmt)
+        codes = res.scalars().all()
+
+        return {
+            "success": True,
+            "data": [
+                {
+                    "code": c.code,
+                    "programme": c.programme,
+                    "createdAt": c.created_at,
+                }
+                for c in codes
+            ],
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+        }
+
+    async def admin_get_attendance_code_details(
+        self, code_str: str, page: int = 1, page_size: int = 50
+    ) -> dict:
+        stmt = (
+            select(AttendanceCode)
+            .where(func.lower(func.trim(AttendanceCode.code)) == code_str.lower().strip())
+        )
+        res = await self.session.execute(stmt)
+        code = res.scalar_one_or_none()
+        if not code:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Attendance code {code_str} not found",
+            )
+
+        mentor_stmt = (
+            select(Mentor, User)
+            .join(User, User.id == Mentor.user_id)
+            .where(Mentor.id == code.mentor_id)
+        )
+        mentor_res = await self.session.execute(mentor_stmt)
+        mentor_row = mentor_res.first()
+        mentor_data = {
+            "id": code.mentor_id,
+            "name": "Unknown",
+            "email": "Unknown",
+        }
+        if mentor_row:
+            mentor, user = mentor_row
+            mentor_data = {
+                "id": mentor.id,
+                "name": mentor.full_name or user.full_name or "Mentor",
+                "email": user.email,
+            }
+
+        count_stmt = select(func.count(Attendance.id)).where(
+            Attendance.attendance_code_id == code.id
+        )
+        count_res = await self.session.execute(count_stmt)
+        total_attendance = count_res.scalar() or 0
+
+        attendance_stmt = (
+            select(Attendance)
+            .where(Attendance.attendance_code_id == code.id)
+            .order_by(Attendance.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+        attendance_res = await self.session.execute(attendance_stmt)
+        records = attendance_res.scalars().all()
+
+        now = datetime.now(UTC)
+        status_str = self._determine_status(code, now)
+
+        return {
+            "success": True,
+            "data": {
+                "code": code.code,
+                "programme": code.programme,
+                "track": code.track,
+                "duration": code.duration,
+                "expiresAt": code.expires_at,
+                "isActive": code.is_active,
+                "status": status_str,
+                "createdAt": code.created_at,
+                "mentor": mentor_data,
+                "attendance": [
+                    {
+                        "id": r.id,
+                        "studentName": r.student_name,
+                        "date": r.date,
+                        "time": r.time,
+                        "timeIn": r.time_in,
+                        "timeOut": r.time_out,
+                        "createdAt": r.created_at,
+                    }
+                    for r in records
+                ],
+                "totalAttendance": total_attendance,
+                "page": page,
+                "page_size": page_size,
+            }
+        }
+

@@ -465,3 +465,117 @@ def test_mentor_reactivate_attendance_code() -> None:
     data = response.json()
     assert data["isActive"] is True
     assert data["status"] == "Active"
+
+
+def build_admin_user(user_id: int = 1) -> User:
+    return User(
+        id=user_id,
+        email=f"admin{user_id}@example.com",
+        role=UserRole.ADMIN.value,
+        account_state=AccountState.ACTIVE.value,
+        email_verified=True,
+    )
+
+
+def test_admin_get_attendance_codes_requires_auth() -> None:
+    response = client.get("/api/v1/admin/attendance/codes?programme=solidity")
+    assert response.status_code in (401, 403)
+
+
+def test_admin_get_attendance_codes_success() -> None:
+    admin_user = build_admin_user()
+
+    async def override_admin_user() -> User:
+        return admin_user
+
+    async def mock_admin_list(self: AttendanceService, programme: str, page: int, page_size: int) -> dict:
+        return {
+            "success": True,
+            "data": [
+                {
+                    "code": "ABC123",
+                    "programme": "solidity",
+                    "createdAt": "2026-08-21T10:00:00Z"
+                }
+            ],
+            "total": 1,
+            "page": 1,
+            "page_size": 20
+        }
+
+    orig = AttendanceService.admin_list_attendance_codes
+    AttendanceService.admin_list_attendance_codes = mock_admin_list
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_admin_user
+    app.dependency_overrides[get_db_session] = override_db_session
+
+    try:
+        response = client.get("/api/v1/admin/attendance/codes?programme=solidity")
+    finally:
+        AttendanceService.admin_list_attendance_codes = orig
+        clear_overrides()
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert len(data["data"]) == 1
+    assert data["data"][0]["code"] == "ABC123"
+
+
+def test_admin_get_attendance_code_details_success() -> None:
+    admin_user = build_admin_user()
+
+    async def override_admin_user() -> User:
+        return admin_user
+
+    async def mock_admin_details(self: AttendanceService, code_str: str, page: int, page_size: int) -> dict:
+        return {
+            "success": True,
+            "data": {
+                "code": "ABC123",
+                "programme": "solidity",
+                "track": "web3",
+                "duration": 30,
+                "expiresAt": "2026-08-21T12:00:00Z",
+                "isActive": True,
+                "status": "Active",
+                "createdAt": "2026-08-21T10:00:00Z",
+                "mentor": {
+                    "id": 1,
+                    "name": "John Doe",
+                    "email": "mentor1@example.com"
+                },
+                "attendance": [
+                    {
+                        "id": 1,
+                        "studentName": "Student A",
+                        "date": "2026-08-21",
+                        "time": "10:30:00",
+                        "timeIn": "10:30:00",
+                        "timeOut": None,
+                        "createdAt": "2026-08-21T10:30:00Z"
+                    }
+                ],
+                "totalAttendance": 1,
+                "page": 1,
+                "page_size": 50
+            }
+        }
+
+    orig = AttendanceService.admin_get_attendance_code_details
+    AttendanceService.admin_get_attendance_code_details = mock_admin_details
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_admin_user
+    app.dependency_overrides[get_db_session] = override_db_session
+
+    try:
+        response = client.get("/api/v1/admin/attendance/codes/ABC123")
+    finally:
+        AttendanceService.admin_get_attendance_code_details = orig
+        clear_overrides()
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["code"] == "ABC123"
+    assert data["data"]["mentor"]["name"] == "John Doe"
+    assert len(data["data"]["attendance"]) == 1
+
