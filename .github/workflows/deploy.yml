@@ -26,8 +26,18 @@ jobs:
         run: |
           REF="${GITHUB_REF_NAME}"
           case "$REF" in
-            master|main) echo "name=production" >> "$GITHUB_OUTPUT" ;;
-            *) echo "Staging deploys disabled for now (branch=$REF)"; exit 1 ;;
+            master|main)
+              echo "deploy_env=production" >> "$GITHUB_OUTPUT"
+              echo "doppler_config=prd" >> "$GITHUB_OUTPUT"
+              ;;
+            develop|development|staging)
+              echo "deploy_env=staging" >> "$GITHUB_OUTPUT"
+              echo "doppler_config=stg" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported/disabled branch: $REF"
+              exit 1
+              ;;
           esac
 
       - name: Setup Node
@@ -47,7 +57,7 @@ jobs:
         run: |
           npm ci
           if [ -n "${DOPPLER_TOKEN:-}" ]; then
-            doppler run --config "${{ steps.env.outputs.name }}" -- npm run build
+            doppler run --config "${{ steps.env.outputs.doppler_config }}" -- npm run build
           else
             npm run build
           fi
@@ -77,5 +87,5 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: 22
           script: |
-            deploy-ssr "${{ env.APP_NAME }}" "${{ steps.env.outputs.name }}" /tmp/artifact.tar.gz
+            deploy-ssr "${{ env.APP_NAME }}" "${{ steps.env.outputs.deploy_env }}" /tmp/artifact.tar.gz
             rm -f /tmp/artifact.tar.gz
