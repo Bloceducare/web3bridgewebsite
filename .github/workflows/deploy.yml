@@ -1,0 +1,81 @@
+name: Deploy website SSR
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "frontend_v2/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+env:
+  APP_NAME: web3bridgewebsite
+  BUILD_ROOT: frontend_v2
+  NODE_VERSION: "20"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Map branch to environment
+        id: env
+        run: |
+          REF="${GITHUB_REF_NAME}"
+          case "$REF" in
+            master|main) echo "name=production" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Staging deploys disabled for now (branch=$REF)"; exit 1 ;;
+          esac
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_ROOT }}/package-lock.json
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Install & build standalone
+        working-directory: ${{ env.BUILD_ROOT }}
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: |
+          npm ci
+          if [ -n "${DOPPLER_TOKEN:-}" ]; then
+            doppler run --config "${{ steps.env.outputs.name }}" -- npm run build
+          else
+            npm run build
+          fi
+          mkdir -p .next/standalone/.next
+          cp -a .next/static .next/standalone/.next/static
+          if [ -d public ]; then
+            cp -a public .next/standalone/public
+          fi
+          tar -czf "${GITHUB_WORKSPACE}/artifact.tar.gz" -C .next/standalone .
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          source: artifact.tar.gz
+          target: /tmp/
+          overwrite: true
+
+      - name: Activate release
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          script: |
+            deploy-ssr "${{ env.APP_NAME }}" "${{ steps.env.outputs.name }}" /tmp/artifact.tar.gz
+            rm -f /tmp/artifact.tar.gz

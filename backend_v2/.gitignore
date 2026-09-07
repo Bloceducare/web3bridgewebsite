@@ -187,4 +187,5 @@ __pycache__/
 
 */migrations/
 ***/migrations/
-# ignore migration folder
+# ignore migration folder.env
+venv/
