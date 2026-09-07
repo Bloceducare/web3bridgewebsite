@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.config import get_settings
@@ -154,6 +154,8 @@ class StudentProfile(TimestampMixin, Base):
     )
     participation: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     user: Mapped[User] = relationship(back_populates="profile")
 
@@ -213,11 +215,18 @@ class StudentUpdate(TimestampMixin, Base):
     is_published: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     send_in_app: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
     send_email: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=text("false"), index=True
+    )
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"),
         nullable=True,
     )
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    target_role: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
 
 
 class StudentUpdateRead(Base):
@@ -303,6 +312,9 @@ class Mentor(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
 
 
 class MentorCourseMap(TimestampMixin, Base):
@@ -314,6 +326,8 @@ class MentorCourseMap(TimestampMixin, Base):
         ForeignKey(f"{schema_prefix}mentors.id", ondelete="CASCADE"), nullable=False, index=True
     )
     course_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
 
 class CourseMaterial(TimestampMixin, Base):
@@ -413,3 +427,43 @@ class GuarantorForm(TimestampMixin, Base):
     uploaded_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"), nullable=True
     )
+
+
+class AttendanceCode(TimestampMixin, Base):
+    __tablename__ = "attendance_codes"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    code: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
+    programme: Mapped[str] = mapped_column(String(255), nullable=False)
+    track: Mapped[str] = mapped_column(String(255), nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
+    mentor_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}mentors.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    mentor: Mapped["Mentor"] = relationship()
+    attendances: Mapped[list["Attendance"]] = relationship(
+        back_populates="attendance_code", cascade="all, delete-orphan"
+    )
+
+
+class Attendance(TimestampMixin, Base):
+    __tablename__ = "attendances"
+    __table_args__ = (
+        UniqueConstraint("attendance_code_id", "student_name", name="uq_attendance_code_student"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    attendance_code_id: Mapped[int] = mapped_column(
+        ForeignKey(f"{schema_prefix}attendance_codes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    student_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    date: Mapped[str] = mapped_column(String(50), nullable=False)
+    time: Mapped[str] = mapped_column(String(50), nullable=False)
+    time_in: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    time_out: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    attendance_code: Mapped["AttendanceCode"] = relationship(back_populates="attendances")
+

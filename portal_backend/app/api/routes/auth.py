@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
 from app.db.session import get_db_session
-from app.models.portal import StudentProfile, User
+from app.models.portal import StudentProfile, User, Mentor, UserRole
 from app.schemas.auth import (
     ActivationRequest,
     AuthResponse,
@@ -108,23 +108,53 @@ async def get_me(
     current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> AuthUserResponse:
-    result = await db.execute(
-        select(StudentProfile).where(StudentProfile.user_id == current_user.id)
-    )
-    profile = result.scalar_one_or_none()
+    full_name = None
+    phone = None
+    discord_id = None
+    wallet_address = None
+    cohort = None
+    onboarding_status = None
+    bio = None
+    programme = None
+    track = None
+
+    if current_user.role == UserRole.MENTOR.value:
+        res = await db.execute(select(Mentor).where(Mentor.user_id == current_user.id))
+        mentor = res.scalar_one_or_none()
+        if mentor:
+            full_name = mentor.full_name
+            bio = mentor.bio
+            programme = mentor.programme
+            track = mentor.track
+    elif current_user.role == UserRole.STUDENT.value:
+        res = await db.execute(select(StudentProfile).where(StudentProfile.user_id == current_user.id))
+        profile = res.scalar_one_or_none()
+        if profile:
+            full_name = profile.full_name
+            phone = profile.phone
+            discord_id = profile.discord_id
+            wallet_address = profile.wallet_address
+            cohort = profile.cohort
+            onboarding_status = profile.onboarding_status
+            bio = profile.bio
+            programme = profile.programme
+            track = profile.track
+
     return AuthUserResponse(
         id=current_user.id,
         email=current_user.email,
         role=current_user.role,
         account_state=current_user.account_state,
         email_verified=current_user.email_verified,
-        full_name=profile.full_name if profile else None,
-        phone=profile.phone if profile else None,
-        discord_id=profile.discord_id if profile else None,
-        wallet_address=profile.wallet_address if profile else None,
-        cohort=profile.cohort if profile else None,
-        onboarding_status=profile.onboarding_status if profile else None,
-        bio=profile.bio if profile else None,
+        full_name=full_name,
+        phone=phone,
+        discord_id=discord_id,
+        wallet_address=wallet_address,
+        cohort=cohort,
+        onboarding_status=onboarding_status,
+        bio=bio,
+        programme=programme,
+        track=track,
     )
 
 

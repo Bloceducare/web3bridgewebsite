@@ -1,5 +1,7 @@
 from app.models.portal import (
 	AssessmentResult,
+	Attendance,
+	AttendanceCode,
 	AuditLog,
 	ExternalStudentMap,
 	ExternalSyncRecord,
@@ -16,6 +18,8 @@ from app.models.system import SystemPing
 
 __all__ = [
 	"AssessmentResult",
+	"Attendance",
+	"AttendanceCode",
 	"AuditLog",
 	"ExternalStudentMap",
 	"ExternalSyncRecord",
@@ -29,3 +33,4 @@ __all__ = [
 	"SystemPing",
 	"User",
 ]
+

@@ -18,6 +18,8 @@ class StudentResponse(BaseModel):
     onboarding_status: str | None = None
     participation: str | None = None
     bio: str | None = None
+    programme: str | None = None
+    track: str | None = None
 
 
 class UpdateStudentRequest(BaseModel):

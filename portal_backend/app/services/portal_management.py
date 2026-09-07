@@ -33,6 +33,7 @@ from app.schemas.portal_management import (
     MentorUpdateRequest,
     InvitePortalUserRequest,
     InvitePortalUserResponse,
+    MentorUploadResponse,
 )
 from app.services.auth import AuthService
 from app.services.onboarding import OnboardingService
@@ -54,6 +55,8 @@ class PortalManagementService:
             email=payload.email.strip().lower(),
             bio=payload.bio,
             is_active=payload.is_active,
+            programme=payload.programme,
+            track=payload.track,
         )
         self.session.add(mentor)
         await self.session.flush()
@@ -61,6 +64,7 @@ class PortalManagementService:
         await self.session.commit()
         await self.session.refresh(mentor)
         return await self._mentor_response(mentor)
+
 
     async def invite_portal_user(
         self, *, actor: User, payload: InvitePortalUserRequest
@@ -104,6 +108,8 @@ class PortalManagementService:
                     email=normalized_email,
                     bio=payload.bio,
                     is_active=True,
+                    programme=payload.programme,
+                    track=payload.track,
                 )
                 self.session.add(mentor_row)
                 await self.session.flush()
@@ -112,6 +118,8 @@ class PortalManagementService:
                 mentor_row.email = normalized_email
                 mentor_row.bio = payload.bio
                 mentor_row.is_active = True
+                mentor_row.programme = payload.programme
+                mentor_row.track = payload.track
 
             if payload.course_id is not None:
                 result = await self.session.execute(
@@ -133,11 +141,21 @@ class PortalManagementService:
         self._audit(actor=actor, action="portal_user_invited", resource_id=str(user.id))
         await self.session.commit()
 
-        await self.email_service.send_onboarding_email(
-            to_email=normalized_email,
-            student_name=payload.full_name,
-            activation_url=activation_url,
-        )
+        if payload.role.value == UserRole.MENTOR.value:
+            await self.email_service.send_mentor_onboarding_email(
+                to_email=normalized_email,
+                mentor_name=payload.full_name,
+                activation_url=activation_url,
+                programme=payload.programme or "",
+                track=payload.track or "",
+            )
+        else:
+            await self.email_service.send_onboarding_email(
+                to_email=normalized_email,
+                student_name=payload.full_name,
+                activation_url=activation_url,
+            )
+
 
         return InvitePortalUserResponse(
             user_id=user.id,
@@ -201,7 +219,15 @@ class PortalManagementService:
         self._audit(actor=actor, action="mentor_deleted", resource_id=str(mentor_id))
         await self.session.commit()
 
-    async def assign_mentor_course(self, *, actor: User, mentor_id: int, course_id: int) -> MentorResponse:
+    async def assign_mentor_course(
+        self,
+        *,
+        actor: User,
+        mentor_id: int,
+        course_id: int,
+        programme: str | None = None,
+        track: str | None = None,
+    ) -> MentorResponse:
         await self._get_mentor(mentor_id)
         result = await self.session.execute(
             select(MentorCourseMap).where(
@@ -210,7 +236,17 @@ class PortalManagementService:
         )
         row = result.scalar_one_or_none()
         if row is None:
-            self.session.add(MentorCourseMap(mentor_id=mentor_id, course_id=course_id))
+            self.session.add(
+                MentorCourseMap(
+                    mentor_id=mentor_id,
+                    course_id=course_id,
+                    programme=programme,
+                    track=track,
+                )
+            )
+        else:
+            row.programme = programme
+            row.track = track
         self._audit(actor=actor, action="mentor_course_assigned", resource_id=f"{mentor_id}:{course_id}")
         await self.session.commit()
         mentor = await self._get_mentor(mentor_id)
@@ -241,6 +277,7 @@ class PortalManagementService:
         )
         self.session.add(material)
         await self.session.commit()
+        self._audit(actor=actor, action="course_material_created", resource_id=str(material.id))
         await self.session.refresh(material)
         return self._material_response(material)
 
@@ -250,6 +287,35 @@ class PortalManagementService:
             statement = statement.where(CourseMaterial.course_id == course_id)
         result = await self.session.execute(statement)
         return [self._material_response(item) for item in result.scalars().all()]
+
+    async def list_mentor_uploads(self) -> list[MentorUploadResponse]:
+        statement = (
+            select(CourseMaterial, Mentor)
+            .join(User, CourseMaterial.uploaded_by == User.id)
+            .join(Mentor, Mentor.user_id == User.id)
+            .where(User.role == UserRole.MENTOR.value)
+            .order_by(CourseMaterial.created_at.desc())
+        )
+        result = await self.session.execute(statement)
+        rows = result.all()
+        return [
+            MentorUploadResponse(
+                id=material.id,
+                course_id=material.course_id,
+                title=material.title,
+                material_type=material.material_type,
+                resource_url=material.resource_url,
+                content=material.content,
+                metadata=material.metadata_json,
+                created_at=material.created_at,
+                updated_at=material.updated_at,
+                mentor_id=mentor.id,
+                mentor_name=mentor.full_name,
+                programme=mentor.programme,
+                track=mentor.track,
+            )
+            for material, mentor in rows
+        ]
 
     async def update_course_material(
         self, *, actor: User, material_id: int, payload: CourseMaterialUpdateRequest
@@ -380,10 +446,13 @@ class PortalManagementService:
             email=mentor.email,
             bio=mentor.bio,
             is_active=mentor.is_active,
+            programme=mentor.programme,
+            track=mentor.track,
             created_at=mentor.created_at,
             updated_at=mentor.updated_at,
             course_ids=list(result.scalars().all()),
         )
+
 
     @staticmethod
     def _material_response(material: CourseMaterial) -> CourseMaterialResponse:

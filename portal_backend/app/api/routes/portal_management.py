@@ -24,6 +24,7 @@ from app.schemas.portal_management import (
     MentorCreateRequest,
     MentorResponse,
     MentorUpdateRequest,
+    MentorUploadResponse,
 )
 from app.services.portal_management import PortalManagementService
 
@@ -110,7 +111,11 @@ async def assign_mentor_course(
     db: AsyncSession = Depends(get_db_session),
 ) -> MentorResponse:
     return await PortalManagementService(db).assign_mentor_course(
-        actor=current_user, mentor_id=mentor_id, course_id=payload.course_id
+        actor=current_user,
+        mentor_id=mentor_id,
+        course_id=payload.course_id,
+        programme=payload.programme,
+        track=payload.track,
     )
 
 
@@ -160,6 +165,14 @@ async def list_course_materials(
         )
         for row in rows
     ]
+
+
+@router.get("/materials/mentor-uploads", response_model=list[MentorUploadResponse], status_code=status.HTTP_200_OK)
+async def list_mentor_uploads(
+    _: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[MentorUploadResponse]:
+    return await PortalManagementService(db).list_mentor_uploads()
 
 
 @router.patch("/materials/{material_id}", response_model=CourseMaterialResponse, status_code=status.HTTP_200_OK)

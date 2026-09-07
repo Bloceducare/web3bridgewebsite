@@ -76,6 +76,8 @@ class ProfileService:
             onboarding_status=profile.onboarding_status,
             participation=profile.participation,
             bio=profile.bio,
+            programme=profile.programme,
+            track=profile.track,
         )
 
     @staticmethod
@@ -90,4 +92,6 @@ class ProfileService:
             "cohort": profile.cohort,
             "onboarding_status": profile.onboarding_status,
             "bio": profile.bio,
+            "programme": profile.programme,
+            "track": profile.track,
         }

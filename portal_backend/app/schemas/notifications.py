@@ -35,6 +35,8 @@ class AdminAnnouncementCreateRequest(BaseModel):
     is_published: bool = True
     send_in_app: bool = True
     send_email: bool = False
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
 
 class AdminAnnouncementResponse(BaseModel):

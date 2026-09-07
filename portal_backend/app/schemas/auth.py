@@ -65,6 +65,8 @@ class AuthUserResponse(BaseModel):
     cohort: str | None = None
     onboarding_status: str | None = None
     bio: str | None = None
+    programme: str | None = None
+    track: str | None = None
 
 
 class AuthResponse(BaseModel):

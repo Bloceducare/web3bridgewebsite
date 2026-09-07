@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import HTTPException, status
-from sqlalchemy import and_, or_, select, text
+from sqlalchemy import and_, or_, select, text, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.portal import (
@@ -54,9 +54,13 @@ class UpdatesService:
             send_email=payload.send_email,
             published_at=now if payload.is_published else None,
             created_by=actor.id,
+            programme=payload.programme,
+            track=payload.track,
+            target_role=payload.target_role,
             created_at=now,
             updated_at=now,
         )
+
         self.session.add(student_update)
         await self.session.flush()
 
@@ -79,6 +83,39 @@ class UpdatesService:
     async def list_updates(self) -> list[StudentUpdateResponse]:
         updates = await self._list_all_updates()
         return [self._build_update_response(student_update=item) for item in updates]
+
+    async def list_mentor_announcements(self) -> list[StudentUpdateResponse]:
+        statement = (
+            select(StudentUpdate)
+            .join(User, StudentUpdate.created_by == User.id)
+            .where(
+                User.role == UserRole.MENTOR.value,
+                StudentUpdate.is_deleted.is_(False),
+            )
+            .order_by(StudentUpdate.created_at.desc())
+        )
+        result = await self.session.execute(statement)
+        return [self._build_update_response(student_update=item) for item in result.scalars().all()]
+
+    async def list_admin_announcements(self) -> list[StudentUpdateResponse]:
+        statement = (
+            select(StudentUpdate)
+            .join(User, StudentUpdate.created_by == User.id)
+            .where(
+                User.role.in_(
+                    [
+                        UserRole.ADMIN.value,
+                        UserRole.STAFF.value,
+                        UserRole.GENERAL_ADMIN.value,
+                        UserRole.SYSTEM_ADMIN.value,
+                    ]
+                ),
+                StudentUpdate.is_deleted.is_(False),
+            )
+            .order_by(StudentUpdate.created_at.desc())
+        )
+        result = await self.session.execute(statement)
+        return [self._build_update_response(student_update=item) for item in result.scalars().all()]
 
     async def get_update(self, *, update_id: int) -> StudentUpdateResponse:
         student_update = await self._get_update_by_id(update_id)
@@ -137,6 +174,8 @@ class UpdatesService:
 
     async def delete_update(self, *, actor: User, update_id: int) -> MessageResponse:
         student_update = await self._get_update_by_id(update_id)
+        student_update.is_deleted = True
+        self.session.add(student_update)
         self.session.add(
             AuditLog(
                 actor_user_id=actor.id,
@@ -147,60 +186,34 @@ class UpdatesService:
                 created_at=datetime.now(UTC),
             )
         )
-        await self.session.delete(student_update)
         await self.session.commit()
         return MessageResponse(detail="Update deleted successfully")
 
     async def list_my_updates(self, *, user: User) -> list[StudentUpdateResponse]:
-        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
-        if not hasattr(self.session, "execute"):
-            profile = await self._get_profile_by_user_id(user.id)
-            updates = await self._list_published_updates()
-            visible_updates = [
-                item
-                for item in updates
-                if self._update_applies_to_user(
-                    student_update=item,
-                    user=user,
-                    profile=profile,
-                    enrolled_course_ids=enrolled_course_ids,
-                )
-            ]
-            responses: list[StudentUpdateResponse] = []
-            for item in visible_updates:
-                read_record = await self._get_read_record(update_id=item.id, user_id=user.id)
-                responses.append(
-                    self._build_update_response(
-                        student_update=item,
-                        read_at=read_record.read_at if read_record is not None else None,
-                    )
-                )
-            return responses
-
         profile = await self._get_profile_by_user_id(user.id)
-        visibility_filters = [
-            StudentUpdate.target_type == UpdateTargetType.ALL_ACTIVE.value,
-            and_(
-                StudentUpdate.target_type == UpdateTargetType.INDIVIDUAL.value,
-                StudentUpdate.target_ref == str(user.id),
-            ),
-        ]
-        if profile is not None and profile.cohort:
-            visibility_filters.append(
-                and_(
-                    StudentUpdate.target_type == UpdateTargetType.COHORT.value,
-                    StudentUpdate.target_ref == profile.cohort,
-                )
-            )
-        if enrolled_course_ids:
-            visibility_filters.append(
-                and_(
-                    StudentUpdate.target_type == UpdateTargetType.COURSE.value,
-                    StudentUpdate.target_ref.in_(
-                        [str(course_id) for course_id in enrolled_course_ids]
-                    ),
-                )
-            )
+        enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
+
+        course_names = set()
+        if user.role == UserRole.STUDENT.value:
+            stmt = text("""
+                SELECT DISTINCT LOWER(TRIM(c.name))
+                FROM cohort_participant AS p
+                JOIN cohort_course AS c ON c.id = p.course_id
+                WHERE LOWER(TRIM(p.email)) = :email
+            """)
+            res = await self.session.execute(stmt, {"email": user.email.lower().strip()})
+            course_names = {row[0] for row in res.all() if row[0]}
+
+        mentor = None
+        mentor_programme = None
+        mentor_track = None
+        if user.role == UserRole.MENTOR.value:
+            from app.models.portal import Mentor
+            res = await self.session.execute(select(Mentor).where(Mentor.user_id == user.id))
+            mentor = res.scalar_one_or_none()
+            if mentor:
+                mentor_programme = mentor.programme
+                mentor_track = mentor.track
 
         result = await self.session.execute(
             select(StudentUpdate, StudentUpdateRead.read_at)
@@ -214,15 +227,30 @@ class UpdatesService:
             .where(
                 StudentUpdate.is_published.is_(True),
                 StudentUpdate.send_in_app.is_(True),
-                or_(*visibility_filters),
+                StudentUpdate.is_deleted.is_(False),
             )
             .order_by(StudentUpdate.published_at.desc(), StudentUpdate.created_at.desc())
         )
         rows = result.all()
-        return [
-            self._build_update_response(student_update=student_update, read_at=read_at)
-            for student_update, read_at in rows
-        ]
+
+        responses: list[StudentUpdateResponse] = []
+        for student_update, read_at in rows:
+            applies = await self._update_applies_to_user(
+                student_update=student_update,
+                user=user,
+                profile=profile,
+                enrolled_course_ids=enrolled_course_ids,
+                mentor=mentor,
+            )
+            if not applies:
+                continue
+
+            responses.append(
+                self._build_update_response(student_update=student_update, read_at=read_at)
+            )
+
+        return responses
+
 
     async def mark_update_as_read(
         self,
@@ -233,12 +261,20 @@ class UpdatesService:
         profile = await self._get_profile_by_user_id(user.id)
         enrolled_course_ids = await self._list_enrolled_course_ids_for_email(user.email)
         student_update = await self._get_update_by_id(update_id)
-        if not student_update.is_published or not student_update.send_in_app or not self._update_applies_to_user(
+        mentor = None
+        if user.role == UserRole.MENTOR.value:
+            from app.models.portal import Mentor
+            res = await self.session.execute(select(Mentor).where(Mentor.user_id == user.id))
+            mentor = res.scalar_one_or_none()
+
+        applies = await self._update_applies_to_user(
             student_update=student_update,
             user=user,
             profile=profile,
             enrolled_course_ids=enrolled_course_ids,
-        ):
+            mentor=mentor,
+        )
+        if not student_update.is_published or not student_update.send_in_app or not applies:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Update not found")
 
         read_record = await self._get_read_record(update_id=update_id, user_id=user.id)
@@ -258,7 +294,11 @@ class UpdatesService:
         )
 
     async def _list_all_updates(self) -> list[StudentUpdate]:
-        statement = select(StudentUpdate).order_by(StudentUpdate.created_at.desc())
+        statement = (
+            select(StudentUpdate)
+            .where(StudentUpdate.is_deleted.is_(False))
+            .order_by(StudentUpdate.created_at.desc())
+        )
         result = await self.session.execute(statement)
         return list(result.scalars().all())
 
@@ -266,6 +306,7 @@ class UpdatesService:
         statement = select(StudentUpdate).where(
             StudentUpdate.is_published.is_(True),
             StudentUpdate.send_in_app.is_(True),
+            StudentUpdate.is_deleted.is_(False),
         )
         statement = statement.order_by(
             StudentUpdate.published_at.desc(),
@@ -275,7 +316,10 @@ class UpdatesService:
         return list(result.scalars().all())
 
     async def _get_update_by_id(self, update_id: int) -> StudentUpdate:
-        statement = select(StudentUpdate).where(StudentUpdate.id == update_id)
+        statement = select(StudentUpdate).where(
+            StudentUpdate.id == update_id,
+            StudentUpdate.is_deleted.is_(False),
+        )
         result = await self.session.execute(statement)
         student_update = result.scalar_one_or_none()
         if student_update is None:
@@ -295,28 +339,71 @@ class UpdatesService:
         result = await self.session.execute(statement)
         return result.scalar_one_or_none()
 
-    @staticmethod
-    def _update_applies_to_user(
+    async def _update_applies_to_user(
+        self,
         *,
         student_update: StudentUpdate,
         user: User,
-        profile: StudentProfile | None,
+        profile: StudentProfile | None = None,
         enrolled_course_ids: set[int] | None = None,
+        mentor: Any | None = None,
     ) -> bool:
-        if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
-            return True
-        if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
-            return student_update.target_ref == str(user.id)
-        if student_update.target_type == UpdateTargetType.COHORT.value:
-            return profile is not None and student_update.target_ref == profile.cohort
-        if student_update.target_type == UpdateTargetType.COURSE.value:
-            if not student_update.target_ref:
-                return False
-            try:
-                course_id = int(student_update.target_ref)
-            except ValueError:
-                return False
-            return course_id in (enrolled_course_ids or set())
+        if student_update.target_role and student_update.target_role != user.role:
+            return False
+
+        if student_update.programme:
+            if user.role == UserRole.STUDENT.value:
+                if not profile or not profile.programme or profile.programme.lower().strip() != student_update.programme.lower().strip():
+                    return False
+            elif user.role == UserRole.MENTOR.value:
+                if not mentor or not mentor.programme or mentor.programme.lower().strip() != student_update.programme.lower().strip():
+                    return False
+
+        if student_update.track:
+            if user.role == UserRole.STUDENT.value:
+                if not profile or not profile.track or profile.track.lower().strip() != student_update.track.lower().strip():
+                    return False
+            elif user.role == UserRole.MENTOR.value:
+                if not mentor or not mentor.track or mentor.track.lower().strip() != student_update.track.lower().strip():
+                    return False
+
+        if user.role == UserRole.STUDENT.value:
+            if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
+                return True
+            if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
+                return student_update.target_ref == str(user.id)
+            if student_update.target_type == UpdateTargetType.COHORT.value:
+                return profile is not None and student_update.target_ref == profile.cohort
+            if student_update.target_type == UpdateTargetType.COURSE.value:
+                if not student_update.target_ref:
+                    return True
+                try:
+                    course_id = int(student_update.target_ref)
+                except ValueError:
+                    return False
+                return course_id in (enrolled_course_ids or set())
+        elif user.role == UserRole.MENTOR.value:
+            if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
+                return True
+            if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
+                return student_update.target_ref == str(user.id)
+            if student_update.target_type == UpdateTargetType.COURSE.value:
+                if not student_update.target_ref:
+                    return True
+                try:
+                    course_id = int(student_update.target_ref)
+                except ValueError:
+                    return False
+                from app.models.portal import MentorCourseMap
+                assigned_stmt = select(MentorCourseMap).where(
+                    MentorCourseMap.mentor_id == mentor.id,
+                    MentorCourseMap.course_id == course_id
+                )
+                assigned_res = await self.session.execute(assigned_stmt)
+                return assigned_res.scalar_one_or_none() is not None
+            if student_update.target_type == UpdateTargetType.COHORT.value:
+                return True
+
         return False
 
     async def _list_enrolled_course_ids_for_email(self, email: str) -> set[int]:
@@ -352,6 +439,9 @@ class UpdatesService:
             send_email=student_update.send_email,
             published_at=student_update.published_at,
             created_by=student_update.created_by,
+            programme=student_update.programme,
+            track=student_update.track,
+            target_role=student_update.target_role,
             created_at=student_update.created_at,
             updated_at=student_update.updated_at,
             read_at=read_at,
@@ -368,7 +458,11 @@ class UpdatesService:
             "send_in_app": student_update.send_in_app,
             "send_email": student_update.send_email,
             "created_by": student_update.created_by,
+            "programme": student_update.programme,
+            "track": student_update.track,
+            "target_role": student_update.target_role,
         }
+
 
     async def _dispatch_notification_emails_if_required(self, *, student_update: StudentUpdate) -> None:
         if not student_update.is_published or not student_update.send_email:
@@ -388,12 +482,19 @@ class UpdatesService:
 
     async def _list_target_emails(self, *, student_update: StudentUpdate) -> list[str]:
         if student_update.target_type == UpdateTargetType.ALL_ACTIVE.value:
-            result = await self.session.execute(
-                select(User.email).where(
+            statement = (
+                select(User.email)
+                .join(StudentProfile, StudentProfile.user_id == User.id)
+                .where(
                     User.role == UserRole.STUDENT.value,
                     User.account_state == AccountState.ACTIVE.value,
                 )
             )
+            if student_update.programme:
+                statement = statement.where(func.lower(func.trim(StudentProfile.programme)) == student_update.programme.lower().strip())
+            if student_update.track:
+                statement = statement.where(func.lower(func.trim(StudentProfile.track)) == student_update.track.lower().strip())
+            result = await self.session.execute(statement)
             return [email for email in result.scalars().all() if email]
 
         if student_update.target_type == UpdateTargetType.INDIVIDUAL.value:
@@ -415,7 +516,7 @@ class UpdatesService:
         if student_update.target_type == UpdateTargetType.COHORT.value:
             if not student_update.target_ref:
                 return []
-            result = await self.session.execute(
+            statement = (
                 select(User.email)
                 .join(StudentProfile, StudentProfile.user_id == User.id)
                 .where(
@@ -423,6 +524,11 @@ class UpdatesService:
                     StudentProfile.cohort == student_update.target_ref,
                 )
             )
+            if student_update.programme:
+                statement = statement.where(func.lower(func.trim(StudentProfile.programme)) == student_update.programme.lower().strip())
+            if student_update.track:
+                statement = statement.where(func.lower(func.trim(StudentProfile.track)) == student_update.track.lower().strip())
+            result = await self.session.execute(statement)
             return [email for email in result.scalars().all() if email]
 
         if student_update.target_type == UpdateTargetType.COURSE.value:
@@ -432,16 +538,20 @@ class UpdatesService:
                 course_id = int(student_update.target_ref)
             except ValueError:
                 return []
-            result = await self.session.execute(
-                text(
-                    """
-                    SELECT DISTINCT LOWER(TRIM(p.email)) AS email
-                    FROM cohort_participant AS p
-                    WHERE p.course_id = :course_id
-                    """
-                ),
-                {"course_id": course_id},
+            statement = (
+                select(User.email)
+                .join(StudentProfile, StudentProfile.user_id == User.id)
+                .join(text("cohort_participant"), text("LOWER(TRIM(cohort_participant.email)) = LOWER(TRIM(users.email))"))
+                .where(
+                    User.role == UserRole.STUDENT.value,
+                    text("cohort_participant.course_id = :course_id")
+                )
             )
+            if student_update.programme:
+                statement = statement.where(func.lower(func.trim(StudentProfile.programme)) == student_update.programme.lower().strip())
+            if student_update.track:
+                statement = statement.where(func.lower(func.trim(StudentProfile.track)) == student_update.track.lower().strip())
+            result = await self.session.execute(statement, {"course_id": course_id})
             return [email for email in result.scalars().all() if email]
 
         return []

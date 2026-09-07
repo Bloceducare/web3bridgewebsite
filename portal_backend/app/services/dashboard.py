@@ -1,8 +1,9 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.portal import AccountState, StudentProfile, StudentUpdate, User, UserRole
+from app.models.portal import AccountState, StudentProfile, StudentUpdate, User, UserRole, AuditLog, Mentor
 from app.schemas.dashboard import AdminDashboardOverviewResponse, DashboardRecentStudentResponse
+from app.schemas.dashboard_activity import MentorActivityResponse
 
 
 class DashboardService:
@@ -55,7 +56,10 @@ class DashboardService:
 
     async def _count_published_announcements(self) -> int:
         result = await self.session.execute(
-            select(func.count(StudentUpdate.id)).where(StudentUpdate.is_published.is_(True))
+            select(func.count(StudentUpdate.id)).where(
+                StudentUpdate.is_published.is_(True),
+                StudentUpdate.is_deleted.is_(False),
+            )
         )
         return int(result.scalar() or 0)
 
@@ -79,3 +83,56 @@ class DashboardService:
             )
             for user, profile in rows
         ]
+
+    async def list_recent_mentor_activity(self, limit: int = 20) -> list[MentorActivityResponse]:
+        statement = (
+            select(AuditLog, User, Mentor)
+            .join(User, AuditLog.actor_user_id == User.id)
+            .join(Mentor, Mentor.user_id == User.id)
+            .where(User.role == UserRole.MENTOR.value)
+            .order_by(AuditLog.id.desc())
+            .limit(limit)
+        )
+        result = await self.session.execute(statement)
+        rows = result.all()
+
+        activities: list[MentorActivityResponse] = []
+        for audit_log, user, mentor in rows:
+            desc = self._build_activity_description(
+                mentor_name=mentor.full_name,
+                programme=mentor.programme,
+                track=mentor.track,
+                action=audit_log.action,
+            )
+            activities.append(
+                MentorActivityResponse(
+                    id=audit_log.id,
+                    actor_user_id=user.id,
+                    actor_name=mentor.full_name,
+                    programme=mentor.programme,
+                    track=mentor.track,
+                    action=audit_log.action,
+                    description=desc,
+                    created_at=audit_log.created_at,
+                )
+            )
+        return activities
+
+    @staticmethod
+    def _build_activity_description(
+        mentor_name: str, programme: str | None, track: str | None, action: str
+    ) -> str:
+        prog_track = f" for {programme} ({track})" if programme or track else ""
+        if action == "student_update_created":
+            return f"{mentor_name} the mentor{prog_track} just posted an announcement"
+        elif action == "course_material_created":
+            return f"{mentor_name} the mentor{prog_track} just uploaded a course material"
+        elif action == "course_material_updated":
+            return f"{mentor_name} the mentor{prog_track} just updated a course material"
+        elif action == "mentor_assessment_created":
+            return f"{mentor_name} the mentor{prog_track} just created an assessment"
+        elif action == "mentor_assessment_released":
+            return f"{mentor_name} the mentor{prog_track} just released an assessment"
+        else:
+            friendly_action = action.replace("_", " ")
+            return f"{mentor_name} the mentor{prog_track} performed: {friendly_action}"

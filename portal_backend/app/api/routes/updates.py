@@ -5,6 +5,7 @@ from app.api.deps import (
     get_current_active_user,
     get_current_staff_or_admin_user,
     get_current_verified_user,
+    get_current_staff_admin_or_mentor_user,
 )
 from app.db.session import get_db_session
 from app.models.portal import User
@@ -152,3 +153,33 @@ async def delete_update(
     return await service.delete_update(
         actor=current_user, update_id=update_id
     )
+
+
+@router.get(
+    "/history/mentor",
+    response_model=list[StudentUpdateResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get announcement history from mentors",
+    description="Return all announcements created by mentors. Staff, admin, or mentor only.",
+)
+async def list_mentor_updates(
+    _: User = Depends(get_current_staff_admin_or_mentor_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[StudentUpdateResponse]:
+    service = UpdatesService(db)
+    return await service.list_mentor_announcements()
+
+
+@router.get(
+    "/history/admin",
+    response_model=list[StudentUpdateResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get announcement history from admins",
+    description="Return all announcements created by admins or staff. Staff or admin only.",
+)
+async def list_admin_updates(
+    _: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[StudentUpdateResponse]:
+    service = UpdatesService(db)
+    return await service.list_admin_announcements()

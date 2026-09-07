@@ -50,6 +50,8 @@ def build_student_profile() -> StudentProfile:
         cohort="Cohort XIV",
         onboarding_status=OnboardingStatus.COMPLETED.value,
         bio="Hello world",
+        programme="Web3 Solidity",
+        track="Web3",
     )
 
 
@@ -72,6 +74,34 @@ async def test_list_students_returns_student_responses() -> None:
     assert len(response) == 1
     assert response[0].user_id == user.id
     assert response[0].full_name == profile.full_name
+    assert response[0].programme == "Web3 Solidity"
+    assert response[0].track == "Web3"
+
+
+async def test_list_students_filtering_by_cohort() -> None:
+    service = StudentsService(DummySession())  # type: ignore[arg-type]
+    user = build_student_user()
+    profile = build_student_profile()
+
+    async def list_users(cohort: str | None = None) -> list[User]:
+        if cohort == "Cohort XIV":
+            return [user]
+        return []
+
+    async def get_profile(_: int) -> StudentProfile:
+        return profile
+
+    service._list_student_users = list_users  # type: ignore[method-assign]
+    service._get_profile_by_user_id = get_profile  # type: ignore[method-assign]
+
+    # test matching cohort
+    response = await service.list_students(cohort="Cohort XIV")
+    assert len(response) == 1
+    assert response[0].user_id == user.id
+
+    # test mismatching cohort
+    response_empty = await service.list_students(cohort="Cohort XV")
+    assert len(response_empty) == 0
 
 
 async def test_update_student_updates_state_and_profile_and_logs_audit() -> None:

@@ -18,6 +18,8 @@ class MyProfileResponse(BaseModel):
     onboarding_status: str
     participation: str | None = None
     bio: str | None = None
+    programme: str | None = None
+    track: str | None = None
 
 
 class UpdateMyProfileRequest(BaseModel):

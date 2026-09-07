@@ -993,3 +993,47 @@ def test_invite_portal_user_rejects_course_id_for_non_mentor() -> None:
         clear_overrides()
 
     assert response.status_code == 422
+
+
+def test_list_mentor_uploads_endpoint() -> None:
+    admin = build_user(user_id=74, role="system_admin")
+
+    async def override_current_admin() -> User:
+        return admin
+
+    async def mock_list_mentor_uploads(_: object) -> list[object]:
+        from datetime import datetime, UTC
+        from app.schemas.portal_management import MentorUploadResponse
+        return [
+            MentorUploadResponse(
+                id=1,
+                course_id=5,
+                title="Syllabus",
+                material_type="document",
+                resource_url="https://example.com/syllabus",
+                content=None,
+                metadata={},
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+                mentor_id=2,
+                mentor_name="Olayiwola",
+                programme="Web3 Solidity",
+                track="Web3",
+            )
+        ]
+
+    original = PortalManagementService.list_mentor_uploads
+    PortalManagementService.list_mentor_uploads = mock_list_mentor_uploads
+    app.dependency_overrides[deps.get_current_staff_or_admin_user] = override_current_admin
+    app.dependency_overrides[get_db_session] = override_db_session
+    try:
+        response = client.get("/api/v1/admin/portal/materials/mentor-uploads")
+    finally:
+        PortalManagementService.list_mentor_uploads = original
+        clear_overrides()
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]["title"] == "Syllabus"
+    assert payload[0]["mentor_name"] == "Olayiwola"

@@ -36,6 +36,38 @@ class DummySession:
     async def delete(self, obj: object) -> None:
         self.deleted.append(obj)
 
+    async def execute(self, statement: any, params: any = None) -> any:
+        # If cohort participant query
+        if "cohort_participant" in str(statement):
+            class CourseResult:
+                def all(self):
+                    return []
+                def scalars(self):
+                    class Scalars:
+                        def all(self):
+                            return []
+                    return Scalars()
+            return CourseResult()
+
+        class Result:
+            def __init__(self, session):
+                self.session = session
+            def all(self):
+                updates = getattr(self.session, "_test_updates", [])
+                if updates:
+                    return [
+                        (updates[0], None),
+                        (updates[1], datetime.now(UTC)),
+                        (updates[2], None)
+                    ]
+                return []
+            def scalars(self):
+                class Scalars:
+                    def all(self):
+                        return []
+                return Scalars()
+        return Result(self)
+
 
 def build_staff_user() -> User:
     return User(id=1, email="staff@example.com", role="staff", account_state="active")
@@ -73,6 +105,8 @@ async def test_create_update_creates_audited_published_update() -> None:
             body="Portal is live",
             target_type=UpdateTargetType.ALL_ACTIVE,
             is_published=True,
+            programme="Web3",
+            track="Smart Contracts",
         ),
     )
 
@@ -98,6 +132,7 @@ async def test_list_my_updates_filters_visible_updates() -> None:
         id=2, target_type=UpdateTargetType.INDIVIDUAL.value, target_ref=str(user.id)
     )
     hidden = build_update(id=3, target_type=UpdateTargetType.COHORT.value, target_ref="Cohort XV")
+    session._test_updates = [matching, individual, hidden]
 
     async def list_published() -> list[StudentUpdate]:
         return [matching, individual, hidden]
@@ -183,5 +218,43 @@ async def test_delete_update_deletes_and_audits() -> None:
     response = await service.delete_update(actor=build_staff_user(), update_id=50)
 
     assert response.detail == "Update deleted successfully"
-    assert session.deleted == [student_update]
+    assert student_update.is_deleted is True
     assert any(type(obj).__name__ == "AuditLog" for obj in session.added)
+
+
+async def test_list_mentor_and_admin_announcements() -> None:
+    session = DummySession()
+    service = UpdatesService(session)  # type: ignore[arg-type]
+
+    mentor_update = build_update(id=1, created_by=10)
+    admin_update = build_update(id=2, created_by=20)
+
+    calls = []
+    async def execute_mock(statement: any, params: any = None) -> any:
+        calls.append(statement)
+        if len(calls) == 1:
+            class ResultMentor:
+                def scalars(self):
+                    class Scalars:
+                        def all(self):
+                            return [mentor_update]
+                    return Scalars()
+            return ResultMentor()
+        else:
+            class ResultAdmin:
+                def scalars(self):
+                    class Scalars:
+                        def all(self):
+                            return [admin_update]
+                    return Scalars()
+            return ResultAdmin()
+
+    session.execute = execute_mock  # type: ignore[method-assign]
+
+    mentor_res = await service.list_mentor_announcements()
+    assert len(mentor_res) == 1
+    assert mentor_res[0].id == 1
+
+    admin_res = await service.list_admin_announcements()
+    assert len(admin_res) == 1
+    assert admin_res[0].id == 2
