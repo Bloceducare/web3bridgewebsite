@@ -55,6 +55,8 @@ class CourseMaterialCreateRequest(BaseModel):
     resource_url: HttpUrl | None = None
     content: str | None = None
     metadata: dict = {}
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
 
 class CourseMaterialUpdateRequest(BaseModel):
@@ -63,6 +65,8 @@ class CourseMaterialUpdateRequest(BaseModel):
     resource_url: HttpUrl | None = None
     content: str | None = None
     metadata: dict | None = None
+    programme: str | None = Field(default=None, max_length=255)
+    track: str | None = Field(default=None, max_length=255)
 
 
 class CourseMaterialResponse(BaseModel):
@@ -73,6 +77,8 @@ class CourseMaterialResponse(BaseModel):
     resource_url: str | None = None
     content: str | None = None
     metadata: dict
+    programme: str | None = None
+    track: str | None = None
     created_at: datetime
     updated_at: datetime
 

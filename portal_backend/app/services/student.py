@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.models.portal import CourseMaterial, User, UserRole
+from app.models.portal import CourseMaterial, StudentProfile, User, UserRole
 from app.schemas.student import StudentMentorResponse
 
 settings = get_settings()
@@ -19,15 +19,47 @@ class StudentPortalService:
     ) -> list[CourseMaterial]:
         self._ensure_student_role(user)
         course_ids = await self._enrolled_course_ids(user)
-        if not course_ids:
-            return []
+
+        # When filtering by a specific course, the student must be enrolled in it.
         if course_id is not None:
+            if not course_ids:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You are not enrolled in this course",
+                )
             self._ensure_enrolled(course_id=course_id, course_ids=course_ids)
-            course_ids = [course_id]
+            statement = (
+                select(CourseMaterial)
+                .where(CourseMaterial.course_id == course_id)
+                .order_by(CourseMaterial.created_at.desc())
+            )
+            result = await self.session.execute(statement)
+            return list(result.scalars().all())
+
+        # No course filter — return materials from enrolled courses OR materials
+        # that the admin targeted to the student's own programme + track.
+        profile_result = await self.session.execute(
+            select(StudentProfile).where(StudentProfile.user_id == user.id)
+        )
+        profile = profile_result.scalar_one_or_none()
+        student_programme = profile.programme if profile else None
+        student_track = profile.track if profile else None
+
+        conditions = []
+        if course_ids:
+            conditions.append(CourseMaterial.course_id.in_(course_ids))
+        if student_programme and student_track:
+            conditions.append(
+                (CourseMaterial.programme == student_programme)
+                & (CourseMaterial.track == student_track)
+            )
+
+        if not conditions:
+            return []
 
         statement = (
             select(CourseMaterial)
-            .where(CourseMaterial.course_id.in_(course_ids))
+            .where(or_(*conditions))
             .order_by(CourseMaterial.created_at.desc())
         )
         result = await self.session.execute(statement)

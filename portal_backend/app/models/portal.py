@@ -343,6 +343,8 @@ class CourseMaterial(TimestampMixin, Base):
     uploaded_by: Mapped[int | None] = mapped_column(
         ForeignKey(f"{schema_prefix}users.id", ondelete="SET NULL"), nullable=True
     )
+    programme: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    track: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
 
 class MentorAssessment(TimestampMixin, Base):
