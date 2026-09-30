@@ -1,6 +1,6 @@
-import { defineQuery } from "next-sanity";
+import { groq } from "next-sanity";
 
-export const POSTS_QUERY = defineQuery(`
+export const POSTS_QUERY = groq`
   *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
     _id,
     title,
@@ -11,9 +11,9 @@ export const POSTS_QUERY = defineQuery(`
     "authorName": author->name,
     "categories": categories[]->title
   }
-`);
+`;
 
-export const POST_QUERY = defineQuery(`
+export const POST_QUERY = groq`
   *[_type == "post" && slug.current == $slug][0] {
     _id,
     title,
@@ -26,8 +26,8 @@ export const POST_QUERY = defineQuery(`
     "author": author->{ name, "slug": slug.current, image, bio },
     "categories": categories[]->{ _id, title, "slug": slug.current }
   }
-`);
+`;
 
-export const POST_SLUGS_QUERY = defineQuery(`
+export const POST_SLUGS_QUERY = groq`
   *[_type == "post" && defined(slug.current)]{ "slug": slug.current }
-`);
+`;

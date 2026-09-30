@@ -5,7 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const navLinks = [
+type NavLink = {
+  name: string;
+  href: string;
+  target?: "_blank";
+};
+
+export const navLinks: NavLink[] = [
   {
     name: "Home",
     href: "/",
