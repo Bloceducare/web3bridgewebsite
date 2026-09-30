@@ -274,6 +274,8 @@ class PortalManagementService:
             content=payload.content,
             metadata_json=payload.metadata,
             uploaded_by=actor.id,
+            programme=payload.programme,
+            track=payload.track,
         )
         self.session.add(material)
         await self.session.commit()
@@ -464,6 +466,8 @@ class PortalManagementService:
             resource_url=material.resource_url,
             content=material.content,
             metadata=material.metadata_json or {},
+            programme=material.programme,
+            track=material.track,
             created_at=material.created_at,
             updated_at=material.updated_at,
         )
