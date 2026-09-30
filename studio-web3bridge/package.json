@@ -1,0 +1,28 @@
+{
+  "name": "studio-web3bridge",
+  "private": true,
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "typegen": "sanity schemas extract --force && sanity typegen generate"
+  },
+  "dependencies": {
+    "@sanity/icons": "^5.2.2",
+    "@sanity/vision": "^6.17.0",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2",
+    "sanity": "^6.17.0",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

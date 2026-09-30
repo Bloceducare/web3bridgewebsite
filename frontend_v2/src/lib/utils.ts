@@ -24,8 +24,7 @@ export const navLinks = [
   },
   {
     name: "Blog",
-    href: "https://medium.com/@web3bridge",
-    target: "_blank",
+    href: "/blog",
   },
   {
     name: "dApps",
@@ -84,7 +83,7 @@ export const footerLinks = [
       },
       {
         name: "Blog",
-        path: "https://medium.com/@web3bridge",
+        path: "/blog",
       },
     ],
   },
