@@ -27,7 +27,7 @@ export default async function BlogPage() {
 
       {posts.length === 0 ? (
         <p className="mt-12 text-muted-foreground">
-          Posts will show up here after they are published in Sanity Studio.
+          No Posts Yet.
         </p>
       ) : (
         <div className="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
