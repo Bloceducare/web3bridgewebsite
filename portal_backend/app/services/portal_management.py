@@ -279,7 +279,12 @@ class PortalManagementService:
         )
         self.session.add(material)
         await self.session.commit()
-        self._audit(actor=actor, action="course_material_created", resource_id=str(material.id))
+        self._audit(
+            actor=actor,
+            action="course_material_created",
+            resource_id=str(material.id),
+            after_json={"title": payload.title, "programme": payload.programme, "track": payload.track},
+        )
         await self.session.refresh(material)
         return self._material_response(material)
 
@@ -332,7 +337,12 @@ class PortalManagementService:
             updates["metadata_json"] = updates.pop("metadata")
         for key, value in updates.items():
             setattr(material, key, value)
-        self._audit(actor=actor, action="course_material_updated", resource_id=str(material.id))
+        self._audit(
+            actor=actor,
+            action="course_material_updated",
+            resource_id=str(material.id),
+            after_json={"title": material.title, "programme": material.programme, "track": material.track},
+        )
         await self.session.commit()
         await self.session.refresh(material)
         return self._material_response(material)
@@ -359,7 +369,12 @@ class PortalManagementService:
         self.session.add(row)
         await self.session.commit()
         await self.session.refresh(row)
-        self._audit(actor=actor, action="mentor_assessment_created", resource_id=str(row.id))
+        self._audit(
+            actor=actor,
+            action="mentor_assessment_created",
+            resource_id=str(row.id),
+            after_json={"title": row.title},
+        )
         return self._assessment_response(row)
 
     async def list_assessments(
@@ -383,7 +398,12 @@ class PortalManagementService:
                 updates[enum_field] = updates[enum_field].value
         for key, value in updates.items():
             setattr(row, key, value)
-        self._audit(actor=actor, action="mentor_assessment_updated", resource_id=str(row.id))
+        self._audit(
+            actor=actor,
+            action="mentor_assessment_updated",
+            resource_id=str(row.id),
+            after_json={"title": row.title},
+        )
         await self.session.commit()
         await self.session.refresh(row)
         return self._assessment_response(row)
@@ -391,7 +411,12 @@ class PortalManagementService:
     async def release_assessment(self, *, actor: User, assessment_id: int) -> MentorAssessmentResponse:
         row = await self._get_assessment(assessment_id)
         row.released_at = datetime.now(UTC)
-        self._audit(actor=actor, action="mentor_assessment_released", resource_id=str(row.id))
+        self._audit(
+            actor=actor,
+            action="mentor_assessment_released",
+            resource_id=str(row.id),
+            after_json={"title": row.title},
+        )
         await self.session.commit()
         await self.session.refresh(row)
         return self._assessment_response(row)
@@ -537,13 +562,21 @@ class PortalManagementService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Guarantor form not found")
         return row
 
-    def _audit(self, *, actor: User, action: str, resource_id: str) -> None:
+    def _audit(
+        self,
+        *,
+        actor: User,
+        action: str,
+        resource_id: str,
+        after_json: dict | None = None,
+    ) -> None:
         self.session.add(
             AuditLog(
                 actor_user_id=actor.id,
                 action=action,
                 resource_type="portal_management",
                 resource_id=resource_id,
+                after_json=after_json,
                 created_at=datetime.now(UTC),
             )
         )

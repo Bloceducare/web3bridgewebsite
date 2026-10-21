@@ -280,6 +280,23 @@ class AssessmentService:
         result.status = final_status
         result.submitted_at = now
 
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="assessment_submitted",
+                resource_type="assessment_result",
+                resource_id=str(result.id),
+                after_json={
+                    "assessment_id": assessment.id,
+                    "title": assessment.title,
+                    "programme": assessment.programme,
+                    "track": assessment.track,
+                    "score": score,
+                },
+                created_at=now,
+            )
+        )
+
         await self.session.commit()
         await self.session.refresh(result)
 

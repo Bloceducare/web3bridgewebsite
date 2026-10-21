@@ -30,8 +30,8 @@ async def get_admin_dashboard_overview(
     "/mentor-activity",
     response_model=list[MentorActivityResponse],
     status_code=status.HTTP_200_OK,
-    summary="Get recent activities performed by mentors",
-    description="Return recent log activities performed only by mentors. Staff or admin only.",
+    summary="Get recent activities across the portal",
+    description="Return recent activities performed by mentors, students, and users. Staff or admin only.",
 )
 async def get_recent_mentor_activities(
     limit: int = Query(default=20, ge=1, le=100),
@@ -39,4 +39,20 @@ async def get_recent_mentor_activities(
     db: AsyncSession = Depends(get_db_session),
 ) -> list[MentorActivityResponse]:
     service = DashboardService(db)
-    return await service.list_recent_mentor_activity(limit=limit)
+    return await service.list_recent_activity(limit=limit)
+
+
+@router.get(
+    "/recent-activity",
+    response_model=list[MentorActivityResponse],
+    status_code=status.HTTP_200_OK,
+    summary="Get recent activities across the portal",
+    description="Return recent activities performed by mentors, students, and users. Staff or admin only.",
+)
+async def get_recent_activities(
+    limit: int = Query(default=20, ge=1, le=100),
+    _: User = Depends(get_current_staff_or_admin_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> list[MentorActivityResponse]:
+    service = DashboardService(db)
+    return await service.list_recent_activity(limit=limit)

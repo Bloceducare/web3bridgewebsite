@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models.portal import Attendance, AttendanceCode, Mentor, User, UserRole
+from app.models.portal import Attendance, AttendanceCode, AuditLog, Mentor, User, UserRole
 from app.schemas.attendance import (
     AttendanceCodeDetailResponse,
     AttendanceCodeResponse,
@@ -97,6 +97,22 @@ class AttendanceService:
             mentor_id=mentor.id,
         )
         self.session.add(attendance_code)
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="attendance_code_created",
+                resource_type="attendance_code",
+                resource_id=str(attendance_code.id) if attendance_code.id else code_str,
+                after_json={
+                    "code": code_str,
+                    "programme": payload.programme.strip(),
+                    "track": payload.track.strip(),
+                    "duration": payload.duration,
+                    "mentor_name": mentor.full_name,
+                },
+                created_at=now,
+            )
+        )
         await self.session.commit()
         await self.session.refresh(attendance_code)
 
@@ -223,6 +239,21 @@ class AttendanceService:
             )
 
         code.is_active = False
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="attendance_code_deactivated",
+                resource_type="attendance_code",
+                resource_id=str(code.id),
+                after_json={
+                    "code": code.code,
+                    "programme": code.programme,
+                    "track": code.track,
+                    "mentor_name": mentor.full_name,
+                },
+                created_at=now,
+            )
+        )
         await self.session.commit()
         await self.session.refresh(code)
 
@@ -264,6 +295,21 @@ class AttendanceService:
         from datetime import timedelta
         code.is_active = True
         code.expires_at = now + timedelta(minutes=code.duration)
+        self.session.add(
+            AuditLog(
+                actor_user_id=actor.id,
+                action="attendance_code_reactivated",
+                resource_type="attendance_code",
+                resource_id=str(code.id),
+                after_json={
+                    "code": code.code,
+                    "programme": code.programme,
+                    "track": code.track,
+                    "mentor_name": mentor.full_name,
+                },
+                created_at=now,
+            )
+        )
         await self.session.commit()
         await self.session.refresh(code)
 
@@ -387,6 +433,24 @@ class AttendanceService:
             time_out=None,
         )
         self.session.add(new_attendance)
+        self.session.add(
+            AuditLog(
+                actor_user_id=None,
+                action="student_attendance_signed",
+                resource_type="attendance",
+                resource_id=str(new_attendance.id) if new_attendance.id else code_str,
+                after_json={
+                    "student_name": student_name,
+                    "attendance_code_id": attendance_code.id,
+                    "code": attendance_code.code,
+                    "programme": attendance_code.programme,
+                    "track": attendance_code.track,
+                    "date": new_attendance.date,
+                    "time": new_attendance.time,
+                },
+                created_at=now,
+            )
+        )
         await self.session.commit()
         await self.session.refresh(new_attendance)
 
